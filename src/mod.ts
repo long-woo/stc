@@ -1,7 +1,8 @@
 import { parse } from 'https://deno.land/std@0.106.0/flags/mod.ts'
+import { ensureFile } from 'https://deno.land/std@0.106.0/fs/mod.ts'
 
 import Logs from './color.ts'
-import { ISwaggerPathMethod, ISwaggerResult } from "./swagger.ts";
+import { HttpMethod, IParseApiMethodParams, ISwaggerDefinitionOptions, ISwaggerResult } from "./swagger.ts";
 
 const args = parse(Deno.args)
 
@@ -25,9 +26,34 @@ if (typeof args.out === 'string' && args.out) {
   outDir = args.out
 }
 
-// 解析 API 的方法
-const parseAPIMethod = (method: ISwaggerPathMethod) => {
+const generateResponseInterface = (res: ISwaggerDefinitionOptions) => {
+  if (res.type === 'object') {
+    
+  }
+}
 
+/**
+ * 解析 Api 的方法
+ * @param params - 参数
+ */
+const parseApiMethod = (params: IParseApiMethodParams) => {
+  const options = params.options
+
+  // 参数对象
+  
+  // const request = ''
+
+  // 响应对象
+  const responseRef = options.responses[200].schema.$ref
+  const responseKey = responseRef.slice(14)
+  const response = params.definitions[responseKey]
+  console.log(JSON.stringify(response))
+
+  const functionTemplate = `
+export const ${params.name} = () => webClient.${params.method}<${responseKey}>('${params.url}')
+`
+
+  return functionTemplate
 }
 
 // 获取远程 Swagger API 地址
@@ -42,25 +68,46 @@ for (const key of Object.keys(paths)) {
   console.clear()
   Logs.info(`${key} 接口生成中...`)
 
+  const pathKeys = key.split('/')
+  let methodName = pathKeys[3]
+
   // 文件名。取之 API 路径第二个
-  const fileName = `${key.split('/')[2]}.ts`
-  const outPath = outDir + fileName
+  const fileName = `${pathKeys[2]}.ts`
+  const outPath = `${outDir}/${fileName}`
 
   // 文件内容
-  const content = ''
+  let content = `// 由 swagger2code 生成
+
+import { webClient } from './web_api'
+`
 
   // 当前 API 的所有方法
   const methods = paths[key]
+  const methodKeys = Object.keys(methods)
 
   // 遍历当前 API 方法
-  for (const methodKey of Object.keys(methods)) {
-    const method = methods[methodKey]
+  for (const methodKey of methodKeys) {
+    const methodOption = methods[methodKey]
+
+    // 若同一个地址下存在多个请求方法
+    if (methodKeys.length > 1) {
+      methodName = methodKey + methodName.charAt(0).toUpperCase() + methodName.slice(1)
+    }
     
+    content += parseApiMethod({
+      name: methodName,
+      url: key,
+      method: methodKey as HttpMethod,
+      options: methodOption,
+      definitions
+    })
   }
 
   // 写入文件
-  const fileData = new TextEncoder().encode(content) 
+  const fileData = new TextEncoder().encode(content)
+  await ensureFile(outPath)
   await Deno.writeFile(outPath, fileData)
 
   Logs.success('完成\n')
+  Deno.exit()
 }

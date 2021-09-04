@@ -16,7 +16,7 @@ interface ISwaggerMethodSchema {
 
 interface ISwaggerMethodResponseStatus {
   description: string
-  schema?: ISwaggerMethodSchema
+  schema: ISwaggerMethodSchema
 }
 
 interface ISwaggerMethodResponses {
@@ -33,7 +33,7 @@ interface ISwaggerMethodParameter {
   schema?: ISwaggerMethodSchema
 }
 
-interface ISwaggerPathMethodOption {
+export interface ISwaggerPathMethodOption {
   operationId: string
   consumes: string[]
   produces: string[]
@@ -43,7 +43,7 @@ interface ISwaggerPathMethodOption {
   responses: ISwaggerMethodResponses
 }
 
-export interface ISwaggerPathMethod {
+interface ISwaggerPathMethod {
   [key: string]: ISwaggerPathMethodOption
 }
 
@@ -56,7 +56,7 @@ interface ISwaggerDefinitionProperties {
   format?: string
 }
 
-interface ISwaggerDefinitionOptions {
+export interface ISwaggerDefinitionOptions {
   type: string
   properties: ISwaggerDefinitionProperties
 }
@@ -75,4 +75,34 @@ export interface ISwaggerResult {
   definitions: ISwaggerResultDefinitions
   paths: ISwaggerResultPaths
   produces: string[]
+}
+
+// Http 方法
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'options' | 'patch'
+
+export interface IParseApiMethodParams {
+  /**
+   * 方法名
+   */
+  name: string
+
+  /**
+   * 请求地址
+   */
+  url: string
+
+  /**
+   * 请求方法
+   */
+  method: HttpMethod
+
+  /**
+   * 方法信息
+   */
+  options: ISwaggerPathMethodOption
+
+  /**
+   * 请求、响应对象定义
+   */
+  definitions: ISwaggerResultDefinitions
 }

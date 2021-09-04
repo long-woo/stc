@@ -16,7 +16,7 @@ import * as Colors from 'https://deno.land/std@0.106.0/fmt/colors.ts'
  */
 const success = (str: string) => {
   console.info(
-    Colors.bgGreen(' 信息 ') + ` ${Colors.green(str)}`
+    Colors.bgGreen(' 成功 ') + ` ${Colors.green(str)}`
   )
 }
 
