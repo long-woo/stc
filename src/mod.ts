@@ -69,7 +69,6 @@ for (const key of Object.keys(paths)) {
   Logs.info(`${key} 接口生成中...`)
 
   const pathKeys = key.split('/')
-  let methodName = pathKeys[3]
 
   // 文件名。取之 API 路径第二个
   const fileName = `${pathKeys[2]}.ts`
@@ -88,6 +87,7 @@ import { webClient } from './web_api'
   // 遍历当前 API 方法
   for (const methodKey of methodKeys) {
     const methodOption = methods[methodKey]
+    let methodName = pathKeys[3]
 
     // 若同一个地址下存在多个请求方法
     if (methodKeys.length > 1) {
