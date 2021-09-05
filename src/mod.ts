@@ -2,7 +2,7 @@ import { parse } from 'https://deno.land/std@0.106.0/flags/mod.ts'
 import { ensureFile } from 'https://deno.land/std@0.106.0/fs/mod.ts'
 
 import Logs from './color.ts'
-import { HttpMethod, IParseApiMethodParams, ISwaggerDefinitionOptions, ISwaggerResult } from "./swagger.ts";
+import { HttpMethod, IDefaultObject, IParseApiMethodParams, ISwaggerResult, ISwaggerResultDefinitions } from "./swagger.ts";
 
 const args = parse(Deno.args)
 
@@ -26,10 +26,31 @@ if (typeof args.out === 'string' && args.out) {
   outDir = args.out
 }
 
-const generateResponseInterface = (res: ISwaggerDefinitionOptions) => {
-  if (res.type === 'object') {
+/**
+ * 获取定义名称
+ * @param ref - 参数
+ */
+const getDefinitionName = (ref: string) => ref.slice(14)
+
+const generateDefinition = (name: string, defs: IDefaultObject<ISwaggerResultDefinitions>) => {
+  const def = defs[name]
+
+  if (def.type === 'object') {
+    const properties = def.properties
+    const propertiesKeys = Object.keys(properties)
     
+    const res = propertiesKeys.reduce((prev: string, current: string, index: number) => {
+      const type = properties[current].type.replaceAll('"', '')
+
+      prev += `\n\t${current}: ${type}\n${propertiesKeys.length - 1 === index ? '}' : ''}`
+
+      return prev
+    }, `export interface I${name} {`)
+
+    return res
   }
+
+  return ''
 }
 
 /**
@@ -45,9 +66,9 @@ const parseApiMethod = (params: IParseApiMethodParams) => {
 
   // 响应对象
   const responseRef = options.responses[200].schema.$ref
-  const responseKey = responseRef.slice(14)
-  const response = params.definitions[responseKey]
-  console.log(JSON.stringify(response))
+  const responseKey = getDefinitionName(responseRef)
+  const response = generateDefinition(responseKey, params.definitions)
+  console.log(response)
 
   const functionTemplate = `
 export const ${params.name} = () => webClient.${params.method}<${responseKey}>('${params.url}')
@@ -76,8 +97,7 @@ for (const key of Object.keys(paths)) {
 
   // 文件内容
   let content = `// 由 swagger2code 生成
-
-import { webClient } from './web_api'
+import { webClient } from './web_client'
 `
 
   // 当前 API 的所有方法

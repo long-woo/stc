@@ -1,3 +1,7 @@
+export interface IDefaultObject<T = string> {
+  [key: string]: T
+}
+
 interface ISwaggerResultInfo {
   title: string
   description: string
@@ -33,7 +37,7 @@ interface ISwaggerMethodParameter {
   schema?: ISwaggerMethodSchema
 }
 
-export interface ISwaggerPathMethodOption {
+export interface ISwaggerResultPaths {
   operationId: string
   consumes: string[]
   produces: string[]
@@ -43,26 +47,15 @@ export interface ISwaggerPathMethodOption {
   responses: ISwaggerMethodResponses
 }
 
-interface ISwaggerPathMethod {
-  [key: string]: ISwaggerPathMethodOption
-}
-
-interface ISwaggerResultPaths {
-  [key: string]: ISwaggerPathMethod
-}
-
 interface ISwaggerDefinitionProperties {
   type: string
-  format?: string
+  description: string
+  format: string
 }
 
-export interface ISwaggerDefinitionOptions {
+export interface ISwaggerResultDefinitions {
   type: string
-  properties: ISwaggerDefinitionProperties
-}
-
-interface ISwaggerResultDefinitions {
-  [key: string]: ISwaggerDefinitionOptions
+  properties: IDefaultObject<ISwaggerDefinitionProperties>
 }
 
 export interface ISwaggerResult {
@@ -72,8 +65,8 @@ export interface ISwaggerResult {
   consumes: string[]
   info: ISwaggerResultInfo
   tags: ISwaggerResultTag[]
-  definitions: ISwaggerResultDefinitions
-  paths: ISwaggerResultPaths
+  definitions: IDefaultObject<ISwaggerResultDefinitions>
+  paths: IDefaultObject<IDefaultObject<ISwaggerResultPaths>>
   produces: string[]
 }
 
@@ -99,10 +92,10 @@ export interface IParseApiMethodParams {
   /**
    * 方法信息
    */
-  options: ISwaggerPathMethodOption
+  options: ISwaggerResultPaths
 
   /**
    * 请求、响应对象定义
    */
-  definitions: ISwaggerResultDefinitions
+  definitions: IDefaultObject<ISwaggerResultDefinitions>
 }
