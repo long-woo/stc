@@ -26,6 +26,8 @@ if (typeof args.out === 'string' && args.out) {
   outDir = args.out
 }
 
+const mapDefinitions = new Map<string, string>()
+
 /**
  * 获取定义名称
  * @param ref - 参数
@@ -68,8 +70,13 @@ const parseApiMethod = (params: IParseApiMethodParams) => {
   const responseRef = options.responses[200].schema.$ref
   const responseKey = getDefinitionName(responseRef)
   const response = generateDefinition(responseKey, params.definitions)
-  console.log(response)
 
+  if (!mapDefinitions.has(responseKey)) {
+    mapDefinitions.set(responseKey, response)
+    console.log(mapDefinitions)
+  }
+
+  
   const functionTemplate = `
 export const ${params.name} = () => webClient.${params.method}<${responseKey}>('${params.url}')
 `
