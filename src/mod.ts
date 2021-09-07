@@ -1,141 +1,34 @@
 import { parse } from 'https://deno.land/std@0.106.0/flags/mod.ts'
-import { ensureFile } from 'https://deno.land/std@0.106.0/fs/mod.ts'
 
-import Logs from './color.ts'
-import { HttpMethod, IDefaultObject, IGenerateRuntimeApiParams, ISwaggerResult, ISwaggerResultDefinitions } from "./swagger.ts";
+import Logs from './console.ts'
+import { generateApi } from "./typescript/index.ts"
 
-const args = parse(Deno.args)
+const main = () => {
+  // 解析参数
+  const args = parse(Deno.args)
 
-// 文件输出目录，默认为 Deno 当前执行的目录
-let outDir = Deno.cwd()
+  // 文件输出目录，默认为 Deno 当前执行的目录
+  let outDir = Deno.cwd()
 
-// console.log(import.meta)
-
-// if (import.meta.main) {
-//   console.log(1)
-// }
-
-// 检查 lang 选项
-if (typeof args.lang !== 'string' || !args.lang) {
-  Logs.error('必须提供 --lang 选项。')
-  Deno.exit()
-}
-
-// 若没有提供 out 选项，则使用 Deno 当前执行的目录
-if (typeof args.out === 'string' && args.out) {
-  outDir = args.out
-}
-
-const mapDefinitions = new Map<string, string>()
-
-/**
- * 获取定义名称
- * @param ref - 定义参数
- */
-const getDefinitionName = (ref: string) => ref ? ref.slice(14) : ''
-
-const getDefinitionContent = (name: string, defs: IDefaultObject<ISwaggerResultDefinitions>) => {
-  const def = defs[name]
-
-  if (def.type === 'object') {
-    const properties = def.properties
-    const propertiesKeys = Object.keys(properties)
-    
-    const res = propertiesKeys.reduce((prev: string, current: string, index: number) => {
-      const type = properties[current].type.replaceAll('"', '')
-
-      prev += `\n\t${current}: ${type}\n${propertiesKeys.length - 1 === index ? '}\n' : ''}`
-
-      return prev
-    }, `\nexport interface I${name} {`)
-
-    return res
+  // 检查 lang 选项
+  if (typeof args.lang !== 'string' || !args.lang) {
+    Logs.error('必须提供 --lang 选项。')
+    Deno.exit()
   }
 
-  return ''
-}
-
-const generateDefinition = (key: string, definitions: IDefaultObject<ISwaggerResultDefinitions>) => {
-  if (mapDefinitions.has(key) || !key) return ''
-
-  const content = getDefinitionContent(key, definitions)
-  mapDefinitions.set(key, content)
-
-  return content
-}
-
-/**
- * 生成运行时 Api
- * @param params - 参数
- */
-const generateRuntimeApi = (params: IGenerateRuntimeApiParams) => {
-  const functionTemplate = `
-export const ${params.name} = () => webClient.${params.method}<I${params.responseKey}>('${params.url}')
-`
-
-  return functionTemplate
-}
-
-// 获取远程 Swagger API 地址
-const res = await fetch('https://demodata.liangyihui.net/smart/v2/api-docs')
-const data: ISwaggerResult = await res.json()
-
-const paths = data.paths
-const definitions = data.definitions
-
-// 遍历所有 API 路径
-for (const key of Object.keys(paths)) {
-  console.clear()
-  mapDefinitions.clear()
-  Logs.info(`${key} 接口生成中...`)
-
-  const pathKeys = key.split('/')
-
-  // 文件名。取之 API 路径第二个
-  const fileName = `${pathKeys[2]}.ts`
-  const outPath = `${outDir}/${fileName}`
-
-  // 文件内容
-  let content = `// 由 swagger2code 生成
-import { webClient } from './web_client'
-`
-
-  // 当前 API 的所有方法
-  const methods = paths[key]
-  const methodKeys = Object.keys(methods)
-
-  // 遍历当前 API 方法
-  for (const methodKey of methodKeys) {
-    const methodOption = methods[methodKey]
-    let methodName = pathKeys[3]
-
-    // 若同一个地址下存在多个请求方法
-    if (methodKeys.length > 1) {
-      methodName = methodKey + methodName.charAt(0).toUpperCase() + methodName.slice(1)
-    }
-
-    const requestRef = ''
-    const requestKey = getDefinitionName(requestRef)
-    content += generateDefinition(requestKey, definitions)
-
-    const responseRef = methodOption.responses[200].schema.$ref
-    const responseKey = getDefinitionName(responseRef)
-    content += generateDefinition(responseKey, definitions)
-    
-    content += generateRuntimeApi({
-      name: methodName,
-      url: key,
-      method: methodKey as HttpMethod,
-      requestKey,
-      responseKey
-    })
+  // 若没有提供 out 选项，则使用 Deno 当前执行的目录
+  if (typeof args.out === 'string' && args.out) {
+    outDir = args.out
   }
 
-  // 写入文件
-  const fileData = new TextEncoder().encode(content)
-  await ensureFile(outPath)
-  await Deno.writeFile(outPath, fileData)
+  return {
+    lang: args.lang,
+    outDir
+  }
+}
 
-  Logs.success('完成\n')
-  Deno.exit()
+if (import.meta.main) {
+  const { lang, outDir } = main()
+  
+  generateApi('https://demodata.liangyihui.net/smart/v2/api-docs', outDir)
 }

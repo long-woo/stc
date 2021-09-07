@@ -2,6 +2,11 @@ export interface IDefaultObject<T = string> {
   [key: string]: T
 }
 
+/**
+ * 属性类型
+ */
+export type propertyType = 'string' | 'integer' | 'boolean' | 'array' | 'object'
+
 interface ISwaggerResultInfo {
   title: string
   description: string
@@ -14,27 +19,27 @@ interface ISwaggerResultTag {
   description: string
 }
 
-interface ISwaggerMethodSchema {
+interface ISwaggerSchema {
   $ref: string
 }
 
 interface ISwaggerMethodResponseStatus {
   description: string
-  schema: ISwaggerMethodSchema
+  schema?: ISwaggerSchema
 }
 
 interface ISwaggerMethodResponses {
   200: ISwaggerMethodResponseStatus
 }
 
-interface ISwaggerMethodParameter {
-  in: string
+export interface ISwaggerMethodParameter {
+  in: 'path' | 'query' | 'body'
   name: string
-  type?: string
-  format?: string
+  type: string
+  format: string
   required: boolean
-  description?: string
-  schema?: ISwaggerMethodSchema
+  description: string
+  schema: ISwaggerSchema
 }
 
 export interface ISwaggerResultPaths {
@@ -43,14 +48,20 @@ export interface ISwaggerResultPaths {
   produces: string[]
   summary: string
   tags: string[]
-  parameters?: ISwaggerMethodParameter[]
+  parameters: ISwaggerMethodParameter[]
   responses: ISwaggerMethodResponses
 }
 
+export interface ISwaggerDefinitionPropertieItems extends Partial<ISwaggerSchema> {
+  type?: string
+}
+
 interface ISwaggerDefinitionProperties {
-  type: string
-  description: string
-  format: string
+  type?: string
+  $ref?: string
+  description?: string
+  format?: string
+  items?: ISwaggerDefinitionPropertieItems
 }
 
 export interface ISwaggerResultDefinitions {

@@ -4,7 +4,7 @@ import * as Colors from 'https://deno.land/std@0.106.0/fmt/colors.ts'
  * 输出提示信息
  * @param str - 文本内容
  */
- const info = (str: string) => {
+const info = (str: string) => {
   console.info(
     Colors.bgBlue(' 信息 ') + ` ${Colors.blue(str)}`
   )
@@ -30,8 +30,14 @@ const error = (str: string) => {
   )
 }
 
+/**
+ * 清空终端信息
+ */
+const clear = () => console.clear()
+
 export default {
   info,
   success,
-  error
+  error,
+  clear
 }
