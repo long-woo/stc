@@ -2,7 +2,7 @@ import { parse } from 'https://deno.land/std@0.106.0/flags/mod.ts'
 import { ensureFile } from 'https://deno.land/std@0.106.0/fs/mod.ts'
 
 import Logs from './color.ts'
-import { HttpMethod, IDefaultObject, IParseApiMethodParams, ISwaggerResult, ISwaggerResultDefinitions } from "./swagger.ts";
+import { HttpMethod, IDefaultObject, IGenerateRuntimeApiParams, ISwaggerResult, ISwaggerResultDefinitions } from "./swagger.ts";
 
 const args = parse(Deno.args)
 
@@ -30,11 +30,11 @@ const mapDefinitions = new Map<string, string>()
 
 /**
  * 获取定义名称
- * @param ref - 参数
+ * @param ref - 定义参数
  */
-const getDefinitionName = (ref: string) => ref.slice(14)
+const getDefinitionName = (ref: string) => ref ? ref.slice(14) : ''
 
-const generateDefinition = (name: string, defs: IDefaultObject<ISwaggerResultDefinitions>) => {
+const getDefinitionContent = (name: string, defs: IDefaultObject<ISwaggerResultDefinitions>) => {
   const def = defs[name]
 
   if (def.type === 'object') {
@@ -44,10 +44,10 @@ const generateDefinition = (name: string, defs: IDefaultObject<ISwaggerResultDef
     const res = propertiesKeys.reduce((prev: string, current: string, index: number) => {
       const type = properties[current].type.replaceAll('"', '')
 
-      prev += `\n\t${current}: ${type}\n${propertiesKeys.length - 1 === index ? '}' : ''}`
+      prev += `\n\t${current}: ${type}\n${propertiesKeys.length - 1 === index ? '}\n' : ''}`
 
       return prev
-    }, `export interface I${name} {`)
+    }, `\nexport interface I${name} {`)
 
     return res
   }
@@ -55,30 +55,22 @@ const generateDefinition = (name: string, defs: IDefaultObject<ISwaggerResultDef
   return ''
 }
 
+const generateDefinition = (key: string, definitions: IDefaultObject<ISwaggerResultDefinitions>) => {
+  if (mapDefinitions.has(key) || !key) return ''
+
+  const content = getDefinitionContent(key, definitions)
+  mapDefinitions.set(key, content)
+
+  return content
+}
+
 /**
- * 解析 Api 的方法
+ * 生成运行时 Api
  * @param params - 参数
  */
-const parseApiMethod = (params: IParseApiMethodParams) => {
-  const options = params.options
-
-  // 参数对象
-  
-  // const request = ''
-
-  // 响应对象
-  const responseRef = options.responses[200].schema.$ref
-  const responseKey = getDefinitionName(responseRef)
-  const response = generateDefinition(responseKey, params.definitions)
-
-  if (!mapDefinitions.has(responseKey)) {
-    mapDefinitions.set(responseKey, response)
-    console.log(mapDefinitions)
-  }
-
-  
+const generateRuntimeApi = (params: IGenerateRuntimeApiParams) => {
   const functionTemplate = `
-export const ${params.name} = () => webClient.${params.method}<${responseKey}>('${params.url}')
+export const ${params.name} = () => webClient.${params.method}<I${params.responseKey}>('${params.url}')
 `
 
   return functionTemplate
@@ -94,6 +86,7 @@ const definitions = data.definitions
 // 遍历所有 API 路径
 for (const key of Object.keys(paths)) {
   console.clear()
+  mapDefinitions.clear()
   Logs.info(`${key} 接口生成中...`)
 
   const pathKeys = key.split('/')
@@ -120,13 +113,21 @@ import { webClient } from './web_client'
     if (methodKeys.length > 1) {
       methodName = methodKey + methodName.charAt(0).toUpperCase() + methodName.slice(1)
     }
+
+    const requestRef = ''
+    const requestKey = getDefinitionName(requestRef)
+    content += generateDefinition(requestKey, definitions)
+
+    const responseRef = methodOption.responses[200].schema.$ref
+    const responseKey = getDefinitionName(responseRef)
+    content += generateDefinition(responseKey, definitions)
     
-    content += parseApiMethod({
+    content += generateRuntimeApi({
       name: methodName,
       url: key,
       method: methodKey as HttpMethod,
-      options: methodOption,
-      definitions
+      requestKey,
+      responseKey
     })
   }
 

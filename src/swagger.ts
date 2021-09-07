@@ -73,7 +73,7 @@ export interface ISwaggerResult {
 // Http 方法
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'options' | 'patch'
 
-export interface IParseApiMethodParams {
+export interface IGenerateRuntimeApiParams {
   /**
    * 方法名
    */
@@ -90,12 +90,12 @@ export interface IParseApiMethodParams {
   method: HttpMethod
 
   /**
-   * 方法信息
+   * 请求对象 Key
    */
-  options: ISwaggerResultPaths
+  requestKey: string
 
   /**
-   * 请求、响应对象定义
+   * 响应对象 Key
    */
-  definitions: IDefaultObject<ISwaggerResultDefinitions>
+  responseKey: string
 }
