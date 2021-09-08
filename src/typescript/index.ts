@@ -37,7 +37,7 @@ const caseTitle = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
  */
 const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
-  await Deno.writeFile(filePath, new TextEncoder().encode(content));
+  await Deno.writeFile(filePath, new TextEncoder().encode(`// 由 swagger2code 生成\n${content}`));
 };
 
 /**
@@ -151,10 +151,10 @@ const generateDefinition = (
 };
 
 /**
- * 获取请求参数定义
+ * 生成请求参数定义
  * @param parameters - Api 参数信息
  */
-const getParameterDefinition = (
+const generateParameterDefinition = (
   methodName: string,
   parameters: ISwaggerMethodParameter[] = [],
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
@@ -210,11 +210,13 @@ const getParameterDefinition = (
 };
 
 /**
- * 生成运行时 Api
- * @param options - Api 信息
+ * 拼接请求参数
+ * @param params - 请求的参数
+ * @returns 
  */
-const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
-  const { path, query, body } = options.params || {};
+const getRequestParams = (params: IRequestParams<string, string>) => {
+  const { path, query, body } = params;
+
   let req: string | undefined = undefined;
 
   if (path) {
@@ -240,6 +242,16 @@ const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
       req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
     }
   }
+
+  return req
+}
+
+/**
+ * 生成运行时 Api
+ * @param options - Api 信息
+ */
+const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
+  const req = getRequestParams(options.params || {})
 
   const res = `
 export const ${options.name} = (
@@ -270,7 +282,7 @@ const getSwaggerData = async (urlOrPath: string) => {
  */
 const generateWebClient = (outDir: string) => {
   const outPath = `${outDir}/shared/fetch.ts`;
-  const content = `// 由 swagger2code 生成
+  const content = `
 export const webClient = {
   
 }\n`;
@@ -331,8 +343,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
     const outPath = `${outDir}/${fileName}`;
 
     // 文件内容
-    let content = `// 由 swagger2code 生成
-import { webClient } from './shared/fetch.ts'
+    let content = `import { webClient } from './shared/fetch.ts'
 import { IDefaultObject, IRequestParams } from './shared/interface.ts'
 `;
 
@@ -351,7 +362,7 @@ import { IDefaultObject, IRequestParams } from './shared/interface.ts'
       }
 
       // 请求对象
-      const params = getParameterDefinition(
+      const params = generateParameterDefinition(
         methodName,
         methodOption.parameters,
         definitions,
