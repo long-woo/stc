@@ -1,112 +1,131 @@
 export interface IDefaultObject<T = string> {
-  [key: string]: T
+  [key: string]: T;
+}
+
+export interface IRequestParams<T = unknown, U = unknown> {
+  path?: string;
+  query?: T;
+  body?: U;
 }
 
 /**
  * 属性类型
  */
-export type propertyType = 'string' | 'integer' | 'boolean' | 'array' | 'object'
+export type propertyType =
+  | "string"
+  | "integer"
+  | "boolean"
+  | "array"
+  | "object";
 
 interface ISwaggerResultInfo {
-  title: string
-  description: string
-  version: string
-  license: unknown
+  title: string;
+  description: string;
+  version: string;
+  license: unknown;
 }
 
 interface ISwaggerResultTag {
-  name: string
-  description: string
+  name: string;
+  description: string;
 }
 
 interface ISwaggerSchema {
-  $ref: string
+  $ref: string;
 }
 
 interface ISwaggerMethodResponseStatus {
-  description: string
-  schema?: ISwaggerSchema
+  description: string;
+  schema?: ISwaggerSchema;
 }
 
 interface ISwaggerMethodResponses {
-  200: ISwaggerMethodResponseStatus
+  200: ISwaggerMethodResponseStatus;
 }
 
 export interface ISwaggerMethodParameter {
-  in: 'path' | 'query' | 'body'
-  name: string
-  type: string
-  format: string
-  required: boolean
-  description: string
-  schema: ISwaggerSchema
+  in: "path" | "query" | "body";
+  name: string;
+  type: string;
+  format: string;
+  required: boolean;
+  description: string;
+  schema: ISwaggerSchema;
 }
 
 export interface ISwaggerResultPaths {
-  operationId: string
-  consumes: string[]
-  produces: string[]
-  summary: string
-  tags: string[]
-  parameters: ISwaggerMethodParameter[]
-  responses: ISwaggerMethodResponses
+  operationId: string;
+  consumes: string[];
+  produces: string[];
+  summary: string;
+  tags: string[];
+  parameters: ISwaggerMethodParameter[];
+  responses: ISwaggerMethodResponses;
 }
 
-export interface ISwaggerDefinitionPropertieItems extends Partial<ISwaggerSchema> {
-  type?: string
+export interface ISwaggerDefinitionPropertieItems
+  extends Partial<ISwaggerSchema> {
+  type?: string;
 }
 
 interface ISwaggerDefinitionProperties {
-  type?: string
-  $ref?: string
-  description?: string
-  format?: string
-  items?: ISwaggerDefinitionPropertieItems
+  type?: string;
+  $ref?: string;
+  description?: string;
+  format?: string;
+  items?: ISwaggerDefinitionPropertieItems;
 }
 
 export interface ISwaggerResultDefinitions {
-  type: string
-  properties: IDefaultObject<ISwaggerDefinitionProperties>
+  type: string;
+  properties: IDefaultObject<ISwaggerDefinitionProperties>;
 }
 
 export interface ISwaggerResult {
-  basePath: string
-  host: string
-  swagger: string
-  consumes: string[]
-  info: ISwaggerResultInfo
-  tags: ISwaggerResultTag[]
-  definitions: IDefaultObject<ISwaggerResultDefinitions>
-  paths: IDefaultObject<IDefaultObject<ISwaggerResultPaths>>
-  produces: string[]
+  basePath: string;
+  host: string;
+  swagger: string;
+  consumes: string[];
+  info: ISwaggerResultInfo;
+  tags: ISwaggerResultTag[];
+  definitions: IDefaultObject<ISwaggerResultDefinitions>;
+  paths: IDefaultObject<IDefaultObject<ISwaggerResultPaths>>;
+  produces: string[];
 }
 
 // Http 方法
-export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'options' | 'patch'
+export type HttpMethod =
+  | "get"
+  | "post"
+  | "put"
+  | "delete"
+  | "head"
+  | "options"
+  | "patch";
 
-export interface IGenerateRuntimeApiParams {
+export interface IGenerateRuntimeApiOptions {
   /**
    * 方法名
    */
-  name: string
+  name: string;
 
   /**
    * 请求地址
    */
-  url: string
+  url: string;
 
   /**
    * 请求方法
    */
-  method: HttpMethod
+  method: HttpMethod;
 
   /**
-   * 请求对象 Key
+   * 请求参数
    */
-  requestKey: string
+  params?: IRequestParams;
 
   /**
    * 响应对象 Key
    */
-  responseKey: string
+  responseKey: string;
 }
