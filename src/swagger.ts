@@ -122,7 +122,7 @@ export interface IGenerateRuntimeApiOptions {
   /**
    * 请求参数
    */
-  params?: IRequestParams;
+  params?: IRequestParams<string, string>;
 
   /**
    * 响应对象 Key

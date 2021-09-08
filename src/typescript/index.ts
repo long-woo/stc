@@ -159,38 +159,50 @@ const getParameterDefinition = (
   parameters: ISwaggerMethodParameter[] = [],
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
+  const queryKey = `I${caseTitle(methodName)}`;
+
   const res = parameters.reduce(
-    (prev: IRequestParams<string[], string[]>, current) => {
+    (
+      prev: IRequestParams<
+        { key: string; value: string[] },
+        { key: string; value: string }
+      >,
+      current,
+    ) => {
       // 生成 Path
       if (current.in === "path") {
         prev.path = current.name;
       }
 
       // 生成 Query 对象
-      if (current.in === "query" && prev.query) {
+      if (current.in === "query" && prev.query?.value) {
         const queryProp = `${
           generateComment(current.description)
         }\n\t${current.name}${current.required ? "" : "?"}: ${
           convertType(current.type as propertyType)
         }\n`;
 
-        prev.query.splice(prev.query.length - 1, 0, queryProp);
+        prev.query.value.splice(prev.query.value.length - 1, 0, queryProp);
       }
 
       // 生成 Body 对象
-      if (current.in === "body") {
+      if (current.in === "body" && prev.body) {
         const ref = current.schema.$ref;
         const key = getDefinitionName(ref);
 
-        prev.body?.push(generateDefinition(key, definitions));
+        prev.body.key = key;
+        prev.body.value = generateDefinition(key, definitions);
       }
 
       return prev;
     },
     {
       path: "",
-      query: [`\nexport interface I${caseTitle(methodName)} {`, "}\n"],
-      body: [],
+      query: {
+        key: queryKey,
+        value: [`\nexport interface ${queryKey} {`, "}\n"],
+      },
+      body: { key: "", value: "" },
     },
   );
 
@@ -202,11 +214,38 @@ const getParameterDefinition = (
  * @param options - Api 信息
  */
 const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
+  const { path, query, body } = options.params || {};
+  let req: string | undefined = undefined;
+
+  if (path) {
+    req = `${path}: string`;
+
+    if (query || body) {
+      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
+    }
+  }
+
+  if (query) {
+    req = `req: ${query}`;
+
+    if (path || body) {
+      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
+    }
+  }
+
+  if (body) {
+    req = `req: ${body}`;
+
+    if (path || query) {
+      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
+    }
+  }
+
   const res = `
-export const ${options.name} = (${
-    options.params ? "req: IRequestParams" : ""
-  }) => webClient.${options.method}<${options
-    .responseKey || "void"}>('${options.url}')
+export const ${options.name} = (
+  ${req ?? ""}
+) => webClient.${options.method}<${options
+    .responseKey || "void"}>('${options.url}'${req ? ", req" : ""})
 `;
 
   return res;
@@ -230,12 +269,14 @@ const getSwaggerData = async (urlOrPath: string) => {
  * @param outDir 文件路径
  */
 const generateWebClient = (outDir: string) => {
-  const outPath = `${outDir}/shared/fetch.ts`
+  const outPath = `${outDir}/shared/fetch.ts`;
   const content = `// 由 swagger2code 生成
-export const webClient = () => {}\n`
+export const webClient = {
+  
+}\n`;
 
-  createFile(outPath, content)
-}
+  createFile(outPath, content);
+};
 
 /**
  * 生成默认定义
@@ -248,7 +289,7 @@ const generateDefaultDefinition = (outDir: string) => {
   [key: string]: T
 }
 
-export interface IRequestParams<T = unkown, U = unkown>{
+export interface IRequestParams<T = unknown, U = unknown>{
 	path?: string
 	query?: T
 	body?: U
@@ -272,7 +313,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   Logs.clear();
 
   // 生成运行时请求方法
-  generateWebClient(outDir)
+  generateWebClient(outDir);
 
   // 生成默认定义
   generateDefaultDefinition(outDir);
@@ -315,8 +356,10 @@ import { IDefaultObject, IRequestParams } from './shared/interface.ts'
         methodOption.parameters,
         definitions,
       );
-      content += params.query?.join("");
-      content += params.body?.join("");
+      const paramQuery = params.query;
+      const paramBody = params.body;
+      content += paramQuery?.value.join("");
+      content += paramBody?.value;
 
       // 响应对象
       const responseRef = methodOption.responses[200].schema?.$ref;
@@ -327,7 +370,11 @@ import { IDefaultObject, IRequestParams } from './shared/interface.ts'
         name: methodName,
         url: key,
         method: methodKey as HttpMethod,
-        params: methodOption.parameters.length ? params : undefined,
+        params: {
+          path: params.path,
+          query: paramQuery?.key,
+          body: paramBody?.key,
+        },
         responseKey,
       });
     }
