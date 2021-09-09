@@ -103,7 +103,7 @@ const getDefinitionContent = (
   name: string,
   defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  const def = defs[name.slice(1)];
+  const def = defs[name.slice(1)] ?? {};
 
   if (def.type === "object") {
     const properties = def.properties;
@@ -308,7 +308,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const key of Object.keys(paths)) {
-    if (key !== "/api/applyTrial") continue;
+    // if (key !== "/api/dataOperation/exportList") continue;
     mapDefinitions.clear();
     Logs.info(`${key} 接口生成中...`);
 
