@@ -171,14 +171,13 @@ const generateParameterDefinition = (
   parameters: ISwaggerMethodParameter[] = [],
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  const queryKey = `IQuery${caseTitle(methodName)}`;
-  const queryValue = [];
-
   const res = parameters.reduce(
     (
-      prev: IRequestParams<
-        { key: string; value: string[] },
-        { key: string; value: string }
+      prev: Required<
+        IRequestParams<
+          { key: string; value: string[] },
+          { key: string; value: string }
+        >
       >,
       current,
     ) => {
@@ -188,18 +187,28 @@ const generateParameterDefinition = (
       }
 
       // 生成 Query 对象
-      if (current.in === "query" && prev.query?.value) {
+      if (current.in === "query") {
+        const queryValueLength = prev.query.value.length;
         const queryProp = `${
           generateComment(current.description)
         }\n\t${current.name}${current.required ? "" : "?"}: ${
           convertType(current.type as propertyType)
         }\n`;
 
-        prev.query.value.splice(prev.query.value.length - 1, 0, queryProp);
+        if (!queryValueLength) {
+          const queryKey = `IQuery${caseTitle(methodName)}`;
+
+          prev.query = {
+            key: queryKey,
+            value: [`\nexport interface ${queryKey} {`, "}\n"],
+          };
+        }
+
+        prev.query.value.splice(queryValueLength - 1, 0, queryProp);
       }
 
       // 生成 Body 对象
-      if (current.in === "body" && prev.body) {
+      if (current.in === "body") {
         const ref = current.schema.$ref;
         const key = getDefinitionName(ref);
 
@@ -212,8 +221,8 @@ const generateParameterDefinition = (
     {
       path: "",
       query: {
-        key: queryKey,
-        value: [`\nexport interface ${queryKey} {`, "}\n"],
+        key: "",
+        value: [],
       },
       body: { key: "", value: "" },
     },
@@ -327,7 +336,7 @@ import { IDefaultObject } from './shared/interface.ts'
       if (methodKeys.length > 1) {
         methodName = methodKey + caseTitle(methodName);
       }
-      console.log(methodName);
+
       // 请求对象
       const params = generateParameterDefinition(
         methodName,

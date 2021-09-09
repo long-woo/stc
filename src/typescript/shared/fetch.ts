@@ -86,10 +86,15 @@ export class AxiosHelper {
   /**
    * 请求
    * @param param
+   *
    * `method` - 方法
+   *
    * `url` - 地址
+   *
    * `data` - 请求体
+   *
    * `params` - 请求参数
+   *
    * `headers` - 请求头
    */
   static request({
@@ -126,15 +131,6 @@ export class webClient {
     }, ``);
 
     return query;
-  }
-
-  /**
-   * 获取数据类型
-   * @param data - 数据
-   * @returns
-   */
-  private static getDataType(data: unknown) {
-    return Object.prototype.toString.call(data).slice(8, -1);
   }
 
   /**
