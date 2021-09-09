@@ -1,4 +1,4 @@
-import { ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
+import { copy, ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
 
 import Logs from "../console.ts";
 import {
@@ -37,7 +37,19 @@ const caseTitle = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
  */
 const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
-  await Deno.writeFile(filePath, new TextEncoder().encode(`// 由 swagger2code 生成\n${content}`));
+  await Deno.writeFile(
+    filePath,
+    new TextEncoder().encode(`// 由 swagger2code 生成\n${content}`),
+  );
+};
+
+/**
+ * 覆盖复制文件
+ * @param from - 复制位置
+ * @param to - 目标位置
+ */
+const copyFile = (from: string, to: string) => {
+  copy(from, to, { overwrite: true });
 };
 
 /**
@@ -159,7 +171,8 @@ const generateParameterDefinition = (
   parameters: ISwaggerMethodParameter[] = [],
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  const queryKey = `I${caseTitle(methodName)}`;
+  const queryKey = `IQuery${caseTitle(methodName)}`;
+  const queryValue = [];
 
   const res = parameters.reduce(
     (
@@ -212,52 +225,46 @@ const generateParameterDefinition = (
 /**
  * 拼接请求参数
  * @param params - 请求的参数
- * @returns 
+ * @returns
  */
-const getRequestParams = (params: IRequestParams<string, string>) => {
+const getRequestParams = (params: IRequestParams<string, string, string>) => {
   const { path, query, body } = params;
-
-  let req: string | undefined = undefined;
+  const req: string[] = [];
+  const use: string[] = [];
 
   if (path) {
-    req = `${path}: string`;
-
-    if (query || body) {
-      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
-    }
+    req.push(`${path}: string`);
+    use.splice(use.length - 1, 0, `path: ${path}`);
   }
 
   if (query) {
-    req = `req: ${query}`;
-
-    if (path || body) {
-      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
-    }
+    req.push(`params: ${query}`);
+    use.splice(use.length - 1, 0, `query: params`);
   }
 
   if (body) {
-    req = `req: ${body}`;
-
-    if (path || query) {
-      req = `req: IRequestParams<${query ?? "unknown"}, ${body ?? "unknown"}>`;
-    }
+    req.push(`data: ${body}`);
+    use.splice(use.length - 1, 0, `body: data`);
   }
 
-  return req
-}
+  return {
+    req: req.join(", "),
+    use: `, { ${use.join(", ")} }`,
+  };
+};
 
 /**
  * 生成运行时 Api
  * @param options - Api 信息
  */
 const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
-  const req = getRequestParams(options.params || {})
+  const { req, use } = getRequestParams(options.params || {});
 
   const res = `
 export const ${options.name} = (
   ${req ?? ""}
 ) => webClient.${options.method}<${options
-    .responseKey || "void"}>('${options.url}'${req ? ", req" : ""})
+    .responseKey || "void"}>('${options.url}'${use ?? ""})
 `;
 
   return res;
@@ -277,40 +284,6 @@ const getSwaggerData = async (urlOrPath: string) => {
 };
 
 /**
- * 生成运行时请求方法
- * @param outDir 文件路径
- */
-const generateWebClient = (outDir: string) => {
-  const outPath = `${outDir}/shared/fetch.ts`;
-  const content = `
-export const webClient = {
-  
-}\n`;
-
-  createFile(outPath, content);
-};
-
-/**
- * 生成默认定义
- * @param outDir - 输出路径
- * @returns
- */
-const generateDefaultDefinition = (outDir: string) => {
-  const outPath = `${outDir}/shared/interface.ts`;
-  const content = `export interface IDefaultObject<T = string> {
-  [key: string]: T
-}
-
-export interface IRequestParams<T = unknown, U = unknown>{
-	path?: string
-	query?: T
-	body?: U
-}\n`;
-
-  createFile(outPath, content);
-};
-
-/**
  * 生成 Api
  * @param urlOrPath 远程地址或本地
  * @param outDir 输出路径
@@ -324,15 +297,9 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   // 清空控制台信息
   Logs.clear();
 
-  // 生成运行时请求方法
-  generateWebClient(outDir);
-
-  // 生成默认定义
-  generateDefaultDefinition(outDir);
-
   // 遍历所有 API 路径
   for (const key of Object.keys(paths)) {
-    if (key !== "/api/followUp/saveFollowUpSetting") continue;
+    if (key !== "/api/applyTrial") continue;
     mapDefinitions.clear();
     Logs.info(`${key} 接口生成中...`);
 
@@ -344,7 +311,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
     // 文件内容
     let content = `import { webClient } from './shared/fetch.ts'
-import { IDefaultObject, IRequestParams } from './shared/interface.ts'
+import { IDefaultObject } from './shared/interface.ts'
 `;
 
     // 当前 API 的所有方法
@@ -354,13 +321,13 @@ import { IDefaultObject, IRequestParams } from './shared/interface.ts'
     // 遍历当前 API 方法
     for (const methodKey of methodKeys) {
       const methodOption = methods[methodKey];
-      let methodName = pathKeys[3];
+      let methodName = pathKeys[3] ?? pathKeys[2];
 
       // 若同一个地址下存在多个请求方法
       if (methodKeys.length > 1) {
         methodName = methodKey + caseTitle(methodName);
       }
-
+      console.log(methodName);
       // 请求对象
       const params = generateParameterDefinition(
         methodName,
@@ -389,6 +356,9 @@ import { IDefaultObject, IRequestParams } from './shared/interface.ts'
         responseKey,
       });
     }
+
+    // 复制运行时需要的文件
+    copyFile("./src/typescript/shared", `${outDir}/shared`);
 
     // 创建文件
     await createFile(outPath, content);

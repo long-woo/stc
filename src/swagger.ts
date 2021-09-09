@@ -2,10 +2,14 @@ export interface IDefaultObject<T = string> {
   [key: string]: T;
 }
 
-export interface IRequestParams<T = unknown, U = unknown> {
-  path?: string;
-  query?: T;
-  body?: U;
+export interface IRequestParams<
+  Q = IDefaultObject,
+  B = IDefaultObject,
+  P = string,
+> {
+  path?: P;
+  query?: Q;
+  body?: B;
 }
 
 /**
