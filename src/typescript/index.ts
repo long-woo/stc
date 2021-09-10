@@ -99,6 +99,12 @@ const generateComment = (comment?: string) => {
     : "";
 };
 
+/**
+ * 获取定义的属性内容
+ * @param name - 定义名
+ * @param defs - 定义源
+ * @returns
+ */
 const getDefinitionContent = (
   name: string,
   defs: IDefaultObject<ISwaggerResultDefinitions>,
@@ -116,14 +122,14 @@ const getDefinitionContent = (
           (prop.$ref || prop.type) as propertyType,
           prop.items,
         );
-        const customType = prop.$ref || prop.items?.$ref;
 
         // 处理自定义的类型
+        const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
-          const content = generateDefinition(customKey, defs);
+          // const content = generateDefinition(customKey, defs);
 
-          prev.unshift(content);
+          // prev.unshift(content);
         }
 
         prev.splice(
@@ -211,9 +217,19 @@ const generateParameterDefinition = (
       if (current.in === "body") {
         const ref = current.schema.$ref;
         const key = getDefinitionName(ref);
+        const content = generateDefinition(key, definitions);
 
-        prev.body.key = key;
-        prev.body.value = generateDefinition(key, definitions);
+        prev.body = {
+          key,
+          value: content,
+        };
+
+        if (!content) {
+          prev.body = {
+            key: "IDefaultObject",
+            value: "",
+          };
+        }
       }
 
       return prev;
@@ -263,10 +279,10 @@ const getRequestParams = (params: IRequestParams<string, string, string>) => {
 };
 
 /**
- * 生成运行时 Api
+ * 生成运行时 Api 函数
  * @param options - Api 信息
  */
-const generateRuntimeApi = (options: IGenerateRuntimeApiOptions) => {
+const generateRuntimeFunction = (options: IGenerateRuntimeApiOptions) => {
   const { req, use } = getRequestParams(options.params || {});
 
   const res = `
@@ -308,7 +324,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const key of Object.keys(paths)) {
-    // if (key !== "/api/dataOperation/exportList") continue;
+    if (key !== "/api/dataOperation/save") continue;
     mapDefinitions.clear();
     Logs.info(`${key} 接口生成中...`);
 
@@ -353,7 +369,7 @@ import { IDefaultObject } from './shared/interface.ts'
       const responseKey = getDefinitionName(responseRef);
       content += generateDefinition(responseKey, definitions);
 
-      content += generateRuntimeApi({
+      content += generateRuntimeFunction({
         name: methodName,
         url: key,
         method: methodKey as HttpMethod,
