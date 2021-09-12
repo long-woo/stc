@@ -127,9 +127,10 @@ const getDefinitionContent = (
         const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
-          // const content = generateDefinition(customKey, defs);
+          const content = generateDefinition(customKey, defs);
 
-          // prev.unshift(content);
+          prev.unshift(content);
+          // return prev;
         }
 
         prev.splice(
@@ -143,7 +144,7 @@ const getDefinitionContent = (
       },
       [`\nexport interface ${name} {`, "}\n"],
     );
-
+    console.log(name);
     return res.join("");
   }
 
