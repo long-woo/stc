@@ -1,5 +1,4 @@
-import { copy, ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
-
+import { caseTitle, copyFile, createFile, getDefinitionName } from "./util.ts";
 import Logs from "../console.ts";
 import {
   HttpMethod,
@@ -15,42 +14,6 @@ import {
 
 // 记录定义内容
 const mapDefinitions = new Map<string, string>();
-
-/**
- * 获取定义名称
- * @param ref - 定义参数
- */
-const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
-
-/**
- * 首字母大写
- * @param str - 字符
- * @returns
- */
-const caseTitle = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
-/**
- * 创建文件。如果不存在会被自动创建，存在会被覆盖
- *
- * @param filePath - 文件路径
- * @param content - 文件内容
- */
-const createFile = async (filePath: string, content: string) => {
-  await ensureFile(filePath);
-  await Deno.writeFile(
-    filePath,
-    new TextEncoder().encode(`// 由 swagger2code 生成\n${content}`),
-  );
-};
-
-/**
- * 覆盖复制文件
- * @param from - 复制位置
- * @param to - 目标位置
- */
-const copyFile = (from: string, to: string) => {
-  copy(from, to, { overwrite: true });
-};
 
 /**
  * 转换为 TypeScript 类型
@@ -98,8 +61,8 @@ const generateComment = (comment = "", isIndent = true) => {
   return comment
     ? `
 ${indent}/**
-${indent}* ${comment}
-${indent}*/`
+${indent} * ${comment}
+${indent} */`
     : "";
 };
 
@@ -280,7 +243,7 @@ const getRequestParams = (params: IRequestParams<string, string, string>) => {
 
   return {
     req: req.join(", "),
-    use: `, { ${use.join(", ")} }`,
+    use: use.length ? `, { ${use.join(", ")} }` : "",
   };
 };
 
@@ -292,9 +255,8 @@ const generateRuntimeFunction = (options: IGenerateRuntimeApiOptions) => {
   const { req, use } = getRequestParams(options.params || {});
 
   const res = `${generateComment(options.comment, false)}
-export const ${options.name} = (
-  ${req ?? ""}
-) => webClient.${options.method}<${options
+export const ${options.name} = (${req ??
+    ""}) => webClient.${options.method}<${options
     .responseKey || "void"}>('${options.url}'${use ?? ""})
 `;
 
@@ -330,7 +292,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const key of Object.keys(paths)) {
-    if (key !== "/api/dataOperation/save") continue;
+    // if (key !== "/api/dataOperation/save") continue;
     mapDefinitions.clear();
     Logs.info(`${key} 接口生成中...`);
 
