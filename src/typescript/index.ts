@@ -6,7 +6,7 @@ import {
   IDefaultObject,
   IGenerateRuntimeApiOptions,
   IRequestParams,
-  ISwaggerDefinitionPropertieItems,
+  ISwaggerDefinitionPropertiesItems,
   ISwaggerMethodParameter,
   ISwaggerResult,
   ISwaggerResultDefinitions,
@@ -60,7 +60,7 @@ const copyFile = (from: string, to: string) => {
  */
 const convertType = (
   type: propertyType,
-  typeItem?: ISwaggerDefinitionPropertieItems,
+  typeItem?: ISwaggerDefinitionPropertiesItems,
 ): string => {
   switch (type) {
     case "integer":
@@ -89,13 +89,17 @@ const convertType = (
 /**
  * 生成注释
  * @param comment - 注释描述
+ * @param isIndent - 缩进
  * @returns
  */
-const generateComment = (comment?: string) => {
+const generateComment = (comment = "", isIndent = true) => {
+  const indent = isIndent ? "\t" : "";
+
   return comment
-    ? `\n\t/**
-   * ${comment}
-   */`
+    ? `
+${indent}/**
+${indent}* ${comment}
+${indent}*/`
     : "";
 };
 
@@ -130,21 +134,20 @@ const getDefinitionContent = (
           const content = generateDefinition(customKey, defs);
 
           prev.unshift(content);
-          // return prev;
         }
 
         prev.splice(
           prev.length - 1,
           0,
           `${generateComment(prop.description)}
-\t${current}: ${type}\n`,
+\t${current}?: ${type}\n`,
         );
 
         return prev;
       },
       [`\nexport interface ${name} {`, "}\n"],
     );
-    console.log(name);
+
     return res.join("");
   }
 
@@ -162,6 +165,8 @@ const generateDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
   if (mapDefinitions.has(key) || !key) return "";
+  // 首先把 key 存储到 Map 对象中，防止在
+  mapDefinitions.set(key, "");
 
   const content = getDefinitionContent(key, definitions);
 
@@ -286,7 +291,7 @@ const getRequestParams = (params: IRequestParams<string, string, string>) => {
 const generateRuntimeFunction = (options: IGenerateRuntimeApiOptions) => {
   const { req, use } = getRequestParams(options.params || {});
 
-  const res = `
+  const res = `${generateComment(options.comment, false)}
 export const ${options.name} = (
   ${req ?? ""}
 ) => webClient.${options.method}<${options
@@ -380,6 +385,7 @@ import { IDefaultObject } from './shared/interface.ts'
           body: paramBody?.key,
         },
         responseKey,
+        comment: methodOption.summary,
       });
     }
 

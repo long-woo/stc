@@ -67,7 +67,7 @@ export interface ISwaggerResultPaths {
   responses: ISwaggerMethodResponses;
 }
 
-export interface ISwaggerDefinitionPropertieItems
+export interface ISwaggerDefinitionPropertiesItems
   extends Partial<ISwaggerSchema> {
   type?: string;
 }
@@ -77,7 +77,7 @@ interface ISwaggerDefinitionProperties {
   $ref?: string;
   description?: string;
   format?: string;
-  items?: ISwaggerDefinitionPropertieItems;
+  items?: ISwaggerDefinitionPropertiesItems;
 }
 
 export interface ISwaggerResultDefinitions {
@@ -132,4 +132,6 @@ export interface IGenerateRuntimeApiOptions {
    * 响应对象 Key
    */
   responseKey: string;
+
+  comment?: string;
 }
