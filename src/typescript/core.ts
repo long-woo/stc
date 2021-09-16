@@ -140,7 +140,7 @@ const generateDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
   if (mapDefinitions.has(key) || !key) return "";
-  // 首先把 key 存储到 Map 对象中，防止在
+  // 先存储 key，防止递归生成问题
   mapDefinitions.set(key, "");
 
   const content = getDefinitionContent(key, definitions);
@@ -299,7 +299,8 @@ const generateApiContent = (
   { url, methodName, method, methodOption, definitions }:
     IGenerateApiContentParams,
 ) => {
-  const content = [];
+  const def: string[] = [];
+  const func: string[] = [];
 
   // 请求对象
   const params = generateParameterDefinition(
@@ -309,16 +310,16 @@ const generateApiContent = (
   );
   const paramQuery = params.query;
   const paramBody = params.body;
-  content.push(paramQuery?.value.join(""), paramBody?.value);
+  def.push(paramQuery?.value.join(""), paramBody?.value);
 
   // 响应对象
   const responseRef = methodOption.responses[200].schema?.$ref;
   const responseKey = getDefinitionName(responseRef);
   const response = generateDefinition(responseKey, definitions);
-  content.push(response);
+  def.push(response);
 
   // 运行时方法
-  const func = generateRuntimeFunction({
+  const runtimeFunc = generateRuntimeFunction({
     name: methodName,
     url,
     method,
@@ -330,9 +331,12 @@ const generateApiContent = (
     responseKey,
     comment: methodOption.summary,
   });
-  content.push(func);
+  func.push(runtimeFunc);
 
-  return content;
+  return {
+    def,
+    func,
+  };
 };
 
 /**
@@ -343,26 +347,30 @@ const generateApiContent = (
 export const getApiContent = (params: IGetApiContentParams) => {
   const methodKeys = Object.keys(params.methods);
 
-  const content = methodKeys.reduce((prev: string[], current: string) => {
-    const methodOption = params.methods[current];
-    let methodName = params.urlSplit[3] ?? params.urlSplit[2];
+  const data = methodKeys.reduce(
+    (prev: { def: string[]; func: string[] }, current: string) => {
+      const methodOption = params.methods[current];
+      let methodName = params.urlSplit[3] ?? params.urlSplit[2];
 
-    // 若同一个地址下存在多个请求方法
-    if (methodKeys.length > 1) {
-      methodName = current + caseTitle(methodName);
-    }
+      // 若同一个地址下存在多个请求方法
+      if (methodKeys.length > 1) {
+        methodName = current + caseTitle(methodName);
+      }
 
-    const data = generateApiContent({
-      url: params.url,
-      method: current as HttpMethod,
-      methodName,
-      methodOption,
-      definitions: params.definitions,
-    });
+      const res = generateApiContent({
+        url: params.url,
+        method: current as HttpMethod,
+        methodName,
+        methodOption,
+        definitions: params.definitions,
+      });
 
-    prev.push(...data);
-    return prev;
-  }, []);
+      prev.def.push(...res.def);
+      prev.func.push(...res.func);
+      return prev;
+    },
+    { def: [], func: [] },
+  );
 
-  return content.join("");
+  return data;
 };

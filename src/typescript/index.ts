@@ -17,11 +17,35 @@ const getSwaggerData = async (urlOrPath: string) => {
 };
 
 /**
+ * 输出文件
+ * @param fileMap - 文件集合
+ * @param outDir - 输出目录
+ */
+const outFile = async (fileMap: Map<string, string[]>, outDir: string) => {
+  for (const [fileName, value] of fileMap) {
+    const outPath = `${outDir}/${fileName}`;
+
+    // 文件内容
+    let content = `import { webClient } from './shared/fetch.ts'
+import { IDefaultObject } from './shared/interface.ts'
+${value.join("")}`;
+
+    // 创建文件
+    await createFile(outPath, content);
+    Logs.success("完成。\n");
+  }
+};
+
+/**
  * 生成 Api
  * @param urlOrPath 远程地址或本地
  * @param outDir 输出路径
  */
 export const generateApi = async (urlOrPath: string, outDir: string) => {
+  const fileMap = new Map<string, string[]>();
+  const defMap = new Map<string, string[]>();
+  const funcMap = new Map<string, string[]>();
+
   const data = await getSwaggerData(urlOrPath);
 
   const paths = data.paths;
@@ -30,10 +54,12 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   // 清空控制台信息
   Logs.clear();
 
+  // 复制运行时需要的文件
+  copyFile("./src/typescript/shared", `${outDir}/shared`);
+
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
     if (url !== "/api/dataOperation/exportList") continue;
-    // mapDefinitions.clear();
     Logs.info(`${url} 接口生成中...`);
 
     // 当前 API 的所有方法
@@ -44,21 +70,22 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
     // 文件名。取之 API 路径第二个
     const fileName = `${urlSplit[2]}.ts`;
-    const outPath = `${outDir}/${fileName}`;
 
-    // 文件内容
-    let content = `import { webClient } from './shared/fetch.ts'
-import { IDefaultObject } from './shared/interface.ts'
-`;
+    // 获取定义
+    const def = defMap.get(fileName) ?? [];
+    // 获取函数
+    const func = funcMap.get(fileName) ?? [];
 
     // 处理文件内容
-    content += getApiContent({ url, urlSplit, methods, definitions });
+    const res = getApiContent({ url, urlSplit, methods, definitions });
 
-    // 复制运行时需要的文件
-    copyFile("./src/typescript/shared", `${outDir}/shared`);
-
-    // 创建文件
-    await createFile(outPath, content);
-    Logs.success("完成。\n");
+    defMap.set(fileName, [...def, ...res.def]);
+    funcMap.set(fileName, [...func, ...res.func]);
+    fileMap.set(fileName, [
+      ...(defMap.get(fileName) ?? []),
+      ...(funcMap.get(fileName) ?? []),
+    ]);
   }
+
+  outFile(fileMap, outDir);
 };
