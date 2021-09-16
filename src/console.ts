@@ -21,6 +21,16 @@ const success = (str: string) => {
 };
 
 /**
+ * 输出警告信息
+ * @param str - 文本内容
+ */
+const warn = (str: string) => {
+  console.log(
+    Colors.bgYellow(" 警告 ") + ` ${Colors.yellow(str)}`,
+  );
+};
+
+/**
  * 输出错误信息
  * @param str - 文本内容
  */
@@ -38,6 +48,7 @@ const clear = () => console.clear();
 export default {
   info,
   success,
+  warn,
   error,
   clear,
 };

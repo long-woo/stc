@@ -1,13 +1,6 @@
 import { copy, ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
 
 /**
- * 获取定义名称
- * @param ref - 定义参数
- */
-export const getDefinitionName = (ref?: string) =>
-  ref ? `I${ref.slice(14)}` : "";
-
-/**
  * 首字母大写
  * @param str - 字符
  * @returns
