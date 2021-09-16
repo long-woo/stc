@@ -13,6 +13,7 @@ import {
   propertyType,
 } from "../swagger.ts";
 
+let fileName = "";
 // 记录定义内容
 const mapDefinitions = new Map<string, string>();
 
@@ -346,6 +347,13 @@ const generateApiContent = (
  */
 export const getApiContent = (params: IGetApiContentParams) => {
   const methodKeys = Object.keys(params.methods);
+
+  // 如果不是同一文件名，需要清除记录的声明
+  if (fileName !== params.fileName) {
+    mapDefinitions.clear();
+  }
+
+  fileName = params.fileName;
 
   const data = methodKeys.reduce(
     (prev: { def: string[]; func: string[] }, current: string) => {

@@ -22,18 +22,22 @@ const getSwaggerData = async (urlOrPath: string) => {
  * @param outDir - 输出目录
  */
 const outFile = async (fileMap: Map<string, string[]>, outDir: string) => {
+  console.log("\n");
+  Logs.info("接口生成完成，准备写入文件...");
+
   for (const [fileName, value] of fileMap) {
     const outPath = `${outDir}/${fileName}`;
 
     // 文件内容
-    let content = `import { webClient } from './shared/fetch.ts'
+    const content = `import { webClient } from './shared/fetch.ts'
 import { IDefaultObject } from './shared/interface.ts'
 ${value.join("")}`;
 
     // 创建文件
     await createFile(outPath, content);
-    Logs.success("完成。\n");
   }
+
+  Logs.success("完成。\n");
 };
 
 /**
@@ -59,7 +63,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
-    if (url !== "/api/dataOperation/exportList") continue;
+    if (url !== "/api/dataManagement/queryDataHistory") continue;
     Logs.info(`${url} 接口生成中...`);
 
     // 当前 API 的所有方法
@@ -77,7 +81,13 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
     const func = funcMap.get(fileName) ?? [];
 
     // 处理文件内容
-    const res = getApiContent({ url, urlSplit, methods, definitions });
+    const res = getApiContent({
+      fileName,
+      url,
+      urlSplit,
+      methods,
+      definitions,
+    });
 
     defMap.set(fileName, [...def, ...res.def]);
     funcMap.set(fileName, [...func, ...res.func]);

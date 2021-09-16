@@ -146,6 +146,11 @@ export interface IGenerateApiContentParams {
 
 export interface IGetApiContentParams {
   /**
+   * 文件名
+   */
+  fileName: string;
+
+  /**
    * url
    */
   url: string;
