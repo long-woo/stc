@@ -1,8 +1,11 @@
 import { caseTitle } from "../util.ts";
 import Logs from "../console.ts";
 import {
+  HttpMethod,
   IDefaultObject,
+  IGenerateApiContentParams,
   IGenerateRuntimeApiOptions,
+  IGetApiContentParams,
   IRequestParams,
   ISwaggerDefinitionPropertiesItems,
   ISwaggerMethodParameter,
@@ -17,8 +20,7 @@ const mapDefinitions = new Map<string, string>();
  * 获取定义名称
  * @param ref - 定义参数
  */
-export const getDefinitionName = (ref?: string) =>
-  ref ? `I${ref.slice(14)}` : "";
+const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
 
 /**
  * 生成注释
@@ -26,7 +28,7 @@ export const getDefinitionName = (ref?: string) =>
  * @param isIndent - 缩进
  * @returns
  */
-export const generateComment = (comment = "", isIndent = true) => {
+const generateComment = (comment = "", isIndent = true) => {
   const indent = isIndent ? "\t" : "";
 
   return comment
@@ -43,7 +45,7 @@ ${indent} */`
  * @param typeItem - 属性非基础类型
  * @returns
  */
-export const convertType = (
+const convertType = (
   type: propertyType,
   typeItem?: ISwaggerDefinitionPropertiesItems,
 ): string => {
@@ -77,7 +79,7 @@ export const convertType = (
  * @param defs - 定义源
  * @returns
  */
-export const getDefinitionContent = (
+const getDefinitionContent = (
   name: string,
   defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
@@ -133,7 +135,7 @@ export const getDefinitionContent = (
  * @param definitions
  * @returns
  */
-export const generateDefinition = (
+const generateDefinition = (
   key: string,
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
@@ -151,7 +153,7 @@ export const generateDefinition = (
  * 生成请求参数定义
  * @param parameters - Api 参数信息
  */
-export const generateParameterDefinition = (
+const generateParameterDefinition = (
   methodName: string,
   parameters: ISwaggerMethodParameter[] = [],
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
@@ -231,7 +233,7 @@ export const generateParameterDefinition = (
  * @param params - 请求的参数
  * @returns
  */
-export const getRequestParams = (
+const getRequestParams = (
   params: IRequestParams<string, string, string>,
 ) => {
   const { path, query, body } = params;
@@ -263,7 +265,7 @@ export const getRequestParams = (
  * 生成运行时 Api 函数
  * @param options - Api 信息
  */
-export const generateRuntimeFunction = (
+const generateRuntimeFunction = (
   options: IGenerateRuntimeApiOptions,
 ) => {
   const { req, use } = getRequestParams(options.params || {});
@@ -275,4 +277,92 @@ export const ${options.name} = (${req ??
 `;
 
   return res;
+};
+
+/**
+ * 生成 Api 内容（请求参数、响应体、方法定义）
+ * @param params - 参数
+ *
+ * `url` - 请求地址
+ *
+ * `methodName` -方法名字
+ *
+ * `method` - 请求方式
+ *
+ * `methodOption` - 方法所需参数
+ *
+ * `definitions` - 定义的对象
+ *
+ * @returns
+ */
+const generateApiContent = (
+  { url, methodName, method, methodOption, definitions }:
+    IGenerateApiContentParams,
+) => {
+  const content = [];
+
+  // 请求对象
+  const params = generateParameterDefinition(
+    methodName,
+    methodOption.parameters,
+    definitions,
+  );
+  const paramQuery = params.query;
+  const paramBody = params.body;
+  content.push(paramQuery?.value.join(""), paramBody?.value);
+
+  // 响应对象
+  const responseRef = methodOption.responses[200].schema?.$ref;
+  const responseKey = getDefinitionName(responseRef);
+  const response = generateDefinition(responseKey, definitions);
+  content.push(response);
+
+  // 运行时方法
+  const func = generateRuntimeFunction({
+    name: methodName,
+    url,
+    method,
+    params: {
+      path: params.path,
+      query: paramQuery?.key,
+      body: paramBody?.key,
+    },
+    responseKey,
+    comment: methodOption.summary,
+  });
+  content.push(func);
+
+  return content;
+};
+
+/**
+ * 获取 Api 内容
+ * @param params - 参数
+ * @returns
+ */
+export const getApiContent = (params: IGetApiContentParams) => {
+  const methodKeys = Object.keys(params.methods);
+
+  const content = methodKeys.reduce((prev: string[], current: string) => {
+    const methodOption = params.methods[current];
+    let methodName = params.urlSplit[3] ?? params.urlSplit[2];
+
+    // 若同一个地址下存在多个请求方法
+    if (methodKeys.length > 1) {
+      methodName = current + caseTitle(methodName);
+    }
+
+    const data = generateApiContent({
+      url: params.url,
+      method: current as HttpMethod,
+      methodName,
+      methodOption,
+      definitions: params.definitions,
+    });
+
+    prev.push(...data);
+    return prev;
+  }, []);
+
+  return content.join("");
 };

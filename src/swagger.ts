@@ -119,7 +119,7 @@ export interface IGenerateRuntimeApiOptions {
   url: string;
 
   /**
-   * 请求方法
+   * 请求方式
    */
   method: HttpMethod;
 
@@ -134,4 +134,34 @@ export interface IGenerateRuntimeApiOptions {
   responseKey: string;
 
   comment?: string;
+}
+
+export interface IGenerateApiContentParams {
+  url: string;
+  method: HttpMethod;
+  methodName: string;
+  methodOption: ISwaggerResultPaths;
+  definitions: IDefaultObject<ISwaggerResultDefinitions>;
+}
+
+export interface IGetApiContentParams {
+  /**
+   * url
+   */
+  url: string;
+
+  /**
+   * 根据 `/` 拆分后的 url
+   */
+  urlSplit: string[];
+
+  /**
+   * url 请求方式
+   */
+  methods: IDefaultObject<ISwaggerResultPaths>;
+
+  /**
+   * 定义的对象
+   */
+  definitions: IDefaultObject<ISwaggerResultDefinitions>;
 }
