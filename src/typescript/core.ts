@@ -70,6 +70,11 @@ const convertType = (
     case "object":
       return "IDefaultObject";
     default:
+      if (type.includes("definitions")) {
+        const key = getDefinitionName(type);
+
+        return key;
+      }
       return type;
   }
 };
@@ -107,9 +112,6 @@ const getDefinitionContent = (
         const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
-
-          type = customKey;
-          console.log(customKey);
           const content = generateDefinition(customKey, defs);
 
           prev.unshift(content);
