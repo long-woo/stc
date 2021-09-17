@@ -64,7 +64,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
     if (url !== "/api/dataManagement/queryDataHistory") continue;
-    Logs.info(`${url} 接口生成中...`);
+    Logs.info(`${url} 接口准备中...`);
 
     // 当前 API 的所有方法
     const methods = paths[url];

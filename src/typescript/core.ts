@@ -98,7 +98,7 @@ const getDefinitionContent = (
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
         const prop = properties[current];
-        const type = convertType(
+        let type = convertType(
           (prop.$ref || prop.type) as propertyType,
           prop.items,
         );
@@ -107,6 +107,9 @@ const getDefinitionContent = (
         const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
+
+          type = customKey;
+          console.log(customKey);
           const content = generateDefinition(customKey, defs);
 
           prev.unshift(content);
