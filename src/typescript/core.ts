@@ -70,6 +70,7 @@ const convertType = (
     case "object":
       return "IDefaultObject";
     default:
+      // 自定义类型
       if (type.includes("definitions")) {
         const key = getDefinitionName(type);
 
@@ -103,7 +104,7 @@ const getDefinitionContent = (
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
         const prop = properties[current];
-        let type = convertType(
+        const type = convertType(
           (prop.$ref || prop.type) as propertyType,
           prop.items,
         );
