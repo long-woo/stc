@@ -13,7 +13,10 @@ import {
   propertyType,
 } from "../swagger.ts";
 
+// 文件名
 let fileName = "";
+// 泛型 key 映射
+const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
 const mapDefinitions = new Map<string, string>();
 
@@ -22,6 +25,38 @@ const mapDefinitions = new Map<string, string>();
  * @param ref - 定义参数
  */
 const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
+
+/**
+ * 处理泛型
+ * @param name - 定义名称
+ * @param isDefintion - 是否为定义
+ * @returns
+ */
+const getGeneric = (name: string, isDefintion?: boolean) => {
+  const genericKey = ["T", "K", "U"];
+  const keyLength = genericKey.length;
+
+  name = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
+    const arr = _value.split(",").map((t: string, index: number) => {
+      const interfaceName = `I${t}`;
+      // 自动生成定义名
+      let newKey = genericKey[index % keyLength];
+
+      if (index > 2) {
+        newKey = newKey + Math.ceil((index - keyLength) / keyLength);
+      }
+
+      // key 和定义对象加入映射表
+      genericKeyMapping.set(interfaceName, newKey);
+
+      return isDefintion ? newKey : interfaceName;
+    });
+
+    return `<${arr.join(", ")}>`;
+  });
+
+  return name;
+};
 
 /**
  * 生成注释
@@ -44,11 +79,13 @@ ${indent} */`
  * 转换为 TypeScript 类型
  * @param type - 属性基础类型
  * @param typeItem - 属性非基础类型
+ * @param isDefintion - 是否为泛型定义
  * @returns
  */
 const convertType = (
   type: propertyType,
   typeItem?: ISwaggerDefinitionPropertiesItems,
+  isDefintion?: boolean,
 ): string => {
   switch (type) {
     case "integer":
@@ -61,8 +98,11 @@ const convertType = (
       }
 
       if (typeItem?.$ref) {
-        const name = getDefinitionName(typeItem.$ref);
+        let name = getDefinitionName(typeItem.$ref);
 
+        if (isDefintion) {
+          name = genericKeyMapping.get(name) ?? "";
+        }
         return `${name}[]`;
       }
 
@@ -74,12 +114,10 @@ const convertType = (
       if (type.includes("definitions")) {
         let name = getDefinitionName(type);
 
-        name = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
-          const arr = _value.split(",");
-
-          return "";
-        });
-
+        // 处理泛型定义类型
+        name = isDefintion
+          ? genericKeyMapping.get(name) ?? ""
+          : getGeneric(name);
         return name;
       }
       return type;
@@ -89,17 +127,19 @@ const convertType = (
 /**
  * 获取定义的属性内容
  * @param name - 定义名
+ * @param defKey - 定义源中的 key
  * @param defs - 定义源
  * @returns
  */
 const getDefinitionContent = (
   name: string,
+  defKey: string,
   defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  const def = defs[name.slice(1)];
+  const def = defs[defKey.slice(1)];
 
   if (!def) {
-    Logs.warn(`${name} 未定义`);
+    Logs.warn(`${defKey} 未定义`);
     return "";
   }
 
@@ -113,7 +153,11 @@ const getDefinitionContent = (
         const type = convertType(
           (prop.$ref || prop.type) as propertyType,
           prop.items,
+          name.includes("<"),
         );
+        const content = `${
+          generateComment(prop.description)
+        }\n\t${current}?: ${type}\n`;
 
         // 处理自定义的类型
         const customType = prop.$ref || prop.items?.$ref;
@@ -124,13 +168,7 @@ const getDefinitionContent = (
           prev.unshift(content);
         }
 
-        prev.splice(
-          prev.length - 1,
-          0,
-          `${generateComment(prop.description)}
-\t${current}?: ${type}\n`,
-        );
-
+        prev.splice(prev.length - 1, 0, content);
         return prev;
       },
       [`\nexport interface ${name} {`, "}\n"],
@@ -152,13 +190,16 @@ const generateDefinition = (
   key: string,
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  if (mapDefinitions.has(key) || !key) return "";
+  // 处理 key，可能会存在泛型定义
+  const name = getGeneric(key, true);
+
+  if (mapDefinitions.has(name) || !name) return "";
   // 先存储 key，防止递归生成问题
-  mapDefinitions.set(key, "");
+  mapDefinitions.set(name, "");
 
-  const content = getDefinitionContent(key, definitions);
+  const content = getDefinitionContent(name, key, definitions);
 
-  mapDefinitions.set(key, content);
+  mapDefinitions.set(name, content);
   return content;
 };
 
@@ -362,6 +403,7 @@ export const getApiContent = (params: IGetApiContentParams) => {
 
   // 如果不是同一文件名，需要清除记录的声明
   if (fileName !== params.fileName) {
+    genericKeyMapping.clear();
     mapDefinitions.clear();
   }
 
