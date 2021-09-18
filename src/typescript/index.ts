@@ -23,7 +23,7 @@ const getSwaggerData = async (urlOrPath: string) => {
  */
 const outFile = async (fileMap: Map<string, string[]>, outDir: string) => {
   console.log("\n");
-  Logs.info("接口生成完成，准备写入文件...");
+  Logs.info("接口生成完成，开始写入文件...");
 
   for (const [fileName, value] of fileMap) {
     const outPath = `${outDir}/${fileName}`;

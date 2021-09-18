@@ -61,9 +61,9 @@ const convertType = (
       }
 
       if (typeItem?.$ref) {
-        const key = getDefinitionName(typeItem.$ref);
+        const name = getDefinitionName(typeItem.$ref);
 
-        return `${key}[]`;
+        return `${name}[]`;
       }
 
       return "[]";
@@ -72,9 +72,15 @@ const convertType = (
     default:
       // 自定义类型
       if (type.includes("definitions")) {
-        const key = getDefinitionName(type);
+        let name = getDefinitionName(type);
 
-        return key;
+        name = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
+          const arr = _value.split(",");
+
+          return "";
+        });
+
+        return name;
       }
       return type;
   }
