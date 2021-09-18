@@ -36,6 +36,7 @@ const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
 const getMethodName = (urlSplit: string[], prefix: string) => {
   let name = urlSplit[3] ?? urlSplit[2];
 
+  // 加前缀
   if (prefix) {
     name = prefix + caseTitle(name);
   }
@@ -48,7 +49,7 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
 
   // 处理方法名字是关键字变量
   if (keywordVariable.includes(name)) {
-    name = name + caseTitle(urlSplit[2]);
+    name += caseTitle(urlSplit[2]);
   }
 
   return name;
@@ -65,7 +66,9 @@ const getGeneric = (name: string, isDefintion?: boolean) => {
   const keyLength = genericKey.length;
 
   name = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
-    const arr = _value.split(",").map((t: string, index: number) => {
+    const str = getGeneric(_value, isDefintion);
+    console.log(str);
+    const arr = str.split(/,\s*/g).map((t: string, index: number) => {
       const interfaceName = `I${t}`;
       // 自动生成定义名
       let newKey = genericKey[index % keyLength];
