@@ -58,16 +58,16 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
 /**
  * 处理泛型
  * @param name - 定义名称
- * @param isDefintion - 是否为定义
+ * @param isDefinition - 是否为定义
  * @returns
  */
-const getGeneric = (name: string, isDefintion?: boolean) => {
+const getGeneric = (name: string, isDefinition?: boolean) => {
   const genericKey = ["T", "K", "U"];
   const keyLength = genericKey.length;
 
   name = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
-    const str = getGeneric(_value, isDefintion);
-    console.log(str);
+    const str = getGeneric(_value, isDefinition);
+
     const arr = str.split(/,\s*/g).map((t: string, index: number) => {
       const interfaceName = `I${t}`;
       // 自动生成定义名
@@ -80,7 +80,7 @@ const getGeneric = (name: string, isDefintion?: boolean) => {
       // key 和定义对象加入映射表
       genericKeyMapping.set(interfaceName, newKey);
 
-      return isDefintion ? newKey : interfaceName;
+      return isDefinition ? newKey : interfaceName;
     });
 
     return `<${arr.join(", ")}>`;
@@ -110,13 +110,13 @@ ${indent} */`
  * 转换为 TypeScript 类型
  * @param type - 属性基础类型
  * @param typeItem - 属性非基础类型
- * @param isDefintion - 是否为泛型定义
+ * @param isDefinition - 是否为泛型定义
  * @returns
  */
 const convertType = (
   type: propertyType,
   typeItem?: ISwaggerDefinitionPropertiesItems,
-  isDefintion?: boolean,
+  isDefinition?: boolean,
 ): string => {
   switch (type) {
     case "integer":
@@ -129,12 +129,9 @@ const convertType = (
       }
 
       if (typeItem?.$ref) {
-        let name = getDefinitionName(typeItem.$ref);
+        const name = getDefinitionName(typeItem.$ref);
 
-        if (isDefintion) {
-          name = genericKeyMapping.get(name) ?? "";
-        }
-        return `${name}[]`;
+        return isDefinition ? genericKeyMapping.get(name) ?? "" : `${name}[]`;
       }
 
       return "[]";
@@ -146,7 +143,7 @@ const convertType = (
         let name = getDefinitionName(type);
 
         // 处理泛型定义类型
-        name = isDefintion
+        name = isDefinition
           ? genericKeyMapping.get(name) ?? ""
           : getGeneric(name);
         return name;
@@ -400,8 +397,9 @@ const generateApiContent = (
 
   // 响应对象
   const responseRef = methodOption.responses[200].schema?.$ref;
-  const responseKey = getDefinitionName(responseRef);
-  const response = generateDefinition(responseKey, definitions);
+  const oldResponseKey = getDefinitionName(responseRef);
+  const responseKey = getGeneric(oldResponseKey);
+  const response = generateDefinition(oldResponseKey, definitions);
   def.push(response);
 
   // 运行时方法
