@@ -15,6 +15,8 @@ import {
 
 // 文件名
 let fileName = "";
+// 关键字变量
+const keywordVariable = ["get", "post", "options", "delete"];
 // 泛型 key 映射
 const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
@@ -34,12 +36,20 @@ const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
 const getMethodName = (urlSplit: string[], prefix: string) => {
   let name = urlSplit[3] ?? urlSplit[2];
 
-  name = prefix + caseTitle(name);
+  if (prefix) {
+    name = prefix + caseTitle(name);
+  }
+
   // 处理方法名中特殊字符
   name = name.replace(
     /[\-|_](\w)/g,
     (_key: string, _value: string) => _value.toUpperCase(),
   );
+
+  // 处理方法名字是关键字变量
+  if (keywordVariable.includes(name)) {
+    name = name + caseTitle(urlSplit[2]);
+  }
 
   return name;
 };
