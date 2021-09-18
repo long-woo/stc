@@ -68,13 +68,10 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
     // 当前 API 的所有方法
     const methods = paths[url];
-
     // 拆分后的 url。用于文件名、请求参数和方法名定义
     const urlSplit = url.split("/");
-
     // 文件名。取之 API 路径第二个
     const fileName = `${urlSplit[2]}.ts`;
-
     // 获取定义
     const def = defMap.get(fileName) ?? [];
     // 获取函数

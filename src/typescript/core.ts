@@ -27,6 +27,24 @@ const mapDefinitions = new Map<string, string>();
 const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
 
 /**
+ * 从 url 中获取方法名
+ * @param urlSplit - url
+ * @param prefix - 前缀
+ */
+const getMethodName = (urlSplit: string[], prefix: string) => {
+  let name = urlSplit[3] ?? urlSplit[2];
+
+  name = prefix + caseTitle(name);
+  // 处理方法名中特殊字符
+  name = name.replace(
+    /[\-|_](\w)/g,
+    (_key: string, _value: string) => _value.toUpperCase(),
+  );
+
+  return name;
+};
+
+/**
  * 处理泛型
  * @param name - 定义名称
  * @param isDefintion - 是否为定义
@@ -326,7 +344,8 @@ const generateRuntimeFunction = (
 
   const res = `${generateComment(options.comment, false)}
 export const ${options.name} = (${req ??
-    ""}) => webClient.${options.method}<${options
+    ""}) =>
+\twebClient.${options.method}<${options
     .responseKey || "void"}>('${options.url}'${use ?? ""})
 `;
 
@@ -412,12 +431,10 @@ export const getApiContent = (params: IGetApiContentParams) => {
   const data = methodKeys.reduce(
     (prev: { def: string[]; func: string[] }, current: string) => {
       const methodOption = params.methods[current];
-      let methodName = params.urlSplit[3] ?? params.urlSplit[2];
 
-      // 若同一个地址下存在多个请求方法
-      if (methodKeys.length > 1) {
-        methodName = current + caseTitle(methodName);
-      }
+      // 如果同一地址，自动添加方法名前缀
+      const methodNamePrefix = methodKeys.length > 1 ? current : "";
+      const methodName = getMethodName(params.urlSplit, methodNamePrefix);
 
       const res = generateApiContent({
         url: params.url,
