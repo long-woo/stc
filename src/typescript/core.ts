@@ -34,7 +34,8 @@ const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
  * @param prefix - 前缀
  */
 const getMethodName = (urlSplit: string[], prefix: string) => {
-  let name = urlSplit[3] ?? urlSplit[2];
+  let name =
+    urlSplit.reverse().find((item) => !/[\{|:](\w+)[\}]?/gi.test(item)) ?? "";
 
   // 加前缀
   if (prefix) {
