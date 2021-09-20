@@ -110,14 +110,16 @@ ${indent} */`
  * 转换为 TypeScript 类型
  * @param type - 属性基础类型
  * @param typeItem - 属性非基础类型
- * @param isDefinition - 是否为泛型定义
+ * @param defKey - 定义源中的 key
  * @returns
  */
 const convertType = (
   type: propertyType,
   typeItem?: ISwaggerDefinitionPropertiesItems,
-  isDefinition?: boolean,
+  defKey?: string,
 ): string => {
+  const isDefinition = defKey?.includes("«");
+
   switch (type) {
     case "integer":
       return "number";
@@ -130,8 +132,13 @@ const convertType = (
 
       if (typeItem?.$ref) {
         const name = getDefinitionName(typeItem.$ref);
+        const value = `${name}[]`;
 
-        return isDefinition ? genericKeyMapping.get(name) ?? "" : `${name}[]`;
+        if (defKey) {
+          genericKeyMapping.set(defKey, value);
+        }
+
+        return isDefinition ? genericKeyMapping.get(name) ?? "" : value;
       }
 
       return "[]";
@@ -148,6 +155,7 @@ const convertType = (
           : getGeneric(name);
         return name;
       }
+
       return type;
   }
 };
@@ -181,7 +189,7 @@ const getDefinitionContent = (
         const type = convertType(
           (prop.$ref || prop.type) as propertyType,
           prop.items,
-          name.includes("<"),
+          defKey,
         );
         const content = `${
           generateComment(prop.description)
@@ -191,7 +199,7 @@ const getDefinitionContent = (
         const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
-          const content = generateDefinition(customKey, defs);
+          const { content } = generateDefinition(customKey, defs);
 
           prev.unshift(content);
         }
@@ -210,25 +218,35 @@ const getDefinitionContent = (
 
 /**
  * 生成定义
- * @param key
- * @param definitions
+ * @param key - 定义源中的 key
+ * @param defs - 定义源
  * @returns
  */
 const generateDefinition = (
   key: string,
-  definitions: IDefaultObject<ISwaggerResultDefinitions>,
+  defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
   // 处理 key，可能会存在泛型定义
   const name = getGeneric(key, true);
 
-  if (mapDefinitions.has(name) || !name) return "";
+  if (mapDefinitions.has(name) || !name) {
+    return {
+      name,
+      content: "",
+    };
+  }
+
   // 先存储 key，防止递归生成问题
   mapDefinitions.set(name, "");
 
-  const content = getDefinitionContent(name, key, definitions);
+  const content = getDefinitionContent(name, key, defs);
 
   mapDefinitions.set(name, content);
-  return content;
+
+  return {
+    name,
+    content,
+  };
 };
 
 /**
@@ -280,7 +298,7 @@ const generateParameterDefinition = (
       if (current.in === "body") {
         const ref = current.schema.$ref;
         const key = getDefinitionName(ref);
-        const content = generateDefinition(key, definitions);
+        const { content } = generateDefinition(key, definitions);
 
         prev.body = {
           key,
@@ -308,6 +326,27 @@ const generateParameterDefinition = (
   );
 
   return res;
+};
+
+/**
+ * 生成响应对象
+ * @param key - 响应对象的 key
+ * @param defs - 定义源
+ */
+const generateResponseDefinition = (
+  ref: string,
+  defs: IDefaultObject<ISwaggerResultDefinitions>,
+) => {
+  let key = getDefinitionName(ref);
+  const { name, content } = generateDefinition(key, defs);
+  const oldName = genericKeyMapping.get(key);
+
+  key = name.replace(/<(\w+)?>/gi, `<${oldName}>`);
+
+  return {
+    name: key,
+    content,
+  };
 };
 
 /**
@@ -396,11 +435,9 @@ const generateApiContent = (
   def.push(paramQuery?.value.join(""), paramBody?.value);
 
   // 响应对象
-  const responseRef = methodOption.responses[200].schema?.$ref;
-  const oldResponseKey = getDefinitionName(responseRef);
-  const responseKey = getGeneric(oldResponseKey);
-  const response = generateDefinition(oldResponseKey, definitions);
-  def.push(response);
+  const responseRef = methodOption.responses[200].schema?.$ref ?? "";
+  const response = generateResponseDefinition(responseRef, definitions);
+  def.push(response.content);
 
   // 运行时方法
   const runtimeFunc = generateRuntimeFunction({
@@ -412,7 +449,7 @@ const generateApiContent = (
       query: paramQuery?.key,
       body: paramBody?.key,
     },
-    responseKey,
+    responseKey: response.name,
     comment: methodOption.summary,
   });
   func.push(runtimeFunc);
