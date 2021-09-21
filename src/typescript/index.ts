@@ -63,7 +63,16 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
-    if (!["/api/sys/user/guest/list", "/api/sys/user/list"].includes(url)) {
+    if (
+      ![
+        "/api/sys/user/adminProjectList",
+        "/api/sys/user/delAdmin",
+        // "/api/sys/user/editAdmin",
+        // "/api/sys/user/editRole",
+      ].includes(
+        url,
+      )
+    ) {
       continue;
     }
     Logs.info(`${url} 接口生成中...`);

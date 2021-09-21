@@ -43,6 +43,7 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
     if (methodNameDefinitions.includes(item)) {
       methodIndex = index + 1;
     }
+
     return !regName.test(item);
   }) ?? "";
 
@@ -158,16 +159,24 @@ const convertType = (
 
       return "[]";
     case "object":
+      console.log(defKey);
+      if (defKey) {
+        genericKeyMapping.set(defKey, "IDefaultObject");
+      }
+
       return "IDefaultObject";
     default:
       // 自定义类型
       if (type.includes("definitions")) {
         let name = getDefinitionName(type);
+        const value = getGeneric(name);
+
+        if (defKey) {
+          genericKeyMapping.set(defKey, value);
+        }
 
         // 处理泛型定义类型
-        name = isDefinition
-          ? genericKeyMapping.get(name) ?? ""
-          : getGeneric(name);
+        name = isDefinition ? genericKeyMapping.get(name) ?? "" : value;
         return name;
       }
 
@@ -245,6 +254,7 @@ const generateDefinition = (
   const name = getGeneric(key, true);
 
   if (mapDefinitions.has(name) || !name) {
+    console.log("key", key);
     return {
       name,
       content: "",
