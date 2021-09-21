@@ -16,11 +16,12 @@ import {
 // 文件名
 let fileName = "";
 // 关键字变量
-const keywordVariable = ["get", "post", "options", "delete"];
+const keywordVariable = ["get", "post", "head", "put", "options", "delete"];
 // 泛型 key 映射
 const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
 const mapDefinitions = new Map<string, string>();
+let methodNameDefinitions: string[] = [];
 
 /**
  * 获取定义名称
@@ -34,8 +35,20 @@ const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
  * @param prefix - 前缀
  */
 const getMethodName = (urlSplit: string[], prefix: string) => {
-  let name =
-    urlSplit.reverse().find((item) => !/[\{|:](\w+)[\}]?/gi.test(item)) ?? "";
+  const regName = /[\{|:](\w+)[\}]?/gi;
+  let methodIndex = 0;
+
+  urlSplit = [...urlSplit].reverse();
+  let name = urlSplit.find((item, index) => {
+    if (methodNameDefinitions.includes(item)) {
+      methodIndex = index + 1;
+    }
+    return !regName.test(item);
+  }) ?? "";
+
+  if (methodNameDefinitions.includes(name)) {
+    name += caseTitle(urlSplit[methodIndex]);
+  }
 
   // 加前缀
   if (prefix) {
@@ -53,6 +66,7 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
     name += caseTitle(urlSplit[2]);
   }
 
+  methodNameDefinitions.push(name);
   return name;
 };
 
@@ -473,6 +487,7 @@ export const getApiContent = (params: IGetApiContentParams) => {
   if (fileName !== params.fileName) {
     genericKeyMapping.clear();
     mapDefinitions.clear();
+    methodNameDefinitions = [];
   }
 
   fileName = params.fileName;
