@@ -89,7 +89,7 @@ const getGeneric = (name: string, isDefinition?: boolean) => {
       // 自动生成定义名
       let newKey = genericKey[index % keyLength];
 
-      if (index > 2) {
+      if (index > keyLength - 1) {
         newKey = newKey + Math.ceil((index - keyLength) / keyLength);
       }
 
@@ -158,13 +158,18 @@ const convertType = (
       }
 
       return "[]";
-    case "object":
-      console.log(defKey);
-      if (defKey) {
-        genericKeyMapping.set(defKey, "IDefaultObject");
+    case "object": {
+      let name = "IDefaultObject";
+
+      if (defKey && isDefinition) {
+        getGeneric(defKey);
+        genericKeyMapping.set(defKey, name);
+
+        name = genericKeyMapping.get("Iobject") ?? "";
       }
 
-      return "IDefaultObject";
+      return name;
+    }
     default:
       // 自定义类型
       if (type.includes("definitions")) {
@@ -223,15 +228,28 @@ const getDefinitionContent = (
         const customType = prop.$ref || prop.items?.$ref;
         if (customType) {
           const customKey = getDefinitionName(customType);
-          const { content } = generateDefinition(customKey, defs);
 
-          prev.unshift(content);
+          if (!mapDefinitions.has(customKey)) {
+            const { content } = generateDefinition(customKey, defs);
+
+            prev.unshift(content);
+          }
         }
 
-        prev.splice(prev.length - 1, 0, content);
+        // 如果定义的对象已经有值，同一文件不能重复定义
+        if (!mapDefinitions.has(name)) {
+          mapDefinitions.set(name, prev.join(""));
+        }
+
+        if (prev.length) {
+          prev.splice(prev.length - 1, 0, content);
+        }
         return prev;
       },
-      [`\nexport interface ${name} {`, "}\n"],
+      (console.log(name, mapDefinitions.has(name)),
+        mapDefinitions.has(name)
+          ? []
+          : [`\nexport interface ${name} {`, "}\n"]),
     );
 
     return res.join("");
@@ -250,23 +268,8 @@ const generateDefinition = (
   key: string,
   defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
-  // 处理 key，可能会存在泛型定义
   const name = getGeneric(key, true);
-
-  if (mapDefinitions.has(name) || !name) {
-    console.log("key", key);
-    return {
-      name,
-      content: "",
-    };
-  }
-
-  // 先存储 key，防止递归生成问题
-  mapDefinitions.set(name, "");
-
   const content = getDefinitionContent(name, key, defs);
-
-  mapDefinitions.set(name, content);
 
   return {
     name,
