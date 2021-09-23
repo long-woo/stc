@@ -211,6 +211,10 @@ const getDefinitionContent = (
   if (def.type === "object") {
     const properties = def.properties;
     const propertiesKeys = Object.keys(properties);
+    const initContent = mapDefinitions.has(name)
+      ? []
+      : [`\nexport interface ${name} {`, "}\n"];
+    console.log(initContent);
 
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
@@ -236,20 +240,21 @@ const getDefinitionContent = (
           }
         }
 
-        // 如果定义的对象已经有值，同一文件不能重复定义
-        if (!mapDefinitions.has(name)) {
-          mapDefinitions.set(name, prev.join(""));
+        if (name === "IApiResponse<T>") {
+          console.log(content);
         }
 
         if (prev.length) {
           prev.splice(prev.length - 1, 0, content);
         }
+
+        // 如果定义的对象已经有值，同一文件不能重复定义
+        if (!mapDefinitions.has(name)) {
+          mapDefinitions.set(name, prev.join(""));
+        }
         return prev;
       },
-      (console.log(name, mapDefinitions.has(name)),
-        mapDefinitions.has(name)
-          ? []
-          : [`\nexport interface ${name} {`, "}\n"]),
+      initContent,
     );
 
     return res.join("");
