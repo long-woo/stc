@@ -63,15 +63,13 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
-    // if (
-    //   ![
-    //     "/api/sys/user/adminList",
-    //     "/api/sys/user/adminProjectList",
-    //     "/api/sys/user/roleList",
-    //   ].includes(url)
-    // ) {
-    //   continue;
-    // }
+    if (
+      ![
+        "/{adminPath}/report/queryReportRequire",
+      ].includes(url)
+    ) {
+      continue;
+    }
     Logs.info(`${url} 接口生成中...`);
 
     // 当前 API 的所有方法

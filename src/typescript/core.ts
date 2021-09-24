@@ -330,6 +330,7 @@ const generateParameterDefinition = (
       // 生成 Body 对象
       if (current.in === "body") {
         const ref = current.schema.$ref;
+        console.log(ref);
         const key = getDefinitionName(ref);
         const { content } = generateDefinition(key, definitions);
 
