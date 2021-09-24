@@ -20,7 +20,7 @@ const keywordVariable = ["get", "post", "head", "put", "options", "delete"];
 // 泛型 key 映射
 const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
-const mapDefinitions = new Map<string, string>();
+const mapDefinitions = new Map<string, string[]>();
 let methodNameDefinitions: string[] = [];
 
 /**
@@ -202,19 +202,24 @@ const getDefinitionContent = (
   defs: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
   const def = defs[defKey.slice(1)];
+  let existDefinitionName = name;
+  let initDefinition: string[] = [];
 
   if (!def) {
     Logs.warn(`${defKey} 未定义`);
     return "";
   }
 
+  if (!mapDefinitions.has(name)) {
+    existDefinitionName = "";
+    initDefinition = [`\nexport interface ${name} {`, "}\n"];
+  } else {
+    mapDefinitions.set(name, []);
+  }
+
   if (def.type === "object") {
     const properties = def.properties;
     const propertiesKeys = Object.keys(properties);
-    const initContent = mapDefinitions.has(name)
-      ? []
-      : [`\nexport interface ${name} {`, "}\n"];
-    console.log(initContent);
 
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
@@ -224,7 +229,7 @@ const getDefinitionContent = (
           prop.items,
           defKey,
         );
-        const content = `${
+        const field = `${
           generateComment(prop.description)
         }\n\t${current}?: ${type}\n`;
 
@@ -240,21 +245,16 @@ const getDefinitionContent = (
           }
         }
 
-        if (name === "IApiResponse<T>") {
-          console.log(content);
-        }
-
-        if (prev.length) {
-          prev.splice(prev.length - 1, 0, content);
-        }
-
         // 如果定义的对象已经有值，同一文件不能重复定义
-        if (!mapDefinitions.has(name)) {
-          mapDefinitions.set(name, prev.join(""));
+        if (name !== existDefinitionName) {
+          prev.splice(prev.length - 1, 0, field);
         }
+
+        mapDefinitions.set(name, [...(mapDefinitions.get(name) ?? []), field]);
+
         return prev;
       },
-      initContent,
+      initDefinition,
     );
 
     return res.join("");
