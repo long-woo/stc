@@ -224,11 +224,9 @@ const getDefinitionContent = (
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
         const prop = properties[current];
-        const type = convertType(
-          (prop.$ref || prop.type) as propertyType,
-          prop.items,
-          defKey,
-        );
+        const propType = (prop.$ref || prop.type) as propertyType;
+        const type = convertType(propType, prop.items, defKey);
+
         const field = `${
           generateComment(prop.description)
         }\n\t${current}?: ${type}\n`;
@@ -329,8 +327,9 @@ const generateParameterDefinition = (
 
       // 生成 Body 对象
       if (current.in === "body") {
-        const ref = current.schema.$ref;
-        console.log(ref);
+        const schema = current.schema;
+        const ref = schema.$ref;
+        console.log(current.schema);
         const key = getDefinitionName(ref);
         const { content } = generateDefinition(key, definitions);
 

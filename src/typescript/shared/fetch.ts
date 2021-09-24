@@ -29,7 +29,7 @@ export class webClient {
     const newURL = url.replace(
       /[\{|:](\w+)[\}]?/gi,
       (_key: string, _value: string) => {
-        return typeof path === "string" ? path : path[_value];
+        return typeof path === "string" ? path : path[_value] ?? "";
       },
     );
 
