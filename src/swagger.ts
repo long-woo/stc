@@ -22,6 +22,11 @@ export type propertyType =
   | "array"
   | "object";
 
+/**
+ * 参数类型
+ */
+export type paramType = "path" | "query" | "body";
+
 interface ISwaggerResultInfo {
   title: string;
   description: string;
@@ -169,4 +174,13 @@ export interface IGetApiContentParams {
    * 定义的对象
    */
   definitions: IDefaultObject<ISwaggerResultDefinitions>;
+}
+
+/**
+ * 参数定义
+ */
+export interface IParamDefinition<T = string[]> {
+  key: string;
+  required?: boolean;
+  value: T;
 }

@@ -6,10 +6,12 @@ import {
   IGenerateApiContentParams,
   IGenerateRuntimeApiOptions,
   IGetApiContentParams,
+  IParamDefinition,
   IRequestParams,
   ISwaggerDefinitionPropertiesItems,
   ISwaggerMethodParameter,
   ISwaggerResultDefinitions,
+  paramType,
   propertyType,
 } from "../swagger.ts";
 
@@ -21,7 +23,10 @@ const keywordVariable = ["get", "post", "head", "put", "options", "delete"];
 const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
 const mapDefinitions = new Map<string, string[]>();
+// 方法名定义
 let methodNameDefinitions: string[] = [];
+// 记录请求参数是否必填
+let paramsRequired: boolean[] = [];
 
 /**
  * 获取定义名称
@@ -280,6 +285,35 @@ const generateDefinition = (
   };
 };
 
+const getParamsDefinition = (
+  methodName: string,
+  type: paramType,
+  current: ISwaggerMethodParameter,
+  param: IParamDefinition,
+) => {
+  const valueLength = param.value.length;
+  const queryProp = `${
+    generateComment(current.description)
+  }\n\t${current.name}${current.required ? "" : "?"}: ${
+    convertType(current.type as propertyType)
+  }\n`;
+
+  if (!valueLength) {
+    const key = `I${caseTitle(type)}${caseTitle(methodName)}`;
+
+    param = {
+      key,
+      value: [`\nexport interface ${key} {`, "}\n"],
+    };
+  }
+
+  paramsRequired.push(current.required);
+  param.value.splice(valueLength - 1, 0, queryProp);
+
+  // 任意一项必填，参数为必填
+  param.required = paramsRequired.some((item) => item);
+};
+
 /**
  * 生成请求参数定义
  * @param parameters - Api 参数信息
@@ -293,37 +327,28 @@ const generateParameterDefinition = (
     (
       prev: Required<
         IRequestParams<
-          { key: string; value: string[] },
-          { key: string; value: string }
+          IParamDefinition,
+          IParamDefinition<string>,
+          IParamDefinition
         >
       >,
       current,
     ) => {
+      getParamsDefinition(
+        methodName,
+        current.in,
+        current,
+        prev[current.in] as IParamDefinition,
+      );
       // 生成 Path
-      if (current.in === "path") {
-        prev.path = current.name;
-      }
+      // if (current.in === "path") {
+      //   prev.path = current.name;
+      // }
 
       // 生成 Query 对象
-      if (current.in === "query") {
-        const queryValueLength = prev.query.value.length;
-        const queryProp = `${
-          generateComment(current.description)
-        }\n\t${current.name}${current.required ? "" : "?"}: ${
-          convertType(current.type as propertyType)
-        }\n`;
-
-        if (!queryValueLength) {
-          const queryKey = `IQuery${caseTitle(methodName)}`;
-
-          prev.query = {
-            key: queryKey,
-            value: [`\nexport interface ${queryKey} {`, "}\n"],
-          };
-        }
-
-        prev.query.value.splice(queryValueLength - 1, 0, queryProp);
-      }
+      // if (current.in === "query") {
+      //   getParamsDefinition(methodName, "query", current, prev[current.in]);
+      // }
 
       // 生成 Body 对象
       if (current.in === "body") {
@@ -349,7 +374,10 @@ const generateParameterDefinition = (
       return prev;
     },
     {
-      path: "",
+      path: {
+        key: "",
+        value: [],
+      },
       query: {
         key: "",
         value: [],
@@ -463,9 +491,10 @@ const generateApiContent = (
     methodOption.parameters,
     definitions,
   );
+  const paramPath = params.path;
   const paramQuery = params.query;
   const paramBody = params.body;
-  def.push(paramQuery?.value.join(""), paramBody?.value);
+  def.push(paramQuery.value.join(""), paramBody.value);
 
   // 响应对象
   const responseRef = methodOption.responses[200].schema?.$ref ?? "";
@@ -478,9 +507,9 @@ const generateApiContent = (
     url,
     method,
     params: {
-      path: params.path,
-      query: paramQuery?.key,
-      body: paramBody?.key,
+      path: paramPath.key,
+      query: paramQuery.key,
+      body: paramBody.key,
     },
     responseKey: response.name,
     comment: methodOption.summary,
@@ -509,6 +538,7 @@ export const getApiContent = (params: IGetApiContentParams) => {
   }
 
   fileName = params.fileName;
+  paramsRequired = [];
 
   const data = methodKeys.reduce(
     (prev: { def: string[]; func: string[] }, current: string) => {
