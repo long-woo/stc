@@ -299,6 +299,7 @@ const getParamsDefinition = (
   current: ISwaggerMethodParameter,
   param: IParamDefinition,
 ) => {
+  console.log(param);
   const valueLength = param.value.length;
   const queryProp = `${
     generateComment(current.description)
@@ -364,6 +365,8 @@ const generateParameterDefinition = (
           };
         }
       } else {
+        // formData
+        console.log(current);
         const param = getParamsDefinition(
           methodName,
           current.in,

@@ -65,7 +65,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   for (const url of Object.keys(paths)) {
     if (
       ![
-        "/api/dictionary/children/{code}",
+        "/api/file/upload",
       ].includes(url)
     ) {
       continue;
