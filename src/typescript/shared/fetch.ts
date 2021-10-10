@@ -24,12 +24,12 @@ export class webClient {
    * @param url - 需要处理的 URL
    * @param path - 路由参数
    */
-  private static generateURL(url: string, path: string | IDefaultObject = "") {
+  private static generateURL(url: string, path?: IDefaultObject) {
     // 替换路由参数
     const newURL = url.replace(
       /[\{|:](\w+)[\}]?/gi,
       (_key: string, _value: string) => {
-        return typeof path === "string" ? path : path[_value] ?? "";
+        return path ? path[_value] : "";
       },
     );
 
@@ -42,7 +42,7 @@ export class webClient {
    * @param req - 参数，可选
    */
   public static get<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.get(url, {
       params: req?.query,
@@ -55,7 +55,7 @@ export class webClient {
    * @param req - 参数，可选
    */
   public static post<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.post(url, req?.body, {
       params: req?.query,
@@ -68,7 +68,7 @@ export class webClient {
    * @param req - 参数，可选
    */
   public static put<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.put(url, req?.body, {
       params: req?.query,
@@ -81,7 +81,7 @@ export class webClient {
    * @param req - 参数，可选
    */
   public static delete<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.delete(url, {
       params: req?.query,
@@ -95,7 +95,7 @@ export class webClient {
    * @returns
    */
   public static head<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.delete(url, {
       params: req?.query,
@@ -109,7 +109,7 @@ export class webClient {
    * @returns
    */
   public static options<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.options(url, {
       params: req?.query,
@@ -123,7 +123,7 @@ export class webClient {
    * @returns
    */
   public static patch<T>(url: string, req?: IRequestParams): Promise<T> {
-    url = this.generateURL(url, req?.path);
+    url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.patch(url, req?.body, {
       params: req?.query,

@@ -3,7 +3,7 @@ export interface IDefaultObject<T = string> {
   [key: string]: T;
 }
 
-export interface IRequestParams<Q = unknown, B = unknown, P = string> {
+export interface IRequestParams<Q = unknown, B = unknown, P = unknown> {
   path?: P;
   query?: Q;
   body?: B;

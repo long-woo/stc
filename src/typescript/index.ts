@@ -65,7 +65,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   for (const url of Object.keys(paths)) {
     if (
       ![
-        "/{adminPath}/report/queryReportRequire",
+        "/api/dictionary/children/{code}",
       ].includes(url)
     ) {
       continue;

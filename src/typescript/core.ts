@@ -211,7 +211,7 @@ const getDefinitionContent = (
   let initDefinition: string[] = [];
 
   if (!def) {
-    Logs.warn(`${defKey} 未定义`);
+    defKey && Logs.warn(`${defKey} 未定义`);
     return "";
   }
 
@@ -285,6 +285,14 @@ const generateDefinition = (
   };
 };
 
+/**
+ * 处理 path、query 参数
+ * @param methodName 方法名
+ * @param type 参数类型
+ * @param current 当前参数
+ * @param param 参数
+ * @returns
+ */
 const getParamsDefinition = (
   methodName: string,
   type: paramType,
@@ -312,6 +320,8 @@ const getParamsDefinition = (
 
   // 任意一项必填，参数为必填
   param.required = paramsRequired.some((item) => item);
+
+  return param;
 };
 
 /**
@@ -334,27 +344,11 @@ const generateParameterDefinition = (
       >,
       current,
     ) => {
-      getParamsDefinition(
-        methodName,
-        current.in,
-        current,
-        prev[current.in] as IParamDefinition,
-      );
-      // 生成 Path
-      // if (current.in === "path") {
-      //   prev.path = current.name;
-      // }
-
-      // 生成 Query 对象
-      // if (current.in === "query") {
-      //   getParamsDefinition(methodName, "query", current, prev[current.in]);
-      // }
-
       // 生成 Body 对象
       if (current.in === "body") {
         const schema = current.schema;
         const ref = schema.$ref;
-        console.log(current.schema);
+
         const key = getDefinitionName(ref);
         const { content } = generateDefinition(key, definitions);
 
@@ -369,6 +363,18 @@ const generateParameterDefinition = (
             value: "",
           };
         }
+      } else {
+        const param = getParamsDefinition(
+          methodName,
+          current.in,
+          current,
+          prev[current.in] as IParamDefinition,
+        );
+
+        prev[current.in] = {
+          key: param.key,
+          value: param.value,
+        };
       }
 
       return prev;
@@ -423,8 +429,8 @@ const getRequestParams = (
   const use: string[] = [];
 
   if (path) {
-    req.push(`${path}: string`);
-    use.splice(use.length - 1, 0, `path: ${path}`);
+    req.push(`path: ${path}`);
+    use.splice(use.length - 1, 0, `path`);
   }
 
   if (query) {
@@ -494,11 +500,17 @@ const generateApiContent = (
   const paramPath = params.path;
   const paramQuery = params.query;
   const paramBody = params.body;
-  def.push(paramQuery.value.join(""), paramBody.value);
+
+  def.push(
+    paramPath.value.join(""),
+    paramQuery.value.join(""),
+    paramBody.value,
+  );
 
   // 响应对象
   const responseRef = methodOption.responses[200].schema?.$ref ?? "";
   const response = generateResponseDefinition(responseRef, definitions);
+
   def.push(response.content);
 
   // 运行时方法
