@@ -6,10 +6,12 @@ export interface IRequestParams<
   Q = IDefaultObject,
   B = IDefaultObject,
   P = string,
+  F = string,
 > {
   path?: P;
   query?: Q;
   body?: B;
+  formData?: F;
 }
 
 /**
@@ -25,7 +27,7 @@ export type propertyType =
 /**
  * 参数类型
  */
-export type paramType = "path" | "query" | "body";
+export type paramType = "path" | "query" | "body" | "formData";
 
 interface ISwaggerResultInfo {
   title: string;
@@ -39,7 +41,7 @@ interface ISwaggerResultTag {
   description: string;
 }
 
-interface ISwaggerSchema {
+export interface ISwaggerSchema {
   $ref: string;
 }
 
@@ -53,7 +55,7 @@ interface ISwaggerMethodResponses {
 }
 
 export interface ISwaggerMethodParameter {
-  in: "path" | "query" | "body";
+  in: paramType;
   name: string;
   type: string;
   format: string;

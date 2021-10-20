@@ -1,24 +1,11 @@
 // 由 swagger2code 生成
 import axios from "axios";
-import { IDefaultObject, IRequestParams } from "./interface.ts";
+import { IDefaultObject, IRequestConfig, IRequestParams } from "./interface.ts";
 
 /**
  * API 请求
  */
 export class webClient {
-  /**
-   * GET 请求参数处理
-   * @param params - 参数
-   */
-  private static formaQueryString(params: IDefaultObject): string {
-    const query = Object.keys(params).reduce((prev, current) => {
-      prev += `${current}=${encodeURIComponent(params[current])}&`;
-      return prev;
-    }, ``);
-
-    return query;
-  }
-
   /**
    * 生成 URL
    * @param url - 需要处理的 URL
@@ -40,12 +27,18 @@ export class webClient {
    * GET 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    */
-  public static get<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static get<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.get(url, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -53,12 +46,30 @@ export class webClient {
    * POST 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    */
-  public static post<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static post<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
+
+    // const formData = new FormData();
+
+    // formData.append("uploadFile", uploadFile);
+
+    // return webClient.post<IResponseMessage>("/api/file/upload", {
+    //   body: formData,
+    // }, {
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    // });
 
     return axios.post(url, req?.body, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -66,12 +77,18 @@ export class webClient {
    * PUT 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    */
-  public static put<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static put<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.put(url, req?.body, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -79,12 +96,18 @@ export class webClient {
    * DELETE 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    */
-  public static delete<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static delete<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.delete(url, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -92,13 +115,19 @@ export class webClient {
    * HEAD 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    * @returns
    */
-  public static head<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static head<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.delete(url, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -106,13 +135,19 @@ export class webClient {
    * OPTIONS 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    * @returns
    */
-  public static options<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static options<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.options(url, {
       params: req?.query,
+      ...config,
     });
   }
 
@@ -120,13 +155,19 @@ export class webClient {
    * PATCH 请求
    * @param url - 请求地址
    * @param req - 参数，可选
+   * @param config - 请求配置，可选
    * @returns
    */
-  public static patch<T>(url: string, req?: IRequestParams): Promise<T> {
+  public static patch<T>(
+    url: string,
+    req?: IRequestParams,
+    config?: IRequestConfig,
+  ): Promise<T> {
     url = this.generateURL(url, req?.path as IDefaultObject);
 
     return axios.patch(url, req?.body, {
       params: req?.query,
+      ...config,
     });
   }
 }

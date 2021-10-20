@@ -11,7 +11,6 @@ import {
   ISwaggerDefinitionPropertiesItems,
   ISwaggerMethodParameter,
   ISwaggerResultDefinitions,
-  paramType,
   propertyType,
 } from "../swagger.ts";
 
@@ -287,19 +286,16 @@ const generateDefinition = (
 
 /**
  * 处理 path、query 参数
- * @param methodName 方法名
- * @param type 参数类型
- * @param current 当前参数
- * @param param 参数
+ * @param methodName - 方法名
+ * @param current - 当前参数定义
+ * @param param - 参数
  * @returns
  */
-const getParamsDefinition = (
+const getDefaultParamsDefinition = (
   methodName: string,
-  type: paramType,
   current: ISwaggerMethodParameter,
   param: IParamDefinition,
 ) => {
-  console.log(param);
   const valueLength = param.value.length;
   const queryProp = `${
     generateComment(current.description)
@@ -308,7 +304,7 @@ const getParamsDefinition = (
   }\n`;
 
   if (!valueLength) {
-    const key = `I${caseTitle(type)}${caseTitle(methodName)}`;
+    const key = `I${caseTitle(current.in)}${caseTitle(methodName)}`;
 
     param = {
       key,
@@ -326,6 +322,57 @@ const getParamsDefinition = (
 };
 
 /**
+ * body 参数
+ * @param current - 当前参数定义
+ * @param defs - 定义源
+ * @returns
+ */
+const getBodyParamsDefinition = (
+  current: ISwaggerMethodParameter,
+  defs: IDefaultObject<ISwaggerResultDefinitions>,
+): IParamDefinition<string> => {
+  const schema = current.schema;
+  const ref = schema.$ref;
+
+  // 生成 body 参数定义的名称、内容
+  const key = getDefinitionName(ref);
+  const { content } = generateDefinition(key, defs);
+
+  const res: IParamDefinition<string> = {
+    key,
+    value: content,
+    required: current.required,
+  };
+
+  // 如果没有定义，使用默认定义
+  if (!content) {
+    res.key = "IDefaultObject";
+    res.value = "";
+  }
+
+  return res;
+};
+
+/**
+ * formData 参数
+ * @param current - 当前参数定义
+ * @returns
+ */
+const getFormDataParamsDefinition = (
+  current: ISwaggerMethodParameter,
+): IParamDefinition<string> => {
+  const key = current.name;
+
+  const res: IParamDefinition<string> = {
+    key,
+    value: "",
+    required: current.required,
+  };
+
+  return res;
+};
+
+/**
  * 生成请求参数定义
  * @param parameters - Api 参数信息
  */
@@ -340,44 +387,35 @@ const generateParameterDefinition = (
         IRequestParams<
           IParamDefinition,
           IParamDefinition<string>,
-          IParamDefinition
+          IParamDefinition,
+          IParamDefinition<string>
         >
       >,
       current,
     ) => {
-      // 生成 Body 对象
-      if (current.in === "body") {
-        const schema = current.schema;
-        const ref = schema.$ref;
+      switch (current.in) {
+        case "body": {
+          const body = getBodyParamsDefinition(current, definitions);
 
-        const key = getDefinitionName(ref);
-        const { content } = generateDefinition(key, definitions);
-
-        prev.body = {
-          key,
-          value: content,
-        };
-
-        if (!content) {
-          prev.body = {
-            key: "IDefaultObject",
-            value: "",
-          };
+          prev.body = body;
+          break;
         }
-      } else {
-        // formData
-        console.log(current);
-        const param = getParamsDefinition(
-          methodName,
-          current.in,
-          current,
-          prev[current.in] as IParamDefinition,
-        );
+        case "formData": {
+          const data = getFormDataParamsDefinition(current);
 
-        prev[current.in] = {
-          key: param.key,
-          value: param.value,
-        };
+          prev.formData = data;
+          break;
+        }
+        default: {
+          const param = getDefaultParamsDefinition(
+            methodName,
+            current,
+            prev[current.in] as IParamDefinition,
+          );
+
+          prev[current.in] = param;
+          break;
+        }
       }
 
       return prev;
@@ -392,6 +430,7 @@ const generateParameterDefinition = (
         value: [],
       },
       body: { key: "", value: "" },
+      formData: { key: "", value: "" },
     },
   );
 
@@ -425,25 +464,30 @@ const generateResponseDefinition = (
  * @returns
  */
 const getRequestParams = (
-  params: IRequestParams<string, string, string>,
+  params: IRequestParams<string, string>,
 ) => {
-  const { path, query, body } = params;
+  const { path, query, body, formData } = params;
   const req: string[] = [];
   const use: string[] = [];
 
   if (path) {
     req.push(`path: ${path}`);
-    use.splice(use.length - 1, 0, `path`);
+    use.splice(use.length - 1, 0, "path");
   }
 
   if (query) {
     req.push(`params: ${query}`);
-    use.splice(use.length - 1, 0, `query: params`);
+    use.splice(use.length - 1, 0, "query: params");
   }
 
   if (body) {
     req.push(`data: ${body}`);
-    use.splice(use.length - 1, 0, `body: data`);
+    use.splice(use.length - 1, 0, "body: data");
+  }
+
+  if (formData) {
+    req.push(`${formData}: string`);
+    use.splice(use.length - 1, 0, `body: ${formData}`);
   }
 
   return {
@@ -503,6 +547,7 @@ const generateApiContent = (
   const paramPath = params.path;
   const paramQuery = params.query;
   const paramBody = params.body;
+  const paramFormData = params.formData;
 
   def.push(
     paramPath.value.join(""),
@@ -525,6 +570,7 @@ const generateApiContent = (
       path: paramPath.key,
       query: paramQuery.key,
       body: paramBody.key,
+      formData: paramFormData.key,
     },
     responseKey: response.name,
     comment: methodOption.summary,
