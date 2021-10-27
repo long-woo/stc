@@ -285,7 +285,7 @@ const generateDefinition = (
 };
 
 /**
- * 处理 path、query 参数
+ * 处理 path、query、header 参数
  * @param methodName - 方法名
  * @param current - 当前参数定义
  * @param param - 参数
@@ -296,6 +296,7 @@ const getDefaultParamsDefinition = (
   current: ISwaggerMethodParameter,
   param: IParamDefinition,
 ) => {
+  console.log(param, current);
   const valueLength = param.value.length;
   const queryProp = `${
     generateComment(current.description)
@@ -556,7 +557,7 @@ const generateApiContent = (
   );
 
   // 响应对象
-  const responseRef = methodOption.responses[200].schema?.$ref ?? "";
+  const responseRef = methodOption.responses[200]?.schema?.$ref ?? "";
   const response = generateResponseDefinition(responseRef, definitions);
 
   def.push(response.content);
