@@ -43,6 +43,7 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
   let methodIndex = 0;
 
   urlSplit = [...urlSplit].reverse();
+  console.log(urlSplit);
   let name = urlSplit.find((item, index) => {
     if (methodNameDefinitions.includes(item)) {
       methodIndex = index + 1;
@@ -296,7 +297,6 @@ const getDefaultParamsDefinition = (
   current: ISwaggerMethodParameter,
   param: IParamDefinition,
 ) => {
-  console.log(param, current);
   const valueLength = param.value.length;
   const queryProp = `${
     generateComment(current.description)
@@ -389,7 +389,8 @@ const generateParameterDefinition = (
           IParamDefinition,
           IParamDefinition<string>,
           IParamDefinition,
-          IParamDefinition<string>
+          IParamDefinition<string>,
+          IParamDefinition
         >
       >,
       current,
@@ -432,6 +433,7 @@ const generateParameterDefinition = (
       },
       body: { key: "", value: "" },
       formData: { key: "", value: "" },
+      header: { key: "", value: [] },
     },
   );
 

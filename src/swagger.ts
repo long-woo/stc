@@ -7,11 +7,13 @@ export interface IRequestParams<
   B = IDefaultObject,
   P = string,
   F = string,
+  H = IDefaultObject,
 > {
   path?: P;
   query?: Q;
   body?: B;
   formData?: F;
+  header?: H;
 }
 
 /**
