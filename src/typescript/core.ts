@@ -43,7 +43,7 @@ const getMethodName = (urlSplit: string[], prefix: string) => {
   let methodIndex = 0;
 
   urlSplit = [...urlSplit].reverse();
-  console.log(urlSplit);
+
   let name = urlSplit.find((item, index) => {
     if (methodNameDefinitions.includes(item)) {
       methodIndex = index + 1;
@@ -512,7 +512,7 @@ const generateRuntimeFunction = (
 export const ${options.name} = (${req ??
     ""}) =>
 \twebClient.${options.method}<${options
-    .responseKey || "void"}>('${options.url}'${use ?? ""})
+    .responseKey || "IDefaultObject"}>('${options.url}'${use ?? ""})
 `;
 
   return res;

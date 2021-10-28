@@ -63,13 +63,13 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 遍历所有 API 路径
   for (const url of Object.keys(paths)) {
-    if (
-      ![
-        "/pet/{petId}",
-      ].includes(url)
-    ) {
-      continue;
-    }
+    // if (
+    //   ![
+    //     "/api/patient/deletePatientRecord",
+    //   ].includes(url)
+    // ) {
+    //   continue;
+    // }
     Logs.info(`${url} 接口生成中...`);
 
     // 当前 API 的所有方法
@@ -77,7 +77,7 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
     // 拆分后的 url。用于文件名、请求参数和方法名定义
     const urlSplit = url.split("/");
     // 文件名。取之 API 路径第二个
-    const fileName = `${urlSplit[2]}.ts`;
+    const fileName = `${urlSplit[1]}.ts`;
     // 获取定义
     const def = defMap.get(fileName) ?? [];
     // 获取函数
