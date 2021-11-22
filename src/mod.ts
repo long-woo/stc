@@ -30,6 +30,7 @@ const main = () => {
 if (import.meta.main) {
   const { lang, outDir } = main();
 
+  // http://demodata.liangyihui.net/smart/v2/api-docs
   // https://petstore.swagger.io/v2/swagger.json
-  generateApi("http://demodata.liangyihui.net/smart/v2/api-docs", outDir);
+  generateApi("https://petstore.swagger.io/v2/swagger.json", outDir);
 }

@@ -16,14 +16,11 @@ import {
 
 // 文件名
 let fileName = "";
-// 关键字变量
-const keywordVariable = ["get", "post", "head", "put", "options", "delete"];
+
 // 泛型 key 映射
 const genericKeyMapping = new Map<string, string>();
 // 记录定义内容
 const mapDefinitions = new Map<string, string[]>();
-// 方法名定义
-let methodNameDefinitions: string[] = [];
 // 记录请求参数是否必填
 let paramsRequired: boolean[] = [];
 
@@ -32,49 +29,6 @@ let paramsRequired: boolean[] = [];
  * @param ref - 定义参数
  */
 const getDefinitionName = (ref?: string) => ref ? `I${ref.slice(14)}` : "";
-
-/**
- * 从 url 中获取方法名
- * @param urlSplit - url
- * @param prefix - 前缀
- */
-const getMethodName = (urlSplit: string[], prefix: string) => {
-  const regName = /[\{|:](\w+)[\}]?/gi;
-  let methodIndex = 0;
-
-  urlSplit = [...urlSplit].reverse();
-
-  let name = urlSplit.find((item, index) => {
-    if (methodNameDefinitions.includes(item)) {
-      methodIndex = index + 1;
-    }
-
-    return !regName.test(item);
-  }) ?? "";
-
-  if (methodNameDefinitions.includes(name)) {
-    name += caseTitle(urlSplit[methodIndex]);
-  }
-
-  // 加前缀
-  if (prefix) {
-    name = prefix + caseTitle(name);
-  }
-
-  // 处理方法名中特殊字符
-  name = name.replace(
-    /[\-|_](\w)/g,
-    (_key: string, _value: string) => _value.toUpperCase(),
-  );
-
-  // 处理方法名字是关键字变量
-  if (keywordVariable.includes(name)) {
-    name += caseTitle(urlSplit[2]);
-  }
-
-  methodNameDefinitions.push(name);
-  return name;
-};
 
 /**
  * 处理泛型
@@ -598,7 +552,6 @@ export const getApiContent = (params: IGetApiContentParams) => {
   if (fileName !== params.fileName) {
     genericKeyMapping.clear();
     mapDefinitions.clear();
-    methodNameDefinitions = [];
   }
 
   fileName = params.fileName;
@@ -608,14 +561,10 @@ export const getApiContent = (params: IGetApiContentParams) => {
     (prev: { def: string[]; func: string[] }, current: string) => {
       const methodOption = params.methods[current];
 
-      // 如果同一地址，自动添加方法名前缀
-      const methodNamePrefix = methodKeys.length > 1 ? current : "";
-      const methodName = getMethodName(params.urlSplit, methodNamePrefix);
-
       const res = generateApiContent({
         url: params.url,
         method: current as HttpMethod,
-        methodName,
+        methodName: methodOption.operationId,
         methodOption,
         definitions: params.definitions,
       });
