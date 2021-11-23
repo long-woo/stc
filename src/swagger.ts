@@ -165,11 +165,6 @@ export interface IGetApiContentParams {
   url: string;
 
   /**
-   * 根据 `/` 拆分后的 url
-   */
-  urlSplit: string[];
-
-  /**
    * url 请求方式
    */
   methods: IDefaultObject<ISwaggerResultPaths>;
