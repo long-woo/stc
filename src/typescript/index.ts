@@ -100,5 +100,5 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
     ]);
   }
 
-  outFile(fileMap, outDir);
+  // outFile(fileMap, outDir);
 };
