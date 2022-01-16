@@ -2,6 +2,7 @@ import Logs from "../console.ts";
 import { copyFile, createFile } from "../util.ts";
 import { ISwaggerResult } from "../swagger.ts";
 import { getApiContent } from "./core.ts";
+import { generateDefinition } from "../definition.ts";
 
 /**
  * 获取 Swagger 数据
@@ -59,46 +60,49 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   Logs.clear();
 
   // 复制运行时需要的文件
-  copyFile("./src/typescript/shared", `${outDir}/shared`);
+  // copyFile("./src/typescript/shared", `${outDir}/shared`);
+
+  // 生成定义
+  generateDefinition(definitions);
 
   // 遍历所有 API 路径
-  for (const url of Object.keys(paths)) {
-    if (
-      ![
-        "/pet/{petId}/uploadImage",
-      ].includes(url)
-    ) {
-      continue;
-    }
-    Logs.info(`${url} 接口生成中...`);
+  // for (const url of Object.keys(paths)) {
+  //   if (
+  //     ![
+  //       "/pet/{petId}/uploadImage",
+  //     ].includes(url)
+  //   ) {
+  //     continue;
+  //   }
+  //   Logs.info(`${url} 接口生成中...`);
 
-    // 当前 API 的所有方法（get/post...）
-    const methods = paths[url];
-    // 拆分后的 url。用于文件名、请求参数和方法名定义
-    const urlSplit = url.split("/");
-    // 文件名。取之 API 路径第二个
-    const fileName = `${urlSplit[1]}.ts`;
-    console.log(methods);
-    // 获取定义
-    // const def = defMap.get(fileName) ?? [];
-    // // 获取函数
-    // const func = funcMap.get(fileName) ?? [];
+  //   // 当前 API 的所有方法（get/post...）
+  //   const methods = paths[url];
+  //   // 拆分后的 url。用于文件名、请求参数和方法名定义
+  //   const urlSplit = url.split("/");
+  //   // 文件名。取之 API 路径第二个
+  //   const fileName = `${urlSplit[1]}.ts`;
+  //   console.log(methods);
+  // 获取定义
+  // const def = defMap.get(fileName) ?? [];
+  // // 获取函数
+  // const func = funcMap.get(fileName) ?? [];
 
-    // 处理文件内容
-    // const res = getApiContent({
-    //   fileName,
-    //   url,
-    //   methods,
-    //   definitions,
-    // });
+  // 处理文件内容
+  // const res = getApiContent({
+  //   fileName,
+  //   url,
+  //   methods,
+  //   definitions,
+  // });
 
-    // defMap.set(fileName, [...def, ...res.def]);
-    // funcMap.set(fileName, [...func, ...res.func]);
-    // fileMap.set(fileName, [
-    //   ...(defMap.get(fileName) ?? []),
-    //   ...(funcMap.get(fileName) ?? []),
-    // ]);
-  }
+  // defMap.set(fileName, [...def, ...res.def]);
+  // funcMap.set(fileName, [...func, ...res.func]);
+  // fileMap.set(fileName, [
+  //   ...(defMap.get(fileName) ?? []),
+  //   ...(funcMap.get(fileName) ?? []),
+  // ]);
+  // }
 
   // outFile(fileMap, outDir);
 };

@@ -7,6 +7,23 @@ import {
 } from "./swagger.ts";
 
 /**
+ * 生成注释
+ * @param comment - 注释描述
+ * @param isIndent - 缩进
+ * @returns
+ */
+const generateComment = (comment: string, isIndent = true) => {
+  const indent = isIndent ? "\t" : "";
+
+  return comment
+    ? `
+${indent}/**
+${indent} * ${comment}
+${indent} */`
+    : "";
+};
+
+/**
  * 获取定义的名称
  * @param name - 定义的名称
  * @param isDefinition - 是否为定义
@@ -15,6 +32,8 @@ import {
 const getDefinitionName = (name: string, isDefinition?: boolean): string => {
   const genericKey = ["T", "K", "U"];
   const keyLength = genericKey.length;
+
+  name = name.replace("#/definitions/", "");
 
   // 处理泛型
   const newName = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
@@ -69,19 +88,15 @@ const convertType = (
         return value;
       }
 
-      return "[]";
-    case "object": {
+      return "any[]";
+    case "object":
       return "IDefaultObject";
-    }
-    default:
+    default: {
       // 自定义类型
-      if (type.includes("definitions")) {
-        const name = getDefinitionName(type);
+      const name = getDefinitionName(type);
 
-        return name;
-      }
-
-      return type;
+      return name;
+    }
   }
 };
 
@@ -92,22 +107,25 @@ const getDefinitionProperty = (defItem: ISwaggerResultDefinitions): string => {
   }
 
   const props = defItem.properties;
-  const propKeys = Object.keys(props);
 
-  propKeys.forEach((key) => {
-    const name = convertType(key);
-  });
-  return "";
+  const res = Object.keys(props).reduce((prev, current) => {
+    const prop = props[current];
+    const name = convertType(prop.type ?? "");
+    const comment = generateComment(prop.description ?? "");
+
+    prev.splice(-1, 0, `${comment}\t${current}: ${name}\n`);
+    return prev;
+  }, ["{", "\t}"]);
+
+  return res.join("");
 };
 
 export const generateDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
 ) => {
   const defMap = new Map<string, string>();
-  // 所有定义的 key
-  const definitionKeys = Object.keys(definitions);
 
-  definitionKeys.forEach((key) => {
+  Object.keys(definitions).forEach((key) => {
     const name = getDefinitionName(key, true);
 
     const isExistName = defMap.has(name);
@@ -119,4 +137,5 @@ export const generateDefinition = (
     // 存储到 map 中，防止重复生成
     defMap.set(name, props);
   });
+  console.log(defMap);
 };
