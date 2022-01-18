@@ -1,6 +1,7 @@
 import Logs from "./console.ts";
 import {
   IDefaultObject,
+  ISwaggerDefinitionProperties,
   ISwaggerDefinitionPropertiesItems,
   ISwaggerResultDefinitions,
   propertyType,
@@ -62,40 +63,45 @@ const getDefinitionName = (name: string, isDefinition?: boolean): string => {
 
 /**
  * 转换为 TypeScript 类型
- * @param type - 属性基础类型
- * @param typeItem - 属性非基础类型
- * @param defKey - 定义源中的 key
+ * @param prop - 属性基础类型
  * @returns
  */
-const convertType = (
-  type: string,
-  typeItem?: ISwaggerDefinitionPropertiesItems,
-): string => {
+const convertType = (prop: ISwaggerDefinitionProperties): string => {
+  // 首先判断 type 是否定义，其次判断 $ref 是否定义
+  const type = prop.type ?? prop.$ref ?? "any";
+
   switch (type) {
     case "integer":
       return "number";
-    case "array":
-      if (typeItem?.type) {
-        const childType = convertType(typeItem.type);
+    case "array": {
+      const propItem = prop.items;
+
+      if (propItem?.type) {
+        const childType = convertType(propItem);
 
         return `${childType}[]`;
       }
 
-      if (typeItem?.$ref) {
-        const name = getDefinitionName(typeItem.$ref);
+      if (propItem?.$ref) {
+        const name = getDefinitionName(propItem.$ref);
         const value = `${name}[]`;
 
         return value;
       }
 
       return "any[]";
+    }
     case "object":
       return "IDefaultObject";
     default: {
       // 自定义类型
-      const name = getDefinitionName(type);
+      if (type.includes("definitions")) {
+        const name = getDefinitionName(type);
 
-      return name;
+        return name;
+      }
+
+      return type;
     }
   }
 };
@@ -110,12 +116,21 @@ const getDefinitionProperty = (defItem: ISwaggerResultDefinitions): string => {
 
   const res = Object.keys(props).reduce((prev, current) => {
     const prop = props[current];
-    const name = convertType(prop.type ?? "");
+
+    // 必填属性
+    const isRequired = defItem.required?.includes(current);
+
+    const propName = current + (isRequired ? "" : "?");
+    const propType = convertType(prop);
     const comment = generateComment(prop.description ?? "");
 
-    prev.splice(-1, 0, `${comment}\t${current}: ${name}\n`);
+    prev.splice(
+      -1,
+      0,
+      `${comment}\n\t${propName}: ${propType}`,
+    );
     return prev;
-  }, ["{", "\t}"]);
+  }, ["{", "\n}"]);
 
   return res.join("");
 };
@@ -133,9 +148,9 @@ export const generateDefinition = (
 
     const defItem = definitions[key];
     const props = getDefinitionProperty(defItem);
-
+    console.log("======================" + name);
+    console.log(props);
     // 存储到 map 中，防止重复生成
     defMap.set(name, props);
   });
-  console.log(defMap);
 };

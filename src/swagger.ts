@@ -81,16 +81,18 @@ export interface ISwaggerDefinitionPropertiesItems
   type?: string;
 }
 
-interface ISwaggerDefinitionProperties {
+export interface ISwaggerDefinitionProperties {
   type?: string;
   $ref?: string;
   description?: string;
   format?: string;
   items?: ISwaggerDefinitionPropertiesItems;
+  enum?: string[];
 }
 
 export interface ISwaggerResultDefinitions {
   type: string;
+  required?: string[];
   properties: IDefaultObject<ISwaggerDefinitionProperties>;
 }
 
