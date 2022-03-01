@@ -2,10 +2,10 @@ import Logs from "./console.ts";
 import {
   IDefaultObject,
   ISwaggerDefinitionProperties,
-  ISwaggerDefinitionPropertiesItems,
   ISwaggerResultDefinitions,
-  propertyType,
+  IVirtualProperty,
 } from "./swagger.ts";
+import { caseTitle } from "./util.ts";
 
 /**
  * 生成注释
@@ -123,6 +123,7 @@ const getDefinitionProperty = (defItem: ISwaggerResultDefinitions): string => {
     const propName = current + (isRequired ? "" : "?");
     const propType = convertType(prop);
     const comment = generateComment(prop.description ?? "");
+    const enumOption = prop.enum || [];
 
     prev.splice(
       -1,
@@ -135,10 +136,62 @@ const getDefinitionProperty = (defItem: ISwaggerResultDefinitions): string => {
   return res.join("");
 };
 
+/**
+ * 原始定义对象转换为虚拟定义对象
+ * @param defName - 定义名
+ * @param defItem - 定义名的属性
+ * @returns
+ */
+const getVirtualPropertys = (
+  defName: string,
+  defItem: ISwaggerResultDefinitions,
+): IVirtualProperty[] => {
+  if (defItem.type !== "object") {
+    Logs.error("无法解析当前对象");
+    return [];
+  }
+
+  const props = defItem.properties;
+
+  const vProps = Object.keys(props).reduce(
+    (prev: IVirtualProperty[], current) => {
+      const prop = props[current];
+
+      // 必填属性
+      const isRequired = defItem.required?.includes(current) ?? false;
+      // 属性枚举选项值
+      const enumOption = prop.enum || [];
+      // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
+      const type = enumOption.length
+        ? defName + caseTitle(current)
+        : (prop.type ?? "");
+
+      prev.push({
+        name: current,
+        type,
+        comment: prop.description ?? "",
+        isRequired,
+        enumOption,
+        ref: prop.$ref ?? "",
+        format: prop.format ?? "",
+      });
+      return prev;
+    },
+    [],
+  );
+
+  return vProps;
+};
+
+/**
+ *
+ * @param definitions - 定义对象
+ * @returns
+ */
 export const generateDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinitions>,
-) => {
-  const defMap = new Map<string, string>();
+): Map<string, IVirtualProperty[]> => {
+  const defMap = new Map<string, IVirtualProperty[]>();
 
   Object.keys(definitions).forEach((key) => {
     const name = getDefinitionName(key, true);
@@ -147,10 +200,12 @@ export const generateDefinition = (
     if (isExistName) return;
 
     const defItem = definitions[key];
-    const props = getDefinitionProperty(defItem);
+    const props = getVirtualPropertys(name, defItem);
     console.log("======================" + name);
     console.log(props);
     // 存储到 map 中，防止重复生成
     defMap.set(name, props);
   });
+
+  return defMap;
 };

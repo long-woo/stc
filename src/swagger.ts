@@ -185,3 +185,37 @@ export interface IParamDefinition<T = string[]> {
   required?: boolean;
   value: T;
 }
+
+/**
+ * 虚拟属性
+ */
+export interface IVirtualProperty {
+  /**
+   * 属性名
+   */
+  name: string;
+  /**
+   * 属性类型
+   */
+  type: string;
+  /**
+   * 属性注释
+   */
+  comment?: string;
+  /**
+   * 是否必需
+   */
+  isRequired?: boolean;
+  /**
+   * 枚举选项
+   */
+  enumOption?: string[];
+  /**
+   * 自定义类型
+   */
+  ref?: string;
+  /**
+   * 格式
+   */
+  format?: string;
+}
