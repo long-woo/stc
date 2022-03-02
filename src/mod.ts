@@ -42,10 +42,6 @@ const getSwaggerData = async (urlOrPath: string) => {
 };
 
 const generateApi = async (urlOrPath: string, outDir: string) => {
-  // const fileMap = new Map<string, string[]>();
-  // const defMap = new Map<string, string[]>();
-  // const funcMap = new Map<string, string[]>();
-
   const data = await getSwaggerData(urlOrPath);
 
   const paths = data.paths;
@@ -58,7 +54,7 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // copyFile("./src/typescript/shared", `${outDir}/shared`);
 
   // 生成定义
-  generateDefinition(definitions);
+  const defVirtual = generateDefinition(definitions);
 };
 
 if (import.meta.main) {

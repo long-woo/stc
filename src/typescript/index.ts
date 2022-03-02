@@ -54,16 +54,12 @@ export const generateApi = async (urlOrPath: string, outDir: string) => {
   const data = await getSwaggerData(urlOrPath);
 
   const paths = data.paths;
-  const definitions = data.definitions;
 
   // 清空控制台信息
   Logs.clear();
 
   // 复制运行时需要的文件
   // copyFile("./src/typescript/shared", `${outDir}/shared`);
-
-  // 生成定义
-  generateDefinition(definitions);
 
   // 遍历所有 API 路径
   // for (const url of Object.keys(paths)) {
