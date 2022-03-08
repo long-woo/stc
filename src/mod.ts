@@ -2,6 +2,7 @@ import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 
 import Logs from "./console.ts";
 import { generateDefinition } from "./definition.ts";
+import { generatePath } from "./path.ts";
 import { ISwaggerResult } from "./swagger.ts";
 
 const main = () => {
@@ -55,6 +56,8 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
 
   // 生成定义
   const defVirtual = generateDefinition(definitions);
+  // 生成路径
+  const pathVirtual = generatePath(paths);
 };
 
 if (import.meta.main) {

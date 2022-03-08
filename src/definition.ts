@@ -184,7 +184,7 @@ const getVirtualPropertys = (
 };
 
 /**
- *
+ * 生成定义对象
  * @param definitions - 定义对象
  * @returns
  */
