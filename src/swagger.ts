@@ -187,9 +187,9 @@ export interface IParamDefinition<T = string[]> {
 }
 
 /**
- * 虚拟属性
+ * 定义的虚拟属性
  */
-export interface IVirtualProperty {
+export interface IDefinitionVirtualProperty {
   /**
    * 属性名
    */
