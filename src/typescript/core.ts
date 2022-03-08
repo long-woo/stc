@@ -11,7 +11,7 @@ import {
   ISwaggerDefinitionPropertiesItems,
   ISwaggerMethodParameter,
   ISwaggerResultDefinitions,
-  propertyType,
+  originalBaseType,
 } from "../swagger.ts";
 
 // 文件名
@@ -89,7 +89,7 @@ ${indent} */`
  * @returns
  */
 const convertType = (
-  type: propertyType,
+  type: originalBaseType,
   typeItem?: ISwaggerDefinitionPropertiesItems,
   defKey?: string,
 ): string => {
@@ -100,7 +100,7 @@ const convertType = (
       return "number";
     case "array":
       if (typeItem?.type) {
-        const childType = convertType(typeItem.type as propertyType);
+        const childType = convertType(typeItem.type as originalBaseType);
 
         return `${childType}[]`;
       }
@@ -183,7 +183,7 @@ const getDefinitionContent = (
     const res = propertiesKeys.reduce(
       (prev: string[], current: string) => {
         const prop = properties[current];
-        const propType = (prop.$ref || prop.type) as propertyType;
+        const propType = (prop.$ref || prop.type) as originalBaseType;
         const type = convertType(propType, prop.items, defKey);
 
         const field = `${
@@ -255,7 +255,7 @@ const getDefaultParamsDefinition = (
   const queryProp = `${
     generateComment(current.description)
   }\n\t${current.name}${current.required ? "" : "?"}: ${
-    convertType(current.type as propertyType)
+    convertType(current.type as originalBaseType)
   }\n`;
 
   if (!valueLength) {

@@ -158,21 +158,27 @@ const getVirtualPropertys = (
       const prop = props[current];
 
       // 必填属性
-      const isRequired = defItem.required?.includes(current) ?? false;
+      const required = defItem.required?.includes(current) ?? false;
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
       const type = enumOption.length
         ? defName + caseTitle(current)
         : (prop.type ?? "");
+      // 属性 ref
+      let ref = getDefinitionName(prop.$ref ?? "");
+      if (prop.items) {
+        ref = getDefinitionName(prop.items.$ref ?? "") || (prop.items.type ??
+          "");
+      }
 
       prev.push({
         name: current,
         type,
-        comment: prop.description ?? "",
-        isRequired,
+        description: prop.description ?? "",
+        required,
         enumOption,
-        ref: prop.$ref ?? "",
+        ref,
         format: prop.format ?? "",
       });
       return prev;

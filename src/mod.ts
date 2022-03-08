@@ -57,7 +57,7 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // 生成定义
   const defVirtual = generateDefinition(definitions);
   // 生成路径
-  const pathVirtual = generatePath(paths);
+  // const pathVirtual = generatePath(paths);
 };
 
 if (import.meta.main) {

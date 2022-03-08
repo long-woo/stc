@@ -17,9 +17,9 @@ export interface IRequestParams<
 }
 
 /**
- * 属性类型
+ * 原始基础类型
  */
-export type propertyType =
+export type originalBaseType =
   | "string"
   | "integer"
   | "boolean"
@@ -27,9 +27,9 @@ export type propertyType =
   | "object";
 
 /**
- * 参数类型
+ * 参数类别
  */
-export type paramType = "path" | "query" | "body" | "formData";
+export type parameterCategory = "path" | "query" | "body" | "formData";
 
 interface ISwaggerResultInfo {
   title: string;
@@ -57,7 +57,7 @@ interface ISwaggerMethodResponses {
 }
 
 export interface ISwaggerMethodParameter {
-  in: paramType;
+  in: parameterCategory;
   name: string;
   type: string;
   format: string;
@@ -201,11 +201,11 @@ export interface IDefinitionVirtualProperty {
   /**
    * 属性注释
    */
-  comment?: string;
+  description?: string;
   /**
    * 是否必需
    */
-  isRequired?: boolean;
+  required?: boolean;
   /**
    * 枚举选项
    */
@@ -218,4 +218,48 @@ export interface IDefinitionVirtualProperty {
    * 格式
    */
   format?: string;
+}
+
+/**
+ * 接口地址参数
+ */
+export interface IPathParameter {
+  /**
+   * 参数类别
+   */
+  category: parameterCategory;
+  /**
+   * 参数名
+   */
+  name: string;
+  /**
+   * 类型
+   */
+  type: string;
+  /**
+   * 注释
+   */
+  description: string;
+  /**
+   * 是否必需
+   */
+  required: boolean;
+  /**
+   * 格式
+   */
+  format?: string;
+}
+
+/**
+ * 接口地址的虚拟属性
+ */
+export interface IPathVirtualProperty {
+  /**
+   * 请求方式
+   */
+  method: string;
+  /**
+   * 请求参数
+   */
+  parameters: IPathParameter[];
 }
