@@ -6,10 +6,10 @@ import {
 } from "./swagger.ts";
 
 /**
- *
+ * 获取请求对象
  * @param url - 接口地址
  * @param method - 请求方式
- * @param pathMethod
+ * @param pathMethod - 请求对象
  * @returns
  */
 const getPathVirtualProperty = (
