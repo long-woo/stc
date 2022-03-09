@@ -208,9 +208,7 @@ export const generateDefinition = (
 
     const defItem = definitions[key];
     const props = getVirtualPropertys(name, defItem);
-    console.log("======================" + name);
-    console.log(props);
-    // 存储到 map 中，防止重复生成
+
     defMap.set(name, props);
   });
 

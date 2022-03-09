@@ -71,6 +71,7 @@ export interface ISwaggerResultPaths {
   consumes: string[];
   produces: string[];
   summary: string;
+  description: string;
   tags: string[];
   parameters: ISwaggerMethodParameter[];
   responses: ISwaggerMethodResponses;
@@ -237,7 +238,7 @@ export interface IPathParameter {
    */
   type: string;
   /**
-   * 注释
+   * 描述
    */
   description: string;
   /**
@@ -255,6 +256,10 @@ export interface IPathParameter {
  */
 export interface IPathVirtualProperty {
   /**
+   * 请求地址
+   */
+  url: string;
+  /**
    * 请求方式
    */
   method: string;
@@ -262,4 +267,24 @@ export interface IPathVirtualProperty {
    * 请求参数
    */
   parameters: IPathParameter[];
+  /**
+   * 请求头
+   */
+  requestHeaders: string[];
+  /**
+   * 响应头
+   */
+  responseHeaders: string[];
+  /**
+   * 响应体
+   */
+  response: string;
+  /**
+   * 注释
+   */
+  summary: string;
+  /**
+   * 描述
+   */
+  description: string;
 }
