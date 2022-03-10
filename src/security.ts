@@ -9,6 +9,8 @@ export const generateSecurity = (
 ): Map<string, ISecurityVirtualProperty> => {
   const securityMap = new Map<string, ISecurityVirtualProperty>();
 
+  if (!securityDefinitions) return securityMap;
+
   Object.keys(securityDefinitions).forEach(
     (key) => {
       const item = securityDefinitions[key];

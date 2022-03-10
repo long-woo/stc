@@ -19,7 +19,7 @@ const getPathVirtualProperty = (
 ): IPathVirtualProperty => {
   // 请求参数
   const parameters = pathMethod.parameters
-    .map((param): IPathParameter => ({
+    ?.map((param): IPathParameter => ({
       category: param.in,
       name: param.name,
       type: param.type,
