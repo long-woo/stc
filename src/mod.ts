@@ -34,10 +34,10 @@ const main = () => {
  * @param urlOrPath - 远程地址或本地
  * @returns
  */
-const getSwaggerData = async (urlOrPath: string) => {
+const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
   // 从远程地址获取 Swagger 数据
   const res = await fetch(urlOrPath);
-  const data: ISwaggerResult = await res.json();
+  const data = await res.json();
 
   return data;
 };
