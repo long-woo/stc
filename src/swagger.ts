@@ -97,9 +97,12 @@ export interface ISwaggerResultDefinition {
 }
 
 export interface ISwaggerResultSecurity {
-  in: string;
-  name: string;
+  in?: string;
+  name?: string;
   type: string;
+  authorizationUrl?: string;
+  flow?: string;
+  scopes?: IDefaultObject;
 }
 
 export interface ISwaggerResult {
@@ -227,4 +230,21 @@ export interface IPathVirtualProperty {
   description: string;
 }
 
-// export interface ISecurity
+export interface ISecurityVirtualProperty {
+  /**
+   * 类型
+   */
+  type: string;
+  /**
+   * header key 名
+   */
+  name?: string;
+  /**
+   * 授权地址
+   */
+  authorizationUrl: string;
+  /**
+   * 授权范围
+   */
+  scopes: IDefaultObject;
+}

@@ -3,6 +3,7 @@ import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import Logs from "./console.ts";
 import { generateDefinition } from "./definition.ts";
 import { generatePath } from "./path.ts";
+import { generateSecurity } from "./security.ts";
 import { ISwaggerResult } from "./swagger.ts";
 
 const main = () => {
@@ -45,9 +46,6 @@ const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
 const generateApi = async (urlOrPath: string, outDir: string) => {
   const data = await getSwaggerData(urlOrPath);
 
-  const paths = data.paths;
-  const definitions = data.definitions;
-
   // 清空控制台信息
   Logs.clear();
 
@@ -55,10 +53,12 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // copyFile("./src/typescript/shared", `${outDir}/shared`);
 
   // 生成定义
-  const defVirtual = generateDefinition(definitions);
+  const defVirtual = generateDefinition(data.definitions);
   // 生成路径
-  const pathVirtual = generatePath(paths);
-  console.log(pathVirtual);
+  const pathVirtual = generatePath(data.paths);
+  // 授权、请求头
+  const securityVirtual = generateSecurity(data.securityDefinitions);
+  console.log(securityVirtual);
 };
 
 if (import.meta.main) {
