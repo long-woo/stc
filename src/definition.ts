@@ -2,7 +2,7 @@ import Logs from "./console.ts";
 import {
   IDefaultObject,
   IDefinitionVirtualProperty,
-  ISwaggerResultDefinitions,
+  ISwaggerResultDefinition,
 } from "./swagger.ts";
 import { caseTitle } from "./util.ts";
 
@@ -51,7 +51,7 @@ const getDefinitionName = (name: string, isDefinition?: boolean): string => {
  */
 const getVirtualPropertys = (
   defName: string,
-  defItem: ISwaggerResultDefinitions,
+  defItem: ISwaggerResultDefinition,
 ): IDefinitionVirtualProperty[] => {
   if (defItem.type !== "object") {
     Logs.error("无法解析当前对象");
@@ -103,7 +103,7 @@ const getVirtualPropertys = (
  * @returns
  */
 export const generateDefinition = (
-  definitions: IDefaultObject<ISwaggerResultDefinitions>,
+  definitions: IDefaultObject<ISwaggerResultDefinition>,
 ): Map<string, IDefinitionVirtualProperty[]> => {
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();
 

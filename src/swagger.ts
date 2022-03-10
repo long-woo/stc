@@ -56,7 +56,7 @@ interface ISwaggerMethodResponses {
   200: ISwaggerMethodResponseStatus;
 }
 
-export interface ISwaggerMethodParameter {
+interface ISwaggerMethodParameter {
   in: parameterCategory;
   name: string;
   type: string;
@@ -66,7 +66,7 @@ export interface ISwaggerMethodParameter {
   schema: ISwaggerSchema;
 }
 
-export interface ISwaggerResultPaths {
+export interface ISwaggerResultPath {
   operationId: string;
   consumes: string[];
   produces: string[];
@@ -77,12 +77,11 @@ export interface ISwaggerResultPaths {
   responses: ISwaggerMethodResponses;
 }
 
-export interface ISwaggerDefinitionPropertiesItems
-  extends Partial<ISwaggerSchema> {
+interface ISwaggerDefinitionPropertiesItems extends Partial<ISwaggerSchema> {
   type?: string;
 }
 
-export interface ISwaggerDefinitionProperties {
+interface ISwaggerDefinitionProperties {
   type?: string;
   $ref?: string;
   description?: string;
@@ -91,10 +90,16 @@ export interface ISwaggerDefinitionProperties {
   enum?: string[];
 }
 
-export interface ISwaggerResultDefinitions {
+export interface ISwaggerResultDefinition {
   type: string;
   required?: string[];
   properties: IDefaultObject<ISwaggerDefinitionProperties>;
+}
+
+export interface ISwaggerResultSecurity {
+  in: string;
+  name: string;
+  type: string;
 }
 
 export interface ISwaggerResult {
@@ -104,9 +109,10 @@ export interface ISwaggerResult {
   consumes: string[];
   info: ISwaggerResultInfo;
   tags: ISwaggerResultTag[];
-  definitions: IDefaultObject<ISwaggerResultDefinitions>;
-  paths: IDefaultObject<IDefaultObject<ISwaggerResultPaths>>;
+  definitions: IDefaultObject<ISwaggerResultDefinition>;
+  paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>;
   produces: string[];
+  securityDefinitions: IDefaultObject<ISwaggerResultSecurity>;
 }
 
 // Http 方法
@@ -220,3 +226,5 @@ export interface IPathVirtualProperty {
    */
   description: string;
 }
+
+// export interface ISecurity

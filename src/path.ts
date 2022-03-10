@@ -2,7 +2,7 @@ import {
   IDefaultObject,
   IPathParameter,
   IPathVirtualProperty,
-  ISwaggerResultPaths,
+  ISwaggerResultPath,
 } from "./swagger.ts";
 
 /**
@@ -15,7 +15,7 @@ import {
 const getPathVirtualProperty = (
   url: string,
   method: string,
-  pathMethod: ISwaggerResultPaths,
+  pathMethod: ISwaggerResultPath,
 ): IPathVirtualProperty => {
   // 请求参数
   const parameters = pathMethod.parameters
@@ -53,7 +53,7 @@ const getPathVirtualProperty = (
  * @returns
  */
 export const generatePath = (
-  paths: IDefaultObject<IDefaultObject<ISwaggerResultPaths>>,
+  paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();
 
