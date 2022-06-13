@@ -48,11 +48,11 @@ const getPathVirtualProperty = (
 };
 
 /**
- * 生成接口地址对象
+ * 获取接口地址对象
  * @param paths - 接口地址
  * @returns
  */
-export const generatePath = (
+export const getApiPath = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();

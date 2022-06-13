@@ -102,7 +102,7 @@ const getVirtualPropertys = (
  * @param definitions - 定义对象
  * @returns
  */
-export const generateDefinition = (
+export const getDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinition>,
 ): Map<string, IDefinitionVirtualProperty[]> => {
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();

@@ -4,7 +4,12 @@ import {
   ISwaggerResultSecurity,
 } from "./swagger.ts";
 
-export const generateSecurity = (
+/**
+ * 获取 auth 定义
+ * @param securityDefinitions
+ * @returns
+ */
+export const getSecurityDefinition = (
   securityDefinitions: IDefaultObject<ISwaggerResultSecurity>,
 ): Map<string, ISecurityVirtualProperty> => {
   const securityMap = new Map<string, ISecurityVirtualProperty>();

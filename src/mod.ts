@@ -1,9 +1,9 @@
 import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 
 import Logs from "./console.ts";
-import { generateDefinition } from "./definition.ts";
-import { generatePath } from "./path.ts";
-import { generateSecurity } from "./security.ts";
+import { getDefinition } from "./definition.ts";
+import { getApiPath } from "./path.ts";
+import { getSecurityDefinition } from "./security.ts";
 import { ISwaggerResult } from "./swagger.ts";
 
 const main = () => {
@@ -46,12 +46,12 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // copyFile("./src/typescript/shared", `${outDir}/shared`);
 
   // 生成定义
-  const defVirtual = generateDefinition(data.definitions);
+  const defVirtual = getDefinition(data.definitions);
   // 生成路径
-  const pathVirtual = generatePath(data.paths);
+  const pathVirtual = getApiPath(data.paths);
   // 授权、请求头
-  const securityVirtual = generateSecurity(data.securityDefinitions);
-  console.log(securityVirtual);
+  const securityVirtual = getSecurityDefinition(data.securityDefinitions);
+  console.log(pathVirtual);
 };
 
 if (import.meta.main) {
