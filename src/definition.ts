@@ -49,7 +49,7 @@ const getDefinitionName = (name: string, isDefinition?: boolean): string => {
  * @param defItem - 定义名的属性
  * @returns
  */
-const getVirtualPropertys = (
+const getVirtualProperties = (
   defName: string,
   defItem: ISwaggerResultDefinition,
 ): IDefinitionVirtualProperty[] => {
@@ -114,10 +114,31 @@ export const getDefinition = (
     if (isExistName) return;
 
     const defItem = definitions[key];
-    const props = getVirtualPropertys(name, defItem);
+    const props = getVirtualProperties(name, defItem);
 
     defMap.set(name, props);
   });
 
   return defMap;
+};
+
+export const generateDefinition = (
+  mapData: Map<string, IDefinitionVirtualProperty[]>,
+) => {
+  mapData.forEach((value, key, map) => {
+    console.log(`================ ${key} ================`);
+    console.log(value);
+    const props = value.reduce((prev, current) => {
+      prev.splice(
+        prev.length - 1,
+        0,
+        `/*
+          * ${current.description}
+          */
+      ${current.name}${current.required ? "" : "?"}: ${current.type}`,
+      );
+      return prev;
+    }, [`export interface ${key} {`, "}"]);
+    console.log(props);
+  });
 };
