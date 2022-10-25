@@ -1,7 +1,7 @@
 import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 
 import Logs from "./console.ts";
-import { generateDefinition, getDefinition } from "./definition.ts";
+import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { getSecurityDefinition } from "./security.ts";
 import { ISwaggerResult } from "./swagger.ts";
@@ -52,7 +52,7 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // 授权、请求头
   const securityVirtual = getSecurityDefinition(data.securityDefinitions);
   // console.log(defVirtual);
-  generateDefinition(defVirtual);
+  // generateDefinition(defVirtual);
 };
 
 if (import.meta.main) {

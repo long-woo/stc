@@ -30,3 +30,10 @@ export const createFile = async (filePath: string, content: string) => {
 export const copyFile = (from: string, to: string) => {
   copy(from, to, { overwrite: true });
 };
+
+export const propCommit = (commit: string) =>
+  commit
+    ? `\t/*
+\t * ${commit}
+\t */\n\t`
+    : "\t";

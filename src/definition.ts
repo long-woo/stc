@@ -121,24 +121,3 @@ export const getDefinition = (
 
   return defMap;
 };
-
-export const generateDefinition = (
-  mapData: Map<string, IDefinitionVirtualProperty[]>,
-) => {
-  mapData.forEach((value, key, map) => {
-    console.log(`================ ${key} ================`);
-    console.log(value);
-    const props = value.reduce((prev, current) => {
-      prev.splice(
-        prev.length - 1,
-        0,
-        `/*
-          * ${current.description}
-          */
-      ${current.name}${current.required ? "" : "?"}: ${current.type}`,
-      );
-      return prev;
-    }, [`export interface ${key} {`, "}"]);
-    console.log(props);
-  });
-};
