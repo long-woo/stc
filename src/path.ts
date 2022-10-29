@@ -4,6 +4,7 @@ import {
   IPathVirtualProperty,
   ISwaggerResultPath,
 } from "./swagger.ts";
+import { getRefType } from "./util.ts";
 
 /**
  * 获取请求对象
@@ -26,12 +27,12 @@ const getPathVirtualProperty = (
       required: param.required,
       description: param.description,
       format: param.format,
+      ref: getRefType(param.schema?.$ref ?? ""),
     }));
+
   // 响应
-  const response = pathMethod.responses[200]?.schema?.$ref?.replace(
-    "#/definitions/",
-    "",
-  ) ?? "";
+  const _res = pathMethod.responses[200];
+  const response = getRefType(_res?.schema?.$ref ?? "");
 
   const value: IPathVirtualProperty = {
     url,

@@ -6,6 +6,7 @@ import { getApiPath } from "./path.ts";
 import { getSecurityDefinition } from "./security.ts";
 import { ISwaggerResult } from "./swagger.ts";
 import { parserDefinition } from "./typescript/defintion.ts";
+import { parserPath } from "./typescript/path.ts";
 
 const main = () => {
   // 解析参数
@@ -53,7 +54,8 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   // 授权、请求头
   const securityVirtual = getSecurityDefinition(data.securityDefinitions);
   // console.log(defVirtual);
-  parserDefinition(defVirtual);
+  // parserDefinition(defVirtual);
+  parserPath(pathVirtual);
 };
 
 if (import.meta.main) {

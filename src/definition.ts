@@ -4,7 +4,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { caseTitle } from "./util.ts";
+import { caseTitle, getRefType } from "./util.ts";
 
 /**
  * 获取定义的名称
@@ -16,7 +16,7 @@ const getDefinitionName = (name: string, isDefinition?: boolean): string => {
   const genericKey = ["T", "K", "U"];
   const keyLength = genericKey.length;
 
-  name = name.replace("#/definitions/", "");
+  name = getRefType(name);
 
   // 处理泛型
   const newName = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {

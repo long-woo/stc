@@ -190,6 +190,7 @@ export interface IPathParameter {
    * 格式
    */
   format?: string;
+  ref?: string;
 }
 
 /**

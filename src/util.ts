@@ -31,6 +31,16 @@ export const copyFile = (from: string, to: string) => {
   copy(from, to, { overwrite: true });
 };
 
+/**
+ * ref type
+ * @param ref - ref
+ */
+export const getRefType = (ref: string) => ref.replace("#/definitions/", "");
+
+/**
+ * 属性注释
+ * @param commit - 注释
+ */
 export const propCommit = (commit: string) =>
   commit
     ? `\t/*
