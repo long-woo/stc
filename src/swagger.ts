@@ -44,7 +44,8 @@ interface ISwaggerResultTag {
 }
 
 export interface ISwaggerSchema {
-  $ref: string;
+  $ref?: string;
+  type?: string;
 }
 
 interface ISwaggerMethodResponseStatus {
@@ -190,6 +191,9 @@ export interface IPathParameter {
    * 格式
    */
   format?: string;
+  /**
+   * 自定义类型
+   */
   ref?: string;
 }
 
@@ -220,7 +224,10 @@ export interface IPathVirtualProperty {
   /**
    * 响应体
    */
-  response: string;
+  response: {
+    ref?: string;
+    type?: string;
+  };
   /**
    * 注释
    */
