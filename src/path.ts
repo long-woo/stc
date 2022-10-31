@@ -32,7 +32,6 @@ const getPathVirtualProperty = (
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema;
-  const _resSchemaRef = getRefType(_resSchema?.$ref ?? "");
 
   const value: IPathVirtualProperty = {
     url,
@@ -41,11 +40,12 @@ const getPathVirtualProperty = (
     requestHeaders: pathMethod.consumes,
     responseHeaders: pathMethod.produces,
     response: {
-      ref: _resSchemaRef,
+      ref: getRefType(_resSchema?.$ref ?? ""),
       type: _resSchema?.type,
     },
     summary: pathMethod.summary,
     description: pathMethod.description,
+    tags: pathMethod.tags,
   };
 
   return value;

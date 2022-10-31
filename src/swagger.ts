@@ -29,7 +29,12 @@ export type originalBaseType =
 /**
  * 参数类别
  */
-export type parameterCategory = "path" | "query" | "body" | "formData";
+export type parameterCategory =
+  | "path"
+  | "query"
+  | "body"
+  | "formData"
+  | "header";
 
 interface ISwaggerResultInfo {
   title: string;
@@ -236,6 +241,10 @@ export interface IPathVirtualProperty {
    * 描述
    */
   description: string;
+  /**
+   * 分组
+   */
+  tags: string[];
 }
 
 export interface ISecurityVirtualProperty {

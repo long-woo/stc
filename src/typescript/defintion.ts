@@ -1,25 +1,5 @@
 import { IDefinitionVirtualProperty } from "../swagger.ts";
-import { propCommit } from "../util.ts";
-
-/**
- * 类型转换为 typescript 的
- * @param type - 类型
- * @param ref - 引用
- * @returns
- */
-const convertType = (type: string, ref = "any") => {
-  // 若 type 与 ref 相等，则表示为自定义类型
-  if (type === ref) return type;
-
-  const _action: Record<string, string> = {
-    string: "string",
-    integer: "number",
-    boolean: "boolean",
-    array: `Array<${ref}>`,
-  };
-
-  return _action[type];
-};
+import { convertType, propCommit } from "../util.ts";
 
 /**
  * 解析定义
