@@ -1,4 +1,8 @@
-import { IPathVirtualProperty } from "../swagger.ts";
+import {
+  IPathParameter,
+  IPathVirtualProperty,
+  parameterCategory,
+} from "../swagger.ts";
 import { caseTitle, convertType, propCommit } from "../util.ts";
 
 interface IPathParams {
@@ -7,8 +11,95 @@ interface IPathParams {
   ref?: string;
   commit?: string;
   required?: boolean;
-  category?: string;
+  category?: parameterCategory;
 }
+
+interface IApiRealParams {
+  path?: string;
+  query?: string;
+  body?: string;
+  formData?: string;
+  header?: string;
+}
+
+interface IApiParams {
+  def?: Array<string>;
+  ref?: IApiRealParams;
+  commit?: Array<string>;
+}
+
+/**
+ * 解析接口参数
+ * @param parameters - 接口参数
+ * @param key - 接口名称
+ * @returns
+ */
+const parserParams = (parameters: IPathParameter[], key: string) =>
+  parameters.reduce(
+    (prev: IPathParams[], current) => {
+      const _category = prev.find((item) => item.category === current.category);
+
+      let _ref = `${current.name}${current.required ? "" : "?"}: ${
+        convertType(current.type, current.ref)
+      }`;
+
+      if (_category) {
+        _ref = `${propCommit(current.description ?? "")}${_ref}`;
+
+        if (_category.commit !== _category.name) {
+          const _defName = `${caseTitle(key)}${
+            caseTitle(current.category)
+          }Params`;
+
+          _category.def = [
+            `export interface ${_defName} {`,
+            `${propCommit(_category.commit ?? "")}${_category.ref ?? ""}`,
+            _ref,
+            "}",
+          ];
+
+          _category.commit = current.category;
+          _category.name = current.category;
+          _category.ref = `${current.category}: ${_defName}`;
+        } else {
+          _category.def?.splice(_category.def.length - 1, 0, _ref);
+        }
+      } else {
+        prev.push({
+          name: current.name,
+          commit: current.description ?? current.category,
+          required: current.required,
+          category: current.category,
+          ref: _ref,
+          def: [],
+        });
+      }
+
+      return prev;
+    },
+    [],
+  );
+
+/**
+ * 接口注释
+ * @param summary - 主注释
+ * @param params - 参数注释
+ * @param description -次要注释
+ * @returns
+ */
+const methodCommit = (
+  summary: string,
+  params?: Array<string>,
+  description?: string,
+) => {
+  const _commit = ["/**", `* ${summary}`];
+
+  description && _commit.push(`* @description ${description}`);
+  params?.length && _commit.push(...params);
+  _commit.push("*/");
+
+  return _commit.join("\n ");
+};
 
 /**
  * 解析接口
@@ -16,59 +107,45 @@ interface IPathParams {
  */
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   data.forEach((value, key) => {
-    console.log(key);
-    console.log(value);
-    const _parameters = value.parameters.reduce(
-      (prev: IPathParams[], current) => {
-        const _category = prev.find((item) =>
-          item.category === current.category
-        );
+    const _parameters = parserParams(value.parameters, key);
 
-        let _ref = `${current.name}${current.required ? "" : "?"}: ${
-          convertType(current.type, current.ref)
-        }`;
+    const _params = _parameters.reduce((prev: IApiParams, current) => {
+      const _def = current.ref;
+      const _refName = current.category;
 
-        if (_category) {
-          _ref = `${propCommit(current.description ?? "")}${_ref}`;
+      prev.commit?.push(
+        `* @param ${current.name} - ${current.commit ?? current.name}`,
+      );
+      _def && prev.def?.push(_def);
 
-          if (_category.commit !== _category.name) {
-            const _defName = `${caseTitle(key)}${
-              caseTitle(current.category)
-            }Params`;
-
-            _category.commit = current.category;
-            _category.name = current.category;
-            _category.ref = `${current.category}: ${_defName}`;
-            _category.def = [`export interface ${_defName} {`, _ref, "}"];
-          } else {
-            _category.def?.splice(_category.def.length - 1, 0, _ref);
-          }
+      if (prev.ref) {
+        if (_refName === "body") {
+          prev.ref.body = current.name;
         } else {
-          prev.push({
-            name: current.name,
-            commit: current.description ?? current.category,
-            required: current.required,
-            category: current.category,
-            ref: _ref,
-            def: [],
-          });
+          _refName &&
+            (prev.ref[_refName] = current.def?.length
+              ? current.name
+              : `{ ${current.name} }`);
         }
+      }
 
-        return prev;
-      },
-      [],
-    );
-    console.log(_parameters);
-
+      return prev;
+    }, { commit: [], def: [], ref: {} });
+    console.log(_params);
     const _responseDef = convertType(
       value.response.type ?? "",
       value.response.ref,
     );
 
-    // console.log(`${_params.def?.join("\n")}`, _params.commit, _params.name);
-
     console.log(
-      `export const ${key} = () => webClient.${value.method}<${_responseDef}>('${value.url}')`,
+      methodCommit(value.summary || key, _params.commit, value.description),
+    );
+    console.log(
+      `export const ${key} = (${
+        _params.def?.join(", ")
+      }) => webClient.${value.method}<${_responseDef}>('${value.url}', ${
+        JSON.stringify(_params.ref).replaceAll('"', "")
+      })`,
     );
   });
 };
