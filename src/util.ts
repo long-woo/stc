@@ -55,6 +55,7 @@ export const convertType = (type: string, ref?: string) => {
     integer: "number",
     boolean: "boolean",
     array: `Array<${ref || "unknown"}>`,
+    object: "object",
   };
 
   return _action[type] || "unknown";
