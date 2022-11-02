@@ -4,6 +4,9 @@ import {
   parameterCategory,
 } from "../swagger.ts";
 import { caseTitle, convertType, propCommit } from "../util.ts";
+import Logs from "../console.ts";
+
+const apiMap = new Map<string, Array<string>>();
 
 interface IPathParams {
   name?: string;
@@ -24,6 +27,7 @@ interface IApiRealParams {
 
 interface IApiParams {
   def?: Array<string>;
+  defType?: string;
   ref?: IApiRealParams;
   commit?: Array<string>;
 }
@@ -43,6 +47,7 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
         convertType(current.type, current.ref)
       }`;
 
+      // 若分类存在，组合成对象
       if (_category) {
         _ref = `${propCommit(current.description ?? "")}${_ref}`;
 
@@ -107,12 +112,19 @@ const methodCommit = (
  */
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   data.forEach((value, key) => {
+    console.log(value);
+    const tag = value.tags?.[0];
+    if (!tag) {
+      Logs.error(`${value.url} 未定义 tags`);
+      return;
+    }
     const _parameters = parserParams(value.parameters, key);
 
     const _params = _parameters.reduce((prev: IApiParams, current) => {
       const _def = current.ref;
       const _refName = current.category;
 
+      prev.defType = current.def?.join("\n");
       prev.commit?.push(
         `* @param ${current.name} - ${current.commit ?? current.name}`,
       );
@@ -130,13 +142,14 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
       }
 
       return prev;
-    }, { commit: [], def: [], ref: {} });
-    console.log(_params);
+    }, { commit: [], def: [], ref: {}, defType: "" });
+
     const _responseDef = convertType(
       value.response.type ?? "",
       value.response.ref,
     );
 
+    // console.log(_params.defType);
     console.log(
       methodCommit(value.summary || key, _params.commit, value.description),
     );
@@ -147,5 +160,22 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
         JSON.stringify(_params.ref).replaceAll('"', "")
       })`,
     );
+    const _defType = _params.defType;
+    const _methodCommit = methodCommit(
+      value.summary || key,
+      _params.commit,
+      value.description,
+    );
+    const _method = `export const ${key} = (${
+      _params.def?.join(", ")
+    }) => webClient.${value.method}<${_responseDef}>('${value.url}', ${
+      JSON.stringify(_params.ref).replaceAll('"', " ")
+    })`;
+
+    if (apiMap.has(tag)) {
+      const _apiMap = apiMap.get(tag);
+    } else {
+      // apiMap.set(tag, [_defType]);
+    }
   });
 };
