@@ -62,16 +62,19 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   const pathData = parserPath(pathVirtual);
 
   pathData.forEach((api, key) => {
-    const _apiContent: Array<string> = [
-      `import webClient from './shared/fetch'`,
-    ];
+    const _import = api.import;
+    const _apiImport = [`import webClient from './shared/fetch'`];
+    const _apiContent: Array<string> = [];
 
-    api.import?.length &&
-      _apiContent.push(
-        `import type { ${api.import.join(", ")} } from './types'`,
+    _import?.length &&
+      _apiImport.push(
+        `import type { ${_import.join(", ")} } from './types'`,
       );
+
+    _apiContent.push(_apiImport.join("\n"));
     api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
     api.export?.length && _apiContent.push(api.export.join("\n\n"));
+
     createFile(`${outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
 };

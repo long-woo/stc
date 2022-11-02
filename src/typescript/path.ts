@@ -94,51 +94,54 @@ const methodCommit = (
  * @returns
  */
 const parserParams = (parameters: IPathParameter[], key: string) =>
-  parameters?.reduce(
-    (prev: IPathParams[], current) => {
-      const _category = prev.find((item) => item.category === current.category);
+  parameters?.sort((_a, _b) => Number(_b.required) - Number(_a.required))
+    ?.reduce(
+      (prev: IPathParams[], current) => {
+        const _category = prev.find((item) =>
+          item.category === current.category
+        );
 
-      let _ref = `${current.name}${current.required ? "" : "?"}: ${
-        convertType(current.type, current.ref)
-      }`;
+        let _ref = `${current.name}${current.required ? "" : "?"}: ${
+          convertType(current.type, current.ref)
+        }`;
 
-      // 若分类存在，组合成对象
-      if (_category) {
-        _ref = `${propCommit(current.description ?? "")}${_ref}`;
+        // 若分类存在，组合成对象
+        if (_category) {
+          _ref = `${propCommit(current.description ?? "")}${_ref}`;
 
-        if (_category.commit !== _category.name) {
-          const _defName = `${caseTitle(key)}${
-            caseTitle(current.category)
-          }Params`;
+          if (_category.commit !== _category.name) {
+            const _defName = `${caseTitle(key)}${
+              caseTitle(current.category)
+            }Params`;
 
-          _category.def = [
-            `export interface ${_defName} {`,
-            `${propCommit(_category.commit ?? "")}${_category.ref ?? ""}`,
-            _ref,
-            "}",
-          ];
+            _category.def = [
+              `export interface ${_defName} {`,
+              `${propCommit(_category.commit ?? "")}${_category.ref ?? ""}`,
+              _ref,
+              "}",
+            ];
 
-          _category.commit = current.category;
-          _category.name = current.category;
-          _category.ref = `${current.category}: ${_defName}`;
+            _category.commit = current.category;
+            _category.name = current.category;
+            _category.ref = `${current.category}: ${_defName}`;
+          } else {
+            _category.def?.splice(_category.def.length - 1, 0, _ref);
+          }
         } else {
-          _category.def?.splice(_category.def.length - 1, 0, _ref);
+          prev.push({
+            name: current.name,
+            commit: current.description ?? current.category,
+            required: current.required,
+            category: current.category,
+            ref: _ref,
+            def: [],
+          });
         }
-      } else {
-        prev.push({
-          name: current.name,
-          commit: current.description ?? current.category,
-          required: current.required,
-          category: current.category,
-          ref: _ref,
-          def: [],
-        });
-      }
 
-      return prev;
-    },
-    [],
-  );
+        return prev;
+      },
+      [],
+    );
 
 /**
  * 解析接口数据
