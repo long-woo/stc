@@ -53,7 +53,7 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   const pathVirtual = getApiPath(data.paths);
   // 授权、请求头
   const securityVirtual = getSecurityDefinition(data.securityDefinitions);
-  // console.log(defVirtual);
+  // console.log(securityVirtual);
   // parserDefinition(defVirtual);
   parserPath(pathVirtual);
 };

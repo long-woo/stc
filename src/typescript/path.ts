@@ -6,14 +6,30 @@ import {
 import { caseTitle, convertType, propCommit } from "../util.ts";
 import Logs from "../console.ts";
 
-const apiMap = new Map<string, Array<string>>();
-
 interface IPathParams {
+  /**
+   * 接口参数名称
+   */
   name?: string;
+  /**
+   * 接口参数的自定义类型
+   */
   def?: Array<string>;
+  /**
+   * 接口参数
+   */
   ref?: string;
+  /**
+   * 接口参数注释
+   */
   commit?: string;
+  /**
+   * 接口参数是否必须
+   */
   required?: boolean;
+  /**
+   * 接口参数分类
+   */
   category?: parameterCategory;
 }
 
@@ -26,11 +42,50 @@ interface IApiRealParams {
 }
 
 interface IApiParams {
+  /**
+   * 接口方法形参
+   */
   def?: Array<string>;
+  /**
+   * 接口方法自定义的类型
+   */
   defType?: string;
+  /**
+   * 接口方法传入到运行时方法的参数
+   */
   ref?: IApiRealParams;
+  /**
+   * 接口方法参数注释
+   */
   commit?: Array<string>;
 }
+
+interface IApiFile {
+  import?: Array<string>;
+  interface?: Array<string>;
+  export?: Array<string>;
+}
+
+/**
+ * 接口注释
+ * @param summary - 主注释
+ * @param params - 参数注释
+ * @param description -次要注释
+ * @returns
+ */
+const methodCommit = (
+  summary: string,
+  params?: Array<string>,
+  description?: string,
+) => {
+  const _commit = ["/**", `* ${summary}`];
+
+  description && _commit.push(`* @description ${description}`);
+  params?.length && _commit.push(...params);
+  _commit.push("*/");
+
+  return _commit.join("\n ");
+};
 
 /**
  * 解析接口参数
@@ -39,7 +94,7 @@ interface IApiParams {
  * @returns
  */
 const parserParams = (parameters: IPathParameter[], key: string) =>
-  parameters.reduce(
+  parameters?.reduce(
     (prev: IPathParams[], current) => {
       const _category = prev.find((item) => item.category === current.category);
 
@@ -86,24 +141,74 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
   );
 
 /**
- * 接口注释
- * @param summary - 主注释
- * @param params - 参数注释
- * @param description -次要注释
+ * 解析接口数据
+ * @param parameters - 接口参数
+ * @param key - 接口名称
  * @returns
  */
-const methodCommit = (
-  summary: string,
-  params?: Array<string>,
-  description?: string,
-) => {
-  const _commit = ["/**", `* ${summary}`];
+const parserApiData = (parameters: IPathParameter[], key: string) => {
+  const _parameters = parserParams(parameters, key);
 
-  description && _commit.push(`* @description ${description}`);
-  params?.length && _commit.push(...params);
-  _commit.push("*/");
+  const _params = _parameters?.reduce((prev: IApiParams, current) => {
+    const _def = current.ref;
+    const _refName = current.category;
 
-  return _commit.join("\n ");
+    prev.defType = current.def?.join("\n");
+    prev.commit?.push(
+      `* @param ${current.name} - ${current.commit ?? current.name}`,
+    );
+    _def && prev.def?.push(_def);
+
+    if (prev.ref) {
+      if (_refName === "body") {
+        prev.ref.body = current.name;
+      } else {
+        _refName &&
+          (prev.ref[_refName] = current.def?.length
+            ? current.name
+            : `{ ${current.name} }`);
+      }
+    }
+
+    return prev;
+  }, { commit: [], def: [], ref: {}, defType: "" });
+
+  return _params;
+};
+
+/**
+ * 生成 Api
+ * @param data - 接口数据
+ * @param key - 接口名称
+ * @returns
+ */
+const generateApi = (data: IPathVirtualProperty, key: string) => {
+  const _params = parserApiData(data.parameters, key);
+
+  const _import = data.response.ref;
+  const _responseDef = convertType(
+    data.response.type ?? "",
+    _import,
+  );
+
+  const _defType = _params?.defType;
+  const _methodCommit = methodCommit(
+    data.summary || key,
+    _params?.commit,
+    data.description,
+  );
+  const _method = `${_methodCommit}
+export const ${key} = (${
+    _params?.def?.join(", ")
+  }) => webClient.${data.method}<${_responseDef}>('${data.url}', ${
+    JSON.stringify(_params?.ref, undefined, 2)?.replaceAll('"', "")
+  })`;
+
+  return {
+    import: _import,
+    interface: _defType,
+    export: _method,
+  };
 };
 
 /**
@@ -111,71 +216,31 @@ const methodCommit = (
  * @param data - 接口信息
  */
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
+  const apiMap = new Map<string, IApiFile>();
+
   data.forEach((value, key) => {
-    console.log(value);
-    const tag = value.tags?.[0];
-    if (!tag) {
-      Logs.error(`${value.url} 未定义 tags`);
+    const _tag = value.tags?.[0];
+    if (!_tag) {
+      Logs.error(`${value.url} 未定义 tags，跳过解析`);
       return;
     }
-    const _parameters = parserParams(value.parameters, key);
 
-    const _params = _parameters.reduce((prev: IApiParams, current) => {
-      const _def = current.ref;
-      const _refName = current.category;
+    const _api = generateApi(value, key);
 
-      prev.defType = current.def?.join("\n");
-      prev.commit?.push(
-        `* @param ${current.name} - ${current.commit ?? current.name}`,
-      );
-      _def && prev.def?.push(_def);
+    if (apiMap.has(_tag)) {
+      const _apiMap = apiMap.get(_tag);
 
-      if (prev.ref) {
-        if (_refName === "body") {
-          prev.ref.body = current.name;
-        } else {
-          _refName &&
-            (prev.ref[_refName] = current.def?.length
-              ? current.name
-              : `{ ${current.name} }`);
-        }
-      }
-
-      return prev;
-    }, { commit: [], def: [], ref: {}, defType: "" });
-
-    const _responseDef = convertType(
-      value.response.type ?? "",
-      value.response.ref,
-    );
-
-    // console.log(_params.defType);
-    console.log(
-      methodCommit(value.summary || key, _params.commit, value.description),
-    );
-    console.log(
-      `export const ${key} = (${
-        _params.def?.join(", ")
-      }) => webClient.${value.method}<${_responseDef}>('${value.url}', ${
-        JSON.stringify(_params.ref).replaceAll('"', "")
-      })`,
-    );
-    const _defType = _params.defType;
-    const _methodCommit = methodCommit(
-      value.summary || key,
-      _params.commit,
-      value.description,
-    );
-    const _method = `export const ${key} = (${
-      _params.def?.join(", ")
-    }) => webClient.${value.method}<${_responseDef}>('${value.url}', ${
-      JSON.stringify(_params.ref).replaceAll('"', " ")
-    })`;
-
-    if (apiMap.has(tag)) {
-      const _apiMap = apiMap.get(tag);
+      _api.interface && _apiMap?.interface?.push(_api.interface);
+      _apiMap?.export?.push(_api.export);
     } else {
-      // apiMap.set(tag, [_defType]);
+      apiMap.set(_tag, {
+        import: _api.import ? [_api.import] : [],
+        interface: _api.interface ? [_api.interface] : [],
+        export: [_api.export],
+      });
     }
   });
+
+  console.log(apiMap);
+  return;
 };
