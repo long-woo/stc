@@ -1,5 +1,31 @@
 import { IDefinitionVirtualProperty } from "../swagger.ts";
-import { convertType, propCommit } from "../util.ts";
+import { caseTitle, convertType, propCommit } from "../util.ts";
+
+/**
+ * 解析枚举
+ * @param defName - 定义类型的名称
+ * @param propName - 属性名称
+ * @param data - 枚举数据
+ * @returns
+ */
+const parserEnum = (
+  defName: string,
+  propName: string,
+  data?: Array<string>,
+) => {
+  const _enumName = `${defName}${caseTitle(propName)}`;
+
+  return data?.reduce((prev, current, index) => {
+    const _comma = index === data.length - 1 ? "" : ",";
+
+    prev.value.splice(
+      prev.value.length - 1,
+      0,
+      `\t${current} = '${current}'${_comma}`,
+    );
+    return prev;
+  }, { name: _enumName, value: [`export enum ${_enumName} {`, "}"] });
+};
 
 /**
  * 解析定义
@@ -8,13 +34,19 @@ import { convertType, propCommit } from "../util.ts";
 export const parserDefinition = (
   data: Map<string, IDefinitionVirtualProperty[]>,
 ) => {
-  let _res = "";
+  const _res: Array<string> = [];
 
   data.forEach((value, key) => {
     const props = value.reduce((prev, current) => {
-      const _type = current.enumOption?.length
-        ? current.enumOption.join(" | ")
-        : convertType(current.type, current.ref);
+      const _enum = current.enumOption;
+      const _enumData = parserEnum(key, current.name, _enum);
+
+      let _type = convertType(current.type, current.ref);
+
+      if (_enum?.length && _enumData?.name) {
+        _type = _enumData.name;
+        _res.push(_enumData.value.join("\n"));
+      }
 
       prev.splice(
         prev.length - 1,
@@ -26,8 +58,8 @@ export const parserDefinition = (
       return prev;
     }, [`export interface ${key} {`, "}"]);
 
-    _res = props.join("\n");
+    _res.push(props.join("\n"));
   });
 
-  return _res;
+  return _res.join("\n\n");
 };

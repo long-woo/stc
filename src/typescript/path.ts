@@ -241,6 +241,5 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
     }
   });
 
-  console.log(apiMap);
-  return;
+  return apiMap;
 };

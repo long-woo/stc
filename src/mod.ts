@@ -7,6 +7,7 @@ import { getSecurityDefinition } from "./security.ts";
 import { ISwaggerResult } from "./swagger.ts";
 import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
+import { copyFile, createFile } from "./util.ts";
 
 const main = () => {
   // 解析参数
@@ -45,7 +46,7 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   Logs.clear();
 
   // 复制运行时需要的文件
-  // copyFile("./src/typescript/shared", `${outDir}/shared`);
+  copyFile("./src/typescript/shared", `${outDir}/shared`);
 
   // 生成定义
   const defVirtual = getDefinition(data.definitions);
@@ -53,9 +54,11 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   const pathVirtual = getApiPath(data.paths);
   // 授权、请求头
   const securityVirtual = getSecurityDefinition(data.securityDefinitions);
-  // console.log(securityVirtual);
-  // parserDefinition(defVirtual);
-  parserPath(pathVirtual);
+  // console.log(defVirtual);
+  const defFileContent = parserDefinition(defVirtual);
+
+  createFile(`${outDir}/types.ts`, defFileContent);
+  // parserPath(pathVirtual);
 };
 
 if (import.meta.main) {
