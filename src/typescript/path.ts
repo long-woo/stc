@@ -230,6 +230,10 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
     if (apiMap.has(_tag)) {
       const _apiMap = apiMap.get(_tag);
 
+      if (_api.import && !_apiMap?.import?.includes(_api.import)) {
+        _apiMap?.import?.push(_api.import);
+      }
+
       _api.interface && _apiMap?.interface?.push(_api.interface);
       _apiMap?.export?.push(_api.export);
     } else {

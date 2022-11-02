@@ -58,7 +58,22 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
   const defFileContent = parserDefinition(defVirtual);
 
   createFile(`${outDir}/types.ts`, defFileContent);
-  // parserPath(pathVirtual);
+
+  const pathData = parserPath(pathVirtual);
+
+  pathData.forEach((api, key) => {
+    const _apiContent: Array<string> = [
+      `import webClient from './shared/fetch'`,
+    ];
+
+    api.import?.length &&
+      _apiContent.push(
+        `import type { ${api.import.join(", ")} } from './types'`,
+      );
+    api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
+    api.export?.length && _apiContent.push(api.export.join("\n\n"));
+    createFile(`${outDir}/${key}.ts`, _apiContent.join("\n\n"));
+  });
 };
 
 if (import.meta.main) {
