@@ -1,11 +1,17 @@
 // 由 swagger2code 生成
+import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import { IDefaultObject, IRequestConfig, IRequestParams } from "./interface.ts";
+import { IDefaultObject } from "./interface.ts";
 
 /**
  * API 请求
  */
-export class webClient {
+export class WebClient {
+  private static axiosInstance: AxiosInstance;
+  // private static onError: ((message: string) => void) | undefined;
+  // private static errorIgnore: string[] = [];
+  // private static onLogin: (() => void) | undefined;
+
   /**
    * 生成 URL
    * @param url - 需要处理的 URL
@@ -23,112 +29,119 @@ export class webClient {
     return newURL;
   }
 
+  private static request<T>(
+    url: string,
+    method: Method,
+    req?: IDefaultObject<unknown>,
+  ) {
+    const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
+    const _formData: IDefaultObject = req?.formData as IDefaultObject;
+
+    let _data: IDefaultObject | FormData | unknown = req?.data;
+
+    // 处理 FormData 数据
+    if (_formData) {
+      const formData = new FormData();
+
+      Object.keys(_formData).forEach((key) => {
+        formData.append(key, _formData[key]);
+      });
+
+      _data = formData;
+    }
+
+    return this.axiosInstance.request<T, T>({
+      url: _url,
+      method,
+      data: _data,
+      params: req?.query,
+      headers: req?.header,
+    });
+  }
+
+  public static createAxios(
+    config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
+      /**
+  		 * 错误回调函数
+  		 */
+      error?: (message: string) => void;
+      /**
+  		 * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+  		 */
+      errorIgnore?: string[];
+    },
+  ) {
+    this.axiosInstance = axios.create({
+      timeout: config.timeout ?? 5000,
+      baseURL: config.baseURL,
+      withCredentials: config.withCredentials ?? false,
+    });
+
+    // this.onError = config.error;
+    // this.errorIgnore = config.errorIgnore ?? [];
+
+    return this.axiosInstance;
+  }
+
   /**
    * GET 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    */
   public static get<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.get(url, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "get", req);
   }
 
   /**
    * POST 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    */
   public static post<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    // const formData = new FormData();
-
-    // formData.append("uploadFile", uploadFile);
-
-    // return webClient.post<IResponseMessage>("/api/file/upload", {
-    //   body: formData,
-    // }, {
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // });
-
-    return axios.post(url, req?.body, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "post", req);
   }
 
   /**
    * PUT 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    */
   public static put<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.put(url, req?.body, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "put", req);
   }
 
   /**
    * DELETE 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    */
   public static delete<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.delete(url, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "delete", req);
   }
 
   /**
    * HEAD 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    * @returns
    */
   public static head<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.delete(url, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "head", req);
   }
 
   /**
@@ -140,34 +153,23 @@ export class webClient {
    */
   public static options<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.options(url, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "options", req);
   }
 
   /**
    * PATCH 请求
    * @param url - 请求地址
    * @param req - 参数，可选
-   * @param config - 请求配置，可选
    * @returns
    */
   public static patch<T>(
     url: string,
-    req?: IRequestParams,
-    config?: IRequestConfig,
+    req?: IDefaultObject,
   ): Promise<T> {
-    url = this.generateURL(url, req?.path as IDefaultObject);
-
-    return axios.patch(url, req?.body, {
-      params: req?.query,
-      ...config,
-    });
+    return this.request<T>(url, "patch", req);
   }
 }
+
+export default WebClient;
