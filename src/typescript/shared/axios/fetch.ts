@@ -1,33 +1,17 @@
 // 由 swagger2code 生成
 import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import { IDefaultObject } from "./interface.ts";
+import type { IDefaultObject } from "../webClientBase";
+import { WebClientBase } from "../webClientBase.ts";
 
 /**
  * API 请求
  */
-export class WebClient {
+export class WebClient extends WebClientBase {
   private static axiosInstance: AxiosInstance;
   // private static onError: ((message: string) => void) | undefined;
   // private static errorIgnore: string[] = [];
   // private static onLogin: (() => void) | undefined;
-
-  /**
-   * 生成 URL
-   * @param url - 需要处理的 URL
-   * @param path - 路由参数
-   */
-  private static generateURL(url: string, path?: IDefaultObject) {
-    // 替换路由参数
-    const newURL = url.replace(
-      /[\{|:](\w+)[\}]?/gi,
-      (_key: string, _value: string) => {
-        return path ? path[_value] : "";
-      },
-    );
-
-    return newURL;
-  }
 
   private static request<T>(
     url: string,
