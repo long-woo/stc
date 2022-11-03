@@ -265,3 +265,14 @@ export interface ISecurityVirtualProperty {
    */
   scopes: IDefaultObject;
 }
+
+export interface ISwaggerOptions {
+  /**
+   * 输出目录
+   */
+  outDir?: string;
+  /**
+   * 平台。默认：axios
+   */
+  platform?: "axios" | "wechat";
+}

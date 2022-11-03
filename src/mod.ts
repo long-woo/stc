@@ -3,13 +3,18 @@ import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import Logs from "./console.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
-import { getSecurityDefinition } from "./security.ts";
-import { ISwaggerResult } from "./swagger.ts";
+import {
+  IDefaultObject,
+  ISwaggerOptions,
+  ISwaggerResult,
+  ISwaggerResultDefinition,
+  ISwaggerResultPath,
+} from "./swagger.ts";
 import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
 import { copyFile, createFile } from "./util.ts";
 
-const main = () => {
+const main = (): ISwaggerOptions => {
   // 解析参数
   const args = parse(Deno.args);
 
@@ -21,8 +26,12 @@ const main = () => {
     outDir = args.out;
   }
 
+  // 平台。axios、wechat
+  const platform = args.platform ?? "axios";
+
   return {
     outDir,
+    platform,
   };
 };
 
@@ -39,31 +48,28 @@ const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
   return data;
 };
 
-const generateApi = async (urlOrPath: string, outDir: string) => {
-  const data = await getSwaggerData(urlOrPath);
-
-  // 清空控制台信息
-  Logs.clear();
-
-  // 复制运行时需要的文件
-  copyFile("./src/typescript/shared", `${outDir}/shared`);
-
-  // 生成定义
-  const defVirtual = getDefinition(data.definitions);
-  // 生成路径
-  const pathVirtual = getApiPath(data.paths);
-  // 授权、请求头
-  const securityVirtual = getSecurityDefinition(data.securityDefinitions);
-  // console.log(defVirtual);
+const generateDefFile = (
+  definitions: IDefaultObject<ISwaggerResultDefinition>,
+  options: ISwaggerOptions,
+) => {
+  const defVirtual = getDefinition(definitions);
   const defFileContent = parserDefinition(defVirtual);
 
-  createFile(`${outDir}/types.ts`, defFileContent);
+  createFile(`${options.outDir}/types.ts`, defFileContent);
+};
 
+const generateApiMethodFile = (
+  paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
+  options: ISwaggerOptions,
+) => {
+  const pathVirtual = getApiPath(paths);
   const pathData = parserPath(pathVirtual);
 
   pathData.forEach((api, key) => {
     const _import = api.import;
-    const _apiImport = [`import webClient from './shared/fetch'`];
+    const _apiImport = [
+      `import webClient from './shared/${options.platform}/fetch'`,
+    ];
     const _apiContent: Array<string> = [];
 
     _import?.length &&
@@ -75,14 +81,30 @@ const generateApi = async (urlOrPath: string, outDir: string) => {
     api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
     api.export?.length && _apiContent.push(api.export.join("\n\n"));
 
-    createFile(`${outDir}/${key}.ts`, _apiContent.join("\n\n"));
+    createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
 };
 
+const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
+  const data = await getSwaggerData(urlOrPath);
+
+  // 清空控制台信息
+  Logs.clear();
+
+  // 复制运行时需要的文件
+  copyFile(
+    `./src/typescript/shared`,
+    `${options.outDir}/shared`,
+  );
+
+  generateDefFile(data.definitions, options);
+  generateApiMethodFile(data.paths, options);
+};
+
 if (import.meta.main) {
-  const { outDir } = main();
+  const options = main();
 
   // http://demodata.liangyihui.net/smart/v2/api-docs
   // https://petstore.swagger.io/v2/swagger.json
-  generateApi("https://petstore.swagger.io/v2/swagger.json", outDir);
+  generateApi("https://petstore.swagger.io/v2/swagger.json", options);
 }

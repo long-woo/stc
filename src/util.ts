@@ -1,5 +1,14 @@
 import { copy, ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
 
+interface ICopyFileOptions {
+  /**
+   * 覆盖现有文件或目录。默认为 true
+   */
+  overwrite?: boolean;
+  // ignore?: Array<string> | string | RegExp;
+  // include?: Array<string> | string;
+}
+
 /**
  * 首字母大写
  * @param str - 字符
@@ -27,8 +36,12 @@ export const createFile = async (filePath: string, content: string) => {
  * @param from - 复制位置
  * @param to - 目标位置
  */
-export const copyFile = (from: string, to: string) => {
-  copy(from, to, { overwrite: true });
+export const copyFile = (
+  from: string,
+  to: string,
+  options: ICopyFileOptions = { overwrite: true },
+) => {
+  copy(from, to, { overwrite: options.overwrite });
 };
 
 /**
