@@ -200,12 +200,14 @@ const generateApi = (data: IPathVirtualProperty, key: string) => {
     _params?.commit,
     data.description,
   );
+  const _methodParam = _params.ref
+    ? `, ${JSON.stringify(_params.ref, undefined, 2)?.replaceAll('"', "")}`
+    : "";
+
   const _method = `${_methodCommit}
 export const ${key} = (${
-    _params?.def?.join(", ")
-  }) => webClient.${data.method}<${_responseDef}>('${data.url}', ${
-    JSON.stringify(_params?.ref, undefined, 2)?.replaceAll('"', "")
-  })`;
+    _params?.def?.join(", ") ?? ""
+  }) => webClient.${data.method}<${_responseDef}>('${data.url}'${_methodParam})`;
 
   return {
     import: _import,

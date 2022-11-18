@@ -18,6 +18,12 @@ export const caseTitle = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
+ * 读取文件
+ * @param filePath - 文件路径
+ */
+export const readFile = (filePath: string) => Deno.readTextFile(filePath);
+
+/**
  * 创建文件。如果不存在会被自动创建，存在会被覆盖
  *
  * @param filePath - 文件路径

@@ -12,7 +12,7 @@ import {
 } from "./swagger.ts";
 import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
-import { copyFile, createFile } from "./util.ts";
+import { copyFile, createFile, readFile } from "./util.ts";
 
 const main = (): ISwaggerOptions => {
   // 解析参数
@@ -30,6 +30,7 @@ const main = (): ISwaggerOptions => {
   const platform = args.platform ?? "axios";
 
   return {
+    url: args.url,
     outDir,
     platform,
   };
@@ -41,6 +42,16 @@ const main = (): ISwaggerOptions => {
  * @returns
  */
 const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
+  if (!/^http(s?):\/\//.test(urlOrPath)) {
+    const content = await readFile(urlOrPath);
+
+    try {
+      return JSON.parse(content) as unknown as ISwaggerResult;
+    } catch (error) {
+      throw new Error(`api 文件解析失败。原因：${error}`);
+    }
+  }
+
   // 从远程地址获取 Swagger 数据
   const res = await fetch(urlOrPath);
   const data = await res.json();
@@ -106,5 +117,5 @@ if (import.meta.main) {
 
   // http://demodata.liangyihui.net/smart/v2/api-docs
   // https://petstore.swagger.io/v2/swagger.json
-  generateApi("https://petstore.swagger.io/v2/swagger.json", options);
+  generateApi(options.url, options);
 }

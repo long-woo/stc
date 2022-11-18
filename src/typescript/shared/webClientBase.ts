@@ -1,5 +1,4 @@
-export interface IDefaultObject<T = string> {
-  [key: string]: T;
+export interface IDefaultObject extends Record<string, any> {
 }
 
 export class WebClientBase {

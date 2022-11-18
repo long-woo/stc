@@ -267,6 +267,7 @@ export interface ISecurityVirtualProperty {
 }
 
 export interface ISwaggerOptions {
+  url: string;
   /**
    * 输出目录
    */
