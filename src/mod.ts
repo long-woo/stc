@@ -65,8 +65,8 @@ const generateDefFile = (
 ) => {
   const defVirtual = getDefinition(definitions);
   const defFileContent = parserDefinition(defVirtual);
-  console.log(defFileContent);
-  // createFile(`${options.outDir}/types.ts`, defFileContent);
+
+  createFile(`${options.outDir}/types.ts`, defFileContent);
 };
 
 const generateApiMethodFile = (
@@ -103,13 +103,13 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   Logs.clear();
 
   // 复制运行时需要的文件
-  // copyFile(
-  //   `./src/typescript/shared`,
-  //   `${options.outDir}/shared`,
-  // );
+  copyFile(
+    `./src/typescript/shared`,
+    `${options.outDir}/shared`,
+  );
 
   generateDefFile(data.definitions, options);
-  // generateApiMethodFile(data.paths, options);
+  generateApiMethodFile(data.paths, options);
 };
 
 if (import.meta.main) {

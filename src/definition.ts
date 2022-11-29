@@ -158,12 +158,12 @@ export const getDefinition = (
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();
 
   Object.keys(definitions).forEach((key) => {
-    if (key !== "ApiResponse«List«PatientFormInputProofreadTableDto»»") {
-      return;
-    }
-    const def = getDefinitionNameMapping(key, true);
+    // if (key !== "ApiResponse«List«PatientFormInputProofreadTableDto»»") {
+    //   return;
+    // }
+    // const def = getDefinitionNameMapping(key, true);
     const name = getDefinitionName(key, true);
-    console.log(def);
+    // console.log(def);
     const isExistName = defMap.has(name);
     if (isExistName) return;
 
