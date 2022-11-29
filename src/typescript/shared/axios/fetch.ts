@@ -43,6 +43,11 @@ export class WebClient extends WebClientBase {
     });
   }
 
+  /**
+   * 创建请求，并配置
+   * @param config - 请求配置
+   * @returns
+   */
   public static createAxios(
     config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
       /**

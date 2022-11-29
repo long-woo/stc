@@ -1,6 +1,8 @@
 import Logs from "./console.ts";
 import {
   IDefaultObject,
+  IDefinitionNameMapping,
+  IDefinitionNameMappingItem,
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
@@ -41,6 +43,54 @@ const getDefinitionName = (name: string, isDefinition?: boolean): string => {
   });
 
   return newName;
+};
+
+const getDefinitionNameMapping = (
+  key: string,
+  isDefinition?: boolean,
+): IDefinitionNameMapping => {
+  const genericKey = ["T", "K", "U"];
+  const keyLength = genericKey.length;
+
+  const name = getRefType(key);
+  const mappings: Record<string, string> = {};
+
+  // 处理泛型
+  const newName = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
+    const def = getDefinitionNameMapping(_value, isDefinition);
+
+    // 定义的情况下，需要将具体名称换成 T、K、U...
+    if (isDefinition) {
+      const arr = def.name.split(/,\s*/g).map((_n: string, index: number) => {
+        let newKey = genericKey[index % keyLength];
+        // 当超过预设泛型 key 长度，自动加数字
+        if (index >= keyLength) {
+          newKey = newKey + Math.ceil((index - keyLength) / keyLength);
+        }
+
+        if (def.mappings && !def.mappings[newKey]) {
+          def.mappings[newKey] = _n;
+        } else {
+          // if (!mappings[newKey]) {
+
+          // }
+          console.log(def);
+          mappings[newKey] = _n;
+        }
+
+        return newKey;
+      });
+
+      return `<${arr.join(", ")}>`;
+    }
+
+    return `<${def.name}>`;
+  });
+
+  return {
+    name: newName,
+    mappings,
+  };
 };
 
 /**
@@ -108,8 +158,12 @@ export const getDefinition = (
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();
 
   Object.keys(definitions).forEach((key) => {
+    if (key !== "ApiResponse«List«PatientFormInputProofreadTableDto»»") {
+      return;
+    }
+    const def = getDefinitionNameMapping(key, true);
     const name = getDefinitionName(key, true);
-
+    console.log(def);
     const isExistName = defMap.has(name);
     if (isExistName) return;
 

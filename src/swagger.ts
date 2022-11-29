@@ -1,20 +1,6 @@
-export interface IDefaultObject<T = string> {
+export type IDefaultObject<T = unknown> = {
   [key: string]: T;
-}
-
-export interface IRequestParams<
-  Q = IDefaultObject,
-  B = IDefaultObject,
-  P = string,
-  F = string,
-  H = IDefaultObject,
-> {
-  path?: P;
-  query?: Q;
-  body?: B;
-  formData?: F;
-  header?: H;
-}
+};
 
 /**
  * 原始基础类型
@@ -276,4 +262,20 @@ export interface ISwaggerOptions {
    * 平台。默认：axios
    */
   platform?: "axios" | "wechat";
+}
+
+export interface IDefinitionNameMappingItem {
+  /**
+   * 定义名
+   */
+  key: string;
+  /**
+   * 真实名
+   */
+  name: string;
+}
+
+export interface IDefinitionNameMapping {
+  name: string;
+  mappings?: Record<string, string>;
 }

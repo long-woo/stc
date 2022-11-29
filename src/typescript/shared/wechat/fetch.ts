@@ -12,6 +12,8 @@ type Method =
   | "CONNECT";
 
 export class WebClient extends WebClientBase {
+  private static baseURL: string;
+
   private static request<T>(
     url: string,
     method: Method,
@@ -35,7 +37,7 @@ export class WebClient extends WebClientBase {
 
     return new Promise<T>((resolve, reject) => {
       wx.request({
-        url: _url,
+        url: `${this.baseURL}${_url}`,
         method,
         data: _data,
         params: req?.query,
@@ -48,6 +50,14 @@ export class WebClient extends WebClientBase {
         },
       });
     });
+  }
+
+  /**
+   * 创建请求，并配置
+   * @param options - 请求配置
+   */
+  public static create(options: { baseURL: string }) {
+    this.baseURL = options.baseURL;
   }
 
   /**
