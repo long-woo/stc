@@ -91,3 +91,13 @@ export const propCommit = (commit: string) =>
 \t * ${commit}
 \t */\n\t`
     : "\t";
+
+/**
+ * 根据值获取对象的 key
+ * @param obj - 对象
+ * @param value - 值
+ */
+export const getObjectKeyByValue = (
+  obj: Record<string, string>,
+  value: string,
+) => Object.keys(obj).find((key) => obj[key] === value);

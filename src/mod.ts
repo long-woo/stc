@@ -63,16 +63,19 @@ const generateDefFile = (
   definitions: IDefaultObject<ISwaggerResultDefinition>,
   options: ISwaggerOptions,
 ) => {
+  Logs.info("正在生成定义...");
   const defVirtual = getDefinition(definitions);
   const defFileContent = parserDefinition(defVirtual);
 
   createFile(`${options.outDir}/types.ts`, defFileContent);
+  Logs.info("生成定义完成");
 };
 
 const generateApiMethodFile = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
   options: ISwaggerOptions,
 ) => {
+  Logs.info("正在生成 api...");
   const pathVirtual = getApiPath(paths);
   const pathData = parserPath(pathVirtual);
 
@@ -94,6 +97,7 @@ const generateApiMethodFile = (
 
     createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
+  Logs.info("生成 api 完成...");
 };
 
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
@@ -103,13 +107,13 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   Logs.clear();
 
   // 复制运行时需要的文件
-  copyFile(
-    `./src/typescript/shared`,
-    `${options.outDir}/shared`,
-  );
+  // copyFile(
+  //   `./src/typescript/shared`,
+  //   `${options.outDir}/shared`,
+  // );
 
   generateDefFile(data.definitions, options);
-  generateApiMethodFile(data.paths, options);
+  // generateApiMethodFile(data.paths, options);
 };
 
 if (import.meta.main) {

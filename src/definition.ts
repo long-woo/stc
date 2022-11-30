@@ -2,49 +2,17 @@ import Logs from "./console.ts";
 import {
   IDefaultObject,
   IDefinitionNameMapping,
-  IDefinitionNameMappingItem,
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { caseTitle, getRefType } from "./util.ts";
+import { caseTitle, getObjectKeyByValue, getRefType } from "./util.ts";
 
 /**
- * 获取定义的名称
- * @param name - 定义的名称
+ * 获取定义
+ * @param key - 定义的名称
  * @param isDefinition - 是否为定义
  * @returns
  */
-const getDefinitionName = (name: string, isDefinition?: boolean): string => {
-  const genericKey = ["T", "K", "U"];
-  const keyLength = genericKey.length;
-
-  name = getRefType(name);
-
-  // 处理泛型
-  const newName = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
-    const str = getDefinitionName(_value, isDefinition);
-
-    // 定义的情况下，需要将具体名称换成 T、K、U...
-    if (isDefinition) {
-      const arr = str.split(/,\s*/g).map((_n: string, index: number) => {
-        let newKey = genericKey[index % keyLength];
-        // 当超过预设泛型 key 长度，自动加数字
-        if (index >= keyLength) {
-          newKey = newKey + Math.ceil((index - keyLength) / keyLength);
-        }
-
-        return newKey;
-      });
-
-      return `<${arr.join(", ")}>`;
-    }
-
-    return `<${str}>`;
-  });
-
-  return newName;
-};
-
 const getDefinitionNameMapping = (
   key: string,
   isDefinition?: boolean,
@@ -53,7 +21,7 @@ const getDefinitionNameMapping = (
   const keyLength = genericKey.length;
 
   const name = getRefType(key);
-  const mappings: Record<string, string> = {};
+  let mappings: Record<string, string> = {};
 
   // 处理泛型
   const newName = name.replace(/«(.*)?»/g, (_key: string, _value: string) => {
@@ -61,6 +29,8 @@ const getDefinitionNameMapping = (
 
     // 定义的情况下，需要将具体名称换成 T、K、U...
     if (isDefinition) {
+      mappings = def.mappings ?? {};
+
       const arr = def.name.split(/,\s*/g).map((_n: string, index: number) => {
         let newKey = genericKey[index % keyLength];
         // 当超过预设泛型 key 长度，自动加数字
@@ -68,13 +38,7 @@ const getDefinitionNameMapping = (
           newKey = newKey + Math.ceil((index - keyLength) / keyLength);
         }
 
-        if (def.mappings && !def.mappings[newKey]) {
-          def.mappings[newKey] = _n;
-        } else {
-          // if (!mappings[newKey]) {
-
-          // }
-          console.log(def);
+        if (!mappings[newKey]) {
           mappings[newKey] = _n;
         }
 
@@ -95,13 +59,13 @@ const getDefinitionNameMapping = (
 
 /**
  * 原始定义对象转换为虚拟定义对象
- * @param defName - 定义名
  * @param defItem - 定义名的属性
+ * @param defMapping - 定义
  * @returns
  */
 const getVirtualProperties = (
-  defName: string,
   defItem: ISwaggerResultDefinition,
+  defMapping: IDefinitionNameMapping,
 ): IDefinitionVirtualProperty[] => {
   if (defItem.type !== "object") {
     Logs.error("无法解析当前对象");
@@ -109,6 +73,8 @@ const getVirtualProperties = (
   }
 
   const props = defItem.properties;
+  const mappings = defMapping.mappings ?? {};
+  const hasMappings = Object.keys(mappings).length > 0;
 
   const vProps = Object.keys(props).reduce(
     (prev: IDefinitionVirtualProperty[], current) => {
@@ -119,16 +85,22 @@ const getVirtualProperties = (
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性 ref
-      let ref = getDefinitionName(prop.$ref ?? "");
+      let ref = getDefinitionNameMapping(prop.$ref ?? "");
       if (prop.items) {
-        ref = getDefinitionName(prop.items.$ref ?? "") || (prop.items.type ??
-          "");
+        ref = getDefinitionNameMapping(prop.items.$ref ?? "") ||
+          (prop.items.type ??
+            "");
       }
+      const refName = ref.name;
+
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
+      // defMapping.mappings 不为空，说明是有泛型定义
       // 若类型为空，可能为自定义类型
       const type = enumOption.length
-        ? defName + caseTitle(current)
-        : (prop.type ?? ref);
+        ? defMapping.name + caseTitle(current)
+        : hasMappings
+        ? (getObjectKeyByValue(mappings, refName) ?? "")
+        : (prop.type ?? refName);
 
       prev.push({
         name: current,
@@ -136,7 +108,8 @@ const getVirtualProperties = (
         description: prop.description ?? "",
         required,
         enumOption,
-        ref,
+        // 范型类型定义时，无需设置该属性
+        ref: hasMappings ? "" : refName,
         format: prop.format ?? "",
       });
       return prev;
@@ -158,18 +131,23 @@ export const getDefinition = (
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();
 
   Object.keys(definitions).forEach((key) => {
-    // if (key !== "ApiResponse«List«PatientFormInputProofreadTableDto»»") {
-    //   return;
-    // }
-    // const def = getDefinitionNameMapping(key, true);
-    const name = getDefinitionName(key, true);
-    // console.log(def);
+    if (
+      // ![
+      //   "ApiResponse«List«PatientFormInputProofreadTableDto»»",
+      //   "ApiResponse«object»",
+      // ].includes(key)
+      !key.includes("ApiResponse")
+    ) {
+      return;
+    }
+
+    const def = getDefinitionNameMapping(key, true);
+    const name = def.name;
+    console.log(name, key);
     const isExistName = defMap.has(name);
     if (isExistName) return;
 
-    const defItem = definitions[key];
-    const props = getVirtualProperties(name, defItem);
-
+    const props = getVirtualProperties(definitions[key], def);
     defMap.set(name, props);
   });
 
