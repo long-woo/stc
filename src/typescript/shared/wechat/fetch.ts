@@ -20,8 +20,18 @@ export class WebClient extends WebClientBase {
     req?: IDefaultObject<unknown>,
   ) {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
-    const _formData: IDefaultObject = req?.formData as IDefaultObject;
 
+    // query 参数处理
+    const _query = req?.query ?? {};
+    const _params = Object.keys(_query).reduce(
+      (prev: Array<string>, current) => {
+        prev.push(`${current}=${encodeURIComponent(_query[current])}`);
+        return prev;
+      },
+      [],
+    );
+
+    const _formData: IDefaultObject = req?.formData as IDefaultObject;
     let _data: IDefaultObject | FormData | unknown = req?.data;
 
     // TODO: 处理 FormData 数据
@@ -37,7 +47,7 @@ export class WebClient extends WebClientBase {
 
     return new Promise<T>((resolve, reject) => {
       wx.request({
-        url: `${this.baseURL}${_url}`,
+        url: `${this.baseURL}${_url}?${_params.join("&")}`,
         method,
         data: _data,
         params: req?.query,
