@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "dev": "deno run -A --watch=src src/mod.ts"
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.190.0/"
+  }
+}

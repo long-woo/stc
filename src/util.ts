@@ -1,4 +1,4 @@
-import { copy, ensureFile } from "https://deno.land/std@0.106.0/fs/mod.ts";
+import { copy, ensureFile } from "std/fs/mod.ts";
 
 interface ICopyFileOptions {
   /**

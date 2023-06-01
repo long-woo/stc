@@ -1,4 +1,4 @@
-import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
+import { parse } from "std/flags/mod.ts";
 
 import Logs from "./console.ts";
 import { getDefinition } from "./definition.ts";
