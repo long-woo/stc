@@ -74,7 +74,7 @@ interface ISwaggerDefinitionPropertiesItems extends Partial<ISwaggerSchema> {
 }
 
 interface ISwaggerDefinitionProperties {
-  type?: string;
+  type: string;
   $ref?: string;
   description?: string;
   format?: string;

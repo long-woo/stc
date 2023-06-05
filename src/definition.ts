@@ -74,9 +74,7 @@ const getVirtualProperties = (
 
   const props = defItem.properties;
   const mappings = defMapping.mappings ?? {};
-  const hasMappings = Object.keys(mappings).length > 0;
-  console.log(props);
-  console.log(mappings, hasMappings);
+
   const vProps = Object.keys(props).reduce(
     (prev: IDefinitionVirtualProperty[], current) => {
       const prop = props[current];
@@ -86,31 +84,25 @@ const getVirtualProperties = (
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性 ref
-      let ref = getDefinitionNameMapping(prop.$ref ?? "");
+      let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
       if (prop.items) {
-        ref = getDefinitionNameMapping(prop.items.$ref ?? "") ||
+        refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
           (prop.items.type ??
             "");
       }
-      const refName = ref.name;
 
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
-      // defMapping.mappings 不为空，说明是有泛型定义
-      // 若类型为空，可能为自定义类型
       const type = enumOption.length
         ? defMapping.name + caseTitle(current)
-        : (hasMappings
-          ? (getObjectKeyByValue(mappings, refName) ?? "")
-          : (prop.type ?? refName));
-      console.log(current, type);
+        : (getObjectKeyByValue(mappings, refName) || prop.type);
+
       prev.push({
         name: current,
         type,
         description: prop.description ?? "",
         required,
         enumOption,
-        // 范型类型定义时，无需设置该属性
-        ref: hasMappings ? "" : refName,
+        ref: refName,
         format: prop.format ?? "",
       });
       return prev;
@@ -132,30 +124,17 @@ export const getDefinition = (
   const defMap = new Map<string, IDefinitionVirtualProperty[]>();
 
   Object.keys(definitions).forEach((key) => {
-    if (
-      ![
-        "ApiResponse",
-        "ApiResponse«List«PatientFormInputProofreadTableDto»»",
-        // "ApiResponse«object»",
-      ].includes(key)
-      // !key.includes("ApiResponse")
-    ) {
-      return;
-    }
-
     const def = getDefinitionNameMapping(key, true);
     const name = def.name;
 
-    console.log(name, key);
-    // TODO
     // 存在相同定义时，直接跳过
-    const prevProps = defMap.get(name);
-    if (prevProps?.length) {
-      return;
-    }
+    const defKeys: string[] = [];
+    defMap.forEach((_, key) => {
+      defKeys.push(key.replace(/<.*>$/, ""));
+    });
+    if (defKeys.includes(name)) return;
 
     const props = getVirtualProperties(definitions[key], def);
-    // console.log(props);
     defMap.set(name, props);
   });
 

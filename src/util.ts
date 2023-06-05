@@ -73,12 +73,12 @@ export const convertType = (type: string, ref?: string) => {
     string: "string",
     integer: "number",
     boolean: "boolean",
-    array: `Array<${ref || "unknown"}>`,
-    object: "object",
+    array: `Array<${ref && convertType(ref) || "unknown"}>`,
+    object: "Record<string, unknown>",
     file: "File",
   };
 
-  return _action[type] || "unknown";
+  return _action[type] || type;
 };
 
 /**
