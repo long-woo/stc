@@ -12,7 +12,7 @@ import {
 } from "./swagger.ts";
 import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
-import { copyFile, createFile, readFile } from "./util.ts";
+import { copyFile, createFile, emptyDirectory, readFile } from "./util.ts";
 
 const main = (): ISwaggerOptions => {
   // 解析参数
@@ -105,6 +105,7 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
 
   // 清空控制台信息
   Logs.clear();
+  await emptyDirectory(options.outDir);
 
   // 复制运行时需要的文件
   // copyFile(
@@ -113,7 +114,7 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   // );
 
   generateDefFile(data.definitions, options);
-  // generateApiMethodFile(data.paths, options);
+  generateApiMethodFile(data.paths, options);
 };
 
 if (import.meta.main) {

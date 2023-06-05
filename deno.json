@@ -4,5 +4,13 @@
   },
   "imports": {
     "std/": "https://deno.land/std@0.190.0/"
+  },
+  "lint": {
+    "include": ["src/"],
+    "exclude": ["dist/", "src/typescript/shared/**/*.ts"]
+  },
+  "fmt": {
+    "include": ["src/"],
+    "exclude": ["dist/", "src/typescript/shared/**/*.ts"]
   }
 }

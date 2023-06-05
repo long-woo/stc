@@ -62,6 +62,9 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
+    if (!url.includes("/api/patient/chart/getPatientProcessTable")) {
+      return;
+    }
     // 请求方式
     const methods = paths[url];
 

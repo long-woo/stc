@@ -12,13 +12,17 @@ interface IPathParams {
    */
   name?: string;
   /**
+   * 接口参数类型
+   */
+  type?: string;
+  /**
    * 接口参数的自定义类型
    */
-  def?: Array<string>;
+  interface?: Array<string>;
   /**
-   * 接口参数
+   * 接口参数映射
    */
-  ref?: string;
+  refMap?: string;
   /**
    * 接口参数注释
    */
@@ -31,6 +35,10 @@ interface IPathParams {
    * 接口参数分类
    */
   category?: parameterCategory;
+  /**
+   * 导入外部的定义
+   */
+  import?: string;
 }
 
 interface IApiRealParams {
@@ -45,25 +53,29 @@ interface IApiParams {
   /**
    * 接口方法形参
    */
-  def?: Array<string>;
+  defMap?: Array<string>;
   /**
    * 接口方法自定义的类型
    */
-  defType?: string;
+  interface?: string;
   /**
    * 接口方法传入到运行时方法的参数
    */
-  ref?: IApiRealParams;
+  refMap?: IApiRealParams;
   /**
    * 接口方法参数注释
    */
   commit?: Array<string>;
+  /**
+   * 接口的导入类型
+   */
+  import?: Array<string>;
 }
 
 interface IApiFile {
-  import?: Array<string>;
-  interface?: Array<string>;
-  export?: Array<string>;
+  import: Array<string>;
+  interface: Array<string>;
+  export: Array<string>;
 }
 
 /**
@@ -100,41 +112,46 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
         const _category = prev.find((item) =>
           item.category === current.category
         );
+        const _type = `${convertType(current.type, current.ref)}`;
+        let _refMap = `${current.name}${current.required ? "" : "?"}: ${_type}`;
 
-        let _ref = `${current.name}${current.required ? "" : "?"}: ${
-          convertType(current.type, current.ref)
-        }`;
-
-        // 若分类存在，组合成对象
+        // 同一类型参数，组合成对象
         if (_category) {
-          _ref = `${propCommit(current.description ?? "")}${_ref}`;
+          _refMap = `${propCommit(current.description ?? "")}${_refMap}`;
 
           if (_category.commit !== _category.name) {
             const _defName = `${caseTitle(key)}${
               caseTitle(current.category)
             }Params`;
 
-            _category.def = [
+            _category.interface = [
               `export interface ${_defName} {`,
-              `${propCommit(_category.commit ?? "")}${_category.ref ?? ""}`,
-              _ref,
+              `${propCommit(_category.commit ?? "")}${_category.refMap ?? ""}`,
+              _refMap,
               "}",
             ];
 
             _category.commit = current.category;
             _category.name = current.category;
-            _category.ref = `${current.category}: ${_defName}`;
+            _category.type = _defName;
+            _category.refMap = `${current.category}: ${_defName}`;
           } else {
-            _category.def?.splice(_category.def.length - 1, 0, _ref);
+            _category.interface?.splice(
+              _category.interface.length - 1,
+              0,
+              _refMap,
+            );
           }
         } else {
           prev.push({
             name: current.name,
+            type: _type,
             commit: current.description ?? current.category,
             required: current.required,
             category: current.category,
-            ref: _ref,
-            def: [],
+            refMap: _refMap,
+            interface: [],
+            import: current.ref && _type,
           });
         }
 
@@ -150,31 +167,32 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
  * @returns
  */
 const parserApiData = (parameters: IPathParameter[], key: string) => {
-  const _parameters = parserParams(parameters, key);
+  const _parameters = parserParams(parameters, key) || [];
 
   const _params = _parameters?.reduce((prev: IApiParams, current) => {
-    const _def = current.ref;
+    const _defMap = current.refMap;
     const _refName = current.category;
 
-    prev.defType = current.def?.join("\n");
+    current.import && prev.import?.push(current.import);
+    prev.interface = current.interface?.join("\n");
     prev.commit?.push(
       `* @param ${current.name} - ${current.commit ?? current.name}`,
     );
-    _def && prev.def?.push(_def);
+    _defMap && prev.defMap?.push(_defMap);
 
-    if (prev.ref) {
+    if (prev.refMap) {
       if (_refName === "body") {
-        prev.ref.body = current.name;
+        prev.refMap.body = current.name;
       } else {
         _refName &&
-          (prev.ref[_refName] = current.def?.length
+          (prev.refMap[_refName] = current.interface?.length
             ? current.name
             : `{ ${current.name} }`);
       }
     }
 
     return prev;
-  }, { commit: [], def: [], ref: {}, defType: "" });
+  }, { commit: [], defMap: [], refMap: {}, interface: "", import: [] });
 
   return _params;
 };
@@ -188,29 +206,30 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
 const generateApi = (data: IPathVirtualProperty, key: string) => {
   const _params = parserApiData(data.parameters, key);
 
-  const _import = data.response.ref;
+  const _refResponse = data.response.ref;
   const _responseDef = convertType(
     data.response.type ?? "",
-    _import,
+    _refResponse,
   );
 
-  const _defType = _params?.defType;
   const _methodCommit = methodCommit(
     data.summary || key,
     _params?.commit,
     data.description,
   );
-  const _methodParam = _params?.ref
-    ? `, ${JSON.stringify(_params.ref, undefined, 2)?.replaceAll('"', "")}`
+  const _methodParam = _params?.refMap
+    ? `, ${JSON.stringify(_params.refMap, undefined, 2)?.replaceAll('"', "")}`
     : "";
 
   const _method = `${_methodCommit}
-export const ${key} = (${_params?.def?.join(", ") ??
-    ""}) => webClient.${data.method}<${_responseDef}>('${data.url}'${_methodParam})`;
+export const ${key} = (${
+    _params?.defMap?.join(", ") ??
+      ""
+  }) => webClient.request<${_responseDef}>('${data.url}', '${data.method}'${_methodParam})`;
 
   return {
-    import: _import,
-    interface: _defType,
+    import: [...(_params.import ?? []), _refResponse],
+    interface: _params.interface,
     export: _method,
   };
 };
@@ -222,27 +241,29 @@ export const ${key} = (${_params?.def?.join(", ") ??
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   const apiMap = new Map<string, IApiFile>();
 
-  data.forEach((value, key) => {
-    const _tag = value.tags?.[0];
+  data.forEach((item, key) => {
+    const _tag = item.tags?.[0];
     if (!_tag) {
-      Logs.error(`${value.url} 未定义 tags，跳过解析`);
+      Logs.error(`${item.url} 未定义 tags，跳过解析`);
       return;
     }
 
-    const _api = generateApi(value, key);
+    const _api = generateApi(item, key);
+    const _apiMap = apiMap.get(_tag);
 
-    if (apiMap.has(_tag)) {
-      const _apiMap = apiMap.get(_tag);
+    if (_apiMap) {
+      if (_api.import) {
+        const _import = Array.from(
+          new Set([..._apiMap.import, ..._api.import]),
+        );
 
-      if (_api.import && !_apiMap?.import?.includes(_api.import)) {
-        _apiMap?.import?.push(_api.import);
+        _apiMap.import = _import as string[];
       }
-
       _api.interface && _apiMap?.interface?.push(_api.interface);
       _apiMap?.export?.push(_api.export);
     } else {
       apiMap.set(_tag, {
-        import: _api.import ? [_api.import] : [],
+        import: _api.import as string[],
         interface: _api.interface ? [_api.interface] : [],
         export: [_api.export],
       });

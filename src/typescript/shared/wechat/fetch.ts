@@ -14,7 +14,7 @@ type Method =
 export class WebClient extends WebClientBase {
   private static baseURL: string;
 
-  private static request<T>(
+  public static request<T>(
     url: string,
     method: Method,
     req?: IDefaultObject<unknown>,
@@ -68,81 +68,6 @@ export class WebClient extends WebClientBase {
    */
   public static create(options: { baseURL: string }) {
     this.baseURL = options.baseURL;
-  }
-
-  /**
-   * GET 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   */
-  public static get<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "GET", req);
-  }
-
-  /**
-   * POST 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   */
-  public static post<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "POST", req);
-  }
-
-  /**
-   * PUT 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   */
-  public static put<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "PUT", req);
-  }
-
-  /**
-   * DELETE 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   */
-  public static delete<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "DELETE", req);
-  }
-
-  /**
-   * HEAD 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   * @returns
-   */
-  public static head<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "HEAD", req);
-  }
-
-  /**
-   * OPTIONS 请求
-   * @param url - 请求地址
-   * @param req - 参数，可选
-   * @param config - 请求配置，可选
-   * @returns
-   */
-  public static options<T>(
-    url: string,
-    req?: IDefaultObject,
-  ): Promise<T> {
-    return this.request<T>(url, "OPTIONS", req);
   }
 }
 

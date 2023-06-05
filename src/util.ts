@@ -1,4 +1,4 @@
-import { copy, ensureFile } from "std/fs/mod.ts";
+import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 
 interface ICopyFileOptions {
   /**
@@ -49,6 +49,12 @@ export const copyFile = (
 ) => {
   copy(from, to, { overwrite: options.overwrite });
 };
+
+/**
+ * 清空目录
+ * @param dir - 目录
+ */
+export const emptyDirectory = (dir: string) => emptyDir(dir);
 
 /**
  * ref type

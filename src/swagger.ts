@@ -257,7 +257,7 @@ export interface ISwaggerOptions {
   /**
    * 输出目录
    */
-  outDir?: string;
+  outDir: string;
   /**
    * 平台。默认：axios
    */
