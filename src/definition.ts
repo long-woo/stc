@@ -75,7 +75,8 @@ const getVirtualProperties = (
   const props = defItem.properties;
   const mappings = defMapping.mappings ?? {};
   const hasMappings = Object.keys(mappings).length > 0;
-
+  console.log(props);
+  console.log(mappings, hasMappings);
   const vProps = Object.keys(props).reduce(
     (prev: IDefinitionVirtualProperty[], current) => {
       const prop = props[current];
@@ -98,10 +99,10 @@ const getVirtualProperties = (
       // 若类型为空，可能为自定义类型
       const type = enumOption.length
         ? defMapping.name + caseTitle(current)
-        : hasMappings
-        ? (getObjectKeyByValue(mappings, refName) ?? "")
-        : (prop.type ?? refName);
-
+        : (hasMappings
+          ? (getObjectKeyByValue(mappings, refName) ?? "")
+          : (prop.type ?? refName));
+      console.log(current, type);
       prev.push({
         name: current,
         type,
@@ -132,22 +133,29 @@ export const getDefinition = (
 
   Object.keys(definitions).forEach((key) => {
     if (
-      // ![
-      //   "ApiResponse«List«PatientFormInputProofreadTableDto»»",
-      //   "ApiResponse«object»",
-      // ].includes(key)
-      !key.includes("ApiResponse")
+      ![
+        "ApiResponse",
+        "ApiResponse«List«PatientFormInputProofreadTableDto»»",
+        // "ApiResponse«object»",
+      ].includes(key)
+      // !key.includes("ApiResponse")
     ) {
       return;
     }
 
     const def = getDefinitionNameMapping(key, true);
     const name = def.name;
+
     console.log(name, key);
-    const isExistName = defMap.has(name);
-    if (isExistName) return;
+    // TODO
+    // 存在相同定义时，直接跳过
+    const prevProps = defMap.get(name);
+    if (prevProps?.length) {
+      return;
+    }
 
     const props = getVirtualProperties(definitions[key], def);
+    // console.log(props);
     defMap.set(name, props);
   });
 

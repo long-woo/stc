@@ -22,8 +22,8 @@ const main = (): ISwaggerOptions => {
   let outDir = Deno.cwd();
 
   // 若没有提供 out 选项，则使用 Deno 当前执行的目录
-  if (typeof args.out === "string" && args.out) {
-    outDir = args.out;
+  if (typeof args.outDir === "string" && args.outDir) {
+    outDir = args.outDir;
   }
 
   // 平台。axios、wechat

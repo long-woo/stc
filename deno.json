@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch=src src/mod.ts"
+    "dev": "deno run -A --watch=src src/mod.ts --url=http://demodata.liangyihui.net/smart/v2/api-docs --outDir=dist"
   },
   "imports": {
     "std/": "https://deno.land/std@0.190.0/"
