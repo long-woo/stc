@@ -23,11 +23,11 @@ const getPathVirtualProperty = (
     ?.map((param): IPathParameter => ({
       category: param.in,
       name: param.name,
-      type: param.type,
+      type: param.type ?? param.schema?.type ?? "",
       required: param.required,
       description: param.description,
-      format: param.format,
-      ref: getRefType(param.schema?.$ref ?? ""),
+      format: param.format ?? param.schema?.format,
+      ref: getRefType(param.schema?.$ref ?? param.schema?.items?.$ref ?? ""),
     }));
 
   // 响应
@@ -62,7 +62,7 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    if (!url.includes("/api/patient/chart/getPatientProcessTable")) {
+    if (!url.includes("/api/dataDictionary/dictionarySettingList")) {
       return;
     }
     // 请求方式

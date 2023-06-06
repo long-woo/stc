@@ -100,10 +100,9 @@ const methodCommit = (
 };
 
 /**
- * 解析接口参数
+ * 解析接口参数，按参数类型分类
  * @param parameters - 接口参数
  * @param key - 接口名称
- * @returns
  */
 const parserParams = (parameters: IPathParameter[], key: string) =>
   parameters?.sort((_a, _b) => Number(_b.required) - Number(_a.required))
@@ -118,8 +117,8 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
         // 同一类型参数，组合成对象
         if (_category) {
           _refMap = `${propCommit(current.description ?? "")}${_refMap}`;
-
-          if (_category.commit !== _category.name) {
+          // console.log(_category, _refMap);
+          if (_category.commit === _category.name) {
             const _defName = `${caseTitle(key)}${
               caseTitle(current.category)
             }Params`;

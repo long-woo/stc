@@ -37,6 +37,8 @@ interface ISwaggerResultTag {
 export interface ISwaggerSchema {
   $ref?: string;
   type?: string;
+  format?: string;
+  items?: ISwaggerSchema;
 }
 
 interface ISwaggerMethodResponseStatus {
@@ -51,11 +53,11 @@ interface ISwaggerMethodResponses {
 interface ISwaggerMethodParameter {
   in: parameterCategory;
   name: string;
-  type: string;
-  format: string;
+  type?: string;
+  format?: string;
   required: boolean;
   description: string;
-  schema: ISwaggerSchema;
+  schema?: ISwaggerSchema;
 }
 
 export interface ISwaggerResultPath {
@@ -69,16 +71,12 @@ export interface ISwaggerResultPath {
   responses: ISwaggerMethodResponses;
 }
 
-interface ISwaggerDefinitionPropertiesItems extends Partial<ISwaggerSchema> {
-  type?: string;
-}
-
 interface ISwaggerDefinitionProperties {
   type: string;
   $ref?: string;
   description?: string;
   format?: string;
-  items?: ISwaggerDefinitionPropertiesItems;
+  items?: ISwaggerSchema;
   enum?: string[];
 }
 
@@ -186,6 +184,10 @@ export interface IPathParameter {
    * 自定义类型
    */
   ref?: string;
+  /**
+   * 默认值
+   */
+  default?: string;
 }
 
 /**
