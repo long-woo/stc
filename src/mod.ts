@@ -125,5 +125,6 @@ if (import.meta.main) {
 
   // http://demodata.liangyihui.net/smart/v2/api-docs
   // https://petstore.swagger.io/v2/swagger.json
+  // https://petstore3.swagger.io/api/v3/openapi.json
   generateApi(options.url, options);
 }
