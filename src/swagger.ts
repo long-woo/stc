@@ -281,3 +281,8 @@ export interface IDefinitionNameMapping {
   name: string;
   mappings?: Record<string, string>;
 }
+
+export interface IApiParseResponse {
+  name: string;
+  import: Array<string>;
+}

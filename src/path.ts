@@ -64,7 +64,7 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    if (!url.includes("/api/dataDictionary/dictionarySettingList")) {
+    if (!url.includes("/api/patient/batchImportPatient")) {
       return;
     }
     // 请求方式

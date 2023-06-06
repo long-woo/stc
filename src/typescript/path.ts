@@ -1,4 +1,5 @@
-import {
+import type {
+  IApiParseResponse,
   IPathParameter,
   IPathVirtualProperty,
   parameterCategory,
@@ -114,7 +115,7 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
       // 同一类型参数，组合成对象
       if (_category) {
         _refMap = `${propCommit(current.description ?? "")}${_refMap}`;
-        console.log(_category);
+
         if (!_category.interface?.length) {
           const _defName = `${caseTitle(key)}${
             caseTitle(current.category)
@@ -194,6 +195,36 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
 };
 
 /**
+ * 解析响应对象
+ * @param ref - 自定义类型
+ * @returns
+ */
+const parseResponseRef = (ref: string): IApiParseResponse => {
+  const _sliceIndex = ref.indexOf("«");
+  const _imports = [];
+  const _import = ref.slice(0, _sliceIndex > -1 ? _sliceIndex : undefined);
+
+  if (_import !== "Array") {
+    _imports.push(_import);
+  }
+
+  const name = ref.replace(/«(.*)?»/g, (_key: string, _value: string) => {
+    _value = _value.replace(/^List/, "Array");
+
+    const res = parseResponseRef(_value);
+    _imports.push(...res.import);
+
+    const arr = res.name.split(/,\s*/g).map((_ref: string) => {
+      return _ref;
+    });
+
+    return `<${arr.join(", ")}>`;
+  });
+
+  return { name, import: _imports };
+};
+
+/**
  * 生成 Api
  * @param data - 接口数据
  * @param key - 接口名称
@@ -202,10 +233,10 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
 const generateApi = (data: IPathVirtualProperty, key: string) => {
   const _params = parserApiData(data.parameters, key);
 
-  const _refResponse = data.response.ref;
+  const _refResponse = parseResponseRef(data.response.ref ?? "");
   const _responseDef = convertType(
     data.response.type ?? "",
-    _refResponse,
+    _refResponse.name,
   );
 
   const _methodCommit = methodCommit(
@@ -224,7 +255,7 @@ export const ${key} = (${
   }) => webClient.request<${_responseDef}>('${data.url}', '${data.method}'${_methodParam})`;
 
   return {
-    import: [...(_params.import ?? []), _refResponse],
+    import: [...(_params.import ?? []), ..._refResponse.import],
     interface: _params.interface,
     export: _method,
   };

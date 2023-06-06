@@ -68,7 +68,7 @@ const generateDefFile = (
   const defFileContent = parserDefinition(defVirtual);
 
   createFile(`${options.outDir}/types.ts`, defFileContent);
-  Logs.info("生成定义完成");
+  Logs.info("生成定义完成。\n");
 };
 
 const generateApiMethodFile = (
@@ -97,7 +97,7 @@ const generateApiMethodFile = (
 
     createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
-  Logs.info("生成 api 完成...");
+  Logs.info("生成 api 完成。\n");
 };
 
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
