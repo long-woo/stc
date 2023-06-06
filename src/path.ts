@@ -19,7 +19,9 @@ const getPathVirtualProperty = (
   pathMethod: ISwaggerResultPath,
 ): IPathVirtualProperty => {
   // 请求参数
-  const parameters = pathMethod.parameters
+  const parameters = pathMethod.parameters?.sort((_a, _b) =>
+    Number(_b.required) - Number(_a.required)
+  )
     ?.map((param): IPathParameter => ({
       category: param.in,
       name: param.name,
