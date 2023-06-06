@@ -64,9 +64,12 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    if (!url.includes("/api/patient/batchImportPatient")) {
-      return;
-    }
+    // if (
+    //   !url.includes("/api/project")
+    //   // !["/api/project/saveFormDataByPatient"].includes(url)
+    // ) {
+    //   return;
+    // }
     // 请求方式
     const methods = paths[url];
 

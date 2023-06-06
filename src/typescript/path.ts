@@ -58,7 +58,7 @@ interface IApiParams {
   /**
    * 接口方法自定义的类型
    */
-  interface?: string;
+  interface?: Array<string>;
   /**
    * 接口方法传入到运行时方法的参数
    */
@@ -70,7 +70,7 @@ interface IApiParams {
   /**
    * 接口的导入类型
    */
-  import?: Array<string>;
+  import: Array<string>;
 }
 
 interface IApiFile {
@@ -148,7 +148,7 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
           category: current.category,
           refMap: _refMap,
           interface: [],
-          import: current.ref && _type,
+          import: current.ref,
         });
       }
 
@@ -171,7 +171,8 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
     const _refName = current.category;
 
     current.import && prev.import?.push(current.import);
-    prev.interface = current.interface?.join("\n");
+    current.interface?.length &&
+      prev.interface?.push(current.interface?.join("\n"));
     prev.commit?.push(
       `* @param ${current.name} - ${current.commit ?? current.name}`,
     );
@@ -189,7 +190,7 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
     }
 
     return prev;
-  }, { commit: [], defMap: [], refMap: {}, interface: "", import: [] });
+  }, { commit: [], defMap: [], refMap: {}, interface: [], import: [] });
 
   return _params;
 };
@@ -204,7 +205,7 @@ const parseResponseRef = (ref: string): IApiParseResponse => {
   const _imports = [];
   const _import = ref.slice(0, _sliceIndex > -1 ? _sliceIndex : undefined);
 
-  if (_import !== "Array") {
+  if (_import && _import !== "Array") {
     _imports.push(_import);
   }
 
@@ -255,8 +256,8 @@ export const ${key} = (${
   }) => webClient.request<${_responseDef}>('${data.url}', '${data.method}'${_methodParam})`;
 
   return {
-    import: [...(_params.import ?? []), ..._refResponse.import],
-    interface: _params.interface,
+    import: [..._params.import, ..._refResponse.import],
+    interface: _params.interface?.join("\n"),
     export: _method,
   };
 };

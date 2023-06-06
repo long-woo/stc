@@ -63,22 +63,21 @@ const generateDefFile = (
   definitions: IDefaultObject<ISwaggerResultDefinition>,
   options: ISwaggerOptions,
 ) => {
-  Logs.info("正在生成定义...");
+  Logs.info("处理类型定义...");
   const defVirtual = getDefinition(definitions);
   const defFileContent = parserDefinition(defVirtual);
 
   createFile(`${options.outDir}/types.ts`, defFileContent);
-  Logs.info("生成定义完成。\n");
+  Logs.info("处理类型定义完成。\n");
 };
 
 const generateApiMethodFile = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
   options: ISwaggerOptions,
 ) => {
-  Logs.info("正在生成 api...");
+  Logs.info("处理 api...");
   const pathVirtual = getApiPath(paths);
   const pathData = parserPath(pathVirtual);
-
   pathData.forEach((api, key) => {
     const _import = api.import;
     const _apiImport = [
@@ -86,10 +85,11 @@ const generateApiMethodFile = (
     ];
     const _apiContent: Array<string> = [];
 
-    _import?.length &&
+    if (_import.length) {
       _apiImport.push(
         `import type { ${_import.join(", ")} } from './types'`,
       );
+    }
 
     _apiContent.push(_apiImport.join("\n"));
     api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
@@ -97,7 +97,7 @@ const generateApiMethodFile = (
 
     createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
-  Logs.info("生成 api 完成。\n");
+  Logs.info("处理 api 完成。\n");
 };
 
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
