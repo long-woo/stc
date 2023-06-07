@@ -1,3 +1,4 @@
+// 由 swagger2code 生成
 import type { IDefaultObject } from "../interface";
 import { WebClientBase } from "../webClientBase";
 

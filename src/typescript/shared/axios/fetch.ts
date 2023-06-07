@@ -1,6 +1,6 @@
 // 由 swagger2code 生成
-import type { AxiosDefaults, AxiosInstance, Method } from "npm:axios";
-import axios from "npm:axios";
+import type { AxiosDefaults, AxiosInstance, Method } from "axios";
+import axios from "axios";
 import type { IDefaultObject } from "../webClientBase";
 import { WebClientBase } from "../webClientBase.ts";
 

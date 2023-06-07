@@ -1,3 +1,4 @@
+// 由 swagger2code 生成
 export interface IDefaultObject extends Record<string, any> {
 }
 

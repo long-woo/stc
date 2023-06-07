@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch=src src/mod.ts --url=http://demodata.liangyihui.net/smart/v2/api-docs --outDir=dist"
+    "dev": "deno run -A --watch=src src/mod.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=dist"
   },
   "imports": {
     "std/": "https://deno.land/std@0.190.0/"

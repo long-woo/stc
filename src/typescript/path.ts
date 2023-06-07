@@ -253,7 +253,7 @@ const generateApi = (data: IPathVirtualProperty, key: string) => {
 export const ${key} = (${
     _params?.defMap?.join(", ") ??
       ""
-  }) => webClient.request<${_responseDef}>('${data.url}', '${data.method}'${_methodParam})`;
+  }) => webClient.request<${_responseDef}>('${data.url}', '${data.method.toUpperCase()}'${_methodParam})`;
 
   return {
     import: [..._params.import, ..._refResponse.import],

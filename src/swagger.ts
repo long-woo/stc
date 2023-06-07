@@ -80,6 +80,10 @@ interface ISwaggerDefinitionProperties {
   enum?: string[];
 }
 
+export interface ISwaggerComponents {
+  schemas: IDefaultObject<ISwaggerResultDefinition>;
+}
+
 export interface ISwaggerResultDefinition {
   type: string;
   required?: string[];
@@ -102,7 +106,14 @@ export interface ISwaggerResult {
   consumes: string[];
   info: ISwaggerResultInfo;
   tags: ISwaggerResultTag[];
+  /**
+   * v2 版本定义
+   */
   definitions: IDefaultObject<ISwaggerResultDefinition>;
+  /**
+   * v3 版本定义
+   */
+  components: ISwaggerComponents;
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>;
   produces: string[];
   securityDefinitions: IDefaultObject<ISwaggerResultSecurity>;

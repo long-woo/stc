@@ -113,10 +113,15 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   //   `${options.outDir}/shared`,
   // );
 
-  // 生成类型定义文件
+  // 生成 v2 类型定义文件
   if (data.definitions) {
     generateDefFile(data.definitions, options);
   }
+  // 生成 v3 类型定义文件
+  if (data.components?.schemas) {
+    generateDefFile(data.components?.schemas, options);
+  }
+
   generateApiMethodFile(data.paths, options);
 };
 
