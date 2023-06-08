@@ -41,9 +41,24 @@ export interface ISwaggerSchema {
   items?: ISwaggerSchema;
 }
 
+export interface ISwaggerContentJson {
+  schema?: ISwaggerSchema;
+}
+
+export interface ISwaggerContent {
+  "application/json": ISwaggerContentJson;
+}
+
 interface ISwaggerMethodResponseStatus {
   description: string;
+  /**
+   * v2
+   */
   schema?: ISwaggerSchema;
+  /**
+   * v3
+   */
+  content?: ISwaggerContent;
 }
 
 interface ISwaggerMethodResponses {
@@ -60,6 +75,11 @@ interface ISwaggerMethodParameter {
   schema?: ISwaggerSchema;
 }
 
+interface ISwaggerMethodBody {
+  description: string;
+  content: ISwaggerContent;
+}
+
 export interface ISwaggerResultPath {
   operationId: string;
   consumes: string[];
@@ -67,7 +87,14 @@ export interface ISwaggerResultPath {
   summary: string;
   description: string;
   tags: string[];
+  /**
+   * v2 请求参数，path、query、body
+   */
   parameters: ISwaggerMethodParameter[];
+  /**
+   * v3 请求体
+   */
+  requestBody: ISwaggerMethodBody;
   responses: ISwaggerMethodResponses;
 }
 
