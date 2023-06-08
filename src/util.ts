@@ -60,7 +60,8 @@ export const emptyDirectory = (dir: string) => emptyDir(dir);
  * ref type
  * @param ref - ref
  */
-export const getRefType = (ref: string) => ref.replace("#/definitions/", "");
+export const getRefType = (ref: string) =>
+  ref.replace(/^#\/(definitions|components\/schemas)\//, "");
 
 /**
  * 转换为 typescript 类型
