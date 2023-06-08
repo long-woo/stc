@@ -1,6 +1,7 @@
 import {
   IDefaultObject,
-  IPathParameter,
+  IPathVirtualParameter,
+  IPathVirtualParameterCategory,
   IPathVirtualProperty,
   ISwaggerResultPath,
 } from "./swagger.ts";
@@ -18,19 +19,26 @@ const getPathVirtualProperty = (
   method: string,
   pathMethod: ISwaggerResultPath,
 ): IPathVirtualProperty => {
-  // 请求参数
+  // 请求参数 path、query、body、formData、header
   const parameters = pathMethod.parameters?.sort((_a, _b) =>
     Number(_b.required) - Number(_a.required)
   )
-    ?.map((param): IPathParameter => ({
-      category: param.in,
-      name: param.name,
-      type: param.type ?? param.schema?.type ?? "",
-      required: param.required,
-      description: param.description,
-      format: param.format ?? param.schema?.format,
-      ref: getRefType(param.schema?.$ref ?? param.schema?.items?.$ref ?? ""),
-    }));
+    ?.reduce((prev: IPathVirtualParameter, current) => {
+      const item: IPathVirtualParameterCategory = {
+        name: current.name,
+        type: current.type ?? current.schema?.type ?? "",
+        required: current.required,
+        description: current.description,
+        format: current.format ?? current.schema?.format,
+        ref: getRefType(
+          current.schema?.$ref ?? current.schema?.items?.$ref ?? "",
+        ),
+      };
+
+      prev[current.in].push(item);
+
+      return prev;
+    }, { path: [], query: [], body: [], formData: [], header: [] });
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema;

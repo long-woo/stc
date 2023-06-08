@@ -39,6 +39,14 @@ export interface ISwaggerSchema {
   type?: string;
   format?: string;
   items?: ISwaggerSchema;
+  /**
+   * 默认值
+   */
+  default?: string | number | boolean;
+  /**
+   * v3 枚举值
+   */
+  enum?: Array<string | number>;
 }
 
 export interface ISwaggerContentJson {
@@ -228,6 +236,45 @@ export interface IPathParameter {
   default?: string;
 }
 
+export interface IPathVirtualParameterCategory {
+  /**
+   * 参数名
+   */
+  name: string;
+  /**
+   * 类型
+   */
+  type: string;
+  /**
+   * 描述
+   */
+  description: string;
+  /**
+   * 是否必需
+   */
+  required: boolean;
+  /**
+   * 格式
+   */
+  format?: string;
+  /**
+   * 自定义类型
+   */
+  ref?: string;
+  /**
+   * v2 默认值
+   */
+  default?: string;
+}
+
+export interface IPathVirtualParameter {
+  path: Array<IPathVirtualParameterCategory>;
+  query: Array<IPathVirtualParameterCategory>;
+  body: Array<IPathVirtualParameterCategory>;
+  formData: Array<IPathVirtualParameterCategory>;
+  header: Array<IPathVirtualParameterCategory>;
+}
+
 /**
  * 接口地址的虚拟属性
  */
@@ -243,7 +290,7 @@ export interface IPathVirtualProperty {
   /**
    * 请求参数
    */
-  parameters: IPathParameter[];
+  parameters: IPathVirtualParameter;
   /**
    * 请求头
    */
