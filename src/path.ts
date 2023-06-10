@@ -3,6 +3,7 @@ import {
   IPathVirtualParameter,
   IPathVirtualParameterCategory,
   IPathVirtualProperty,
+  ISwaggerContent,
   ISwaggerResultPath,
 } from "./swagger.ts";
 import { getRefType, lowerCase } from "./util.ts";
@@ -43,20 +44,24 @@ const getPathVirtualProperty = (
   // v3 body 参数在 requestBody
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
-    // Object.keys(_requestBody.content).reduce();
-    const _bodyJson = _requestBody.content["application/json"];
-    const _bodyJsonRef = getRefType(
-      _bodyJson?.schema?.$ref ?? _bodyJson?.schema?.items?.$ref ?? "",
-    );
-    const _body: IPathVirtualParameterCategory = {
-      name: lowerCase(_bodyJsonRef),
-      type: _bodyJson?.schema?.type ?? "",
-      required: _requestBody.required ?? false,
-      description: _requestBody.description,
-      ref: _bodyJsonRef,
-    };
+    Object.keys(_requestBody.content).forEach((_key) => {
+      if (["application/json", "application/octet-stream"].includes(_key)) {
+        const _bodyContent =
+          _requestBody.content[_key as keyof ISwaggerContent];
+        const _bodyContentRef = getRefType(
+          _bodyContent?.schema?.$ref ?? _bodyContent?.schema?.items?.$ref ?? "",
+        );
+        const _body: IPathVirtualParameterCategory = {
+          name: lowerCase(_bodyContentRef),
+          type: _bodyContent?.schema?.type ?? "",
+          required: _requestBody.required ?? false,
+          description: _requestBody.description,
+          ref: _bodyContentRef,
+        };
 
-    parameters.body.push(_body);
+        parameters?.body?.push(_body);
+      }
+    });
   }
 
   // 响应
