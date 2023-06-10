@@ -49,12 +49,13 @@ export interface ISwaggerSchema {
   enum?: Array<string | number>;
 }
 
-export interface ISwaggerContentJson {
+export interface ISwaggerContentSchema {
   schema?: ISwaggerSchema;
 }
 
 export interface ISwaggerContent {
-  "application/json": ISwaggerContentJson;
+  "application/json"?: ISwaggerContentSchema;
+  "application/octet-stream"?: ISwaggerContentSchema;
 }
 
 interface ISwaggerMethodResponseStatus {
@@ -86,6 +87,7 @@ interface ISwaggerMethodParameter {
 interface ISwaggerMethodBody {
   description: string;
   content: ISwaggerContent;
+  required?: boolean;
 }
 
 export interface ISwaggerResultPath {

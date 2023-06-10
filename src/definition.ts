@@ -5,7 +5,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { caseTitle, getObjectKeyByValue, getRefType } from "./util.ts";
+import { getObjectKeyByValue, getRefType, upperCase } from "./util.ts";
 
 /**
  * 获取定义
@@ -93,7 +93,7 @@ const getVirtualProperties = (
 
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
       const type = enumOption.length
-        ? defMapping.name + caseTitle(current)
+        ? defMapping.name + upperCase(current)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
       prev.push({

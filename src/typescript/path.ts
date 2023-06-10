@@ -4,7 +4,7 @@ import type {
   IPathVirtualProperty,
   parameterCategory,
 } from "../swagger.ts";
-import { caseTitle, convertType, propCommit } from "../util.ts";
+import { convertType, propCommit, upperCase } from "../util.ts";
 import Logs from "../console.ts";
 
 interface IPathParams {
@@ -117,8 +117,8 @@ const parserParams = (parameters: IPathParameter[], key: string) =>
         _refMap = `${propCommit(current.description ?? "")}${_refMap}`;
 
         if (!_category.interface?.length) {
-          const _defName = `${caseTitle(key)}${
-            caseTitle(current.category)
+          const _defName = `${upperCase(key)}${
+            upperCase(current.category)
           }Params`;
 
           _category.interface = [

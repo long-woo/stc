@@ -10,11 +10,17 @@ interface ICopyFileOptions {
 }
 
 /**
+ * 首字母小写
+ * @param str - 字符
+ */
+export const lowerCase = (str: string) =>
+  str.charAt(0).toLowerCase() + str.slice(1);
+
+/**
  * 首字母大写
  * @param str - 字符
- * @returns
  */
-export const caseTitle = (str: string) =>
+export const upperCase = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
 /**

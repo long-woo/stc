@@ -1,5 +1,5 @@
 import { IDefinitionVirtualProperty } from "../swagger.ts";
-import { caseTitle, convertType, propCommit } from "../util.ts";
+import { convertType, propCommit, upperCase } from "../util.ts";
 
 /**
  * 解析枚举
@@ -13,7 +13,7 @@ const parserEnum = (
   propName: string,
   data?: Array<string>,
 ) => {
-  const _enumName = `${defName}${caseTitle(propName)}`;
+  const _enumName = `${defName}${upperCase(propName)}`;
 
   return data?.reduce((prev, current, index) => {
     const _comma = index === data.length - 1 ? "" : ",";

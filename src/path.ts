@@ -5,7 +5,7 @@ import {
   IPathVirtualProperty,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { getRefType } from "./util.ts";
+import { getRefType, lowerCase } from "./util.ts";
 
 /**
  * 获取请求对象
@@ -39,6 +39,25 @@ const getPathVirtualProperty = (
 
       return prev;
     }, { path: [], query: [], body: [], formData: [], header: [] });
+
+  // v3 body 参数在 requestBody
+  const _requestBody = pathMethod.requestBody;
+  if (_requestBody) {
+    // Object.keys(_requestBody.content).reduce();
+    const _bodyJson = _requestBody.content["application/json"];
+    const _bodyJsonRef = getRefType(
+      _bodyJson?.schema?.$ref ?? _bodyJson?.schema?.items?.$ref ?? "",
+    );
+    const _body: IPathVirtualParameterCategory = {
+      name: lowerCase(_bodyJsonRef),
+      type: _bodyJson?.schema?.type ?? "",
+      required: _requestBody.required ?? false,
+      description: _requestBody.description,
+      ref: _bodyJsonRef,
+    };
+
+    parameters.body.push(_body);
+  }
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema;
