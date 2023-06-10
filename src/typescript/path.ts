@@ -1,6 +1,7 @@
 import type {
   IApiParseResponse,
   IPathParameter,
+  IPathVirtualParameter,
   IPathVirtualProperty,
   parameterCategory,
 } from "../swagger.ts";
@@ -105,7 +106,7 @@ const methodCommit = (
  * @param parameters - 接口参数
  * @param key - 接口名称
  */
-const parserParams = (parameters: IPathParameter[], key: string) =>
+const parserParams1 = (parameters: IPathParameter[], key: string) =>
   parameters?.reduce(
     (prev: IPathParams[], current) => {
       const _category = prev.find((item) => item.category === current.category);
@@ -196,6 +197,49 @@ const parserApiData = (parameters: IPathParameter[], key: string) => {
 };
 
 /**
+ * 解析参数
+ * @param parameters - 参数
+ * @param action - 方法名称
+ */
+const parserParams = (parameters: IPathVirtualParameter, action: string) =>
+  Object.keys(parameters).reduce((prev: IApiParams, current) => {
+    const _params = parameters[current as keyof IPathVirtualParameter];
+    let _interface: string[] = [];
+
+    _params.forEach((item, index) => {
+      const _type = `${convertType(item.type, item.ref)}`;
+      let _refMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
+      const _defName = `${upperCase(action)}${upperCase(current)}Params`;
+
+      // import
+      if (item.ref && !prev.import.includes(item.ref)) {
+        prev.import.push(item.ref);
+      }
+
+      // interface
+      if (index > 0) {
+        _refMap = `${propCommit(item.description ?? "")}${_refMap}`;
+
+        if (index === 1) {
+          _interface = [
+            `export interface ${_defName} {`,
+            `${propCommit(item.description ?? "")}${_refMap}`,
+            _refMap,
+            "}",
+          ];
+        } else {
+          _interface?.splice(
+            _interface.length - 1,
+            0,
+            _refMap,
+          );
+        }
+      }
+    });
+    return prev;
+  }, { commit: [], defMap: [], refMap: {}, interface: [], import: [] });
+
+/**
  * 解析响应对象
  * @param ref - 自定义类型
  * @returns
@@ -232,7 +276,8 @@ const parseResponseRef = (ref: string): IApiParseResponse => {
  * @returns
  */
 const generateApi = (data: IPathVirtualProperty, key: string) => {
-  const _params = parserApiData(data.parameters, key);
+  // const _params = parserApiData(data.parameters, key);
+  const _params = parserParams(data.parameters ?? {}, key);
 
   const _refResponse = parseResponseRef(data.response.ref ?? "");
   const _responseDef = convertType(

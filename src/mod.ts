@@ -77,8 +77,6 @@ const generateApiMethodFile = (
 ) => {
   Logs.info("处理 api...");
   const pathVirtual = getApiPath(paths);
-  console.log(pathVirtual);
-  return;
   const pathData = parserPath(pathVirtual);
   pathData.forEach((api, key) => {
     const _import = api.import;
