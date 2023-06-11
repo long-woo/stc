@@ -21,10 +21,10 @@ const getPathVirtualProperty = (
   pathMethod: ISwaggerResultPath,
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
-  const parameters = pathMethod.parameters?.sort((_a, _b) =>
-    Number(_b.required) - Number(_a.required)
-  )
-    ?.reduce((prev: IPathVirtualParameter, current) => {
+  const parameters =
+    (pathMethod.parameters?.sort((_a, _b) =>
+      Number(_b.required) - Number(_a.required)
+    ) ?? []).reduce((prev: IPathVirtualParameter, current) => {
       const item: IPathVirtualParameterCategory = {
         name: current.name,
         type: current.type ?? current.schema?.type ?? "",
@@ -32,7 +32,8 @@ const getPathVirtualProperty = (
         description: current.description,
         format: current.format ?? current.schema?.format,
         ref: getRefType(
-          current.schema?.$ref ?? current.schema?.items?.$ref ?? "",
+          current.schema?.$ref ?? current.schema?.items?.$ref ??
+            current.schema?.items?.type ?? "",
         ),
       };
 
@@ -59,13 +60,14 @@ const getPathVirtualProperty = (
           ref: _bodyContentRef,
         };
 
-        parameters?.body?.push(_body);
+        parameters.body.push(_body);
       }
     });
   }
 
   // 响应
-  const _resSchema = pathMethod.responses[200]?.schema;
+  const _resSchema = pathMethod.responses[200]?.schema ??
+    pathMethod.responses[200]?.content?.["application/json"]?.schema;
 
   const value: IPathVirtualProperty = {
     url,
@@ -74,7 +76,7 @@ const getPathVirtualProperty = (
     requestHeaders: pathMethod.consumes,
     responseHeaders: pathMethod.produces,
     response: {
-      ref: getRefType(_resSchema?.$ref ?? ""),
+      ref: getRefType(_resSchema?.$ref ?? _resSchema?.items?.$ref ?? ""),
       type: _resSchema?.type,
     },
     summary: pathMethod.summary,
@@ -96,12 +98,13 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    // if (
-    //   !url.includes("/api/project")
-    //   // !["/api/project/saveFormDataByPatient"].includes(url)
-    // ) {
-    //   return;
-    // }
+    if (
+      url !== "/pet/{petId}"
+      // !url.includes("/pet")
+      // !["/api/project/saveFormDataByPatient"].includes(url)
+    ) {
+      return;
+    }
     // 请求方式
     const methods = paths[url];
 

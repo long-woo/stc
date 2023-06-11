@@ -1,47 +1,10 @@
 import type {
   IApiParseResponse,
-  IPathParameter,
   IPathVirtualParameter,
   IPathVirtualProperty,
-  parameterCategory,
 } from "../swagger.ts";
 import { convertType, propCommit, upperCase } from "../util.ts";
 import Logs from "../console.ts";
-
-interface IPathParams {
-  /**
-   * 接口参数名称
-   */
-  name?: string;
-  /**
-   * 接口参数类型
-   */
-  type?: string;
-  /**
-   * 接口参数的自定义类型
-   */
-  interface?: Array<string>;
-  /**
-   * 接口参数映射
-   */
-  refMap?: string;
-  /**
-   * 接口参数注释
-   */
-  commit?: string;
-  /**
-   * 接口参数是否必须
-   */
-  required?: boolean;
-  /**
-   * 接口参数分类
-   */
-  category?: parameterCategory;
-  /**
-   * 导入外部的定义
-   */
-  import?: string;
-}
 
 interface IApiRealParams {
   path?: string;
@@ -102,101 +65,6 @@ const methodCommit = (
 };
 
 /**
- * 解析接口参数，按参数类型分类
- * @param parameters - 接口参数
- * @param key - 接口名称
- */
-const parserParams1 = (parameters: IPathParameter[], key: string) =>
-  parameters?.reduce(
-    (prev: IPathParams[], current) => {
-      const _category = prev.find((item) => item.category === current.category);
-      const _type = `${convertType(current.type, current.ref)}`;
-      let _refMap = `${current.name}${current.required ? "" : "?"}: ${_type}`;
-
-      // 同一类型参数，组合成对象
-      if (_category) {
-        _refMap = `${propCommit(current.description ?? "")}${_refMap}`;
-
-        if (!_category.interface?.length) {
-          const _defName = `${upperCase(key)}${
-            upperCase(current.category)
-          }Params`;
-
-          _category.interface = [
-            `export interface ${_defName} {`,
-            `${propCommit(_category.commit ?? "")}${_category.refMap ?? ""}`,
-            _refMap,
-            "}",
-          ];
-
-          _category.commit = current.category;
-          _category.name = current.category;
-          _category.type = _defName;
-          _category.refMap = `${current.category}: ${_defName}`;
-        } else {
-          _category.interface?.splice(
-            _category.interface.length - 1,
-            0,
-            _refMap,
-          );
-        }
-      } else {
-        prev.push({
-          name: current.name,
-          type: _type,
-          commit: current.description ?? current.category,
-          required: current.required,
-          category: current.category,
-          refMap: _refMap,
-          interface: [],
-          import: current.ref,
-        });
-      }
-
-      return prev;
-    },
-    [],
-  );
-
-/**
- * 解析接口数据
- * @param parameters - 接口参数
- * @param key - 接口名称
- * @returns
- */
-const parserApiData = (parameters: IPathParameter[], key: string) => {
-  const _parameters = parserParams(parameters, key) || [];
-
-  const _params = _parameters?.reduce((prev: IApiParams, current) => {
-    const _defMap = current.refMap;
-    const _refName = current.category;
-
-    current.import && prev.import?.push(current.import);
-    current.interface?.length &&
-      prev.interface?.push(current.interface?.join("\n"));
-    prev.commit?.push(
-      `* @param ${current.name} - ${current.commit ?? current.name}`,
-    );
-    _defMap && prev.defMap?.push(_defMap);
-
-    if (prev.refMap) {
-      if (_refName === "body") {
-        prev.refMap.body = current.name;
-      } else {
-        _refName &&
-          (prev.refMap[_refName] = current.interface?.length
-            ? current.name
-            : `{ ${current.name} }`);
-      }
-    }
-
-    return prev;
-  }, { commit: [], defMap: [], refMap: {}, interface: [], import: [] });
-
-  return _params;
-};
-
-/**
  * 解析参数
  * @param parameters - 参数
  * @param action - 方法名称
@@ -208,34 +76,56 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
 
     _params.forEach((item, index) => {
       const _type = `${convertType(item.type, item.ref)}`;
-      let _refMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
+      let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
       const _defName = `${upperCase(action)}${upperCase(current)}Params`;
 
-      // import
+      // 接口导入外部的定义
       if (item.ref && !prev.import.includes(item.ref)) {
         prev.import.push(item.ref);
       }
 
-      // interface
+      // 接口内部定义，同一类型的参数合并为新定义对象
       if (index > 0) {
-        _refMap = `${propCommit(item.description ?? "")}${_refMap}`;
+        _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
 
         if (index === 1) {
           _interface = [
             `export interface ${_defName} {`,
-            `${propCommit(item.description ?? "")}${_refMap}`,
-            _refMap,
+            `${propCommit(item.description ?? "")}${_defMap}`,
+            _defMap,
             "}",
           ];
         } else {
           _interface?.splice(
             _interface.length - 1,
             0,
-            _refMap,
+            _defMap,
           );
         }
       }
+
+      // 接口参数注释
+      prev.commit?.push(
+        `* @param ${item.name} - ${item.description ?? item.name}`,
+      );
+      // 接口形参
+      prev.defMap?.push(_defMap);
+      action === "updatePetWithForm" && console.log(_defMap, index);
+      // 接口形参使用
+      if (prev.refMap) {
+        if (current === "body") {
+          prev.refMap.body = item.name;
+        } else {
+          current &&
+            (prev.refMap[current as keyof IPathVirtualParameter] =
+              _interface.length ? item.name : `{ ${item.name} }`);
+        }
+      }
     });
+
+    if (_interface.length) {
+      prev.interface?.push(_interface.join("\n"));
+    }
     return prev;
   }, { commit: [], defMap: [], refMap: {}, interface: [], import: [] });
 
@@ -276,7 +166,6 @@ const parseResponseRef = (ref: string): IApiParseResponse => {
  * @returns
  */
 const generateApi = (data: IPathVirtualProperty, key: string) => {
-  // const _params = parserApiData(data.parameters, key);
   const _params = parserParams(data.parameters ?? {}, key);
 
   const _refResponse = parseResponseRef(data.response.ref ?? "");

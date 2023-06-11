@@ -3,16 +3,6 @@ export type IDefaultObject<T = unknown> = {
 };
 
 /**
- * 原始基础类型
- */
-export type originalBaseType =
-  | "string"
-  | "integer"
-  | "boolean"
-  | "array"
-  | "object";
-
-/**
  * 参数类别
  */
 export type parameterCategory =
@@ -156,16 +146,6 @@ export interface ISwaggerResult {
   securityDefinitions: IDefaultObject<ISwaggerResultSecurity>;
 }
 
-// Http 方法
-export type HttpMethod =
-  | "get"
-  | "post"
-  | "put"
-  | "delete"
-  | "head"
-  | "options"
-  | "patch";
-
 /**
  * 定义的虚拟属性
  */
@@ -198,44 +178,6 @@ export interface IDefinitionVirtualProperty {
    * 格式
    */
   format?: string;
-}
-
-/**
- * 接口地址参数
- */
-export interface IPathParameter {
-  /**
-   * 参数类别
-   */
-  category: parameterCategory;
-  /**
-   * 参数名
-   */
-  name: string;
-  /**
-   * 类型
-   */
-  type: string;
-  /**
-   * 描述
-   */
-  description: string;
-  /**
-   * 是否必需
-   */
-  required: boolean;
-  /**
-   * 格式
-   */
-  format?: string;
-  /**
-   * 自定义类型
-   */
-  ref?: string;
-  /**
-   * 默认值
-   */
-  default?: string;
 }
 
 export interface IPathVirtualParameterCategory {
@@ -351,17 +293,6 @@ export interface ISwaggerOptions {
    * 平台。默认：axios
    */
   platform?: "axios" | "wechat";
-}
-
-export interface IDefinitionNameMappingItem {
-  /**
-   * 定义名
-   */
-  key: string;
-  /**
-   * 真实名
-   */
-  name: string;
 }
 
 export interface IDefinitionNameMapping {
