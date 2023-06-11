@@ -35,7 +35,7 @@ const getPathVirtualProperty = (
         ref: getRefType(
           _schema?.$ref ?? _schema?.items?.$ref ?? "",
         ),
-        typeX: _schema?.items?.type ?? "",
+        typeX: current?.items?.type ?? _schema?.items?.type,
       };
 
       prev[current.in].push(item);
@@ -102,7 +102,7 @@ export const getApiPath = (
 
   Object.keys(paths).forEach((url) => {
     // if (
-    //   url !== "/store/inventory"
+    //   url !== "/pet"
     //   // !url.includes("/pet")
     //   // !["/api/project/saveFormDataByPatient"].includes(url)
     // ) {

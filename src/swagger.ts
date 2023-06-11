@@ -72,6 +72,7 @@ interface ISwaggerMethodParameter {
   required: boolean;
   description: string;
   schema?: ISwaggerSchema;
+  items: ISwaggerSchema;
 }
 
 interface ISwaggerMethodBody {
