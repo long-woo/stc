@@ -25,16 +25,17 @@ const getPathVirtualProperty = (
     (pathMethod.parameters?.sort((_a, _b) =>
       Number(_b.required) - Number(_a.required)
     ) ?? []).reduce((prev: IPathVirtualParameter, current) => {
+      const _schema = current.schema;
       const item: IPathVirtualParameterCategory = {
         name: current.name,
-        type: current.type ?? current.schema?.type ?? "",
+        type: current.type ?? _schema?.type ?? "",
         required: current.required,
         description: current.description,
-        format: current.format ?? current.schema?.format,
+        format: current.format ?? _schema?.format,
         ref: getRefType(
-          current.schema?.$ref ?? current.schema?.items?.$ref ??
-            current.schema?.items?.type ?? "",
+          _schema?.$ref ?? _schema?.items?.$ref ?? "",
         ),
+        typeX: _schema?.items?.type ?? "",
       };
 
       prev[current.in].push(item);
@@ -53,7 +54,9 @@ const getPathVirtualProperty = (
           _bodyContent?.schema?.$ref ?? _bodyContent?.schema?.items?.$ref ?? "",
         );
         const _body: IPathVirtualParameterCategory = {
-          name: lowerCase(_bodyContentRef),
+          name: _key === "application/octet-stream"
+            ? "file"
+            : lowerCase(_bodyContentRef),
           type: _bodyContent?.schema?.type ?? "",
           required: _requestBody.required ?? false,
           description: _requestBody.description,
@@ -98,13 +101,13 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    if (
-      url !== "/pet/{petId}"
-      // !url.includes("/pet")
-      // !["/api/project/saveFormDataByPatient"].includes(url)
-    ) {
-      return;
-    }
+    // if (
+    //   url !== "/store/inventory"
+    //   // !url.includes("/pet")
+    //   // !["/api/project/saveFormDataByPatient"].includes(url)
+    // ) {
+    //   return;
+    // }
     // 请求方式
     const methods = paths[url];
 

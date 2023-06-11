@@ -72,12 +72,15 @@ const methodCommit = (
 const parserParams = (parameters: IPathVirtualParameter, action: string) =>
   Object.keys(parameters).reduce((prev: IApiParams, current) => {
     const _params = parameters[current as keyof IPathVirtualParameter];
-    let _interface: string[] = [];
+    const _multiParam = _params.length > 1;
+    const _defName = `${upperCase(action)}${upperCase(current)}Params`;
+    const _interface = _multiParam
+      ? [`export interface ${_defName} {`, "}"]
+      : [];
 
     _params.forEach((item, index) => {
-      const _type = `${convertType(item.type, item.ref)}`;
+      const _type = `${convertType(item.type, item.typeX ?? item.ref)}`;
       let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
-      const _defName = `${upperCase(action)}${upperCase(current)}Params`;
 
       // 接口导入外部的定义
       if (item.ref && !prev.import.includes(item.ref)) {
@@ -85,40 +88,37 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       }
 
       // 接口内部定义，同一类型的参数合并为新定义对象
-      if (index > 0) {
+      if (_multiParam) {
         _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
 
-        if (index === 1) {
-          _interface = [
-            `export interface ${_defName} {`,
-            `${propCommit(item.description ?? "")}${_defMap}`,
-            _defMap,
-            "}",
-          ];
-        } else {
-          _interface?.splice(
-            _interface.length - 1,
-            0,
-            _defMap,
-          );
-        }
-      }
+        _interface.splice(
+          _interface.length - 1,
+          0,
+          _defMap,
+        );
 
-      // 接口参数注释
-      prev.commit?.push(
-        `* @param ${item.name} - ${item.description ?? item.name}`,
-      );
-      // 接口形参
-      prev.defMap?.push(_defMap);
-      action === "updatePetWithForm" && console.log(_defMap, index);
-      // 接口形参使用
-      if (prev.refMap) {
-        if (current === "body") {
-          prev.refMap.body = item.name;
-        } else {
-          current &&
-            (prev.refMap[current as keyof IPathVirtualParameter] =
-              _interface.length ? item.name : `{ ${item.name} }`);
+        if (index === 0) {
+          // 接口参数注释
+          prev.commit?.push(
+            `* @param ${current} - ${_defName}`,
+          );
+          // 接口形参
+          prev.defMap?.push(`${current}: ${_defName}`);
+          // 接口形参使用
+          prev.refMap &&
+            (prev.refMap[current as keyof IPathVirtualParameter] = current);
+        }
+      } else {
+        // 接口参数注释
+        prev.commit?.push(
+          `* @param ${item.name} - ${item.description || item.name}`,
+        );
+        // 接口形参
+        prev.defMap?.push(_defMap);
+        // 接口形参使用
+        if (prev.refMap) {
+          prev.refMap[current as keyof IPathVirtualParameter] =
+            current === "body" ? item.name : `{ ${item.name} }`;
         }
       }
     });
@@ -166,6 +166,9 @@ const parseResponseRef = (ref: string): IApiParseResponse => {
  * @returns
  */
 const generateApi = (data: IPathVirtualProperty, key: string) => {
+  const methodName = data.method.toUpperCase();
+  Logs.info(`【${methodName}】${data.url}`);
+
   const _params = parserParams(data.parameters ?? {}, key);
 
   const _refResponse = parseResponseRef(data.response.ref ?? "");
@@ -174,12 +177,16 @@ const generateApi = (data: IPathVirtualProperty, key: string) => {
     _refResponse.name,
   );
 
+  if (_responseDef === "unknown") {
+    Logs.warn("缺少 200 状态码的信息。");
+  }
+
   const _methodCommit = methodCommit(
     data.summary || key,
     _params?.commit,
     data.description,
   );
-  const _methodParam = _params?.refMap
+  const _methodParam = _params.refMap && Object.keys(_params.refMap).length
     ? `, ${JSON.stringify(_params.refMap, undefined, 2)?.replaceAll('"', "")}`
     : "";
 
@@ -187,7 +194,7 @@ const generateApi = (data: IPathVirtualProperty, key: string) => {
 export const ${key} = (${
     _params?.defMap?.join(", ") ??
       ""
-  }) => webClient.request<${_responseDef}>('${data.url}', '${data.method.toUpperCase()}'${_methodParam})`;
+  }) => webClient.request<${_responseDef}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
     import: [..._params.import, ..._refResponse.import],

@@ -190,6 +190,10 @@ export interface IPathVirtualParameterCategory {
    */
   type: string;
   /**
+   * 扩展类型
+   */
+  typeX?: string;
+  /**
    * 描述
    */
   description: string;
