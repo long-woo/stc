@@ -97,7 +97,8 @@ const generateApiMethodFile = (
 
     createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
-  Logs.info("处理 api 完成。\n");
+  console.log("\n");
+  Logs.success(`api 生成已完成：\n\t${options.outDir}\n`);
 };
 
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
@@ -108,10 +109,10 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   await emptyDirectory(options.outDir);
 
   // 复制运行时需要的文件
-  // copyFile(
-  //   `./src/typescript/shared`,
-  //   `${options.outDir}/shared`,
-  // );
+  copyFile(
+    `./src/typescript/shared`,
+    `${options.outDir}/shared`,
+  );
 
   // 生成 v2 类型定义文件
   if (data.definitions) {
@@ -128,8 +129,5 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
 if (import.meta.main) {
   const options = main();
 
-  // http://demodata.liangyihui.net/smart/v2/api-docs
-  // https://petstore.swagger.io/v2/swagger.json
-  // https://petstore3.swagger.io/api/v3/openapi.json
   generateApi(options.url, options);
 }

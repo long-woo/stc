@@ -1,4 +1,5 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
+import { format as dateFormat } from "std/datetime/format.ts";
 
 interface ICopyFileOptions {
   /**
@@ -39,7 +40,10 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 swagger2code 生成\n${content}`),
+    new TextEncoder().encode(`// 由 swagger2code 生成
+// ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
+
+${content}`),
   );
 };
 
