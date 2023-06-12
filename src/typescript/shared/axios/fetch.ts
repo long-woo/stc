@@ -2,7 +2,7 @@
 import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
 import type { IDefaultObject } from "../webClientBase";
-import { WebClientBase } from "../webClientBase.ts";
+import { WebClientBase } from "../webClientBase";
 
 /**
  * API 请求
@@ -11,7 +11,6 @@ export class WebClient extends WebClientBase {
   private static axiosInstance: AxiosInstance;
   // private static onError: ((message: string) => void) | undefined;
   // private static errorIgnore: string[] = [];
-  // private static onLogin: (() => void) | undefined;
 
   public static request<T>(
     url: string,
@@ -50,14 +49,14 @@ export class WebClient extends WebClientBase {
    */
   public static createAxios(
     config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
-      /**
-       * 错误回调函数
-       */
-      error?: (message: string) => void;
-      /**
-       * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
-       */
-      errorIgnore?: string[];
+      // /**
+      //  * 错误回调函数
+      //  */
+      // error?: (message: string) => void;
+      // /**
+      //  * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+      //  */
+      // errorIgnore?: string[];
     },
   ) {
     this.axiosInstance = axios.create({

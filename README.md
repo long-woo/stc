@@ -4,6 +4,7 @@
 
 特性：
 
+- [x] 覆盖 ~95% 已知 Swagger 文档。
 - [x] 支持 Swagger 2/3。
 - [x] 支持 Axios、Wechat。
 - [x] 生成 TypeScript。
@@ -14,8 +15,12 @@
 
 ### 使用
 
-⚠️ deno 不会解析 `~`字符为用户主目录。
+⚠️ 注意：deno 不会解析 `~`字符为用户主目录。
 
 ```sh
-swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=dist
+swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 ```
+
+![终端输出信息](resources/info.png)
+
+![输出文件](resources/output.png)
