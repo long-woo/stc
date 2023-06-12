@@ -1,4 +1,5 @@
 import { parse } from "std/flags/mod.ts";
+import { dirname, fromFileUrl, join } from "std/path/mod.ts";
 
 import Logs from "./console.ts";
 import { getDefinition } from "./definition.ts";
@@ -110,7 +111,7 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
 
   // 复制运行时需要的文件
   copyFile(
-    `./src/typescript/shared`,
+    join(dirname(fromFileUrl(import.meta.url)), "/typescript/shared"),
     `${options.outDir}/shared`,
   );
 

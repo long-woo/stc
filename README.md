@@ -21,6 +21,6 @@
 swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 ```
 
-![终端输出信息](resources/info.png)
+![终端输出信息](resources/output.png)
 
-![输出文件](resources/output.png)
+![输出文件](resources/file.png)
