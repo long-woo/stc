@@ -2,6 +2,8 @@ import { parse } from "std/flags/mod.ts";
 import { dirname, fromFileUrl, join } from "std/path/mod.ts";
 
 import Logs from "./console.ts";
+import { PluginManager } from "./plugins/index.ts";
+import { typeScriptPlugin } from "./plugins/typescript/index.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import {
@@ -35,6 +37,16 @@ const main = (): ISwaggerOptions => {
     outDir,
     platform,
   };
+};
+
+/**
+ * 初始化插件管理器
+ */
+const initPluginManager = (options: ISwaggerOptions) => {
+  const pluginManager = new PluginManager();
+
+  pluginManager.register(typeScriptPlugin);
+  pluginManager.setupAll(options);
 };
 
 /**
@@ -130,5 +142,6 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
 if (import.meta.main) {
   const options = main();
 
-  generateApi(options.url, options);
+  initPluginManager(options);
+  // generateApi(options.url, options);
 }

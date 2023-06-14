@@ -1,17 +1,19 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch=src src/mod.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=dist",
+    "dev": "deno run -A --watch=src src/mod.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out",
     "build": "deno compile -A src/mod.ts --output release/swagger2code"
   },
   "imports": {
+    "/": "./",
+    "./": "./",
     "std/": "https://deno.land/std@0.190.0/"
   },
   "lint": {
     "include": ["src/"],
-    "exclude": ["dist/", "src/typescript/shared/**/*.ts"]
+    "exclude": ["out/", "**/shared/**"]
   },
   "fmt": {
     "include": ["src/"],
-    "exclude": ["dist/", "src/typescript/shared/**/*.ts"]
+    "exclude": ["out/"]
   }
 }
