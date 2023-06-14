@@ -99,7 +99,7 @@ const generateApiMethodFile = (
     createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
   });
   console.log("\n");
-  Logs.success(`api 生成已完成：\n\t${options.outDir}\n`);
+  Logs.success(`api 已生成完成：\n\t${options.outDir}\n`);
 };
 
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {

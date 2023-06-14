@@ -24,3 +24,11 @@ swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 ![终端输出信息](resources/output.png)
 
 ![输出文件](resources/file.png)
+
+### 选项
+
+| 参数名 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| url | string |  | Swagger 文档地址 |
+| outDir | string | swagger2code_out | 输出目录 |
+| platform | string |  | 平台，可选值：`axios`、`wechat` |
