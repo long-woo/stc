@@ -45,8 +45,10 @@ const main = (): ISwaggerOptions => {
 const initPluginManager = (options: ISwaggerOptions) => {
   const pluginManager = new PluginManager();
 
+  // 注册插件
   pluginManager.register(typeScriptPlugin);
-  pluginManager.setupAll(options);
+  // 启动所有插件
+  pluginManager.setupAll({ options });
 };
 
 /**
@@ -117,8 +119,6 @@ const generateApiMethodFile = (
 const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   const data = await getSwaggerData(urlOrPath);
 
-  // 清空控制台信息
-  Logs.clear();
   await emptyDirectory(options.outDir);
 
   // 复制运行时需要的文件
@@ -142,6 +142,10 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
 if (import.meta.main) {
   const options = main();
 
+  // 清空控制台信息
+  Logs.clear();
+  // 初始化插件管理器
   initPluginManager(options);
-  // generateApi(options.url, options);
+  // 生成 api
+  generateApi(options.url, options);
 }

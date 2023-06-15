@@ -1,5 +1,4 @@
-import { ISwaggerOptions } from "../swagger.ts";
-import { IPlugin } from "./typeDeclaration.ts";
+import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 
 export class PluginManager {
   private plugins: IPlugin[] = [];
@@ -8,9 +7,11 @@ export class PluginManager {
     this.plugins.push(plugin);
   }
 
-  async setupAll(options: ISwaggerOptions) {
+  async setupAll(context: IPluginContext) {
     for (const plugin of this.plugins) {
-      await plugin.setup(options);
+      await plugin.setup(context);
+
+      // plugin.onLoad?.()
     }
   }
 }
