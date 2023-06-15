@@ -17,26 +17,11 @@ import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
 import { copyFile, createFile, emptyDirectory, readFile } from "./util.ts";
 
-const main = (): ISwaggerOptions => {
-  // 解析参数
-  const args = parse(Deno.args);
-
-  // 文件输出目录，默认为 Deno 当前执行的目录
-  let outDir = `${Deno.cwd()}/swagger2code_out`;
-
-  // 若没有提供 out 选项，则使用 Deno 当前执行的目录
-  if (typeof args.outDir === "string" && args.outDir) {
-    outDir = args.outDir;
-  }
-
-  // 平台。axios、wechat
-  const platform = args.platform ?? "axios";
-
-  return {
-    url: args.url,
-    outDir,
-    platform,
-  };
+/**
+ * 创建上下文
+ * @param options
+ */
+const createContext = (options: ISwaggerOptions) => {
 };
 
 /**
@@ -137,6 +122,28 @@ const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
   }
 
   generateApiMethodFile(data.paths, options);
+};
+
+const main = (): ISwaggerOptions => {
+  // 解析参数
+  const args = parse(Deno.args);
+
+  // 文件输出目录，默认为 Deno 当前执行的目录
+  let outDir = `${Deno.cwd()}/swagger2code_out`;
+
+  // 若没有提供 out 选项，则使用 Deno 当前执行的目录
+  if (typeof args.outDir === "string" && args.outDir) {
+    outDir = args.outDir;
+  }
+
+  // 平台。axios、wechat
+  const platform = args.platform ?? "axios";
+
+  return {
+    url: args.url,
+    outDir,
+    platform,
+  };
 };
 
 if (import.meta.main) {

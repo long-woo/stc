@@ -5,33 +5,7 @@ import {
   ISwaggerResult,
 } from "../swagger.ts";
 
-export interface IPluginContext {
-  /**
-   * 选项
-   */
-  options: ISwaggerOptions;
-}
-
-export interface IPluginTransform {
-  /**
-   * 类型定义
-   */
-  definition: string;
-  /**
-   * 接口数据
-   */
-  action: Map<string, string>;
-}
-
-export interface IPlugin {
-  /**
-   * 插件名称
-   */
-  name: string;
-  /**
-   * 插件入口
-   */
-  setup: (context: IPluginContext) => Promise<void> | void;
+interface IPluginEvent {
   /**
    * 加载完成事件
    * @param data - 原始数据
@@ -60,4 +34,33 @@ export interface IPlugin {
    * 结束事件
    */
   onEnd?: () => void;
+}
+
+export interface IPluginContext extends IPluginEvent {
+  /**
+   * 选项
+   */
+  options: ISwaggerOptions;
+}
+
+export interface IPluginTransform {
+  /**
+   * 类型定义
+   */
+  definition: string;
+  /**
+   * 接口数据
+   */
+  action: Map<string, string>;
+}
+
+export interface IPlugin extends IPluginEvent {
+  /**
+   * 插件名称
+   */
+  name: string;
+  /**
+   * 插件入口
+   */
+  setup: (context: IPluginContext) => Promise<void> | void;
 }
