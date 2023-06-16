@@ -6,4 +6,8 @@ export const typeScriptPlugin: IPlugin = {
   setup(options: ISwaggerOptions) {
     console.log("oi:TypeScriptPlugin setup", options);
   },
+
+  onLoad(data) {
+    console.log(data);
+  },
 };

@@ -4,10 +4,10 @@
 
 特性：
 
-- [x] 覆盖 ~95% 已知 Swagger 文档，几乎等同于手写。
+- [x] 覆盖 ~95% 已知 Swagger 文档。
 - [x] 支持 Swagger 2、3。
 - [x] 支持 Axios、Wechat。
-- [x] 生成 TypeScript。
+- [x] 生成 TypeScript，几乎等同于手写。
 
 ## 快速开始
 

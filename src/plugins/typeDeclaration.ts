@@ -62,5 +62,5 @@ export interface IPlugin extends IPluginEvent {
   /**
    * 插件入口
    */
-  setup: (context: IPluginContext) => Promise<void> | void;
+  setup: (options: ISwaggerOptions) => Promise<void> | void;
 }

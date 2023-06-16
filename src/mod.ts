@@ -16,24 +16,24 @@ import {
 import { parserDefinition } from "./typescript/defintion.ts";
 import { parserPath } from "./typescript/path.ts";
 import { copyFile, createFile, emptyDirectory, readFile } from "./util.ts";
+import { IPluginContext } from "./plugins/typeDeclaration.ts";
 
 /**
  * 创建上下文
  * @param options
  */
-const createContext = (options: ISwaggerOptions) => {
-};
+const createContext = (context: IPluginContext) => context;
 
 /**
  * 初始化插件管理器
  */
-const initPluginManager = (options: ISwaggerOptions) => {
+const initPluginManager = (context: IPluginContext) => {
   const pluginManager = new PluginManager();
 
   // 注册插件
   pluginManager.register(typeScriptPlugin);
   // 启动所有插件
-  pluginManager.setupAll({ options });
+  pluginManager.setupAll(context);
 };
 
 /**
@@ -101,9 +101,14 @@ const generateApiMethodFile = (
   Logs.success(`api 已生成完成：\n\t${options.outDir}\n`);
 };
 
-const generateApi = async (urlOrPath: string, options: ISwaggerOptions) => {
+const generateApi = async (
+  context: IPluginContext,
+  urlOrPath: string,
+  options: ISwaggerOptions,
+) => {
   const data = await getSwaggerData(urlOrPath);
 
+  context.onLoad?.(data);
   await emptyDirectory(options.outDir);
 
   // 复制运行时需要的文件
@@ -148,11 +153,13 @@ const main = (): ISwaggerOptions => {
 
 if (import.meta.main) {
   const options = main();
+  // 创建上下文
+  const context = createContext({ options });
 
   // 清空控制台信息
   Logs.clear();
   // 初始化插件管理器
-  initPluginManager(options);
+  initPluginManager(context);
   // 生成 api
-  generateApi(options.url, options);
+  generateApi(context, options.url, options);
 }
