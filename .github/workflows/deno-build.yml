@@ -61,35 +61,36 @@ jobs:
       - name: Get file names
         id: get_file_name
         run: |
-          echo "::set-output name=files::$(find ./release -type f)"
+          echo "files=$(find ./release -type f)" >> $GITHUB_OUTPUT
 
       # 获取文件目录中的文件类型
       - name: Get file types
         id: get_file_type
         run: |
-          echo "::set-output name=files::$(file --mime-type -b ./release/*)"
+          echo "files=$(file --mime-type -b ./release/*)" >> $GITHUB_OUTPUT
+          echo "$(startsWith(github.ref, 'refs/tags/'))"
 
       # 创建 Release
-      - name: Create release
-        if: startsWith(github.ref, 'refs/tags/')
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref  }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+      # - name: Create release
+      #   # if: startsWith(github.ref, 'refs/tags/')
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref  }}
+      #     release_name: Release ${{ github.ref }}
+      #     draft: false
+      #     prerelease: false
 
-      # 上传 Release 里的资产
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './release/*'
-          asset_name: ${{ steps.get_file_name.outputs.files }} # ${{ steps.list_files.outputs.files }}
-          asset_content_type: ${{ steps.get_file_type.outputs.files }}
+      # # 上传 Release 里的资产
+      # - name: Upload Release Asset
+      #   id: upload_release_asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: './release/*'
+      #     asset_name: ${{ steps.get_file_name.outputs.files }} # ${{ steps.list_files.outputs.files }}
+      #     asset_content_type: ${{ steps.get_file_type.outputs.files }}
