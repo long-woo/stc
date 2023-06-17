@@ -1,5 +1,5 @@
 // 由 swagger2code 生成
-export type IDefaultObject = Record<string, any>;
+export type IDefaultObject = Record<string, unknown>;
 
 export class WebClientBase {
   /**
@@ -11,8 +11,8 @@ export class WebClientBase {
     // 替换路由参数
     const newURL = url.replace(
       /[\{|:](\w+)[\}]?/gi,
-      (_key: string, _value: string) => {
-        return path ? path[_value] : "";
+      (_key: string, _value: string): string => {
+        return path ? path[_value] as string : "";
       },
     );
 

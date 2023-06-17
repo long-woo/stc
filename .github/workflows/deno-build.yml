@@ -10,9 +10,9 @@ name: DenoBuild
 
 on:
   push:
-    branches: ["master"]
+    branches: ['master']
   pull_request:
-    branches: ["master"]
+    branches: ['master']
 
 permissions:
   contents: read
@@ -40,6 +40,56 @@ jobs:
 
       - name: Run tests
         run: deno test -A
-        
-      - name: Run compile
-        run: deno task build
+
+      # 执行编译命令
+      - name: Run compile mac
+        run: deno task build:mac
+      - name: Run compile mac M
+        run: deno task build:mac-m
+      - name: Run compile windows
+        run: deno task build:win
+      - name: Run compile linux
+        run: deno task build:linux
+
+      # 列出编译后的文件
+      # - name: List compiled files
+      #   id: list_files
+      #   run: |
+      #     find ./release -type f > files.txt
+
+      # 获取目录中的文件名
+      - name: Get file names
+        id: get_file_name
+        run: |
+          echo "::set-output name=files::$(find ./release -type f)"
+
+      # 获取文件目录中的文件类型
+      - name: Get file types
+        id: get_file_type
+        run: |
+          echo "::set-output name=files::$(file --mime-type -b ./release/*)"
+
+      # 创建 Release
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref  }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      # 上传 Release 里的资产
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './release/*'
+          asset_name: ${{ steps.get_file_name.outputs.files }} # ${{ steps.list_files.outputs.files }}
+          asset_content_type: ${{ steps.get_file_type.outputs.files }}
