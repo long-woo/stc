@@ -210,6 +210,7 @@ export const ${key} = (${
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   const apiMap = new Map<string, IApiFile>();
 
+  Logs.info("解析接口...");
   data.forEach((item, key) => {
     const _tag = item.tags?.[0];
     if (!_tag) {
@@ -239,5 +240,6 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
     }
   });
 
+  Logs.info("解析完成。");
   return apiMap;
 };

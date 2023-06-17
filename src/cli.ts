@@ -1,16 +1,8 @@
-import { dirname, fromFileUrl, join } from "std/path/mod.ts";
-
 import Logs from "./console.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
-import {
-  IDefaultObject,
-  ISwaggerOptions,
-  ISwaggerResult,
-  ISwaggerResultDefinition,
-  ISwaggerResultPath,
-} from "./swagger.ts";
-import { copyFile, createFile, emptyDirectory, readFile } from "./util.ts";
+import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
+import { createFile, emptyDirectory, readFile } from "./util.ts";
 import { IPluginContext } from "./plugins/typeDeclaration.ts";
 
 /**
@@ -18,7 +10,7 @@ import { IPluginContext } from "./plugins/typeDeclaration.ts";
  * @param urlOrPath - 远程地址或本地
  * @returns
  */
-const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
+const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
   if (!/^http(s?):\/\//.test(urlOrPath)) {
     const content = await readFile(urlOrPath);
 
@@ -36,72 +28,56 @@ const getSwaggerData = async (urlOrPath: string): Promise<ISwaggerResult> => {
   return data;
 };
 
-const generateDefFile = (
-  definitions: IDefaultObject<ISwaggerResultDefinition>,
-  options: ISwaggerOptions,
-) => {
-  Logs.info("处理类型定义...");
-  const defVirtual = getDefinition(definitions);
-  const defFileContent = parserDefinition(defVirtual);
-
-  createFile(`${options.outDir}/types.ts`, defFileContent);
-  Logs.info("处理类型定义完成。\n");
-};
-
-const generateApiMethodFile = (
-  paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
-  options: ISwaggerOptions,
-) => {
-  Logs.info("处理 api...");
-  const pathVirtual = getApiPath(paths);
-  const pathData = parserPath(pathVirtual);
-  pathData.forEach((api, key) => {
-    const _import = api.import;
-    const _apiImport = [
-      `import webClient from './shared/${options.platform}/fetch'`,
-    ];
-    const _apiContent: Array<string> = [];
-
-    if (_import.length) {
-      _apiImport.push(
-        `import type { ${_import.join(", ")} } from './types'`,
-      );
-    }
-
-    _apiContent.push(_apiImport.join("\n"));
-    api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
-    api.export?.length && _apiContent.push(api.export.join("\n\n"));
-
-    createFile(`${options.outDir}/${key}.ts`, _apiContent.join("\n\n"));
-  });
-  console.log("\n");
-  Logs.success(`api 已生成完成：\n\t${options.outDir}\n`);
-};
-
-export const generateApi = async (
+/**
+ * 启动
+ * @param context - 插件上下文
+ * @param urlOrPath - url 或本地文件路径
+ * @param options - 配置
+ */
+export const start = async (
   context: IPluginContext,
   urlOrPath: string,
   options: ISwaggerOptions,
 ) => {
-  const data = await getSwaggerData(urlOrPath);
-
+  const data = await getData(urlOrPath);
+  // 触发插件 onload 事件
   context.onLoad?.(data);
+
+  // 处理类型定义。v2 版本中，通过 `definitions` 属性获取。而 v3 版本，则通过 `components.schemas` 属性获取。
+  const defData = getDefinition(data.definitions || data.components?.schemas);
+  // 触发插件 onDefinition 事件
+  context.onDefinition?.(defData);
+
+  const actionData = getApiPath(data.paths);
+  // 触发插件 onAction 事件
+  context.onAction?.(actionData);
+
+  // 清空输出目录
   await emptyDirectory(options.outDir);
 
-  // 复制运行时需要的文件
-  copyFile(
-    join(dirname(fromFileUrl(import.meta.url)), "/typescript/shared"),
-    `${options.outDir}/shared`,
-  );
+  // 触发插件 onTransform 事件
+  const transformData = context.onTransform?.(defData, actionData);
 
-  // 生成 v2 类型定义文件
-  if (data.definitions) {
-    generateDefFile(data.definitions, options);
-  }
-  // 生成 v3 类型定义文件
-  if (data.components?.schemas) {
-    generateDefFile(data.components?.schemas, options);
+  // 写入类型定义文件
+  if (transformData?.definition) {
+    createFile(
+      `${options.outDir}/types.${options.lang}`,
+      transformData.definition,
+    );
   }
 
-  generateApiMethodFile(data.paths, options);
+  // 写入 API 文件
+  if (transformData?.action) {
+    transformData.action.forEach((content, filename) => {
+      createFile(
+        `${options.outDir}/${filename}.${options.lang}`,
+        content,
+      );
+    });
+  }
+
+  console.log("\n");
+  Logs.success(`API 文件生成完成：\n\t${options.outDir}\n`);
+  // 触发插件 onEnd 事件
+  context.onEnd?.();
 };

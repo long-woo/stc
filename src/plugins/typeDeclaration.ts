@@ -26,7 +26,7 @@ interface IPluginEvent {
    * @param def - 类型定义
    * @param action - 接口数据
    */
-  onTransform?: (
+  onTransform: (
     def: Map<string, IDefinitionVirtualProperty[]>,
     action: Map<string, IPathVirtualProperty>,
   ) => IPluginTransform;
@@ -36,29 +36,29 @@ interface IPluginEvent {
   onEnd?: () => void;
 }
 
-export interface IPluginContext extends IPluginEvent {
+export interface IPluginContext extends Partial<IPluginEvent> {
   /**
    * 选项
    */
-  options: ISwaggerOptions;
+  readonly options: ISwaggerOptions;
 }
 
 export interface IPluginTransform {
   /**
    * 类型定义
    */
-  definition: string;
+  definition?: string;
   /**
    * 接口数据
    */
-  action: Map<string, string>;
+  action?: Map<string, string>;
 }
 
 export interface IPlugin extends IPluginEvent {
   /**
    * 插件名称
    */
-  name: string;
+  readonly name: string;
   /**
    * 插件入口
    */

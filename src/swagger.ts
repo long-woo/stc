@@ -289,15 +289,19 @@ export interface ISecurityVirtualProperty {
 }
 
 export interface ISwaggerOptions {
-  url: string;
+  readonly url: string;
   /**
    * 输出目录
    */
-  outDir: string;
+  readonly outDir: string;
   /**
    * 平台。默认：axios
    */
-  platform?: "axios" | "wechat";
+  readonly platform?: "axios" | "wechat";
+  /**
+   * 语言，用于输出文件的后缀名。默认：ts
+   */
+  readonly lang?: string;
 }
 
 export interface IDefinitionNameMapping {

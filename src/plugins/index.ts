@@ -13,13 +13,16 @@ export class PluginManager {
       Logs.info(`加载插件: ${plugin.name}`);
       await plugin.setup(context.options);
 
+      // 触发插件 onload 事件
       context.onLoad = plugin.onLoad;
-
-      context.onDefinition = (data) => {
-        plugin.onDefinition?.(data);
-      };
-
+      // 触发插件 onDefinition 事件
+      context.onDefinition = plugin.onDefinition;
+      // 触发插件 onAction 事件
       context.onAction = plugin.onAction;
+      // 触发插件 onTransform 事件
+      context.onTransform = plugin.onTransform;
+      // 触发插件 onEnd 事件
+      context.onEnd = plugin.onEnd;
     }
     Logs.info("插件加载完成\n");
   }

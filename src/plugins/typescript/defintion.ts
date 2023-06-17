@@ -1,3 +1,4 @@
+import Logs from "/src/console.ts";
 import { IDefinitionVirtualProperty } from "/src/swagger.ts";
 import { convertType, propCommit, upperCase } from "/src/util.ts";
 
@@ -36,6 +37,7 @@ export const parserDefinition = (
 ) => {
   const _res: Array<string> = [];
 
+  Logs.info("解析定义...");
   data.forEach((value, key) => {
     const props = value.reduce((prev, current) => {
       const _enum = current.enumOption;
@@ -61,5 +63,6 @@ export const parserDefinition = (
     _res.push(props.join("\n"));
   });
 
+  Logs.info("解析定义完成。\n");
   return _res.join("\n\n");
 };
