@@ -65,7 +65,9 @@ jobs:
       - name: Get file names
         id: get_file_name
         run: |
-          echo "FILE_NAME=$(find ./release -type f)" >> "$GITHUB_ENV"
+          file_names=$(find ./release -type f)
+          file_names_with_newlines=$(echo "$file_names" | tr '\n' ',')
+          echo "FILE_NAME=$file_names_with_newlines" >> $GITHUB_ENV
 
       # 获取文件目录中的文件类型
       - name: Get file types
