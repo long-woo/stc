@@ -54,7 +54,8 @@ jobs:
       # 创建版本文件
       - name: 创建版本文件
         id: create_version_file
-        run: deno task version
+        run: |
+          deno task version
           echo "TAG=$(cat ./release/version)" >> $GITHUB_ENV
 
       # 列出编译后的文件
