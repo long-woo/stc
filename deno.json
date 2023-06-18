@@ -1,6 +1,7 @@
 {
   "tasks": {
     "dev": "deno run -A --watch=src src/mod.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out",
+    "version": "echo '1.0.0' > release/version",
     "build:mac": "deno compile -A src/mod.ts --output release/swagger2code --target x86_64-apple-darwin",
     "build:mac-m": "deno compile -A src/mod.ts --output release/swagger2code-m --target aarch64-apple-darwin",
     "build:win": "deno compile -A src/mod.ts --output release/swagger2code-win --target x86_64-pc-windows-msvc",

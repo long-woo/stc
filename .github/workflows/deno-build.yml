@@ -31,11 +31,6 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Extract Current Tag
-        id: extract_tag
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "TAG=${GITHUB_REF#refs/tags/}"
-
       # Uncomment this step to verify the use of 'deno fmt' on each commit.
       - name: Verify formatting
         run: deno fmt --check
@@ -55,6 +50,12 @@ jobs:
         run: deno task build:win
       - name: Run compile linux
         run: deno task build:linux
+
+      # 创建版本文件
+      - name: 创建版本文件
+        id: create_version_file
+        run: deno task version
+          echo "TAG=$(cat ./release/version)" >> $GITHUB_ENV
 
       # 列出编译后的文件
       # - name: List compiled files
@@ -79,26 +80,28 @@ jobs:
           echo "FILE_TYPES=$file_types_with_newlines" >> $GITHUB_ENV
 
       # 创建 Release
-      # - name: Create release
-      #   # if: startsWith(github.ref, 'refs/tags/')
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.TAG }}
-      #     release_name: Release${{ env.TAG }}
-      #     draft: false
-      #     prerelease: false
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ env.TAG }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: Release${{ env.TAG }}
+          draft: false
+          prerelease: false
 
-      # # 上传 Release 里的资产
-      # - name: Upload Release Asset
-      #   id: upload_release_asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: './release/*'
-      #     asset_name: ${{ env.FILE_NAMES }} # ${{ steps.list_files.outputs.files }}
-      #     asset_content_type: ${{ env.FILE_TYPES }}
+      # 上传 Release 里的资产
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILE_NAMES: ${{ env.FILE_NAMES }}
+          FILE_TYPES: ${{ env.FILE_TYPES }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './release/*'
+          asset_name: ${{ env.FILE_NAMES }} # ${{ steps.list_files.outputs.files }}
+          asset_content_type: ${{ env.FILE_TYPES }}

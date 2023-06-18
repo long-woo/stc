@@ -87,18 +87,19 @@ export const start = async (
 const printHelp = () => {
   console.log(`
 Usage:
-  swagger2code [options] <url>
+  swagger2code [options]
 
 Options:
   -h, --help         显示帮助信息
+  --url              远程地址或本地文件路径
   -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 swagger2code_out
   -p, --platform     平台，可选值：axios、wechat， [default: "axios"]
   -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
   -v, --version      显示版本信息
 
 Examples:
-  swagger2code -o./out http://petstore.swagger.io/v2/swagger.json
-  swagger2code -o./out -p wechat -l ts http://petstore.swagger.io/v2/swagger.json
+  swagger2code -o./out --url=http://petstore.swagger.io/v2/swagger.json
+  swagger2code -o./out -p wechat -l ts --url=http://petstore.swagger.io/v2/swagger.json
 `);
   Deno.exit(0);
 };
@@ -107,7 +108,7 @@ export const main = (): ISwaggerOptions => {
   // 定义命令行参数和选项的配置
   const argsConfig = {
     boolean: ["help"],
-    string: ["outDir", "platform", "lang", "version"],
+    string: ["url", "outDir", "platform", "lang", "version"],
     alias: {
       h: "help",
       o: "outDir",

@@ -5,6 +5,7 @@ import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { main, start } from "./cli.ts";
 
 const __VERSION__ = "1.0.0";
+Deno.env.set("VERSION", __VERSION__);
 
 /**
  * 创建上下文
@@ -31,6 +32,7 @@ if (import.meta.main) {
 
   // 清空控制台信息
   Logs.clear();
+
   // 初始化插件管理器
   initPluginManager(context);
   // 启动
