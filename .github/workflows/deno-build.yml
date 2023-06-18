@@ -65,44 +65,59 @@ jobs:
       #     find ./release -type f > files.txt
 
       # 获取目录中的文件名
-      - name: Get file names
-        id: get_file_names
-        run: |
-          file_names=$(find ./release -type f)
-          file_names_with_newlines=$(echo "$file_names" | tr '\n' ',')
-          echo "FILE_NAMES=$file_names_with_newlines" >> $GITHUB_ENV
+      # - name: Get file names
+      #   id: get_file_names
+      #   run: |
+      #     file_names=$(find ./release -type f ! -name "version")
+      #     file_names_with_newlines=$(echo "$file_names" | tr '\n' ',')
+      #     echo "FILE_NAMES=$file_names_with_newlines" >> $GITHUB_ENV
 
-      # 获取文件目录中的文件类型
-      - name: Get file types
-        id: get_file_types
-        run: |
-          file_types=$(file --mime-type -b ./release/*)
-          file_types_with_newlines=$(echo "$file_types" | tr '\n' ',')
-          echo "FILE_TYPES=$file_types_with_newlines" >> $GITHUB_ENV
+      # # 获取文件目录中的文件类型
+      # - name: Get file types
+      #   id: get_file_types
+      #   run: |
+      #     file_types=$(file --mime-type -b ./release/* | grep -v "version$")
+      #     file_types_with_newlines=$(echo "$file_types" | tr '\n' ',')
+      #     echo "FILE_TYPES=$file_types_with_newlines" >> $GITHUB_ENV
 
-      # 创建 Release
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
+      # 发布到 Release
+      - name: Publish to Release
+        id: publish_release
+        uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ env.TAG }}
         with:
+          files: ./release/!(version)
+          name: ${{ env.TAG }}
           tag_name: ${{ env.TAG }}
-          release_name: Release${{ env.TAG }}
+          body: |
+            v ${{ env.TAG }}
           draft: false
           prerelease: false
 
-      # 上传 Release 里的资产
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILE_NAMES: ${{ env.FILE_NAMES }}
-          FILE_TYPES: ${{ env.FILE_TYPES }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './release/*'
-          asset_name: ${{ env.FILE_NAMES }} # ${{ steps.list_files.outputs.files }}
-          asset_content_type: ${{ env.FILE_TYPES }}
+      # 创建 Release
+      # - name: Create release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     TAG: ${{ env.TAG }}
+      #   with:
+      #     tag_name: ${{ env.TAG }}
+      #     release_name: ${{ env.TAG }}
+      #     draft: false
+      #     prerelease: false
+
+      # # 上传 Release 里的资产
+      # - name: Upload Release Asset
+      #   id: upload_release_asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     FILE_NAMES: ${{ env.FILE_NAMES }}
+      #     FILE_TYPES: ${{ env.FILE_TYPES }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: './release/*'
+      #     asset_name: ${{ env.FILE_NAMES }} # ${{ steps.list_files.outputs.files }}
+      #     asset_content_type: ${{ env.FILE_TYPES }}
