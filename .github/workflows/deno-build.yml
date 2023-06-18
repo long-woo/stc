@@ -34,6 +34,7 @@ jobs:
       - name: Extract Current Tag
         id: extract_tag
         run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF#refs/tags/}"
 
       # Uncomment this step to verify the use of 'deno fmt' on each commit.
       - name: Verify formatting
@@ -76,7 +77,6 @@ jobs:
           file_types=$(file --mime-type -b ./release/*)
           file_types_with_newlines=$(echo "$file_types" | tr '\n' ',')
           echo "FILE_TYPES=$file_types_with_newlines" >> $GITHUB_ENV
-          echo "$(startsWith(github.ref, 'refs/tags/'))"
 
       # 创建 Release
       # - name: Create release
