@@ -4,8 +4,11 @@ import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 export class PluginManager {
   private plugins: IPlugin[] = [];
 
-  register(plugin: IPlugin) {
-    this.plugins.push(plugin);
+  register(plugin: IPlugin | IPlugin[]) {
+    this.plugins = [
+      ...this.plugins,
+      ...(Array.isArray(plugin) ? plugin : [plugin]),
+    ];
   }
 
   async setupAll(context: IPluginContext) {

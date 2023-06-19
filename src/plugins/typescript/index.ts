@@ -9,7 +9,7 @@ import { parserPath } from "./path.ts";
 let pluginOptions: ISwaggerOptions;
 
 export const typeScriptPlugin: IPlugin = {
-  name: "oi:TypeScriptPlugin",
+  name: "stc:TypeScriptPlugin",
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
   },

@@ -1,11 +1,34 @@
 import { Args, parse } from "std/flags/mod.ts";
 
 import Logs from "./console.ts";
+import { PluginManager } from "./plugins/index.ts";
+import { typeScriptPlugin } from "./plugins/typescript/index.ts";
+import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import { createFile, emptyDirectory, readFile } from "./util.ts";
-import { IPluginContext } from "./plugins/typeDeclaration.ts";
+
+/**
+ * 创建上下文
+ * @param options
+ */
+const createContext = (context: IPluginContext) => context;
+
+/**
+ * 初始化插件管理器
+ */
+const initPluginManager = (context: IPluginContext) => {
+  const pluginManager = new PluginManager();
+
+  // 注册插件
+  pluginManager.register([
+    typeScriptPlugin,
+    ...(context.options.plugins ?? []),
+  ]);
+  // 启动所有插件
+  pluginManager.setupAll(context);
+};
 
 /**
  * 获取 Swagger 数据
@@ -32,16 +55,19 @@ const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
 
 /**
  * 启动
- * @param context - 插件上下文
- * @param urlOrPath - url 或本地文件路径
  * @param options - 配置
  */
-export const start = async (
-  context: IPluginContext,
-  urlOrPath: string,
-  options: ISwaggerOptions,
-) => {
-  const data = await getData(urlOrPath);
+export const start = async (options: ISwaggerOptions) => {
+  // 创建上下文
+  const context = createContext({ options });
+
+  // 清空控制台信息
+  Logs.clear();
+
+  // 初始化插件管理器
+  initPluginManager(context);
+
+  const data = await getData(options.url);
   // 触发插件 onload 事件
   context.onLoad?.(data);
 
@@ -84,12 +110,15 @@ export const start = async (
   context.onEnd?.();
 };
 
+/**
+ * 打印帮助信息
+ */
 const printHelp = () => {
   console.log(`
-Usage:
-  swagger2code [options]
+使用:
+  stc [options]
 
-Options:
+选项:
   -h, --help         显示帮助信息
   --url              远程地址或本地文件路径
   -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 swagger2code_out
@@ -97,13 +126,16 @@ Options:
   -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
   -v, --version      显示版本信息
 
-Examples:
-  swagger2code -o./out --url=http://petstore.swagger.io/v2/swagger.json
-  swagger2code -o./out -p wechat -l ts --url=http://petstore.swagger.io/v2/swagger.json
+示例:
+  stc -o./out --url=http://petstore.swagger.io/v2/swagger.json
+  stc -o./out -p wechat -l ts --url=http://petstore.swagger.io/v2/swagger.json
 `);
   Deno.exit(0);
 };
 
+/**
+ * 主入口
+ */
 export const main = (): ISwaggerOptions => {
   // 定义命令行参数和选项的配置
   const argsConfig = {
@@ -121,7 +153,7 @@ export const main = (): ISwaggerOptions => {
       platform: "axios",
     },
     unknown: (arg: string) => {
-      console.error(`Unknown option: ${arg}`);
+      Logs.error(`未知选项: ${arg}`);
       printHelp();
       Deno.exit(1);
     },
@@ -129,6 +161,13 @@ export const main = (): ISwaggerOptions => {
 
   // 解析命令行参数和选项
   const args: Args = parse(Deno.args, argsConfig);
+
+  // 检查 url
+  if (!args.url) {
+    Logs.error(`必须提供选项 url`);
+    printHelp();
+    Deno.exit(1);
+  }
 
   // 文件输出目录，默认为 Deno 当前执行的目录
   let outDir = `${Deno.cwd()}/swagger2code_out`;

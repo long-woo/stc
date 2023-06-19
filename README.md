@@ -1,4 +1,4 @@
-# swagger2code
+# stc
 
 🔧 Swagger 文档自动生成接口文件。
 
@@ -20,7 +20,7 @@
 ⚠️ 注意：deno 不会解析 `~`字符为用户主目录。
 
 ```sh
-swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
+stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 ```
 
 ![终端输出信息](resources/output.png)

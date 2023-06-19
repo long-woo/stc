@@ -1,3 +1,5 @@
+import { IPlugin } from "./plugins/typeDeclaration.ts";
+
 export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
@@ -302,6 +304,10 @@ export interface ISwaggerOptions {
    * 语言，用于输出文件的后缀名。默认：ts
    */
   readonly lang?: string;
+  /**
+   * 插件
+   */
+  readonly plugins?: IPlugin[];
 }
 
 export interface IDefinitionNameMapping {

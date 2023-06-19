@@ -40,7 +40,7 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 swagger2code 生成
+    new TextEncoder().encode(`// 由 stc 生成
 // ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
 
 ${content}`),
