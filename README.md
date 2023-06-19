@@ -4,11 +4,12 @@
 
 特性：
 
-- [x] 覆盖 ~95% 已知 Swagger 文档。
 - [x] 支持 Swagger 2、3。
 - [x] 支持 Axios、Wechat。
-- [x] 生成 TypeScript，几乎等同于手写。
 - [x] 支持插件开发。
+- [x] 内置转换语言：
+
+  - TypeScript，几乎等同于手写。
 
 ## 快速开始
 
@@ -30,7 +31,7 @@ swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 | 参数名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| url | string |  | Swagger 文档地址 |
+| url | string |  | Swagger 文档地址，或者本地路径 |
 | outDir | string | swagger2code_out | 输出目录 |
 | platform | string |  | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
