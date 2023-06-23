@@ -1,0 +1,22 @@
+{
+  "name": "@loongwoo/stc",
+  "version": "1.0.0",
+  "description": "Swagger 文档转换为接口文件",
+  "main": "index.js",
+  "scripts": {
+    "build": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loongwoo/STC.git"
+  },
+  "keywords": [
+    "STC"
+  ],
+  "author": "loong.woo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/long-woo/stc/issues"
+  },
+  "homepage": "https://github.com/long-woo/stc#readme"
+}
