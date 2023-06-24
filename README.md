@@ -37,3 +37,30 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | lang | string | ts | 语言，用于输出文件的后缀名 |
 
 ## 插件开发
+
+1.创建一个 `myPlugin.ts` 文件。
+
+2.添加 `@loongwoo/stc` 引用，使用 `start` 方法：
+
+```ts
+import { start } from '@loongwoo/stc'
+```
+
+3.在插件的 `onTransform` 钩子函数中实现将 `definition` 和 `action` 转换为目标语言的代码。
+
+```ts
+export const myPlugin: IPlugin = {
+  name: "stc:MyPlugin",
+  onTransform(def, action) {
+    // 转换 definition
+    const defContent = parserDefinition(def // 这里的 def 是 Definition 对象)
+    // 转换 action
+    const actionContent = parserAction(action // 这里的 action 是 Action 对象)
+    // 返回转换后的内容
+    return {
+      definition: defContent,
+      action: actionContent
+    }
+  }
+}
+```

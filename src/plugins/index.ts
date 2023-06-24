@@ -1,4 +1,4 @@
-import Logs from "/src/console.ts";
+import Logs from "../console.ts";
 import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 
 export class PluginManager {

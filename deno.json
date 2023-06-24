@@ -2,6 +2,7 @@
   "tasks": {
     "dev": "deno run -A --watch=src src/mod.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out",
     "version": "echo '1.0.0' > release/version",
+    "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A src/mod.ts --output release/stc --target x86_64-apple-darwin",
     "build:mac-m": "deno compile -A src/mod.ts --output release/stc-m --target aarch64-apple-darwin",
     "build:win": "deno compile -A src/mod.ts --output release/stc-win --target x86_64-pc-windows-msvc",
@@ -10,11 +11,12 @@
   "imports": {
     "/": "./",
     "./": "./",
-    "std/": "https://deno.land/std@0.190.0/"
+    "std/": "https://deno.land/std@0.190.0/",
+    "x/": "https://deno.land/x/"
   },
   "lint": {
     "include": ["src/"],
-    "exclude": ["**/out/**/*", "**/shared/**/*"]
+    "exclude": ["**/out/**/*", "**/shared/**/*", "src/npm/"]
   },
   "fmt": {
     "include": ["src/"],
