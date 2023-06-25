@@ -1,4 +1,4 @@
-import { copy, emptyDir, ensureFile, expandGlob } from "std/fs/mod.ts";
+import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
 
 interface ICopyFileOptions {
