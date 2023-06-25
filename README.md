@@ -53,9 +53,9 @@ export const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
   onTransform(def, action) {
     // 转换 definition
-    const defContent = parserDefinition(def // 这里的 def 是 Definition 对象)
+    const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
     // 转换 action
-    const actionContent = parserAction(action // 这里的 action 是 Action 对象)
+    const actionContent: Map<string, string> = parserAction(action /* 这里的 action 是 Action 对象 */)
     // 返回转换后的内容
     return {
       definition: defContent,

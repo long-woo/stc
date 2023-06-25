@@ -16,10 +16,14 @@
   },
   "lint": {
     "include": ["src/"],
-    "exclude": ["**/out/**/*", "**/shared/**/*", "src/npm/"]
+    "exclude": ["**/out/**/*", "**/shared/**/*", "dist"]
   },
   "fmt": {
     "include": ["src/"],
-    "exclude": ["out/**/*"]
+    "exclude": ["out/**/*", "dist"]
+  },
+  "test": {
+    "include": ["src/"],
+    "exclude": ["out", "dist"]
   }
 }

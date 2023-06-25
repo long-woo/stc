@@ -1,5 +1,5 @@
 // 由 stc 生成
-import type { IDefaultObject } from "../interface";
+import type { IDefaultObject } from "../webClientBase";
 import { WebClientBase } from "../webClientBase";
 
 type Method =
@@ -51,8 +51,7 @@ export class WebClient extends WebClientBase {
         url: `${this.baseURL}${_url}?${_params.join("&")}`,
         method,
         data: _data,
-        params: req?.query,
-        headers: req?.header,
+        header: req?.header,
         success: (res: unknown) => {
           resolve(res.data);
         },
