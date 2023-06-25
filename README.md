@@ -1,4 +1,4 @@
-# swagger2code
+# stc
 
 🔧 Swagger 文档自动生成接口文件。
 
@@ -20,7 +20,7 @@
 ⚠️ 注意：deno 不会解析 `~`字符为用户主目录。
 
 ```sh
-swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
+stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 ```
 
 ![终端输出信息](resources/output.png)
@@ -35,3 +35,32 @@ swagger2code --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | outDir | string | swagger2code_out | 输出目录 |
 | platform | string |  | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
+
+## 插件开发
+
+1.创建一个 `myPlugin.ts` 文件。
+
+2.添加 `@loongwoo/stc` 引用，使用 `start` 方法：
+
+```ts
+import { start } from '@loongwoo/stc'
+```
+
+3.在插件的 `onTransform` 钩子函数中实现将 `definition` 和 `action` 转换为目标语言的代码。
+
+```ts
+export const myPlugin: IPlugin = {
+  name: "stc:MyPlugin",
+  onTransform(def, action) {
+    // 转换 definition
+    const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
+    // 转换 action
+    const actionContent: Map<string, string> = parserAction(action /* 这里的 action 是 Action 对象 */)
+    // 返回转换后的内容
+    return {
+      definition: defContent,
+      action: actionContent
+    }
+  }
+}
+```

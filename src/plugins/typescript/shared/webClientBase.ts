@@ -1,4 +1,4 @@
-// 由 swagger2code 生成
+// 由 stc 生成
 export type IDefaultObject = Record<string, unknown>;
 
 export class WebClientBase {

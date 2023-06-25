@@ -1,4 +1,4 @@
-// 由 swagger2code 生成
+// 由 stc 生成
 import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
 import type { IDefaultObject } from "../webClientBase";

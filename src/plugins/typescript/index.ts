@@ -1,15 +1,18 @@
-import { dirname, fromFileUrl, join } from "std/path/mod.ts";
-
-import { copyFile } from "/src/util.ts";
+import { createFile } from "/src/util.ts";
 import { ISwaggerOptions } from "../../swagger.ts";
 import { IPlugin } from "../typeDeclaration.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
+import {
+  createAxiosFile,
+  createBaseFile,
+  createWechatFile,
+} from "./shared/index.ts";
 
 let pluginOptions: ISwaggerOptions;
 
 export const typeScriptPlugin: IPlugin = {
-  name: "oi:TypeScriptPlugin",
+  name: "stc:TypeScriptPlugin",
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
   },
@@ -47,10 +50,30 @@ export const typeScriptPlugin: IPlugin = {
   },
 
   onEnd() {
-    // 复制运行时需要的文件
-    copyFile(
-      join(dirname(fromFileUrl(import.meta.url)), "/shared"),
-      `${pluginOptions.outDir}/shared`,
+    // 创建运行时需要的文件
+    const _baseFileContent = createBaseFile();
+
+    if (pluginOptions.platform === "axios") {
+      const _axiosFileContent = createAxiosFile();
+
+      createFile(
+        `${pluginOptions.outDir}/shared/axios/fetch.ts`,
+        _axiosFileContent,
+      );
+    }
+
+    if (pluginOptions.platform === "wechat") {
+      const _wechatFileContent = createWechatFile();
+
+      createFile(
+        `${pluginOptions.outDir}/shared/wechat/fetch.ts`,
+        _wechatFileContent,
+      );
+    }
+
+    createFile(
+      `${pluginOptions.outDir}/shared/webClientBase.ts`,
+      _baseFileContent,
     );
   },
 };

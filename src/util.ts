@@ -1,4 +1,4 @@
-import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
+import { copy, emptyDir, ensureFile, expandGlob } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
 
 interface ICopyFileOptions {
@@ -40,7 +40,7 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 swagger2code 生成
+    new TextEncoder().encode(`// 由 stc 生成
 // ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
 
 ${content}`),
@@ -118,25 +118,3 @@ export const getObjectKeyByValue = (
   obj: Record<string, string>,
   value: string,
 ) => Object.keys(obj).find((key) => obj[key] === value);
-
-/**
- * 获取目录所有文件
- * @param dir - 目录
- */
-export const getDirFiles = async (dir: string) => {
-  const files: string[] = [];
-
-  for await (const file of Deno.readDir(dir)) {
-    if (file.isFile) {
-      files.push(`${dir}/${file.name}`);
-    }
-
-    if (file.isDirectory) {
-      const childFiles = await getDirFiles(`${dir}/${file.name}`);
-
-      files.push(...childFiles);
-    }
-  }
-
-  return files;
-};

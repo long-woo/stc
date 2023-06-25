@@ -2,4 +2,6 @@ dist
 out
 release
 
+node_modules
+
 .DS_Store
