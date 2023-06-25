@@ -32,7 +32,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | 参数名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | url | string |  | Swagger 文档地址，或者本地路径 |
-| outDir | string | swagger2code_out | 输出目录 |
+| outDir | string | stc_out | 输出目录 |
 | platform | string |  | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
 
