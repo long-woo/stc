@@ -21,7 +21,7 @@ import pkg from "./package.json" assert { type: "json" };
 // console.log(res);
 await dnt.build({
   entryPoints: ["./src/cli.ts"],
-  outDir: "./npm",
+  outDir: "./npm_dist",
   shims: {
     deno: true,
   },
@@ -30,7 +30,7 @@ await dnt.build({
   importMap: "deno.json",
   package: pkg,
   postBuild() {
-    Deno.copyFile("LICENSE", "./dist/LICENSE");
-    Deno.copyFile("README.md", "./dist/README.md");
+    Deno.copyFile("LICENSE", "./npm_dist/LICENSE");
+    Deno.copyFile("README.md", "./npm_dist/README.md");
   },
 });

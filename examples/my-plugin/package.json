@@ -1,0 +1,9 @@
+{
+  "name": "my-plugin",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "devDependencies": {
+    "@loongwoo/stc": "^1.0.0"
+  }
+}

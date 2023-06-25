@@ -4,9 +4,6 @@
   "description": "Swagger 文档转换为接口文件",
   "main": "script/cli.js",
   "module": "esm/cli.js",
-  "scripts": {
-    "build": ""
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/loongwoo/STC.git"

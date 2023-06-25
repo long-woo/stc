@@ -51,6 +51,9 @@ import { start } from '@loongwoo/stc'
 ```ts
 export const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
+  setup(options) {
+    console.log(options)
+  }
   onTransform(def, action) {
     // 转换 definition
     const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
@@ -63,4 +66,13 @@ export const myPlugin: IPlugin = {
     }
   }
 }
+```
+
+4.在 `start` 方法里，添加 `plugins`:
+
+```ts
+start({
+  // ...其他配置
+  plugins: [myPlugin]
+})
 ```
