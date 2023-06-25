@@ -20,7 +20,7 @@
   },
   "fmt": {
     "include": ["src/"],
-    "exclude": ["out/**/*", "dist"]
+    "exclude": ["out/**/*", "dist", "**/npm/package.json"]
   },
   "test": {
     "include": ["src/"],
