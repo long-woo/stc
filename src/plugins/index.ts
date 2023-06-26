@@ -14,6 +14,13 @@ export class PluginManager {
   async setupAll(context: IPluginContext) {
     for (const plugin of this.plugins) {
       Logs.info(`加载插件: ${plugin.name}`);
+
+      if (!plugin.setup) {
+        Logs.warn(`插件 ${plugin.name} 没有 setup 方法`);
+        continue;
+      }
+
+      // 执行插件 setup 方法
       await plugin.setup(context.options);
 
       // 触发插件 onload 事件

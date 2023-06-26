@@ -170,7 +170,7 @@ export const main = (): ISwaggerOptions => {
   }
 
   // 文件输出目录，默认为 Deno 当前执行的目录
-  let outDir = `${Deno.cwd()}/swagger2code_out`;
+  let outDir = `${Deno.cwd()}/stc_out`;
 
   // 若没有提供 out 选项，则使用 Deno 当前执行的目录
   if (typeof args.outDir === "string" && args.outDir) {

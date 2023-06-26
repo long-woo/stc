@@ -6,7 +6,7 @@ Deno.test("测试-在命令行中", async () => {
     args: [
       "run",
       "-A",
-      "src/mod.ts",
+      "src/main.ts",
       "--url=https://petstore.swagger.io/v2/swagger.json",
       "--outDir=out",
     ],

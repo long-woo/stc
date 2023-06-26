@@ -1,6 +1,8 @@
-# stc
+# STC
 
-🔧 Swagger 文档自动生成接口文件。
+STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
+
+![Publish](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 
 特性：
 
@@ -32,7 +34,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | 参数名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | url | string |  | Swagger 文档地址，或者本地路径 |
-| outDir | string | swagger2code_out | 输出目录 |
+| outDir | string | stc_out | 输出目录 |
 | platform | string |  | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
 
@@ -51,6 +53,9 @@ import { start } from '@loongwoo/stc'
 ```ts
 export const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
+  setup(options) {
+    console.log(options)
+  }
   onTransform(def, action) {
     // 转换 definition
     const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
@@ -63,4 +68,13 @@ export const myPlugin: IPlugin = {
     }
   }
 }
+```
+
+4.在 `start` 方法里，添加 `plugins`:
+
+```ts
+start({
+  // ...其他配置
+  plugins: [myPlugin]
+})
 ```

@@ -3,6 +3,6 @@ out
 release
 
 node_modules
-npm
+npm_dist
 
 .DS_Store
