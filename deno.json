@@ -15,15 +15,15 @@
     "x/": "https://deno.land/x/"
   },
   "lint": {
-    "include": ["src/"],
+    "include": ["src/", "test/"],
     "exclude": ["**/out/**/*", "**/shared/**/*", "dist"]
   },
   "fmt": {
-    "include": ["src/"],
+    "include": ["src/", "test/"],
     "exclude": ["out/**/*", "dist", "**/npm/package.json"]
   },
   "test": {
-    "include": ["src/"],
+    "include": ["test/"],
     "exclude": ["out", "dist"]
   }
 }

@@ -13,6 +13,7 @@ Deno.test("测试-在命令行中", async () => {
   });
 
   const { code } = await command.output();
+  console.log(code)
   // console.assert("hello\n" === new TextDecoder().decode(stdout));
   // console.assert("world\n" === new TextDecoder().decode(stderr));
   assertEquals(0, code);
