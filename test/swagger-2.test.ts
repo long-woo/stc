@@ -6,14 +6,13 @@ Deno.test("测试-在命令行中", async () => {
     args: [
       "run",
       "-A",
-      "src/mod.ts",
+      "src/main.ts",
       "--url=https://petstore.swagger.io/v2/swagger.json",
       "--outDir=out",
     ],
   });
 
   const { code } = await command.output();
-  console.log(code)
   // console.assert("hello\n" === new TextDecoder().decode(stdout));
   // console.assert("world\n" === new TextDecoder().decode(stderr));
   assertEquals(0, code);

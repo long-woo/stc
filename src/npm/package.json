@@ -26,5 +26,12 @@
   "files": [
     "esm",
     "script"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "require": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./*": "./index.ts"
+  }
 }
