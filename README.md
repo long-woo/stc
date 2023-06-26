@@ -1,6 +1,6 @@
-# stc
+# STC
 
-🔧 Swagger 文档自动生成接口文件。
+STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
 
 特性：
 
