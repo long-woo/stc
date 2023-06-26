@@ -27,6 +27,10 @@
     "esm",
     "script"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
     ".": {
       "require": "./index.ts",
