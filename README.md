@@ -47,7 +47,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 为了方便，STC 不仅可以在 Deno 中开发插件，同时也提供了 `@loongwoo/stc` npm 库，可以在 Node 环境中开发插件。
 
-[查看示例代码](https://github.com/long-woo/stc/tree/main/examples/myPlugin)
+[查看示例代码](https://github.com/long-woo/stc/tree/master/examples)
 
 ### Deno 方式
 
