@@ -1,12 +1,12 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Swagger 文档转换为接口文件",
   "main": "script/cli.js",
   "module": "esm/cli.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/loongwoo/STC.git"
+    "url": "git+https://github.com/long-woo/stc.git"
   },
   "keywords": [
     "swagger",

@@ -15,7 +15,12 @@ STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工�
 
 ## 快速开始
 
-⚠️ 由于工具基于 `Deno` 实现，使用前确保已经安装 [Deno](https://github.com/denoland/deno#install) 环境。
+按系统[下载](https://github.com/long-woo/stc/releases/tag/1.0.1)：
+
+- stc：Intel 系列的 Mac
+- stc-m：M 系列的 Mac
+- stc-linux：Linux
+- stc-win.exe: Windows
 
 ### 使用
 
@@ -40,6 +45,48 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ## 插件开发
 
+为了方便，STC 不仅可以在 Deno 中开发插件，同时也提供了 `@loongwoo/stc` npm 库，可以在 Node 环境中开发插件。
+
+[查看示例代码](https://github.com/long-woo/stc/tree/main/examples/myPlugin)
+
+### Deno 方式
+
+⚠️ 准备 [Deno](https://github.com/denoland/deno#install) 环境
+
+创建一个 `myPlugin.ts` 文件：
+
+```ts
+// 引用模块
+import { start } from 'https://deno.land/x/stc@1.0.0/mod.ts'
+
+// 定义插件
+const myPlugin: IPlugin = {
+  name: "stc:MyPlugin",
+  setup(options) {
+    console.log(options)
+  },
+  onTransform(def, action) {
+    // 转换 definition
+    const defContent: string = parserDefinition( def /* 这里的 def 是 Definition 对象 */)
+    // 转换 action
+    const actionContent: Map<string, string> = parserAction(action /* 这里的 action 是 Action 对象 */)
+    // 返回转换后的内容
+    return {
+      definition: defContent,
+      action: actionContent // 这里的 actionContent 是 Map<string, string> 类型，key 是文件名称，value 是转换后的代码
+    }
+  }
+}
+
+// 使用插件
+start({
+  // ...其他配置
+  plugins: [myPlugin]
+})
+```
+
+### Node 方式
+
 1.创建一个 `myPlugin.ts` 文件。
 
 2.添加 `@loongwoo/stc` 引用，使用 `start` 方法：
@@ -55,7 +102,7 @@ export const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
   setup(options) {
     console.log(options)
-  }
+  },
   onTransform(def, action) {
     // 转换 definition
     const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
