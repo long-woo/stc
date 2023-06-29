@@ -12,6 +12,7 @@ STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工�
 - [x] 内置转换语言：
 
   - TypeScript，几乎等同于手写。
+  - ...
 
 ## 快速开始
 
