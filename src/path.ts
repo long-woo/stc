@@ -4,6 +4,7 @@ import {
   IPathVirtualParameterCategory,
   IPathVirtualProperty,
   ISwaggerContent,
+  ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
 import { getRefType, lowerCase } from "./util.ts";
@@ -13,12 +14,14 @@ import { getRefType, lowerCase } from "./util.ts";
  * @param url - 接口地址
  * @param method - 请求方式
  * @param pathMethod - 请求对象
+ * @param tagIndex - 从 url 指定标签
  * @returns
  */
 const getPathVirtualProperty = (
   url: string,
   method: string,
   pathMethod: ISwaggerResultPath,
+  tagIndex?: number
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
   const parameters =
@@ -72,6 +75,12 @@ const getPathVirtualProperty = (
   const _resSchema = pathMethod.responses[200]?.schema ??
     pathMethod.responses[200]?.content?.["application/json"]?.schema;
 
+  // 标签，用于文件名
+  let _tag = pathMethod.tags?.[0]
+  if (tagIndex !== undefined) {
+    _tag = url.split('/')[tagIndex]
+  }
+
   const value: IPathVirtualProperty = {
     url,
     method,
@@ -84,7 +93,7 @@ const getPathVirtualProperty = (
     },
     summary: pathMethod.summary,
     description: pathMethod.description,
-    tags: pathMethod.tags,
+    tag: _tag,
   };
 
   return value;
@@ -97,6 +106,7 @@ const getPathVirtualProperty = (
  */
 export const getApiPath = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
+  options?: ISwaggerOptions
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();
 
@@ -116,7 +126,7 @@ export const getApiPath = (
       // 方法名
       const name = currentMethod.operationId;
       // 接口对象
-      const value = getPathVirtualProperty(url, method, currentMethod);
+      const value = getPathVirtualProperty(url, method, currentMethod, options?.tag);
 
       pathMap.set(name, value);
     });

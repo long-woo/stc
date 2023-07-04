@@ -266,9 +266,9 @@ export interface IPathVirtualProperty {
    */
   description: string;
   /**
-   * 分组
+   * 标签，用于文件名
    */
-  tags: string[];
+  tag: string;
 }
 
 export interface ISecurityVirtualProperty {
@@ -291,6 +291,9 @@ export interface ISecurityVirtualProperty {
 }
 
 export interface ISwaggerOptions {
+  /**
+   * 远程地址或本地 json 文件路径
+   */
   readonly url: string;
   /**
    * 输出目录
@@ -308,6 +311,18 @@ export interface ISwaggerOptions {
    * 插件
    */
   readonly plugins?: IPlugin[];
+  /**
+   * 包含解析接口
+   */
+  readonly include?: string[];
+  /**
+   * 排除解析接口
+   */
+  readonly exclude?: string[];
+  /**
+   * 从接口指定标签，默认使用 tags 的第一个用于文件名
+   */
+  readonly tag?: number
 }
 
 export interface IDefinitionNameMapping {

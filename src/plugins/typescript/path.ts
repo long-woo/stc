@@ -212,9 +212,9 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
 
   Logs.info("解析接口...");
   data.forEach((item, key) => {
-    const _tag = item.tags?.[0];
+    const _tag = item.tag;
     if (!_tag) {
-      Logs.error(`${item.url} 未定义 tags，跳过解析`);
+      Logs.error(`${item.url} 未指定 tag，跳过解析`);
       return;
     }
 
