@@ -143,7 +143,16 @@ export const main = (): ISwaggerOptions => {
   // 定义命令行参数和选项的配置
   const argsConfig = {
     boolean: ["help"],
-    string: ["url", "outDir", "platform", "lang", "version"],
+    string: [
+      "url",
+      "outDir",
+      "platform",
+      "lang",
+      "version",
+      "include",
+      "exclude",
+      "tag",
+    ],
     alias: {
       h: "help",
       o: "outDir",
@@ -192,6 +201,6 @@ export const main = (): ISwaggerOptions => {
     lang,
     tag: args.tag,
     include: args.include,
-    exclude: args.exclude
+    exclude: args.exclude,
   };
 };

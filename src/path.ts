@@ -1,3 +1,5 @@
+import { expandGlob } from "std/fs/mod.ts";
+
 import {
   IDefaultObject,
   IPathVirtualParameter,
@@ -21,7 +23,7 @@ const getPathVirtualProperty = (
   url: string,
   method: string,
   pathMethod: ISwaggerResultPath,
-  tagIndex?: number
+  tagIndex?: number,
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
   const parameters =
@@ -76,9 +78,9 @@ const getPathVirtualProperty = (
     pathMethod.responses[200]?.content?.["application/json"]?.schema;
 
   // 标签，用于文件名
-  let _tag = pathMethod.tags?.[0]
+  let _tag = pathMethod.tags?.[0];
   if (tagIndex !== undefined) {
-    _tag = url.split('/')[tagIndex]
+    _tag = url.split("/")[tagIndex];
   }
 
   const value: IPathVirtualProperty = {
@@ -106,18 +108,13 @@ const getPathVirtualProperty = (
  */
 export const getApiPath = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
-  options?: ISwaggerOptions
+  options?: ISwaggerOptions,
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    // if (
-    //   url !== "/pet"
-    //   // !url.includes("/pet")
-    //   // !["/api/project/saveFormDataByPatient"].includes(url)
-    // ) {
-    //   return;
-    // }
+    // 匹配 include 的规则，再匹配 exclude 的规则，不满足条件直接返回。所有规则是 glob 写法
+
     // 请求方式
     const methods = paths[url];
 
@@ -126,7 +123,12 @@ export const getApiPath = (
       // 方法名
       const name = currentMethod.operationId;
       // 接口对象
-      const value = getPathVirtualProperty(url, method, currentMethod, options?.tag);
+      const value = getPathVirtualProperty(
+        url,
+        method,
+        currentMethod,
+        options?.tag,
+      );
 
       pathMap.set(name, value);
     });
