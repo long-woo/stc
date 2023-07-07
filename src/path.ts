@@ -1,5 +1,6 @@
 import {
   IDefaultObject,
+  IDefinitionVirtualProperty,
   IPathVirtualParameter,
   IPathVirtualParameterCategory,
   IPathVirtualProperty,
@@ -24,6 +25,44 @@ const getMethodName = (url: string) => {
   }
 
   return _name;
+};
+
+/**
+ * ApiFox 属性
+ * @param properties - 属性
+ * @param requiredProps - 必填属性
+ * @returns
+ */
+const getProperties = (
+  properties: IDefaultObject<IDefinitionVirtualProperty>,
+  requiredProps: string[],
+) => {
+  const _properties = Object.keys(properties ?? {})
+    .reduce((prev: IDefinitionVirtualProperty[], current) => {
+      const _props = properties[current];
+      const _propItem = {
+        name: current,
+        type: _props?.type ?? "",
+        required: requiredProps.includes(current) ??
+          false,
+        title: _props?.title,
+        description: _props?.description ?? "",
+      };
+
+      if (_props.type === "object") {
+        _propItem.properties = getProperties(
+          (_props?.properties ?? {}) as unknown as IDefaultObject<
+            IDefinitionVirtualProperty
+          >,
+          (_props?.required ?? []) as unknown as string[],
+        );
+      }
+
+      prev.push(_propItem);
+      return prev;
+    }, []);
+
+  return _properties;
 };
 
 /**
@@ -70,17 +109,27 @@ const getPathVirtualProperty = (
       if (["application/json", "application/octet-stream"].includes(_key)) {
         const _bodyContent =
           _requestBody.content[_key as keyof ISwaggerContent];
+        const _bodyContentSchema = _bodyContent?.schema;
         const _bodyContentRef = getRefType(
-          _bodyContent?.schema?.$ref ?? _bodyContent?.schema?.items?.$ref ?? "",
+          _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
         );
+        const _name = _key === "application/octet-stream"
+          ? "file"
+          : lowerCase(_bodyContentRef);
+
+        // 处理 type 为 object 的情况，并且有 properties 属性
+        const _properties = getProperties(
+          _bodyContentSchema?.properties ?? {},
+          _bodyContentSchema?.required ?? [],
+        );
+
         const _body: IPathVirtualParameterCategory = {
-          name: _key === "application/octet-stream"
-            ? "file"
-            : lowerCase(_bodyContentRef),
-          type: _bodyContent?.schema?.type ?? "",
-          required: _requestBody.required ?? false,
+          name: _name || "body",
+          type: _bodyContentSchema?.type ?? "",
+          required: _requestBody.required ?? true,
           description: _requestBody.description,
           ref: _bodyContentRef,
+          properties: _properties,
         };
 
         parameters.body.push(_body);
@@ -91,6 +140,12 @@ const getPathVirtualProperty = (
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema ??
     pathMethod.responses[200]?.content?.["application/json"]?.schema;
+
+  const _properties = getProperties(
+    _resSchema?.properties ?? {},
+    _resSchema?.required ?? [],
+  );
+  console.log(_properties);
 
   // 标签，用于文件名
   let _tag = pathMethod.tags?.[0];
@@ -107,6 +162,7 @@ const getPathVirtualProperty = (
     response: {
       ref: getRefType(_resSchema?.$ref ?? _resSchema?.items?.$ref ?? ""),
       type: _resSchema?.type,
+      properties: _properties,
     },
     summary: pathMethod.summary,
     description: pathMethod.description,
