@@ -1,5 +1,3 @@
-import { expandGlob } from "std/fs/mod.ts";
-
 import {
   IDefaultObject,
   IPathVirtualParameter,
@@ -9,7 +7,24 @@ import {
   ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { getRefType, lowerCase } from "./util.ts";
+import { getRefType, lowerCase, upperCase } from "./util.ts";
+import Logs from "./console.ts";
+
+/**
+ * 从 URL 获取方法名称
+ * @param url - 接口地址
+ * @returns
+ */
+const getMethodName = (url: string) => {
+  const _url = url.split("/");
+  let _name = _url[_url.length - 1];
+
+  if (_name.includes("{")) {
+    _name = _url[_url.length - 2];
+  }
+
+  return _name;
+};
 
 /**
  * 获取请求对象
@@ -121,7 +136,14 @@ export const getApiPath = (
     Object.keys(methods).forEach((method) => {
       const currentMethod = methods[method];
       // 方法名
-      const name = currentMethod.operationId;
+      let name = currentMethod.operationId ?? getMethodName(url);
+      if (!name) {
+        Logs.error(`${url} 的 ${method} 无法获取方法名称`);
+        return;
+      }
+
+      name = `${name}${upperCase(method)}`;
+
       // 接口对象
       const value = getPathVirtualProperty(
         url,
