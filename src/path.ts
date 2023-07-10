@@ -8,7 +8,7 @@ import {
   ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { getRefType, lowerCase, upperCase } from "./util.ts";
+import { getRefType, hasKey, lowerCase, upperCase } from "./util.ts";
 import Logs from "./console.ts";
 
 /**
@@ -49,13 +49,27 @@ const getProperties = (
         description: _props?.description ?? "",
       };
 
-      if (_props.type === "object") {
+      // 处理 properties
+      if (hasKey(_props, "properties")) {
         _propItem.properties = getProperties(
-          (_props?.properties ?? {}) as unknown as IDefaultObject<
+          (_props.properties) as unknown as IDefaultObject<
             IDefinitionVirtualProperty
           >,
           (_props?.required ?? []) as unknown as string[],
         );
+      }
+
+      // 处理 items
+      if (hasKey(_props, "items")) {
+        // 检查 items 是否为 object
+        if (hasKey(_props.items ?? {}, "properties")) {
+          _propItem.properties = getProperties(
+            (_props.items?.properties) as unknown as IDefaultObject<
+              IDefinitionVirtualProperty
+            >,
+            (_props.items?.required ?? []) as unknown as string[],
+          );
+        }
       }
 
       prev.push(_propItem);
@@ -200,7 +214,10 @@ export const getApiPath = (
         return;
       }
 
-      name = `${name}${upperCase(method)}`;
+      // 方法名中不含请求方式的标识，则添加请求方式标识
+      if (!name.toLowerCase().includes(method.toLowerCase())) {
+        name = `${name}${upperCase(method)}`;
+      }
 
       // 接口对象
       const value = getPathVirtualProperty(

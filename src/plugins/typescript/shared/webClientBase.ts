@@ -1,5 +1,7 @@
 // 由 stc 生成
-export type IDefaultObject = Record<string, unknown>;
+export type IDefaultObject<T = unknown> = {
+  [key: string]: T;
+};
 
 export class WebClientBase {
   /**

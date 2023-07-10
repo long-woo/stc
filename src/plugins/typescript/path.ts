@@ -95,7 +95,8 @@ const getInternalDefinition = (
         current.properties,
         _type,
       );
-      prev.childProps.push(..._childProps.props);
+
+      prev.childProps.push(..._childProps.props, ..._childProps.childProps);
     }
 
     prev.props.splice(
@@ -126,7 +127,7 @@ const getDefinition = (
 ) => {
   const _props = getInternalDefinition(properties, name);
   const _defs = [..._props.props, ..._props.childProps];
-
+  // console.log(_defs);
   return _defs;
 };
 
