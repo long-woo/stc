@@ -76,7 +76,7 @@ export const start = async (options: ISwaggerOptions) => {
   // 触发插件 onDefinition 事件
   context.onDefinition?.(defData);
 
-  const actionData = getApiPath(data.paths);
+  const actionData = getApiPath(data.paths, options);
   // 触发插件 onAction 事件
   context.onAction?.(actionData);
 
@@ -124,11 +124,14 @@ const printHelp = () => {
   -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 swagger2code_out
   -p, --platform     平台，可选值：axios、wechat， [default: "axios"]
   -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
+  --include          包含解析接口
+  --exclude          排除解析接口
+  --tag              从接口指定标签，默认读取 tags 的第一个用于文件名
   -v, --version      显示版本信息
 
 示例:
-  stc -o./out --url=http://petstore.swagger.io/v2/swagger.json
-  stc -o./out -p wechat -l ts --url=http://petstore.swagger.io/v2/swagger.json
+  stc -o ./out --url http://petstore.swagger.io/v2/swagger.json
+  stc -o ./out -p wechat -l ts --url http://petstore.swagger.io/v2/swagger.json
 `);
   Deno.exit(0);
 };
@@ -140,7 +143,16 @@ export const main = (): ISwaggerOptions => {
   // 定义命令行参数和选项的配置
   const argsConfig = {
     boolean: ["help"],
-    string: ["url", "outDir", "platform", "lang", "version"],
+    string: [
+      "url",
+      "outDir",
+      "platform",
+      "lang",
+      "version",
+      "include",
+      "exclude",
+      "tag",
+    ],
     alias: {
       h: "help",
       o: "outDir",
@@ -187,5 +199,8 @@ export const main = (): ISwaggerOptions => {
     outDir,
     platform,
     lang,
+    tag: args.tag,
+    include: args.include,
+    exclude: args.exclude,
   };
 };

@@ -39,6 +39,14 @@ export interface ISwaggerSchema {
    * v3 枚举值
    */
   enum?: Array<string | number>;
+  /**
+   * ApiFox - 属性
+   */
+  properties?: IDefaultObject<IDefinitionVirtualProperty>;
+  /**
+   * ApiFox - 必填属性
+   */
+  required?: Array<string>;
 }
 
 export interface ISwaggerContentSchema {
@@ -181,6 +189,14 @@ export interface IDefinitionVirtualProperty {
    * 格式
    */
   format?: string;
+  /**
+   * ApiFox - 属性标题
+   */
+  title?: string;
+  /**
+   * type 为 object 时，定义的属性对象
+   */
+  properties?: IDefinitionVirtualProperty[];
 }
 
 export interface IPathVirtualParameterCategory {
@@ -196,6 +212,10 @@ export interface IPathVirtualParameterCategory {
    * 扩展类型
    */
   typeX?: string;
+  /**
+   * ApiFox - 标题
+   */
+  title?: string;
   /**
    * 描述
    */
@@ -216,6 +236,10 @@ export interface IPathVirtualParameterCategory {
    * v2 默认值
    */
   default?: string;
+  /**
+   * ApiFox - 属性
+   */
+  properties?: IDefinitionVirtualProperty[];
 }
 
 export interface IPathVirtualParameter {
@@ -253,10 +277,7 @@ export interface IPathVirtualProperty {
   /**
    * 响应体
    */
-  response: {
-    ref?: string;
-    type?: string;
-  };
+  response: IPathVirtualPropertyResponse;
   /**
    * 注释
    */
@@ -266,9 +287,24 @@ export interface IPathVirtualProperty {
    */
   description: string;
   /**
-   * 分组
+   * 标签，用于文件名
    */
-  tags: string[];
+  tag: string;
+}
+
+export interface IPathVirtualPropertyResponse {
+  /**
+   * 外部定义
+   */
+  ref?: string;
+  /**
+   * 类型
+   */
+  type?: string;
+  /**
+   * 内部定义
+   */
+  properties?: IDefinitionVirtualProperty[];
 }
 
 export interface ISecurityVirtualProperty {
@@ -291,6 +327,9 @@ export interface ISecurityVirtualProperty {
 }
 
 export interface ISwaggerOptions {
+  /**
+   * 远程地址或本地 json 文件路径
+   */
   readonly url: string;
   /**
    * 输出目录
@@ -308,6 +347,18 @@ export interface ISwaggerOptions {
    * 插件
    */
   readonly plugins?: IPlugin[];
+  /**
+   * 包含解析接口
+   */
+  readonly include?: string[];
+  /**
+   * 排除解析接口
+   */
+  readonly exclude?: string[];
+  /**
+   * 从接口指定标签，默认使用 tags 的第一个用于文件名
+   */
+  readonly tag?: number;
 }
 
 export interface IDefinitionNameMapping {
@@ -315,7 +366,13 @@ export interface IDefinitionNameMapping {
   mappings?: Record<string, string>;
 }
 
-export interface IApiParseResponse {
+export interface IApiParseResponseRef {
   name: string;
   import: Array<string>;
+}
+
+export interface IApiParseResponse {
+  def: string;
+  interface?: Array<string>;
+  import?: Array<string>;
 }

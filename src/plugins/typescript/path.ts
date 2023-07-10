@@ -1,7 +1,10 @@
 import type {
   IApiParseResponse,
+  IApiParseResponseRef,
+  IDefinitionVirtualProperty,
   IPathVirtualParameter,
   IPathVirtualProperty,
+  IPathVirtualPropertyResponse,
 } from "/src/swagger.ts";
 import { convertType, propCommit, upperCase } from "/src/util.ts";
 import Logs from "/src/console.ts";
@@ -43,25 +46,88 @@ interface IApiFile {
   export: Array<string>;
 }
 
+interface IApiInternalDefinition {
+  props: Array<string>;
+  childProps: Array<string>;
+}
+
 /**
  * 接口注释
  * @param summary - 主注释
  * @param params - 参数注释
  * @param description -次要注释
+ * @param title - 标题
  * @returns
  */
 const methodCommit = (
   summary: string,
   params?: Array<string>,
   description?: string,
+  title?: string,
 ) => {
   const _commit = ["/**", `* ${summary}`];
 
+  title && _commit.push(`* @title ${title}`);
   description && _commit.push(`* @description ${description}`);
   params?.length && _commit.push(...params);
   _commit.push("*/");
 
   return _commit.join("\n ");
+};
+
+/**
+ * 从给定的属性数组中获取属性，生成内部定义
+ *
+ * @param {IDefinitionVirtualProperty[]} properties - 属性
+ * @param {string} name - 定义的名称
+ */
+const getInternalDefinition = (
+  properties: IDefinitionVirtualProperty[],
+  name: string,
+): IApiInternalDefinition => {
+  const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
+    let _type = `${convertType(current.type)}`;
+
+    if (current.properties) {
+      _type = `${name}${upperCase(current.name)}`;
+
+      const _childProps = getInternalDefinition(
+        current.properties,
+        _type,
+      );
+      prev.childProps.push(..._childProps.props);
+    }
+
+    prev.props.splice(
+      prev.props.length - 1,
+      0,
+      `${
+        propCommit(current.title ?? current.description ?? "")
+      }${current.name}${current.required ? "" : "?"}: ${_type};`,
+    );
+    return prev;
+  }, {
+    props: properties.length ? [`export interface ${name} {`, "}"] : [],
+    childProps: [],
+  });
+
+  return _props;
+};
+
+/**
+ * 从给定的属性数组中获取属性，生成内部定义
+ *
+ * @param {IDefinitionVirtualProperty[]} properties - 属性
+ * @param {string} name - 定义的名称
+ */
+const getDefinition = (
+  properties: IDefinitionVirtualProperty[],
+  name: string,
+) => {
+  const _props = getInternalDefinition(properties, name);
+  const _defs = [..._props.props, ..._props.childProps];
+
+  return _defs;
 };
 
 /**
@@ -87,15 +153,27 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         prev.import.push(item.ref);
       }
 
-      // 接口内部定义，同一类型的参数合并为新定义对象
-      if (_multiParam) {
-        _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
+      // 处理内部定义
+      if (_multiParam || item.properties?.length) {
+        // properties 存在时直接定义。
+        if (item.properties?.length) {
+          const _props = getDefinition(item.properties, _defName);
 
-        _interface.splice(
-          _interface.length - 1,
-          0,
-          _defMap,
-        );
+          if (_props.length) {
+            prev.interface?.push(_props.join("\n"));
+          }
+        }
+
+        // 合并同一类型的参数为新定义对象
+        if (_multiParam) {
+          _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
+
+          _interface.splice(
+            _interface.length - 1,
+            0,
+            _defMap,
+          );
+        }
 
         if (index === 0) {
           // 接口参数注释
@@ -134,7 +212,7 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
  * @param ref - 自定义类型
  * @returns
  */
-const parseResponseRef = (ref: string): IApiParseResponse => {
+const parseResponseRef = (ref: string): IApiParseResponseRef => {
   const _sliceIndex = ref.indexOf("«");
   const _imports = [];
   const _import = ref.slice(0, _sliceIndex > -1 ? _sliceIndex : undefined);
@@ -159,30 +237,58 @@ const parseResponseRef = (ref: string): IApiParseResponse => {
   return { name, import: _imports };
 };
 
+const parseResponse = (
+  response: IPathVirtualPropertyResponse,
+  action: string,
+): IApiParseResponse => {
+  let _response: IApiParseResponse;
+
+  if (response.properties?.length) {
+    const _def = `${upperCase(action)}Response`;
+    const _props = getDefinition(
+      response.properties,
+      `${upperCase(action)}Response`,
+    );
+
+    _response = {
+      def: _def,
+      interface: _props,
+    };
+  } else {
+    const _refResponse = parseResponseRef(response.ref ?? "");
+    const _responseDef = convertType(
+      response.type ?? "",
+      _refResponse.name,
+    );
+
+    _response = {
+      def: _responseDef,
+      import: _refResponse.import,
+    };
+  }
+
+  return _response;
+};
+
 /**
  * 生成 Api
  * @param data - 接口数据
- * @param key - 接口名称
+ * @param action - 接口名称
  * @returns
  */
-const generateApi = (data: IPathVirtualProperty, key: string) => {
+const generateApi = (data: IPathVirtualProperty, action: string) => {
   const methodName = data.method.toUpperCase();
   Logs.info(`【${methodName}】${data.url}`);
 
-  const _params = parserParams(data.parameters ?? {}, key);
+  const _params = parserParams(data.parameters ?? {}, action);
+  const _response = parseResponse(data.response, action);
 
-  const _refResponse = parseResponseRef(data.response.ref ?? "");
-  const _responseDef = convertType(
-    data.response.type ?? "",
-    _refResponse.name,
-  );
-
-  if (_responseDef === "unknown") {
+  if (_response.def === "unknown") {
     Logs.warn("缺少 200 状态码的信息。");
   }
 
   const _methodCommit = methodCommit(
-    data.summary || key,
+    data.summary || action,
     _params?.commit,
     data.description,
   );
@@ -191,14 +297,15 @@ const generateApi = (data: IPathVirtualProperty, key: string) => {
     : "";
 
   const _method = `${_methodCommit}
-export const ${key} = (${
+export const ${action} = (${
     _params?.defMap?.join(", ") ??
       ""
-  }) => webClient.request<${_responseDef}>('${data.url}', '${methodName}'${_methodParam})`;
+  }) => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
-    import: [..._params.import, ..._refResponse.import],
-    interface: _params.interface?.join("\n"),
+    import: [..._params.import, ...(_response.import ?? [])],
+    interface: [...(_params.interface ?? []), ...(_response.interface ?? [])]
+      ?.join("\n"),
     export: _method,
   };
 };
@@ -212,9 +319,9 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
 
   Logs.info("解析接口...");
   data.forEach((item, key) => {
-    const _tag = item.tags?.[0];
+    const _tag = item.tag;
     if (!_tag) {
-      Logs.error(`${item.url} 未定义 tags，跳过解析`);
+      Logs.error(`${item.url} 未指定 tag，跳过解析`);
       return;
     }
 

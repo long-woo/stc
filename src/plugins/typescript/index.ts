@@ -13,10 +13,23 @@ let pluginOptions: ISwaggerOptions;
 
 export const typeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
+  /**
+   * Set up the function with the given options.
+   *
+   * @param {ISwaggerOptions} options - The options for setting up the function.
+   */
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
   },
 
+  /**
+   * Transforms the given definition and action into an object containing
+   * the definition content and action data.
+   *
+   * @param {type} def - the definition parameter
+   * @param {type} action - the action parameter
+   * @return {type} an object containing the definition content and action data
+   */
   onTransform(def, action) {
     const defContent = parserDefinition(def);
     const pathData = parserPath(action);
