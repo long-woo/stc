@@ -28,7 +28,7 @@ const getMethodName = (url: string) => {
 };
 
 /**
- * ApiFox 属性
+ * ApiFox 属性（type 为 object 时，处理存在的属性定义）
  * @param properties - 属性
  * @param requiredProps - 必填属性
  * @returns
@@ -40,7 +40,7 @@ const getProperties = (
   const _properties = Object.keys(properties ?? {})
     .reduce((prev: IDefinitionVirtualProperty[], current) => {
       const _props = properties[current];
-      const _propItem = {
+      const _propItem: IDefinitionVirtualProperty = {
         name: current,
         type: _props?.type ?? "",
         required: requiredProps.includes(current) ??
@@ -145,7 +145,6 @@ const getPathVirtualProperty = (
     _resSchema?.properties ?? {},
     _resSchema?.required ?? [],
   );
-  console.log(_properties);
 
   // 标签，用于文件名
   let _tag = pathMethod.tags?.[0];
@@ -184,7 +183,7 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    // 匹配 include 的规则，再匹配 exclude 的规则，不满足条件直接返回。所有规则是 glob 写法
+    // 匹配 include 的规则，再匹配 exclude 的规则，不满足条件直接返回
 
     // 请求方式
     const methods = paths[url];
@@ -194,7 +193,7 @@ export const getApiPath = (
       // 方法名
       let name = currentMethod.operationId ?? getMethodName(url);
       if (!name) {
-        Logs.error(`${url} 的 ${method} 无法获取方法名称`);
+        Logs.error(`${url} 的 ${method} 无法获取方法名称，故忽略。`);
         return;
       }
 

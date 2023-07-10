@@ -193,6 +193,10 @@ export interface IDefinitionVirtualProperty {
    * ApiFox - 属性标题
    */
   title?: string;
+  /**
+   * type 为 object 时，定义的属性对象
+   */
+  properties?: IDefinitionVirtualProperty[];
 }
 
 export interface IPathVirtualParameterCategory {

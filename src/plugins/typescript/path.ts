@@ -1,5 +1,6 @@
 import type {
   IApiParseResponse,
+  IDefinitionVirtualProperty,
   IPathVirtualParameter,
   IPathVirtualProperty,
 } from "/src/swagger.ts";
@@ -48,20 +49,49 @@ interface IApiFile {
  * @param summary - 主注释
  * @param params - 参数注释
  * @param description -次要注释
+ * @param title - 标题
  * @returns
  */
 const methodCommit = (
   summary: string,
   params?: Array<string>,
   description?: string,
+  title?: string,
 ) => {
   const _commit = ["/**", `* ${summary}`];
 
+  title && _commit.push(`* @title ${title}`);
   description && _commit.push(`* @description ${description}`);
   params?.length && _commit.push(...params);
   _commit.push("*/");
 
   return _commit.join("\n ");
+};
+
+/**
+ * 从给定的属性数组中获取属性，生成内部定义
+ *
+ * @param {IDefinitionVirtualProperty[]} properties - 属性
+ * @param {string} name - 定义的名称
+ */
+const getInternalDefinition = (
+  properties: IDefinitionVirtualProperty[],
+  name: string,
+) => {
+  const _props = properties.reduce((prev: string[], current) => {
+    const _type = `${convertType(current.type)}`;
+
+    prev.splice(
+      prev.length - 1,
+      0,
+      `${
+        propCommit(current.title ?? current.description ?? "")
+      }${current.name}${current.required ? "" : "?"}: ${_type};`,
+    );
+    return prev;
+  }, properties.length ? [`export interface ${name} {`, "}"] : []);
+
+  return _props;
 };
 
 /**
@@ -87,15 +117,27 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         prev.import.push(item.ref);
       }
 
-      // 接口内部定义，同一类型的参数合并为新定义对象
-      if (_multiParam) {
-        _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
+      // 处理内部定义
+      if (_multiParam || item.properties) {
+        // properties 存在时直接定义。
+        if (item.properties) {
+          const _props = getInternalDefinition(item.properties, _defName);
 
-        _interface.splice(
-          _interface.length - 1,
-          0,
-          _defMap,
-        );
+          if (_props.length) {
+            prev.interface?.push(_props.join("\n"));
+          }
+        }
+
+        // 合并同一类型的参数为新定义对象
+        if (_multiParam) {
+          _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
+
+          _interface.splice(
+            _interface.length - 1,
+            0,
+            _defMap,
+          );
+        }
 
         if (index === 0) {
           // 接口参数注释
