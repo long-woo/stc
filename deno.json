@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch=src src/main.ts --url=http://127.0.0.1:4523/export/openapi/2 --outDir=out",
+    "dev": "deno run -A --watch=src src/main.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out",
     "version": "echo '1.0.1' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A src/main.ts --output release/stc --target x86_64-apple-darwin",

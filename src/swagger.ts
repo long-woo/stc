@@ -277,11 +277,7 @@ export interface IPathVirtualProperty {
   /**
    * 响应体
    */
-  response: {
-    ref?: string;
-    type?: string;
-    properties?: IDefinitionVirtualProperty[];
-  };
+  response: IPathVirtualPropertyResponse;
   /**
    * 注释
    */
@@ -294,6 +290,21 @@ export interface IPathVirtualProperty {
    * 标签，用于文件名
    */
   tag: string;
+}
+
+export interface IPathVirtualPropertyResponse {
+  /**
+   * 外部定义
+   */
+  ref?: string;
+  /**
+   * 类型
+   */
+  type?: string;
+  /**
+   * 内部定义
+   */
+  properties?: IDefinitionVirtualProperty[];
 }
 
 export interface ISecurityVirtualProperty {
@@ -355,7 +366,13 @@ export interface IDefinitionNameMapping {
   mappings?: Record<string, string>;
 }
 
-export interface IApiParseResponse {
+export interface IApiParseResponseRef {
   name: string;
   import: Array<string>;
+}
+
+export interface IApiParseResponse {
+  def: string;
+  interface?: Array<string>;
+  import?: Array<string>;
 }
