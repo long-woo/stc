@@ -184,7 +184,7 @@ export const getApiPath = (
 
   Object.keys(paths).forEach((url) => {
     // 匹配 include 的规则，再匹配 exclude 的规则，不满足条件直接返回
-    // if (!["/api/visit/get/{id}"].includes(url)) {
+    // if (!["/api/form/getMyFormTemplateList"].includes(url)) {
     //   return;
     // }
 

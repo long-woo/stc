@@ -86,14 +86,15 @@ const getInternalDefinition = (
   name: string,
 ): IApiInternalDefinition => {
   const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
-    const _type = `${convertType(current.type)}`;
+    let _type = `${convertType(current.type)}`;
 
     if (current.properties) {
+      _type = `${name}${upperCase(current.name)}`;
+
       const _childProps = getInternalDefinition(
         current.properties,
-        `${name}${upperCase(current.name)}`,
+        _type,
       );
-
       prev.childProps.push(..._childProps.props);
     }
 
