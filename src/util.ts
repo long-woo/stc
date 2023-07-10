@@ -127,5 +127,5 @@ export const getObjectKeyByValue = (
  * @return {boolean} 如果对象具有指定的键，则返回true，否则返回false
  */
 
-export const hasKey = (obj: Record<string, any>, name: string) =>
+export const hasKey = (obj: Record<string, unknown>, name: string) =>
   Object.prototype.hasOwnProperty.call(obj, name);

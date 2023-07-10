@@ -50,7 +50,7 @@ const getProperties = (
       };
 
       // 处理 properties
-      if (hasKey(_props, "properties")) {
+      if (hasKey(_props as unknown as Record<string, unknown>, "properties")) {
         _propItem.properties = getProperties(
           (_props.properties) as unknown as IDefaultObject<
             IDefinitionVirtualProperty
@@ -60,9 +60,14 @@ const getProperties = (
       }
 
       // 处理 items
-      if (hasKey(_props, "items")) {
+      if (hasKey(_props as unknown as Record<string, unknown>, "items")) {
         // 检查 items 是否为 object
-        if (hasKey(_props.items ?? {}, "properties")) {
+        if (
+          hasKey(
+            _props.items as unknown as Record<string, unknown>,
+            "properties",
+          )
+        ) {
           _propItem.properties = getProperties(
             (_props.items?.properties) as unknown as IDefaultObject<
               IDefinitionVirtualProperty
