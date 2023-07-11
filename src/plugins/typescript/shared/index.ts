@@ -1,5 +1,7 @@
 export const createBaseFile = () =>
-  `export type IDefaultObject = Record<string, unknown>;
+  `export type IDefaultObject<T = unknown> = {
+  [key: string]: T;
+};
 
 export class WebClientBase {
   /**

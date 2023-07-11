@@ -40,11 +40,11 @@ export interface ISwaggerSchema {
    */
   enum?: Array<string | number>;
   /**
-   * ApiFox - 属性
+   * Apifox - 属性
    */
   properties?: IDefaultObject<IDefinitionVirtualProperty>;
   /**
-   * ApiFox - 必填属性
+   * Apifox - 必填属性
    */
   required?: Array<string>;
 }
@@ -190,13 +190,17 @@ export interface IDefinitionVirtualProperty {
    */
   format?: string;
   /**
-   * ApiFox - 属性标题
+   * Apifox - 属性标题
    */
   title?: string;
   /**
    * type 为 object 时，定义的属性对象
    */
   properties?: IDefinitionVirtualProperty[];
+  /**
+   * Apifox - 属性定义
+   */
+  items?: IDefinitionVirtualProperty;
 }
 
 export interface IPathVirtualParameterCategory {
@@ -213,7 +217,7 @@ export interface IPathVirtualParameterCategory {
    */
   typeX?: string;
   /**
-   * ApiFox - 标题
+   * Apifox - 标题
    */
   title?: string;
   /**
@@ -237,7 +241,7 @@ export interface IPathVirtualParameterCategory {
    */
   default?: string;
   /**
-   * ApiFox - 属性
+   * Apifox - 属性
    */
   properties?: IDefinitionVirtualProperty[];
 }

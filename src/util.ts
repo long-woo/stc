@@ -80,8 +80,8 @@ export const getRefType = (ref: string) =>
  * @returns
  */
 export const convertType = (type: string, ref?: string) => {
-  // 当只有 ref 的时候，直接返回 ref
-  if (!type && ref) return ref;
+  // 当只有 ref 或者 type 为 object 时，直接返回 ref
+  if ((!type || type === "object") && ref) return ref;
 
   // 若 type 与 ref 相等，则表示为自定义类型
   if (type === ref) return type || "unknown";
@@ -118,3 +118,14 @@ export const getObjectKeyByValue = (
   obj: Record<string, string>,
   value: string,
 ) => Object.keys(obj).find((key) => obj[key] === value);
+
+/**
+ * 检查给定的对象是否具有指定的键。
+ *
+ * @param {Record<string, string>} obj - 要检查键的对象
+ * @param {string} name - 要检查的键的名称
+ * @return {boolean} 如果对象具有指定的键，则返回true，否则返回false
+ */
+
+export const hasKey = (obj: Record<string, unknown>, name: string) =>
+  Object.prototype.hasOwnProperty.call(obj, name);
