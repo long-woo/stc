@@ -1,7 +1,7 @@
 // 由 stc 生成
 import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import type { IDefaultObject } from "../webClientBase";
+import type { IDefaultObject, IRequestParams } from "../webClientBase";
 import { WebClientBase } from "../webClientBase";
 
 /**
@@ -15,12 +15,12 @@ export class WebClient extends WebClientBase {
   public static request<T>(
     url: string,
     method: Method,
-    req?: IDefaultObject<unknown>,
+    req?: IRequestParams,
   ) {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
 
-    let _data: IDefaultObject | FormData | unknown = req?.data;
+    let _data: IDefaultObject | FormData | unknown = req?.body;
 
     // 处理 FormData 数据
     if (_formData) {

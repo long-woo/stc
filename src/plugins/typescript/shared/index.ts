@@ -3,6 +3,14 @@ export const createBaseFile = () =>
   [key: string]: T;
 };
 
+export interface IRequestParams {
+  path: Array<unknown>;
+  query: Array<unknown>;
+  body: Array<unknown>;
+  formData: Array<unknown>;
+  header: Array<unknown>;
+}
+
 export class WebClientBase {
   /**
    * 生成 URL
@@ -25,7 +33,7 @@ export class WebClientBase {
 export const createAxiosFile = () =>
   `import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import type { IDefaultObject } from "../webClientBase";
+import type { IDefaultObject, IRequestParams } from "../webClientBase";
 import { WebClientBase } from "../webClientBase";
 
 /**
@@ -39,12 +47,12 @@ export class WebClient extends WebClientBase {
   public static request<T>(
     url: string,
     method: Method,
-    req?: IDefaultObject<unknown>,
+    req?: IRequestParams,
   ) {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
 
-    let _data: IDefaultObject | FormData | unknown = req?.data;
+    let _data: IDefaultObject | FormData | unknown = req?.body;
 
     // 处理 FormData 数据
     if (_formData) {
@@ -99,7 +107,7 @@ export class WebClient extends WebClientBase {
 export default WebClient;`;
 
 export const createWechatFile = () =>
-  `import type { IDefaultObject } from "../webClientBase";
+  `import type { IDefaultObject, IRequestParams } from "../webClientBase";
 import { WebClientBase } from "../webClientBase";
 
 type Method =
@@ -118,7 +126,7 @@ export class WebClient extends WebClientBase {
   public static request<T>(
     url: string,
     method: Method,
-    req?: IDefaultObject<unknown>,
+    req?: IRequestParams,
   ) {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
 
@@ -133,7 +141,7 @@ export class WebClient extends WebClientBase {
     );
 
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
-    let _data: IDefaultObject | FormData | unknown = req?.data;
+    let _data: IDefaultObject | FormData | unknown = req?.body;
 
     // TODO: 处理 FormData 数据
     if (_formData) {

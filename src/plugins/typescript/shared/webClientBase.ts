@@ -3,6 +3,14 @@ export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
 
+export interface IRequestParams {
+  path: Array<unknown>;
+  query: Array<unknown>;
+  body: Array<unknown>;
+  formData: Array<unknown>;
+  header: Array<unknown>;
+}
+
 export class WebClientBase {
   /**
    * 生成 URL
