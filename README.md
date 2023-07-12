@@ -1,4 +1,5 @@
 # STC
+![logo](resources/stc.svg)
 
 STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
 
