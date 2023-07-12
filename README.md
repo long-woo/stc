@@ -1,4 +1,5 @@
 # STC
+![logo](resources/stc.svg)
 
 STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
 
@@ -42,7 +43,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | --- | --- | --- | --- |
 | url | string |  | Swagger 文档地址，或者本地路径 |
 | outDir | string | stc_out | 输出目录 |
-| platform | string |  | 平台，可选值：`axios`、`wechat` |
+| platform | string | axios | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
 | tag | number | | 从接口指定标签，默认读取 tags 的第一个用于文件名 |
 

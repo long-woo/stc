@@ -1,4 +1,4 @@
-import { Args, parse } from "std/flags/mod.ts";
+import { Args, parse, type ParseOptions } from "std/flags/mod.ts";
 
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
@@ -141,7 +141,7 @@ const printHelp = () => {
  */
 export const main = (): ISwaggerOptions => {
   // 定义命令行参数和选项的配置
-  const argsConfig = {
+  const argsConfig: ParseOptions = {
     boolean: ["help"],
     string: [
       "url",
@@ -149,8 +149,6 @@ export const main = (): ISwaggerOptions => {
       "platform",
       "lang",
       "version",
-      "include",
-      "exclude",
       "tag",
     ],
     alias: {
@@ -160,6 +158,7 @@ export const main = (): ISwaggerOptions => {
       l: "lang",
       v: "version",
     },
+    collect: ["include", "exclude"],
     default: {
       lang: "ts",
       platform: "axios",
@@ -176,7 +175,7 @@ export const main = (): ISwaggerOptions => {
 
   // 检查 url
   if (!args.url) {
-    Logs.error(`必须提供选项 url`);
+    Logs.error("必须提供选项 url");
     printHelp();
     Deno.exit(1);
   }

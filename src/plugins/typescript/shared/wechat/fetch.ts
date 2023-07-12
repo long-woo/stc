@@ -1,6 +1,6 @@
 // 由 stc 生成
-import type { IDefaultObject } from "../webClientBase";
-import { WebClientBase } from "../webClientBase";
+import type { IDefaultObject, IRequestParams } from "../webClientBase";
+import { WebClientBase } from "../webClientBase.ts";
 
 type Method =
   | "OPTIONS"
@@ -18,7 +18,7 @@ export class WebClient extends WebClientBase {
   public static request<T>(
     url: string,
     method: Method,
-    req?: IDefaultObject<unknown>,
+    req?: IRequestParams,
   ) {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
 
@@ -26,14 +26,18 @@ export class WebClient extends WebClientBase {
     const _query = req?.query ?? {};
     const _params = Object.keys(_query).reduce(
       (prev: Array<string>, current) => {
-        prev.push(`${current}=${encodeURIComponent(_query[current])}`);
+        prev.push(
+          `${current}=${
+            encodeURIComponent(_query[current as keyof typeof _query])
+          }`,
+        );
         return prev;
       },
       [],
     );
 
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
-    let _data: IDefaultObject | FormData | unknown = req?.data;
+    let _data: IDefaultObject | FormData | unknown = req?.body;
 
     // TODO: 处理 FormData 数据
     if (_formData) {
