@@ -18,7 +18,7 @@ STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工�
 
 ## 快速开始
 
-按系统[下载](https://github.com/long-woo/stc/releases/tag/1.0.1)：
+按系统[下载](https://github.com/long-woo/stc/releases/tag/1.1.3)：
 
 - stc：Intel 系列的 Mac
 - stc-m：M 系列的 Mac
