@@ -20,7 +20,7 @@ export class WebClientBase {
   static generateURL(url: string, path?: IDefaultObject) {
     // 替换路由参数
     const newURL = url.replace(
-      /[\{|:](\w+)[\}]?/gi,
+      /[\\{|:](\\w+)[\\}]?/gi,
       (_key: string, _value: string): string => {
         return path ? path[_value] as string : "";
       },

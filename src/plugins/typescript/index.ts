@@ -1,4 +1,4 @@
-import { createFile } from "/src/util.ts";
+import { createFile } from "../../util.ts";
 import { ISwaggerOptions } from "../../swagger.ts";
 import { IPlugin } from "../typeDeclaration.ts";
 import { parserDefinition } from "./defintion.ts";
