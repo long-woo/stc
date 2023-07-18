@@ -7,7 +7,7 @@ import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
-import { createFile, emptyDirectory, readFile } from "./util.ts";
+import { createAppFile, createFile, emptyDirectory, readFile } from "./util.ts";
 import denoJson from "/deno.json" assert { type: "json" };
 
 const checkUpdate = async () => {
@@ -26,25 +26,51 @@ const checkUpdate = async () => {
     if (version < _lastVersion) {
       Logs.info("发现新版本，正在更新中...");
       const dir = Deno.cwd();
+      const systemInfo = Deno.build;
+      const appNameMap: Record<string, string> = {
+        "x86_64-apple-darwin": "stc",
+        "aarch64-apple-darwin": "stc-m",
+        "x86_64-pc-windows-msvc": "stc-win",
+        "x86_64-unknown-linux-gnu": "stc-linux",
+      };
+      const downloadUrl =
+        `https://github.com/long-woo/stc/releases/download/${latestVersion}/${
+          appNameMap[systemInfo.target]
+        }`;
+      const downloadApp = await fetch(downloadUrl);
 
-      const command = new Deno.Command("deno", {
-        args: [
-          "compile",
-          "-A",
-          `https://deno.land/x/stc@${latestVersion}/mod.ts`,
-          "--output",
+      if (downloadApp.ok) {
+        const content = await downloadApp.arrayBuffer();
+
+        await createAppFile(
           `${dir}/stc`,
-        ],
-      });
+          content,
+        );
 
-      const { code, stderr } = await command.output();
-
-      if (code === 0) {
         Logs.info("更新完成，请重新运行");
         return;
       }
 
-      Logs.error(new TextDecoder().decode(stderr));
+      Logs.error(downloadApp.statusText);
+
+      // const command = new Deno.Command("deno", {
+      //   args: [
+      //     "compile",
+      //     "-A",
+      //     `https://deno.land/x/stc@${latestVersion}/mod.ts`,
+      //     "--output",
+      //     `${dir}/stc`,
+      //   ],
+      // });
+
+      // const { code, stderr } = await command.output();
+
+      // if (code === 0) {
+      //   Logs.info("更新完成，请重新运行");
+      //   return;
+      // }
+
+      // Logs.error(new TextDecoder().decode(stderr));
       return;
     }
 

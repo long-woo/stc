@@ -48,6 +48,17 @@ ${content}`),
 };
 
 /**
+ * 将给定的内容写入指定路径的文件中
+ *
+ * @param {string} filePath - 要创建或覆盖的文件的路径
+ * @param {ArrayBuffer} content - 要写入文件的内容
+ * @return {Promise<void>} - 在文件成功写入时解析，或在出现错误时拒绝
+ */
+
+export const createAppFile = (filePath: string, content: ArrayBuffer) =>
+  Deno.writeFile(filePath, new Uint8Array(content));
+
+/**
  * 覆盖复制文件
  * @param from - 复制位置
  * @param to - 目标位置
