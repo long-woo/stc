@@ -8,6 +8,49 @@ import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import { createFile, emptyDirectory, readFile } from "./util.ts";
+import denoJson from "/deno.json" assert { type: "json" };
+
+const checkUpdate = async () => {
+  Logs.info("检查更新...");
+  const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
+
+  const res = await fetch(
+    "https://api.github.com/repos/long-woo/stc/releases/latest",
+  );
+
+  if (res.ok) {
+    const data = await res.json();
+    const latestVersion = data.tag_name;
+    const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
+
+    if (version < _lastVersion) {
+      Logs.info("发现新版本，正在更新中...");
+      const dir = Deno.cwd();
+
+      const command = new Deno.Command("deno", {
+        args: [
+          "compile",
+          "-A",
+          `https://deno.land/x/stc@${latestVersion}/mod.ts`,
+          "--output",
+          `${dir}/stc`,
+        ],
+      });
+
+      const { code, stderr } = await command.output();
+
+      if (code === 0) {
+        Logs.info("更新完成，请重新运行");
+        return;
+      }
+
+      Logs.error(new TextDecoder().decode(stderr));
+      return;
+    }
+
+    Logs.info("已经是最新版本");
+  }
+};
 
 /**
  * 创建上下文
@@ -121,7 +164,7 @@ const printHelp = () => {
 选项:
   -h, --help         显示帮助信息
   --url              远程地址或本地文件路径
-  -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 swagger2code_out
+  -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 stc_out
   -p, --platform     平台，可选值：axios、wechat， [default: "axios"]
   -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
   --include          包含解析接口
@@ -130,8 +173,8 @@ const printHelp = () => {
   -v, --version      显示版本信息
 
 示例:
-  stc -o ./out --url http://petstore.swagger.io/v2/swagger.json
-  stc -o ./out -p wechat -l ts --url http://petstore.swagger.io/v2/swagger.json
+  stc -o ./stc_out --url http://petstore.swagger.io/v2/swagger.json
+  stc -o ./stc_out -p axios -l ts --url http://petstore.swagger.io/v2/swagger.json
 `);
   Deno.exit(0);
 };
@@ -139,16 +182,15 @@ const printHelp = () => {
 /**
  * 主入口
  */
-export const main = (): ISwaggerOptions => {
+export const main = async (): Promise<ISwaggerOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help"],
+    boolean: ["help", "version"],
     string: [
       "url",
       "outDir",
       "platform",
       "lang",
-      "version",
       "tag",
     ],
     alias: {
@@ -172,6 +214,21 @@ export const main = (): ISwaggerOptions => {
 
   // 解析命令行参数和选项
   const args: Args = parse(Deno.args, argsConfig);
+
+  // 检查更新
+  await checkUpdate();
+
+  // 帮助
+  if (args.help) {
+    printHelp();
+    Deno.exit(0);
+  }
+
+  // 版本
+  if (args.version) {
+    console.log(`stc v${denoJson.version}`);
+    Deno.exit(0);
+  }
 
   // 检查 url
   if (!args.url) {

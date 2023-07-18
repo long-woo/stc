@@ -1,6 +1,6 @@
-import Logs from "/src/console.ts";
-import { IDefinitionVirtualProperty } from "/src/swagger.ts";
-import { convertType, propCommit, upperCase } from "/src/util.ts";
+import Logs from "../../console.ts";
+import { IDefinitionVirtualProperty } from "../../swagger.ts";
+import { convertType, propCommit, upperCase } from "../../util.ts";
 
 /**
  * 解析枚举

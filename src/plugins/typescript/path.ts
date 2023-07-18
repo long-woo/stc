@@ -5,9 +5,9 @@ import type {
   IPathVirtualParameter,
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
-} from "/src/swagger.ts";
-import { convertType, propCommit, upperCase } from "/src/util.ts";
-import Logs from "/src/console.ts";
+} from "../../swagger.ts";
+import { convertType, propCommit, upperCase } from "../../util.ts";
+import Logs from "../../console.ts";
 
 interface IApiRealParams {
   path?: string;
