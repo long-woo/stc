@@ -32,7 +32,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: |
           cd npm_dist
-          pwd
+          
           npm ci
          # npm publish
         env:
