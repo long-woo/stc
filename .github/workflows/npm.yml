@@ -1,7 +1,6 @@
 name: Publish Package to npmjs
 
 on:
-  # 手动创建的 release，才会触发
   release:
     types: [released]
 
