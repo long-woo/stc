@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   check:
-    uses: ./.github/workflows/check.yaml
+    uses: ./.github/workflows/check.yml
 
   release:
     runs-on: ubuntu-latest
