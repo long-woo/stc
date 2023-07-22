@@ -1,11 +1,10 @@
 name: Publish Package to npmjs
 
 on:
-  release:
-    types: [released]
-
-permissions:
-  contents: read
+  push:
+    branches: ['master']
+#   release:
+#     types: [released]
 
 jobs:
   build:
@@ -28,6 +27,7 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+
       - run: |
           cd npm_dist
 
