@@ -1,8 +1,8 @@
 {
-  "version": "1.1.3",
+  "version": "1.1.4",
   "tasks": {
     "dev": "deno run -A --watch=src src/main.ts --url 'http://127.0.0.1:4523/export/openapi/7?version=3.1' --tag=2 --outDir=out",
-    "version": "echo '1.1.3' > release/version",
+    "version": "echo '1.1.4' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A src/main.ts --output release/stc --target x86_64-apple-darwin",
     "build:mac-m": "deno compile -A src/main.ts --output release/stc-m --target aarch64-apple-darwin",
