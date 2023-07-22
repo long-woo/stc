@@ -61,7 +61,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.0.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.1.4/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
