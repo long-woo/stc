@@ -1,0 +1,35 @@
+name: Publish Package to npmjs
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1.1.2
+        with:
+          deno-version: v1.x
+
+      # 使用 dtn 打包
+      - name: 构建成 npm 包
+        run: |
+          deno task build:npm
+
+          # 进入发布目录
+          cd npm_dist
+
+      # Setup .npmrc file to publish to npm
+      - name: 发布到 npmjs
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
