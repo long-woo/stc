@@ -1,13 +1,9 @@
 name: Publish Package to npmjs
 
 on:
+  # 手动创建的 release，才会触发
   release:
-    types: [published]
-
-  workflow_run:
-    workflows: ['Deno PR check']
-    types:
-      - completed
+    types: [released]
 
 permissions:
   contents: read
