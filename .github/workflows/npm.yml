@@ -2,12 +2,7 @@ name: Publish Package to npmjs
 
 on:
   release:
-    types: [published]
-
-  workflow_run:
-    workflows: ['Deno PR check']
-    types:
-      - completed
+    types: [released]
 
 permissions:
   contents: read
