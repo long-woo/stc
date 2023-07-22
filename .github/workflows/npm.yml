@@ -20,11 +20,7 @@ jobs:
 
       # 使用 dtn 打包
       - name: 构建成 npm 包
-        run: |
-          deno task build:npm
-
-          # 进入发布目录
-          cd npm_dist
+        run: deno task build:npm
 
       # Setup .npmrc file to publish to npm
       - name: 发布到 npmjs
@@ -32,7 +28,10 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm publish
+      - run: |
+          cd npm_dist
+
+          npm ci
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
