@@ -27,6 +27,7 @@ const checkUpdate = async () => {
       Logs.info("发现新版本，正在更新中...");
       const dir = Deno.cwd();
       const systemInfo = Deno.build;
+
       const appNameMap: Record<string, string> = {
         "x86_64-apple-darwin": "stc",
         "aarch64-apple-darwin": "stc-m",
@@ -41,13 +42,15 @@ const checkUpdate = async () => {
 
       if (downloadApp.ok) {
         const content = await downloadApp.arrayBuffer();
+        // 文件总大小
+        const size = content.byteLength;
 
         await createAppFile(
           `${dir}/stc`,
           content,
         );
 
-        Logs.info("更新完成，请重新运行");
+        Logs.info(`更新完成，版本：v${latestVersion}`);
         return;
       }
 
