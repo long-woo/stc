@@ -45,7 +45,8 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | outDir | string | stc_out | 输出目录 |
 | platform | string | axios | 平台，可选值：`axios`、`wechat` |
 | lang | string | ts | 语言，用于输出文件的后缀名 |
-| tag | number | | 从接口指定标签，默认读取 tags 的第一个用于文件名 |
+| tag | number | | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名 |
+| filter | string[] | | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
 
 ## 插件开发
 
@@ -61,7 +62,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.1.4/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.1.5/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {

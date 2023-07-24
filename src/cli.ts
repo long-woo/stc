@@ -230,6 +230,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       v: "version",
       f: "filter",
     },
+    collect: ["filter"],
     default: {
       lang: "ts",
       platform: "axios",
@@ -285,7 +286,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
     platform,
     lang,
     tag: args.tag,
-    include: args.include,
-    exclude: args.exclude,
+    filter: args.filter,
   };
 };
