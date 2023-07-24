@@ -55,9 +55,10 @@ ${content}`),
  * @param {ArrayBuffer} content - 要写入文件的内容
  * @return {Promise<void>} - 在文件成功写入时解析，或在出现错误时拒绝
  */
-
-export const createAppFile = (filePath: string, content: ArrayBuffer) =>
-  Deno.writeFile(filePath, new Uint8Array(content));
+export const createAppFile = (
+  filePath: string,
+  content: ArrayBuffer,
+) => Deno.writeFile(filePath, new Uint8Array(content));
 
 /**
  * 覆盖复制文件

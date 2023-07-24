@@ -40,14 +40,41 @@ const checkUpdate = async () => {
         }`;
       const downloadApp = await fetch(downloadUrl);
 
-      if (downloadApp.ok) {
-        const content = await downloadApp.arrayBuffer();
-        // 文件总大小
-        const size = content.byteLength;
+      const reader = downloadApp.body?.getReader();
+      // 文件内容长度
+      const contentLength = downloadApp.headers.get("content-length");
+      const size = Number((Number(contentLength) / 1024 / 1024).toFixed(1));
+      // 接收的文件字节长度
+      let receivedLength = 0;
+      // 接收到的字节数据
+      const chunks: Uint8Array[] = [];
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          chunks.push(value);
+          receivedLength += value.length;
+          Logs.info(
+            `已下载：${(receivedLength / 1024 / 1024).toFixed(1)}/${size} M`,
+          );
+        }
+
+        const chunkContent = new Uint8Array(receivedLength);
+        let offset = 0;
+
+        for (const chunk of chunks) {
+          chunkContent.set(chunk, offset);
+          offset += chunk.length;
+        }
 
         await createAppFile(
           `${dir}/stc`,
-          content,
+          chunkContent.buffer,
         );
 
         Logs.info(`更新完成，版本：v${latestVersion}`);
