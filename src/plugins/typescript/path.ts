@@ -51,6 +51,17 @@ interface IApiInternalDefinition {
   childProps: Array<string>;
 }
 
+interface IApiParamsSort {
+  /**
+   * 必填参数
+   */
+  required: string[];
+  /**
+   * 可选参数
+   */
+  optional: string[];
+}
+
 /**
  * 接口注释
  * @param summary - 主注释
@@ -181,7 +192,7 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         if (index === 0) {
           // 接口参数注释
           prev.commit?.push(
-            `* @param ${current} - ${_defName}`,
+            `* @param {${_defName}} ${current} - ${_defName}`,
           );
           // 接口形参
           prev.defMap?.push(`${current}: ${_defName}`);
@@ -190,12 +201,26 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
             (prev.refMap[current as keyof IPathVirtualParameter] = current);
         }
       } else {
-        // 接口参数注释
-        prev.commit?.push(
-          `* @param ${item.name} - ${item.description || item.name}`,
-        );
-        // 接口形参
-        prev.defMap?.push(_defMap);
+        const _defMapCommit = `* @param {${_type}} ${item.name} - ${
+          item.description || item.name
+        }`;
+        // 找出第一个可选参数的位置
+        const _optionalIndex = prev.defMap?.findIndex((_d) =>
+          _d.includes("?:")
+        ) ?? -1;
+
+        if (_optionalIndex > -1) {
+          // 接口参数注释
+          prev.commit?.splice(_optionalIndex, 0, _defMapCommit);
+          // 接口形参
+          prev.defMap?.splice(_optionalIndex, 0, _defMap);
+        } else {
+          // 接口参数注释
+          prev.commit?.push(_defMapCommit);
+          // 接口形参
+          prev.defMap?.push(_defMap);
+        }
+
         // 接口形参使用
         if (prev.refMap) {
           prev.refMap[current as keyof IPathVirtualParameter] =
@@ -301,8 +326,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
 
   const _method = `${_methodCommit}
 export const ${action} = (${
-    _params?.defMap?.join(", ") ??
-      ""
+    _params.defMap?.join(", ") ?? ""
   }) => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
