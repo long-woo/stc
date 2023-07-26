@@ -139,6 +139,5 @@ export const getObjectKeyByValue = (
  * @param {string} name - 要检查的键的名称
  * @return {boolean} 如果对象具有指定的键，则返回true，否则返回false
  */
-
 export const hasKey = (obj: Record<string, unknown>, name: string) =>
   Object.prototype.hasOwnProperty.call(obj, name);

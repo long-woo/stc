@@ -1,4 +1,5 @@
 import { Args, parse, type ParseOptions } from "std/flags/mod.ts";
+import ProgressBar from "x/progress@v1.3.8/mod.ts";
 
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
@@ -10,7 +11,7 @@ import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import { createAppFile, createFile, emptyDirectory, readFile } from "./util.ts";
 import denoJson from "/deno.json" assert { type: "json" };
 
-const checkUpdate = async () => {
+const checkUpdate = async (): Promise<string> => {
   Logs.info("检查更新...");
   const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
 
@@ -42,14 +43,19 @@ const checkUpdate = async () => {
 
       const reader = downloadApp.body?.getReader();
       // 文件内容长度
-      const contentLength = downloadApp.headers.get("content-length");
-      const size = Number((Number(contentLength) / 1024 / 1024).toFixed(1));
+      const contentLength = Number(downloadApp.headers.get("content-length"));
+      const size = Number((contentLength / 1024 / 1024).toFixed(1));
       // 接收的文件字节长度
       let receivedLength = 0;
       // 接收到的字节数据
       const chunks: Uint8Array[] = [];
 
       if (reader) {
+        const progressBar = new ProgressBar({
+          total: size,
+          display: ":completed/:total M :bar :percent",
+        });
+
         while (true) {
           const { done, value } = await reader.read();
 
@@ -59,9 +65,8 @@ const checkUpdate = async () => {
 
           chunks.push(value);
           receivedLength += value.length;
-          Logs.info(
-            `已下载：${(receivedLength / 1024 / 1024).toFixed(1)}/${size} M`,
-          );
+
+          progressBar.render(Number((receivedLength / 1024 / 1024).toFixed(1)));
         }
 
         const chunkContent = new Uint8Array(receivedLength);
@@ -78,7 +83,7 @@ const checkUpdate = async () => {
         );
 
         Logs.info(`更新完成，版本：v${latestVersion}`);
-        return;
+        return latestVersion;
       }
 
       Logs.error(downloadApp.statusText);
@@ -101,11 +106,13 @@ const checkUpdate = async () => {
       // }
 
       // Logs.error(new TextDecoder().decode(stderr));
-      return;
+      return latestVersion;
     }
 
     Logs.info("已经是最新版本");
   }
+
+  return denoJson.version;
 };
 
 /**
@@ -273,7 +280,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const args: Args = parse(Deno.args, argsConfig);
 
   // 检查更新
-  await checkUpdate();
+  const _version = await checkUpdate();
 
   // 帮助
   if (args.help) {
@@ -283,7 +290,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 版本
   if (args.version) {
-    console.log(`stc v${denoJson.version}`);
+    console.log(`stc v${_version}`);
     Deno.exit(0);
   }
 
