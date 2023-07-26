@@ -17,7 +17,7 @@ jobs:
         with:
           deno-version: v1.x
 
-      # 使用 dtn 打包
+      # 使用 dnt(https​://deno.land/x/dnt​@0.38.0/mod.ts) 打包
       - name: 构建成 npm 包
         run: deno task build:npm
 
