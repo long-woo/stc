@@ -24,10 +24,6 @@ await dnt.build({
   outDir: "./npm_dist",
   shims: {
     deno: true,
-    // custom: [{
-    //   module: "x/progress​@v1.3.8/mod.ts",
-    //   globalNames: ["ProgressBar"],
-    // }],
   },
   typeCheck: false,
   test: false,
