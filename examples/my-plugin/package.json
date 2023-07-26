@@ -4,6 +4,6 @@
     "dev": "node index.js"
   },
   "devDependencies": {
-    "@loongwoo/stc": "^1.0.0"
+    "@loongwoo/stc": "file:../../npm_dist"
   }
 }

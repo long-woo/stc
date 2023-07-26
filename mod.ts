@@ -29,4 +29,4 @@
  *
  * @module
  */
-export { start } from "./src/cli.ts";
+export { start } from "./src/app.ts";

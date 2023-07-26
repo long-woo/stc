@@ -1,4 +1,4 @@
-import * as dnt from "x/dnt@0.37.0/mod.ts";
+import * as dnt from "x/dnt@0.38.0/mod.ts";
 // import * as esbuild from "x/esbuild@v0.18.6/mod.js";
 import pkg from "./package.json" assert { type: "json" };
 
@@ -20,10 +20,14 @@ import pkg from "./package.json" assert { type: "json" };
 // });
 // console.log(res);
 await dnt.build({
-  entryPoints: ["./src/cli.ts"],
+  entryPoints: ["./mod.ts"],
   outDir: "./npm_dist",
   shims: {
     deno: true,
+    // custom: [{
+    //   module: "x/progress​@v1.3.8/mod.ts",
+    //   globalNames: ["ProgressBar"],
+    // }],
   },
   typeCheck: false,
   test: false,
