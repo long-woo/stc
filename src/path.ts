@@ -190,6 +190,18 @@ const getPathVirtualProperty = (
   return value;
 };
 
+const parserFilter = (filters: string[]) => {
+  if (!filters.length) return undefined;
+
+  const regStr = filters.reduce((prev, current) => {
+    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*");
+
+    return `${prev ? `${prev}|` : ""}(${_str})`;
+  }, "");
+
+  return new RegExp(regStr);
+};
+
 /**
  * 获取接口地址对象
  * @param paths - 接口地址
@@ -202,10 +214,10 @@ export const getApiPath = (
   const pathMap = new Map<string, IPathVirtualProperty>();
 
   Object.keys(paths).forEach((url) => {
-    // 匹配 include 的规则，再匹配 exclude 的规则，不满足条件直接返回
-    // if (!["/api/form/getMyFormTemplateList"].includes(url)) {
-    //   return;
-    // }
+    // 过滤接口，符合过滤条件的接口会被生成
+    if (!parserFilter(options?.filter ?? [])?.test(url)) {
+      return;
+    }
 
     // 请求方式
     const methods = paths[url];

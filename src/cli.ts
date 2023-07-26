@@ -1,4 +1,5 @@
 import { Args, parse, type ParseOptions } from "std/flags/mod.ts";
+import ProgressBar from "x/progress@v1.3.8/mod.ts";
 
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
@@ -10,7 +11,7 @@ import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import { createAppFile, createFile, emptyDirectory, readFile } from "./util.ts";
 import denoJson from "/deno.json" assert { type: "json" };
 
-const checkUpdate = async () => {
+const checkUpdate = async (): Promise<string> => {
   Logs.info("检查更新...");
   const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
 
@@ -27,6 +28,7 @@ const checkUpdate = async () => {
       Logs.info("发现新版本，正在更新中...");
       const dir = Deno.cwd();
       const systemInfo = Deno.build;
+
       const appNameMap: Record<string, string> = {
         "x86_64-apple-darwin": "stc",
         "aarch64-apple-darwin": "stc-m",
@@ -39,16 +41,49 @@ const checkUpdate = async () => {
         }`;
       const downloadApp = await fetch(downloadUrl);
 
-      if (downloadApp.ok) {
-        const content = await downloadApp.arrayBuffer();
+      const reader = downloadApp.body?.getReader();
+      // 文件内容长度
+      const contentLength = Number(downloadApp.headers.get("content-length"));
+      const size = Number((contentLength / 1024 / 1024).toFixed(1));
+      // 接收的文件字节长度
+      let receivedLength = 0;
+      // 接收到的字节数据
+      const chunks: Uint8Array[] = [];
+
+      if (reader) {
+        const progressBar = new ProgressBar({
+          total: size,
+          display: ":completed/:total M :bar :percent",
+        });
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          chunks.push(value);
+          receivedLength += value.length;
+
+          progressBar.render(Number((receivedLength / 1024 / 1024).toFixed(1)));
+        }
+
+        const chunkContent = new Uint8Array(receivedLength);
+        let offset = 0;
+
+        for (const chunk of chunks) {
+          chunkContent.set(chunk, offset);
+          offset += chunk.length;
+        }
 
         await createAppFile(
           `${dir}/stc`,
-          content,
+          chunkContent.buffer,
         );
 
-        Logs.info("更新完成，请重新运行");
-        return;
+        Logs.info(`更新完成，版本：v${latestVersion}`);
+        return latestVersion;
       }
 
       Logs.error(downloadApp.statusText);
@@ -71,11 +106,13 @@ const checkUpdate = async () => {
       // }
 
       // Logs.error(new TextDecoder().decode(stderr));
-      return;
+      return latestVersion;
     }
 
     Logs.info("已经是最新版本");
   }
+
+  return denoJson.version;
 };
 
 /**
@@ -193,9 +230,8 @@ const printHelp = () => {
   -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 stc_out
   -p, --platform     平台，可选值：axios、wechat， [default: "axios"]
   -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
-  --include          包含解析接口
-  --exclude          排除解析接口
-  --tag              从接口指定标签，默认读取 tags 的第一个用于文件名
+  -f, --filter       过滤接口，符合过滤条件的接口会被生成
+  --tag              从接口 url 中指定标签，默认读取 tags 的第一个用于文件名
   -v, --version      显示版本信息
 
 示例:
@@ -218,6 +254,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       "platform",
       "lang",
       "tag",
+      "filter",
     ],
     alias: {
       h: "help",
@@ -225,8 +262,9 @@ export const main = async (): Promise<ISwaggerOptions> => {
       p: "platform",
       l: "lang",
       v: "version",
+      f: "filter",
     },
-    collect: ["include", "exclude"],
+    collect: ["filter"],
     default: {
       lang: "ts",
       platform: "axios",
@@ -242,7 +280,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const args: Args = parse(Deno.args, argsConfig);
 
   // 检查更新
-  await checkUpdate();
+  const _version = await checkUpdate();
 
   // 帮助
   if (args.help) {
@@ -252,7 +290,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 版本
   if (args.version) {
-    console.log(`stc v${denoJson.version}`);
+    console.log(`stc v${_version}`);
     Deno.exit(0);
   }
 
@@ -282,7 +320,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
     platform,
     lang,
     tag: args.tag,
-    include: args.include,
-    exclude: args.exclude,
+    filter: args.filter,
   };
 };

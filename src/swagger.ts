@@ -352,13 +352,9 @@ export interface ISwaggerOptions {
    */
   readonly plugins?: IPlugin[];
   /**
-   * 包含解析接口
+   * 过滤接口，符合过滤条件的接口会被生成
    */
-  readonly include?: string[];
-  /**
-   * 排除解析接口
-   */
-  readonly exclude?: string[];
+  readonly filter?: string[];
   /**
    * 从接口指定标签，默认使用 tags 的第一个用于文件名
    */

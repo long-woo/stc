@@ -1,5 +1,6 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
+import denoJson from "/deno.json" assert { type: "json" };
 
 interface ICopyFileOptions {
   /**
@@ -40,7 +41,7 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 stc 生成
+    new TextEncoder().encode(`// 由 stc v${denoJson.version} 生成
 // ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
 
 ${content}`),
@@ -54,9 +55,10 @@ ${content}`),
  * @param {ArrayBuffer} content - 要写入文件的内容
  * @return {Promise<void>} - 在文件成功写入时解析，或在出现错误时拒绝
  */
-
-export const createAppFile = (filePath: string, content: ArrayBuffer) =>
-  Deno.writeFile(filePath, new Uint8Array(content));
+export const createAppFile = (
+  filePath: string,
+  content: ArrayBuffer,
+) => Deno.writeFile(filePath, new Uint8Array(content));
 
 /**
  * 覆盖复制文件
@@ -137,6 +139,5 @@ export const getObjectKeyByValue = (
  * @param {string} name - 要检查的键的名称
  * @return {boolean} 如果对象具有指定的键，则返回true，否则返回false
  */
-
 export const hasKey = (obj: Record<string, unknown>, name: string) =>
   Object.prototype.hasOwnProperty.call(obj, name);
