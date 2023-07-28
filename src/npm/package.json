@@ -1,9 +1,9 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Swagger 文档转换为接口文件",
-  "main": "script/cli.js",
-  "module": "esm/cli.js",
+  "main": "script/mod.js",
+  "module": "esm/mod.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/long-woo/stc.git"
@@ -30,12 +30,5 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },
-  "exports": {
-    ".": {
-      "require": "./index.ts",
-      "import": "./index.ts"
-    },
-    "./*": "./index.ts"
   }
 }

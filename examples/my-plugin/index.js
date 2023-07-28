@@ -1,6 +1,6 @@
 // import { start } from '@loongwoo/stc'
-const { start} = require('@loongwoo/stc')
-
+const { start } = require('@loongwoo/stc')
+console.log(start)
 const myPlugin = {
   name: 'stc:myPlugin',
   setup(options) {

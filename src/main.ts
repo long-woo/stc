@@ -1,4 +1,5 @@
-import { main, start } from "./cli.ts";
+import { main } from "./cli.ts";
+import { start } from "./app.ts";
 
 if (import.meta.main) {
   const options = await main();
