@@ -3,7 +3,8 @@
 
 STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
 
-![Publish](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
+![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
+[![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
 特性：
 

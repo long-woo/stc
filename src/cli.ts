@@ -25,7 +25,9 @@ const checkUpdate = async (): Promise<string> => {
     const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
 
     if (version < _lastVersion) {
-      Logs.info("发现新版本，正在更新中...");
+      Logs.info(
+        `发现新版本：${denoJson.version} → ${latestVersion}，正在更新中...`,
+      );
       const dir = Deno.cwd();
       const systemInfo = Deno.build;
 
