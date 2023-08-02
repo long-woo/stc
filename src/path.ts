@@ -215,7 +215,7 @@ export const getApiPath = (
 
   Object.keys(paths).forEach((url) => {
     // 过滤接口，符合过滤条件的接口会被生成
-    if (!parserFilter(options?.filter ?? [])?.test(url)) {
+    if (options?.filter?.length && !parserFilter(options.filter)?.test(url)) {
       return;
     }
 
