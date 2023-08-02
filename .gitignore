@@ -4,6 +4,7 @@ release
 
 node_modules
 npm_dist
+stc_out
 
 examples/**/pnpm-lock.yaml
 examples/**/yarn.lock
