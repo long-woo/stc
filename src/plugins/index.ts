@@ -1,9 +1,11 @@
 import Logs from "../console.ts";
 import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 import { getT } from "../i18n/index.ts";
+import { TypeScriptPlugin } from "./typescript/index.ts";
+import { JavaScriptPlugin } from "./javascript/index.ts";
 
 export class PluginManager {
-  private plugins: IPlugin[] = [];
+  private plugins: IPlugin[] = [TypeScriptPlugin, JavaScriptPlugin];
 
   register(plugin: IPlugin | IPlugin[]) {
     this.plugins = [

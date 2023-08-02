@@ -68,6 +68,7 @@ import { start } from 'https://deno.land/x/stc@1.1.7/mod.ts'
 // 定义插件
 const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
+  lang: 'ts',
   setup(options) {
     console.log(options)
   },
@@ -106,6 +107,7 @@ import { start } from '@loongwoo/stc'
 ```ts
 export const myPlugin: IPlugin = {
   name: "stc:MyPlugin",
+  lang: 'ts',
   setup(options) {
     console.log(options)
   },

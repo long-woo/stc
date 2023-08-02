@@ -1,6 +1,5 @@
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
-import { typeScriptPlugin } from "./plugins/typescript/index.ts";
 import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
@@ -22,7 +21,6 @@ const initPluginManager = (context: IPluginContext) => {
 
   // 注册插件
   pluginManager.register([
-    typeScriptPlugin,
     ...(context.options.plugins ?? []),
   ]);
   // 启动所有插件
@@ -88,8 +86,8 @@ export const start = async (options: ISwaggerOptions) => {
   // 写入类型定义文件
   if (transformData?.definition) {
     createFile(
-      `${options.outDir}/types.${options.lang}`,
-      transformData.definition,
+      `${options.outDir}/${transformData.definition.filename}`,
+      transformData.definition.content,
     );
   }
 

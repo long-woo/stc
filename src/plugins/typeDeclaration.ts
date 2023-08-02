@@ -43,11 +43,22 @@ export interface IPluginContext extends Partial<IPluginEvent> {
   readonly options: ISwaggerOptions;
 }
 
+export interface IPluginTransformDefinition {
+  /**
+   * 文件名
+   */
+  filename: string;
+  /**
+   * 文件内容
+   */
+  content: string;
+}
+
 export interface IPluginTransform {
   /**
    * 类型定义
    */
-  definition?: string;
+  definition?: IPluginTransformDefinition;
   /**
    * 接口数据
    */
