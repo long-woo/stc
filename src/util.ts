@@ -1,6 +1,8 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
+
 import denoJson from "/deno.json" assert { type: "json" };
+import { getT } from "./i18n/index.ts";
 
 interface ICopyFileOptions {
   /**
@@ -41,11 +43,15 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 stc v${denoJson.version} 生成
+    new TextEncoder().encode(
+      `// ${
+        getT("$t(util.createFileDescription)", { version: denoJson.version })
+      }
 // https://github.com/long-woo/stc
 // ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
 
-${content}`),
+${content}`,
+    ),
   );
 };
 

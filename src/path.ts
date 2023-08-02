@@ -10,6 +10,7 @@ import {
 } from "./swagger.ts";
 import { getRefType, hasKey, lowerCase, upperCase } from "./util.ts";
 import Logs from "./console.ts";
+import { getT } from "./i18n/index.ts";
 
 /**
  * 从 URL 获取方法名称
@@ -227,7 +228,7 @@ export const getApiPath = (
       // 方法名
       let name = currentMethod.operationId ?? getMethodName(url);
       if (!name) {
-        Logs.error(`${url} 的 ${method} 无法获取方法名称，故忽略。`);
+        Logs.error(getT("$t(path.notName)", { url, method }));
         return;
       }
 

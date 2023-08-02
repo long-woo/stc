@@ -8,6 +8,7 @@ import type {
 } from "../../swagger.ts";
 import { convertType, propCommit, upperCase } from "../../util.ts";
 import Logs from "../../console.ts";
+import { getT } from "../../i18n/index.ts";
 
 interface IApiRealParams {
   path?: string;
@@ -312,7 +313,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _response = parseResponse(data.response, action);
 
   if (_response.def === "unknown") {
-    Logs.warn("缺少 200 状态码的信息。");
+    Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
   const _methodCommit = methodCommit(
@@ -344,11 +345,11 @@ export const ${action} = (${
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   const apiMap = new Map<string, IApiFile>();
 
-  Logs.info("解析接口...");
+  Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
     const _tag = item.tag;
     if (!_tag) {
-      Logs.error(`${item.url} 未指定 tag，跳过解析`);
+      Logs.error(getT("$t(plugin.no_tag)", { url: item.url }));
       return;
     }
 
@@ -374,6 +375,6 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
     }
   });
 
-  Logs.info("解析完成。");
+  Logs.info(getT("$t(plugin.parserActionDone)"));
   return apiMap;
 };

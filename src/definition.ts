@@ -6,6 +6,7 @@ import {
   ISwaggerResultDefinition,
 } from "./swagger.ts";
 import { getObjectKeyByValue, getRefType, upperCase } from "./util.ts";
+import { getT } from "./i18n/index.ts";
 
 /**
  * 获取定义
@@ -68,7 +69,7 @@ const getVirtualProperties = (
   defMapping: IDefinitionNameMapping,
 ): IDefinitionVirtualProperty[] => {
   if (defItem.type !== "object") {
-    Logs.error("无法解析当前对象");
+    Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
     return [];
   }
 

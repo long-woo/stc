@@ -1,12 +1,15 @@
 import * as Colors from "std/fmt/colors.ts";
 
+import { getT } from "./i18n/index.ts";
+
 /**
  * 输出提示信息
  * @param str - 文本内容
  */
 const info = (str: string) => {
   console.info(
-    Colors.bgBlue(" 信息 ") + ` ${Colors.blue(str)}`,
+    Colors.bgBlue(getT(" $t(console.info) ")) +
+      ` ${Colors.blue(str)}`,
   );
 };
 
@@ -16,7 +19,7 @@ const info = (str: string) => {
  */
 const success = (str: string) => {
   console.info(
-    Colors.bgGreen(" 成功 ") + ` ${Colors.green(str)}`,
+    Colors.bgGreen(getT(" $t(console.success) ")) + ` ${Colors.green(str)}`,
   );
 };
 
@@ -26,7 +29,7 @@ const success = (str: string) => {
  */
 const warn = (str: string) => {
   console.log(
-    Colors.bgYellow(" 警告 ") + ` ${Colors.yellow(str)}`,
+    Colors.bgYellow(getT(" $t(console.warn) ")) + ` ${Colors.yellow(str)}`,
   );
 };
 
@@ -36,7 +39,7 @@ const warn = (str: string) => {
  */
 const error = (str: string) => {
   console.error(
-    Colors.bgRed(" 错误 ") + ` ${Colors.red(str)}`,
+    Colors.bgRed(getT(" $t(console.error) ")) + ` ${Colors.red(str)}`,
   );
 };
 

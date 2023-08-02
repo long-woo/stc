@@ -1,0 +1,51 @@
+{
+  "console": {
+    "info": "信息",
+    "error": "错误",
+    "warn": "警告",
+    "success": "成功"
+  },
+  "util": {
+    "createFileDescription": "由 stc v{{version}} 生成。"
+  },
+  "def": {
+    "parserTypeError": "{{type}} 类型无法解析。"
+  },
+  "path": {
+    "notName": "{{url}} 的 {{method}} 无法获取方法名称，故忽略。"
+  },
+  "app": {
+    "apiJsonFileError": "API 文件解析失败。原因：{{error}}",
+    "generateFileDone": "API 文件生成完成："
+  },
+  "cli": {
+    "checkUpdate": "检查更新",
+    "newVersion": "发现新版本：{{version}} → {{latestVersion}}，正在更新",
+    "updateDone": "更新完成，版本：v{{version}}",
+    "latestVersion": "已经是最新版本。",
+    "unknownOption": "未知选项: {{arg}}。",
+    "requiredUrl": "必须提供选项 url。",
+    "usage": "使用：",
+    "option": "选项：",
+    "example": "示例：",
+    "option_help": "查看帮助信息。",
+    "option_url": "远程地址或本地文件路径。",
+    "option_out": "输出目录，默认为 stc 当前执行的目录下 {{out}}。",
+    "option_platform": "平台，可选值：axios、wechat， [default: \"axios\"]。",
+    "option_lang": "语言，用于输出文件的后缀名， [default: \"ts\"]。",
+    "option_filter": "过滤接口，符合过滤条件的接口会被生成。",
+    "option_tag": "从接口 url 中指定标签，用于文件名，默认读取 tags 的第一个。",
+    "option_version": "显示版本信息。"
+  },
+  "plugin": {
+    "name": "加载插件: {{name}}",
+    "noSetupMethod": "插件 {{name}} 没有 setup 方法。",
+    "allSetupDone": "插件加载完成。\n",
+    "parserDef": "解析定义",
+    "parserDefDone": "解析定义完成。\n",
+    "parserAction": "解析接口",
+    "parserActionDone": "解析接口完成。",
+    "no_200_response": "缺少 200 状态码的信息。",
+    "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。"
+  }
+}

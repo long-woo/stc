@@ -5,6 +5,7 @@ import Logs from "./console.ts";
 import { ISwaggerOptions } from "./swagger.ts";
 import { createAppFile } from "./util.ts";
 import denoJson from "/deno.json" assert { type: "json" };
+import { getT } from "./i18n/index.ts";
 
 /**
  * 检查更新并处理更新过程（如果有新版本可用）。
@@ -12,7 +13,7 @@ import denoJson from "/deno.json" assert { type: "json" };
  * @return {Promise<string>} 如果进行了更新，则返回最新版本，如果未找到更新，则返回当前版本。
  */
 const checkUpdate = async (): Promise<string> => {
-  Logs.info("检查更新...");
+  Logs.info(`${getT("$t(cli.checkUpdate)")}...`);
   const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
 
   const res = await fetch(
@@ -26,7 +27,12 @@ const checkUpdate = async (): Promise<string> => {
 
     if (version < _lastVersion) {
       Logs.info(
-        `发现新版本：${denoJson.version} → ${latestVersion}，正在更新中...`,
+        `${
+          getT("$t(cli.newVersion)", {
+            version: denoJson.version,
+            latestVersion,
+          })
+        }...`,
       );
       const dir = Deno.cwd();
       const systemInfo = Deno.build;
@@ -84,7 +90,7 @@ const checkUpdate = async (): Promise<string> => {
           chunkContent.buffer,
         );
 
-        Logs.info(`更新完成，版本：v${latestVersion}`);
+        Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
         return latestVersion;
       }
 
@@ -103,7 +109,7 @@ const checkUpdate = async (): Promise<string> => {
       // const { code, stderr } = await command.output();
 
       // if (code === 0) {
-      //   Logs.info("更新完成，请重新运行");
+      //   Logs.info("更新完成");
       //   return;
       // }
 
@@ -111,7 +117,7 @@ const checkUpdate = async (): Promise<string> => {
       return latestVersion;
     }
 
-    Logs.info("已经是最新版本");
+    Logs.info(getT("$t(cli.latestVersion)"));
   }
 
   return denoJson.version;
@@ -122,20 +128,20 @@ const checkUpdate = async (): Promise<string> => {
  */
 const printHelp = () => {
   console.log(`
-使用:
+${getT("$t(cli.usage)")}
   stc [options]
 
-选项:
-  -h, --help         显示帮助信息
-  --url              远程地址或本地文件路径
-  -o, --outDir       输出目录，默认为 Deno 当前执行的目录下 stc_out
-  -p, --platform     平台，可选值：axios、wechat， [default: "axios"]
-  -l, --lang         语言，用于输出文件的后缀名， [default: "ts"]
-  -f, --filter       过滤接口，符合过滤条件的接口会被生成
-  --tag              从接口 url 中指定标签，默认读取 tags 的第一个用于文件名
-  -v, --version      显示版本信息
+${getT("$t(cli.option)")}
+  -h, --help         ${getT("$t(cli.option_help)")}
+  --url              ${getT("$t(cli.option_url)")}
+  -o, --outDir       ${getT("$t(cli.option_out)", { out: "stc_out" })}
+  -p, --platform     ${getT("$t(cli.option_platform)")}
+  -l, --lang         ${getT("$t(cli.option_lang)")}
+  -f, --filter       ${getT("$t(cli.option_filter)")}
+  --tag              ${getT("$t(cli.option_tag)")}
+  -v, --version      ${getT("$t(cli.option_version)")}
 
-示例:
+${getT("$t(cli.example)")}
   stc -o ./stc_out --url http://petstore.swagger.io/v2/swagger.json
   stc -o ./stc_out -p axios -l ts --url http://petstore.swagger.io/v2/swagger.json
 `);
@@ -171,7 +177,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       platform: "axios",
     },
     unknown: (arg: string) => {
-      Logs.error(`未知选项: ${arg}`);
+      Logs.error(getT("$t(cli.unknownOption)", { arg }));
       printHelp();
       Deno.exit(1);
     },
@@ -186,7 +192,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
   // 帮助
   if (args.help) {
     printHelp();
-    Deno.exit(0);
   }
 
   // 版本
@@ -197,9 +202,8 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 检查 url
   if (!args.url) {
-    Logs.error("必须提供选项 url");
+    Logs.error(getT("$t(cli.requiredUrl)"));
     printHelp();
-    Deno.exit(1);
   }
 
   // 文件输出目录，默认为 Deno 当前执行的目录

@@ -1,5 +1,6 @@
 import Logs from "../console.ts";
 import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
+import { getT } from "../i18n/index.ts";
 
 export class PluginManager {
   private plugins: IPlugin[] = [];
@@ -13,10 +14,10 @@ export class PluginManager {
 
   async setupAll(context: IPluginContext) {
     for (const plugin of this.plugins) {
-      Logs.info(`加载插件: ${plugin.name}`);
+      Logs.info(getT("$t(plugin.name)", { name: plugin.name }));
 
       if (!plugin.setup) {
-        Logs.warn(`插件 ${plugin.name} 没有 setup 方法`);
+        Logs.warn(getT("$t(plugin.noSetupMethod)", { name: plugin.name }));
         continue;
       }
 
@@ -34,6 +35,6 @@ export class PluginManager {
       // 触发插件 onEnd 事件
       context.onEnd = plugin.onEnd;
     }
-    Logs.info("插件加载完成\n");
+    Logs.info(getT("$t(plugin.allSetupDone)"));
   }
 }
