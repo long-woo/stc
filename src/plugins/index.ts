@@ -13,7 +13,15 @@ export class PluginManager {
   }
 
   async setupAll(context: IPluginContext) {
+    const _options = context.options;
+
     for (const plugin of this.plugins) {
+      // 加载指定 lang 的插件
+      const _langs = Array.isArray(plugin.lang) ? plugin.lang : [plugin.lang];
+      if (!_langs.includes(_options.lang ?? "")) {
+        continue;
+      }
+
       Logs.info(getT("$t(plugin.name)", { name: plugin.name }));
 
       if (!plugin.setup) {
@@ -22,7 +30,7 @@ export class PluginManager {
       }
 
       // 执行插件 setup 方法
-      await plugin.setup(context.options);
+      await plugin.setup(_options);
 
       // 触发插件 onload 事件
       context.onLoad = plugin.onLoad;

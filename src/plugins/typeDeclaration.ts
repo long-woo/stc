@@ -60,6 +60,10 @@ export interface IPlugin extends IPluginEvent {
    */
   readonly name: string;
   /**
+   * 插件生成的语言，与选项的 `lang` 一致
+   */
+  readonly lang: string | string[];
+  /**
    * 插件入口
    */
   setup: (options: ISwaggerOptions) => Promise<void> | void;

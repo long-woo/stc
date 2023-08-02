@@ -13,6 +13,7 @@ let pluginOptions: ISwaggerOptions;
 
 export const typeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
+  lang: "ts",
   /**
    * Set up the function with the given options.
    *
