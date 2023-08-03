@@ -3,8 +3,8 @@ name: Publish Package to npmjs
 on:
   push:
     branches: ['master']
-#   release:
-#     types: [released]
+    paths:
+      - src/npm/package.json
 
 jobs:
   build:
