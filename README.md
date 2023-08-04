@@ -1,34 +1,59 @@
 # STC
 ![logo](resources/stc.svg)
 
+STC (Swagger Transform Code) is a tool for converting Swagger documents into code files.
+
 STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工具。
 
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
+feature:
 特性：
 
-- [x] 支持 Swagger 2、3。
-- [x] 支持 Apifox。
-- [x] 支持 Axios、Wechat。
-- [x] 支持插件开发。
-- [x] 内置转换语言：
+- Support for Swagger 2, 3 and Apifox.
 
-  - TypeScript，几乎等同于手写。
+  支持 Swagger 2、3 和 支持 Apifox。
+
+- Support Axios, Wechat request library。
+
+  支持 Axios、Wechat 请求库。
+
+- Support plug-in development.
+  
+  支持插件开发。
+
+- Built-in transformation languages:
+
+  内置转换语言：
+
+  - TypeScript, almost equivalent to handwriting.
+  
+    TypeScript，几乎等同于手写。
   - ...
 
-## 快速开始
+## Quick start 快速开始
+
+[download](https://github.com/long-woo/stc/releases) by system：
 
 按系统[下载](https://github.com/long-woo/stc/releases)：
 
-- stc：Intel 系列的 Mac
-- stc-m：M 系列的 Mac
+- stc: Intel-based Mac
+
+  stc：Intel 系列的 Mac
+
+- stc-m: M-series Mac
+  
+  stc-m：M 系列的 Mac
+
 - stc-linux：Linux
 - stc-win.exe: Windows
 
-### 使用
+### Use 使用
 
-⚠️ 注意：deno 不会解析 `~`字符为用户主目录。
+⚠️ Note: deno will not parse the `~` character as the user's home directory.
+
+注意：deno 不会解析 `~`字符为用户主目录。
 
 ```sh
 stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
@@ -38,7 +63,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ![输出文件](resources/file.png)
 
-### 选项
+### Options 选项
 
 | 参数名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
@@ -49,7 +74,9 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 | tag | number | | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名 |
 | filter | string[] | | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
 
-## 插件开发
+## Plug-in development 插件开发
+
+For convenience, STC can not only develop plugins in Deno, but also provides `@loongwoo/stc` npm library, which can develop plugins in Node environment.
 
 为了方便，STC 不仅可以在 Deno 中开发插件，同时也提供了 `@loongwoo/stc` npm 库，可以在 Node 环境中开发插件。
 

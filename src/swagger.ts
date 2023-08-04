@@ -170,6 +170,10 @@ export interface IDefinitionVirtualProperty {
    */
   type: string;
   /**
+   * 扩展类型
+   */
+  typeX?: string;
+  /**
    * 属性注释
    */
   description?: string;
@@ -177,6 +181,10 @@ export interface IDefinitionVirtualProperty {
    * 是否必需
    */
   required?: boolean;
+  /**
+   * v2 默认值
+   */
+  default?: string;
   /**
    * 枚举选项
    */
@@ -203,55 +211,12 @@ export interface IDefinitionVirtualProperty {
   items?: IDefinitionVirtualProperty;
 }
 
-export interface IPathVirtualParameterCategory {
-  /**
-   * 参数名
-   */
-  name: string;
-  /**
-   * 类型
-   */
-  type: string;
-  /**
-   * 扩展类型
-   */
-  typeX?: string;
-  /**
-   * Apifox - 标题
-   */
-  title?: string;
-  /**
-   * 描述
-   */
-  description: string;
-  /**
-   * 是否必需
-   */
-  required: boolean;
-  /**
-   * 格式
-   */
-  format?: string;
-  /**
-   * 自定义类型
-   */
-  ref?: string;
-  /**
-   * v2 默认值
-   */
-  default?: string;
-  /**
-   * Apifox - 属性
-   */
-  properties?: IDefinitionVirtualProperty[];
-}
-
 export interface IPathVirtualParameter {
-  path: Array<IPathVirtualParameterCategory>;
-  query: Array<IPathVirtualParameterCategory>;
-  body: Array<IPathVirtualParameterCategory>;
-  formData: Array<IPathVirtualParameterCategory>;
-  header: Array<IPathVirtualParameterCategory>;
+  path: Array<IDefinitionVirtualProperty>;
+  query: Array<IDefinitionVirtualProperty>;
+  body: Array<IDefinitionVirtualProperty>;
+  formData: Array<IDefinitionVirtualProperty>;
+  header: Array<IDefinitionVirtualProperty>;
 }
 
 /**

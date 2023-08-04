@@ -2,7 +2,6 @@ import {
   IDefaultObject,
   IDefinitionVirtualProperty,
   IPathVirtualParameter,
-  IPathVirtualParameterCategory,
   IPathVirtualProperty,
   ISwaggerContent,
   ISwaggerOptions,
@@ -41,13 +40,18 @@ const getProperties = (
   const _properties = Object.keys(properties ?? {})
     .reduce((prev: IDefinitionVirtualProperty[], current) => {
       const _props = properties[current];
+
       const _propItem: IDefinitionVirtualProperty = {
         name: current,
         type: _props?.type ?? "",
+        typeX: _props.items?.type,
         required: requiredProps.includes(current) ??
           false,
         title: _props?.title,
         description: _props?.description ?? "",
+        // ref: getRefType(
+        //   _props?.$ref ?? _props?.items?.$ref ?? "",
+        // ),
       };
 
       // 处理 properties
@@ -105,7 +109,7 @@ const getPathVirtualProperty = (
       Number(_b.required) - Number(_a.required)
     ) ?? []).reduce((prev: IPathVirtualParameter, current) => {
       const _schema = current.schema;
-      const item: IPathVirtualParameterCategory = {
+      const item: IDefinitionVirtualProperty = {
         name: current.name,
         type: current.type ?? _schema?.type ?? "",
         required: current.required,
@@ -143,7 +147,7 @@ const getPathVirtualProperty = (
           _bodyContentSchema?.required ?? [],
         );
 
-        const _body: IPathVirtualParameterCategory = {
+        const _body: IDefinitionVirtualProperty = {
           name: _name || "body",
           type: _bodyContentSchema?.type ?? "",
           required: _requestBody.required ?? true,

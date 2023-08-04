@@ -52,17 +52,6 @@ interface IApiInternalDefinition {
   childProps: Array<string>;
 }
 
-interface IApiParamsSort {
-  /**
-   * 必填参数
-   */
-  required: string[];
-  /**
-   * 可选参数
-   */
-  optional: string[];
-}
-
 /**
  * 接口注释
  * @param summary - 主注释
@@ -98,7 +87,7 @@ const getInternalDefinition = (
   name: string,
 ): IApiInternalDefinition => {
   const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
-    let _type = convertType(current.type);
+    let _type = convertType(current.type, current.typeX ?? current.ref);
 
     if (current.properties) {
       const _defName = `${name}${upperCase(current.name)}`;
