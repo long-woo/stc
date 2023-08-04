@@ -12,7 +12,7 @@ import { getT } from "./i18n/index.ts";
  *
  * @return {Promise<string>} 如果进行了更新，则返回最新版本，如果未找到更新，则返回当前版本。
  */
-const checkUpdate = async (): Promise<string> => {
+const checkUpdate = async () => {
   Logs.info(`${getT("$t(cli.checkUpdate)")}...`);
   const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
 
@@ -91,7 +91,7 @@ const checkUpdate = async (): Promise<string> => {
         );
 
         Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
-        return latestVersion;
+        Deno.exit(0);
       }
 
       Logs.error(downloadApp.statusText);
@@ -114,13 +114,10 @@ const checkUpdate = async (): Promise<string> => {
       // }
 
       // Logs.error(new TextDecoder().decode(stderr));
-      return latestVersion;
     }
 
     Logs.info(getT("$t(cli.latestVersion)"));
   }
-
-  return denoJson.version;
 };
 
 /**
@@ -187,7 +184,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const args: Args = parse(Deno.args, argsConfig);
 
   // 检查更新
-  const _version = await checkUpdate();
+  await checkUpdate();
 
   // 帮助
   if (args.help) {
@@ -196,7 +193,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 版本
   if (args.version) {
-    console.log(`stc v${_version}`);
+    console.log(`stc v${denoJson.version}`);
     Deno.exit(0);
   }
 
