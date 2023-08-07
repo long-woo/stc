@@ -148,3 +148,17 @@ export const getObjectKeyByValue = (
  */
 export const hasKey = (obj: Record<string, unknown>, name: string) =>
   Object.prototype.hasOwnProperty.call(obj, name);
+
+/**
+ * Converts a string value to its corresponding JavaScript data type.
+ *
+ * @param {string} value - The value to be converted.
+ * @return {any} The converted JavaScript data type.
+ */
+export const convertValue = (value: string) => {
+  try {
+    return JSON.parse(value);
+  } catch (_) {
+    return value;
+  }
+};

@@ -1,32 +1,34 @@
 import Logs from "../../console.ts";
 import { IDefinitionVirtualProperty } from "../../swagger.ts";
-import { convertType, propCommit, upperCase } from "../../util.ts";
+import {
+  convertType,
+  convertValue,
+  propCommit,
+  upperCase,
+} from "../../util.ts";
 import { getT } from "../../i18n/index.ts";
 
 /**
- * 解析枚举
- * @param defName - 定义类型的名称
- * @param propName - 属性名称
- * @param data - 枚举数据
- * @returns
+ * Transforms an enum definition to a union type.
+ *
+ * @param {string} defName - The name of the enum definition.
+ * @param {string} propName - The name of the enum property.
+ * @param {Array<string>} data - An optional array of enum values.
+ * @return {Object} An object representing the transformed enum definition.
  */
-const parserEnum = (
+const parserEnumToUnionType = (
   defName: string,
   propName: string,
   data?: Array<string>,
 ) => {
   const _enumName = `${defName}${upperCase(propName)}`;
+  const _unionValue = data?.map(convertValue).join("' | '");
+  const _value = `export type ${_enumName} = '${_unionValue}'`;
 
-  return data?.reduce((prev, current, index) => {
-    const _comma = index === data.length - 1 ? "" : ",";
-
-    prev.value.splice(
-      prev.value.length - 1,
-      0,
-      `\t${current} = '${current}'${_comma}`,
-    );
-    return prev;
-  }, { name: _enumName, value: [`export enum ${_enumName} {`, "}"] });
+  return {
+    name: _enumName,
+    value: _value,
+  };
 };
 
 /**
@@ -42,13 +44,13 @@ export const parserDefinition = (
   data.forEach((value, key) => {
     const props = value.reduce((prev, current) => {
       const _enum = current.enumOption;
-      const _enumData = parserEnum(key, current.name, _enum);
+      const _enumData = parserEnumToUnionType(key, current.name, _enum);
 
       let _type = convertType(current.type, current.ref);
 
       if (_enum?.length && _enumData?.name) {
         _type = _enumData.name;
-        _res.push(_enumData.value.join("\n"));
+        _res.push(_enumData.value);
       }
 
       prev.splice(
