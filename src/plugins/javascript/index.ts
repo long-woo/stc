@@ -4,6 +4,7 @@ import { parserDefinition } from "../typescript/defintion.ts";
 import { parserPath } from "../typescript/path.ts";
 
 let pluginOptions: ISwaggerOptions;
+const actionDeclareData = new Map<string, string>();
 
 export const JavaScriptPlugin: IPlugin = {
   name: "stc:JavaScriptPlugin",

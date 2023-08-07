@@ -63,6 +63,7 @@ interface IApiInternalDefinition {
 const methodCommit = (
   summary: string,
   params?: Array<string>,
+  response?: string,
   description?: string,
   title?: string,
 ) => {
@@ -71,6 +72,7 @@ const methodCommit = (
   title && _commit.push(`* @title ${title}`);
   description && _commit.push(`* @description ${description}`);
   params?.length && _commit.push(...params);
+  _commit.push(`* @returns {Promise<${response}>} - Promise<${response}>`);
   _commit.push("*/");
 
   return _commit.join("\n ");
@@ -191,9 +193,9 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
             (prev.refMap[current as keyof IPathVirtualParameter] = current);
         }
       } else {
-        const _defMapCommit = `* @param {${_type}} ${item.name} - ${
-          item.description || item.name
-        }`;
+        const _defMapCommit = `* @param {${_type}} ${
+          item.required ? item.name : `[${item.name}]`
+        } - ${item.description || item.name}`;
         // 找出第一个可选参数的位置
         const _optionalIndex = prev.defMap?.findIndex((_d) =>
           _d.includes("?:")
@@ -308,6 +310,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _methodCommit = methodCommit(
     data.summary || action,
     _params?.commit,
+    _response.def,
     data.description,
   );
   const _methodParam = _params.refMap && Object.keys(_params.refMap).length
