@@ -1,4 +1,5 @@
 import { ISwaggerOptions } from "../../swagger.ts";
+import { createFile } from "../../util.ts";
 import { IPlugin } from "../typeDeclaration.ts";
 import { parserDefinition } from "../typescript/defintion.ts";
 import { parserPath } from "../typescript/path.ts";
@@ -24,17 +25,20 @@ export const JavaScriptPlugin: IPlugin = {
         `import webClient from './shared/${pluginOptions.platform}/fetch'`,
       ];
       const _apiContent: Array<string> = [];
+      const _apiDeclareContent: string[] = [];
 
       if (_import.length) {
-        _apiImport.push(
+        _apiDeclareContent.push(
           `import { ${_import.join(", ")} } from './types'`,
         );
       }
 
       _apiContent.push(_apiImport.join("\n"));
-      api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
+      api.interface?.length &&
+        _apiDeclareContent.push(api.interface?.join("\n\n"));
       api.export?.length && _apiContent.push(api.export.join("\n\n"));
 
+      actionDeclareData.set(key, _apiDeclareContent.join("\n\n"));
       actionData.set(key, _apiContent.join("\n\n"));
     });
 
@@ -43,6 +47,16 @@ export const JavaScriptPlugin: IPlugin = {
         filename: `types.d.ts`,
         content: defContent,
       },
+      action: actionData,
     };
+  },
+  onEnd() {
+    // 创建接口声明文件
+    actionDeclareData.forEach((item, key) => {
+      createFile(
+        `${pluginOptions.outDir}/${key}.d.ts`,
+        item,
+      );
+    });
   },
 };
