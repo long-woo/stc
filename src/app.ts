@@ -81,7 +81,7 @@ export const start = async (options: ISwaggerOptions) => {
   await emptyDirectory(options.outDir);
 
   // 触发插件 onTransform 事件
-  const transformData = context.onTransform?.(defData, actionData);
+  const transformData = await context.onTransform?.(defData, actionData);
 
   // 写入类型定义文件
   if (transformData?.definition) {

@@ -1,3 +1,5 @@
+import * as esbuild from "x/esbuild@v0.19.0/mod.js";
+
 import { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../util.ts";
 import { IPlugin } from "../typeDeclaration.ts";
@@ -14,7 +16,21 @@ export const JavaScriptPlugin: IPlugin = {
     pluginOptions = options;
   },
   onTransform(def, action) {
-    const defContent = parserDefinition(def);
+    const _defContent = parserDefinition(def);
+    // console.log(_defContent);
+    // const defContent = await esbuild.transform(
+    //   `export interface ApiResponse {
+    //   code?: number;
+    //   type?: string;
+    //   message?: string;
+    // }`,
+    //   {
+    //     loader: "ts",
+    //     format: "esm",
+    //   },
+    // );
+    // console.log(defContent.code);
+
     const pathData = parserPath(action);
 
     const actionData = new Map<string, string>();
@@ -45,7 +61,7 @@ export const JavaScriptPlugin: IPlugin = {
     return {
       definition: {
         filename: `types.d.ts`,
-        content: defContent,
+        content: _defContent,
       },
       action: actionData,
     };

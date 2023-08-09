@@ -29,7 +29,7 @@ interface IPluginEvent {
   onTransform: (
     def: Map<string, IDefinitionVirtualProperty[]>,
     action: Map<string, IPathVirtualProperty>,
-  ) => IPluginTransform;
+  ) => Promise<IPluginTransform> | IPluginTransform;
   /**
    * 结束事件
    */
