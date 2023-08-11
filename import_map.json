@@ -1,0 +1,10 @@
+{
+  "imports": {
+    "/": "./",
+    "./": "./",
+    "std/": "https://deno.land/std@0.198.0/",
+    "x/": "https://deno.land/x/",
+    "@swc/core": "https://esm.sh/v130/*@swc/core@1.3.76"
+  },
+  "scopes": {}
+}

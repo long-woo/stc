@@ -1,4 +1,4 @@
-import * as esbuild from "x/esbuild@v0.19.0/mod.js";
+import swc from "npm:@swc/core";
 
 import { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../util.ts";
@@ -15,7 +15,7 @@ export const JavaScriptPlugin: IPlugin = {
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
   },
-  onTransform(def, action) {
+  async onTransform(def, action) {
     const _defContent = parserDefinition(def);
     // console.log(_defContent);
     // const defContent = await esbuild.transform(
@@ -31,6 +31,15 @@ export const JavaScriptPlugin: IPlugin = {
     // );
     // console.log(defContent.code);
 
+    const defContent = await swc.transform(_defContent, {
+      jsc: {
+        parser: {
+          syntax: "typescript",
+        },
+        target: "esnext",
+      },
+    });
+    console.log(defContent.code);
     const pathData = parserPath(action);
 
     const actionData = new Map<string, string>();
