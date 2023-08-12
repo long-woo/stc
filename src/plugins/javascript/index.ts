@@ -1,10 +1,12 @@
 import swc from "npm:@swc/core";
+// import * as esbuild from "x/esbuild@v0.19.1/mod.js";
 
 import { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../util.ts";
 import { IPlugin } from "../typeDeclaration.ts";
 import { parserDefinition } from "../typescript/defintion.ts";
 import { parserPath } from "../typescript/path.ts";
+import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
 const actionDeclareData = new Map<string, string>();
@@ -17,18 +19,11 @@ export const JavaScriptPlugin: IPlugin = {
   },
   async onTransform(def, action) {
     const _defContent = parserDefinition(def);
-    // console.log(_defContent);
-    // const defContent = await esbuild.transform(
-    //   `export interface ApiResponse {
-    //   code?: number;
-    //   type?: string;
-    //   message?: string;
-    // }`,
-    //   {
-    //     loader: "ts",
-    //     format: "esm",
-    //   },
-    // );
+
+    // const defContent = await esbuild.transform(_defContent, {
+    //   loader: "ts",
+    //   format: "esm",
+    // });
     // console.log(defContent.code);
 
     const defContent = await swc.transform(_defContent, {
@@ -39,6 +34,9 @@ export const JavaScriptPlugin: IPlugin = {
         target: "esnext",
       },
     });
+
+    const _typeDeclaration = generateDeclarationFile(_defContent);
+    console.log(_typeDeclaration);
     console.log(defContent.code);
     const pathData = parserPath(action);
 
