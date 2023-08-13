@@ -1,68 +1,109 @@
 import ts from "npm:typescript";
-import fs from "node:fs";
 
 export const generateDeclarationFile = (
   sourceCode: string,
 ) => {
-  sourceCode = `export interface abc {
-    a: number;
-  };
-
-  export function add(a: number, b: number): number {
-    return a + b;
-  }`;
-  // 解析源代码为 AST
-  const sourceFile = ts.createSourceFile(
-    "temp.ts",
-    sourceCode,
-    ts.ScriptTarget.Latest,
-    true,
-  );
+  sourceCode = `
+    export type TypeTest = 1 | 0 | 3;
+    export interface ISwagger {
+      name: string;
+      age: number;
+      test: Array<string>;
+    }
+    /**
+     * Adds two numbers.
+     * @param a The first number.
+     * @param b The second number.
+     * @returns The sum of a and b.
+     */
+    export function add(a: number, b: number): number {
+      return a + b;
+    }
+  `;
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
+    skipDefaultLibCheck: true,
+    skipLibCheck: true,
+    noLib: true,
   };
 
-  // 使用 TypeScript 的编译器 API 来获取 AST 的类型检查信息
-  const program = ts.createProgram([sourceFile.fileName], compilerOptions);
-  program.getTypeChecker(); // 这将触发类型检查
-  const emitResult = program.emit();
-  console.log(emitResult);
-  // 检查是否有编译错误
-  const diagnostics = ts.getPreEmitDiagnostics(program).concat(
-    emitResult.diagnostics,
+  const host = ts.createCompilerHost(compilerOptions);
+  const sourceFile = ts.createSourceFile(
+    "temp.ts",
+    sourceCode,
+    ts.ScriptTarget.ESNext,
   );
-  if (diagnostics.length > 0) {
-    console.error(diagnostics);
-    return;
+
+  host.getSourceFile = (fileName, languageVersion) => {
+    if (fileName === "temp.ts") {
+      return sourceFile;
+    }
+    return undefined;
+  };
+
+  sourceFile.forEachChild((node) => {
+    if (ts.isInterfaceDeclaration(node)) {
+      console.log(node.getText());
+    }
+  });
+
+  // 创建 TypeScript 编译器实例
+  const program = ts.createProgram(
+    ["temp.ts"],
+    compilerOptions,
+    host,
+  );
+
+  const _sourceFile = program.getSourceFile("temp.ts");
+  // console.log(_sourceFile?.getFullText());
+  const dtsSourceFile = program.getSourceFile("temp.d.ts");
+  // console.log(dtsSourceFile);
+  // // 执行编译并处理结果
+  const emitResult = program.emit();
+
+  if (emitResult.emitSkipped) {
+    console.error("Compilation failed");
+    const allDiagnostics = ts
+      .getPreEmitDiagnostics(program)
+      .concat(emitResult.diagnostics);
+
+    allDiagnostics.forEach((diagnostic) => {
+      if (diagnostic.file) {
+        const { line, character } = ts.getLineAndCharacterOfPosition(
+          diagnostic.file,
+          diagnostic.start!,
+        );
+        const message = ts.flattenDiagnosticMessageText(
+          diagnostic.messageText,
+          "\n",
+        );
+        console.log(
+          `${diagnostic.file.fileName} (${line + 1},${
+            character + 1
+          }): ${message}`,
+        );
+      } else {
+        console.log(
+          ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+        );
+      }
+    });
+  } else {
+    console.log("Compilation successful");
   }
 
-  // 将生成的声明文件内容读取并写入输出文件
-  const declarationFilePath = sourceFile.fileName.replace(".ts", ".d.ts");
-  const declarationFileContent = fs.readFileSync(declarationFilePath, "utf-8"); // ts.sys.readFile(declarationFilePath);
-
-  // const declarations: string[] = [];
+  // const types: string[] = [];
 
   // ts.forEachChild(sourceFile, (node) => {
-  //   if (ts.isFunctionDeclaration(node)) {
-  //     const name = node.name?.text;
-  //     const returnType = node.type ? node.type.getText() : "any";
-
-  //     const comment = ts.getSyntheticLeadingComments(node);
-
-  //     if (comment) {
-  //       const commentText = comment[0].text.trim();
-  //       declarations.push(`/**\n * ${commentText}\n */`);
-  //     }
-
-  //     // declarations.push(`declare function ${name}(): ${returnType};`);
-  //     declarations.push(`export declare function ${name}(): ${returnType};`);
+  //   if (ts.isInterfaceDeclaration(node)) {
+  //     types.push(node.name.text);
   //   }
   // });
 
-  // const declarationContent = declarations.join("\n\n");
-
-  return declarationFileContent;
+  // return types.join("\n\n");
+  return "";
 };
