@@ -8,7 +8,7 @@ export const generateDeclarationFile = (
     export interface ISwagger {
       name: string;
       age: number;
-      test: string;
+      test: Array<string>;
     }
     /**
      * Adds two numbers.
@@ -28,9 +28,8 @@ export const generateDeclarationFile = (
     target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
-    // skipDefaultLibCheck: true,
-    // skipLibCheck: true,
-    // noLib: true,
+    skipDefaultLibCheck: true,
+    skipLibCheck: true,
   };
 
   const sourceFile = ts.createSourceFile(
@@ -51,7 +50,7 @@ export const generateDeclarationFile = (
       declarationContent = text;
     },
     getDefaultLibFileName: () => "lib.d.ts",
-    useCaseSensitiveFileNames: () => false,
+    useCaseSensitiveFileNames: () => true,
     getCanonicalFileName: (fileName) => fileName,
     getCurrentDirectory: () => "",
     getNewLine: () => "\n",
@@ -97,8 +96,6 @@ export const generateDeclarationFile = (
         );
       }
     });
-  } else {
-    console.log("Compilation successful");
   }
 
   return declarationContent;
