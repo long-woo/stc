@@ -8,7 +8,7 @@ export const generateDeclarationFile = (
     export interface ISwagger {
       name: string;
       age: number;
-      test: Array<string>;
+      test: string;
     }
     /**
      * Adds two numbers.
@@ -20,49 +20,54 @@ export const generateDeclarationFile = (
       return a + b;
     }
   `;
+  const filename = "temp.ts";
+  let declarationContent = "";
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
-    skipDefaultLibCheck: true,
-    skipLibCheck: true,
-    noLib: true,
+    // skipDefaultLibCheck: true,
+    // skipLibCheck: true,
+    // noLib: true,
   };
 
-  const host = ts.createCompilerHost(compilerOptions);
   const sourceFile = ts.createSourceFile(
-    "temp.ts",
+    filename,
     sourceCode,
     ts.ScriptTarget.ESNext,
   );
 
-  host.getSourceFile = (fileName, languageVersion) => {
-    if (fileName === "temp.ts") {
-      return sourceFile;
-    }
-    return undefined;
+  const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
+  const host: ts.CompilerHost = {
+    getSourceFile: (fileName, languageVersion) => {
+      if (fileName === filename) {
+        return sourceFile;
+      }
+      return defaultCompilerHost.getSourceFile(fileName, languageVersion);
+    },
+    writeFile: (_name, text) => {
+      declarationContent = text;
+    },
+    getDefaultLibFileName: () => "lib.d.ts",
+    useCaseSensitiveFileNames: () => false,
+    getCanonicalFileName: (fileName) => fileName,
+    getCurrentDirectory: () => "",
+    getNewLine: () => "\n",
+    getDirectories: () => [],
+    fileExists: () => true,
+    readFile: () => "",
   };
-
-  sourceFile.forEachChild((node) => {
-    if (ts.isInterfaceDeclaration(node)) {
-      console.log(node.getText());
-    }
-  });
 
   // 创建 TypeScript 编译器实例
   const program = ts.createProgram(
-    ["temp.ts"],
+    [filename],
     compilerOptions,
     host,
   );
 
-  const _sourceFile = program.getSourceFile("temp.ts");
-  // console.log(_sourceFile?.getFullText());
-  const dtsSourceFile = program.getSourceFile("temp.d.ts");
-  // console.log(dtsSourceFile);
-  // // 执行编译并处理结果
+  // 执行编译并处理结果
   const emitResult = program.emit();
 
   if (emitResult.emitSkipped) {
@@ -96,14 +101,5 @@ export const generateDeclarationFile = (
     console.log("Compilation successful");
   }
 
-  // const types: string[] = [];
-
-  // ts.forEachChild(sourceFile, (node) => {
-  //   if (ts.isInterfaceDeclaration(node)) {
-  //     types.push(node.name.text);
-  //   }
-  // });
-
-  // return types.join("\n\n");
-  return "";
+  return declarationContent;
 };
