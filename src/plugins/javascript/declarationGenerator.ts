@@ -16,7 +16,7 @@ export const generateDeclarationFile = (
      * @param b The second number.
      * @returns The sum of a and b.
      */
-    export function add(a: number, b: number): number {
+    export function add(a: any, b: any): number {
       return a + b;
     }
   `;
@@ -38,10 +38,27 @@ export const generateDeclarationFile = (
 
   const _declarationContent: string[] = [];
   ts.forEachChild(sourceFile, (node) => {
-    if (ts.isTypeAliasDeclaration(node)) {
-      const _name = node.name.text;
-      console.log(node.type.getText());
-      _declarationContent.push(`export type ${_name}`);
+    if (ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) {
+      _declarationContent.push(node.getText(sourceFile));
+    }
+
+    if (ts.isEnumDeclaration(node)) {
+    }
+
+    if (ts.isFunctionDeclaration(node)) {
+      const _name = node.name?.text;
+      const _comment = ts.getSyntheticLeadingComments(node);
+      const _param = node.parameters.map((_p) => {
+        const _pn = _p.name.getText(sourceFile);
+        const _pt = _p.type?.getText(sourceFile);
+
+        return `${_pn}: ${_pt}`;
+      }).join(", ");
+      const _returnType = node.type?.getText(sourceFile);
+
+      _declarationContent.push(
+        `export function ${_name}(${_param}): ${_returnType}`,
+      );
     }
   });
 
