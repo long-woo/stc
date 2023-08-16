@@ -28,8 +28,6 @@ export const generateDeclarationFile = (
     target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
-    skipDefaultLibCheck: true,
-    skipLibCheck: true,
   };
 
   const sourceFile = ts.createSourceFile(
@@ -37,6 +35,17 @@ export const generateDeclarationFile = (
     sourceCode,
     ts.ScriptTarget.ESNext,
   );
+
+  const _declarationContent: string[] = [];
+  ts.forEachChild(sourceFile, (node) => {
+    if (ts.isTypeAliasDeclaration(node)) {
+      const _name = node.name.text;
+      console.log(node.type.getText());
+      _declarationContent.push(`export type ${_name}`);
+    }
+  });
+
+  console.log(_declarationContent);
 
   const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
   const host: ts.CompilerHost = {
