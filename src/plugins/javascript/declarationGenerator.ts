@@ -1,7 +1,7 @@
 import ts from "npm:typescript";
 import vfs from "npm:@typescript/vfs";
 
-export const generateDeclarationFile = (
+export const generateDeclarationFile = async (
   sourceCode: string,
 ) => {
   sourceCode = `
@@ -30,17 +30,28 @@ export const generateDeclarationFile = (
     target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
+    lib: ["ESNext"],
   };
 
-  // const fsMap = await vfs.createDefaultMapFromCDN(
-  //   compilerOptions,
-  //   ts.version,
-  //   true,
-  //   ts,
-  // );
-  // fsMap.set(filename, sourceCode);
+  const fsMap = await vfs.createDefaultMapFromCDN(
+    compilerOptions,
+    ts.version,
+    true,
+    ts,
+  );
+  fsMap.set(filename, sourceCode);
 
-  // const system = vfs.createSystem(fsMap);
+  const system = vfs.createSystem(fsMap);
+  const env = vfs.createVirtualTypeScriptEnvironment(
+    system,
+    [filename],
+    ts,
+    compilerOptions,
+  );
+
+  const output = env.languageService.getEmitOutput(filename);
+  console.log(output.outputFiles);
+
   // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
   // const program = ts.createProgram({
   //   rootNames: [...fsMap.keys()],
@@ -52,15 +63,16 @@ export const generateDeclarationFile = (
   // // for the .d.ts and .js files
   // program.emit();
 
-  // // Now I can look at the AST for the .ts file too
-  // const index = program.getSourceFile(filename);
-  // console.log(index);
-
-  const sourceFile = ts.createSourceFile(
-    filename,
-    sourceCode,
-    ts.ScriptTarget.ESNext,
-  );
+  // const declarationFilePath = filename.replace(".ts", ".d.ts");
+  // // const declarationFileContent = ts.sys.readFile(declarationFilePath);
+  // // console.log(declarationFileContent);
+  // const file = program.getSourceFile(filename);
+  // console.log(file);
+  // const sourceFile = ts.createSourceFile(
+  //   filename,
+  //   sourceCode,
+  //   ts.ScriptTarget.ESNext,
+  // );
 
   const _declarationContent: string[] = [];
   // ts.forEachChild(sourceFile, (node) => {
@@ -90,65 +102,65 @@ export const generateDeclarationFile = (
 
   // console.log(_declarationContent);
 
-  const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
-  const host: ts.CompilerHost = {
-    getSourceFile: (fileName, languageVersion) => {
-      if (fileName === filename) {
-        return sourceFile;
-      }
-      return defaultCompilerHost.getSourceFile(fileName, languageVersion);
-    },
-    writeFile: (_name, text) => {
-      declarationContent = text;
-    },
-    getDefaultLibFileName: () => "lib.d.ts",
-    useCaseSensitiveFileNames: () => true,
-    getCanonicalFileName: (fileName) => fileName,
-    getCurrentDirectory: () => "",
-    getNewLine: () => "\n",
-    getDirectories: () => [],
-    fileExists: () => true,
-    readFile: () => "",
-  };
+  // const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
+  // const host: ts.CompilerHost = {
+  //   getSourceFile: (fileName, languageVersion) => {
+  //     if (fileName === filename) {
+  //       return sourceFile;
+  //     }
+  //     return defaultCompilerHost.getSourceFile(fileName, languageVersion);
+  //   },
+  //   writeFile: (_name, text) => {
+  //     declarationContent = text;
+  //   },
+  //   getDefaultLibFileName: () => "lib.d.ts",
+  //   useCaseSensitiveFileNames: () => true,
+  //   getCanonicalFileName: (fileName) => fileName,
+  //   getCurrentDirectory: () => "",
+  //   getNewLine: () => "\n",
+  //   getDirectories: () => [],
+  //   fileExists: () => true,
+  //   readFile: () => "",
+  // };
 
-  // 创建 TypeScript 编译器实例
-  const program = ts.createProgram(
-    [filename],
-    compilerOptions,
-    host,
-  );
+  // // 创建 TypeScript 编译器实例
+  // const program = ts.createProgram(
+  //   [filename],
+  //   compilerOptions,
+  //   host,
+  // );
 
   // 执行编译并处理结果
-  const emitResult = program.emit();
+  // const emitResult = program.emit();
 
-  if (emitResult.emitSkipped) {
-    console.error("Compilation failed");
-    const allDiagnostics = ts
-      .getPreEmitDiagnostics(program)
-      .concat(emitResult.diagnostics);
+  // if (emitResult.emitSkipped) {
+  //   console.error("Compilation failed");
+  //   const allDiagnostics = ts
+  //     .getPreEmitDiagnostics(program)
+  //     .concat(emitResult.diagnostics);
 
-    allDiagnostics.forEach((diagnostic) => {
-      if (diagnostic.file) {
-        const { line, character } = ts.getLineAndCharacterOfPosition(
-          diagnostic.file,
-          diagnostic.start!,
-        );
-        const message = ts.flattenDiagnosticMessageText(
-          diagnostic.messageText,
-          "\n",
-        );
-        console.log(
-          `${diagnostic.file.fileName} (${line + 1},${
-            character + 1
-          }): ${message}`,
-        );
-      } else {
-        console.log(
-          ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
-        );
-      }
-    });
-  }
+  //   allDiagnostics.forEach((diagnostic) => {
+  //     if (diagnostic.file) {
+  //       const { line, character } = ts.getLineAndCharacterOfPosition(
+  //         diagnostic.file,
+  //         diagnostic.start!,
+  //       );
+  //       const message = ts.flattenDiagnosticMessageText(
+  //         diagnostic.messageText,
+  //         "\n",
+  //       );
+  //       console.log(
+  //         `${diagnostic.file.fileName} (${line + 1},${
+  //           character + 1
+  //         }): ${message}`,
+  //       );
+  //     } else {
+  //       console.log(
+  //         ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+  //       );
+  //     }
+  //   });
+  // }
 
   return declarationContent;
 };
