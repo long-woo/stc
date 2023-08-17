@@ -1,7 +1,7 @@
 import ts from "npm:typescript";
 import vfs from "npm:@typescript/vfs";
 
-export const generateDeclarationFile = async (
+export const generateDeclarationFile = (
   sourceCode: string,
 ) => {
   sourceCode = `
@@ -11,7 +11,7 @@ export const generateDeclarationFile = async (
       age: number;
       test: Array<string>;
     }
-     
+
     /**
      * Adds two numbers.
      * @param a The first number.
@@ -23,7 +23,6 @@ export const generateDeclarationFile = async (
     }
   `;
   const filename = "temp.ts";
-  let declarationContent = "";
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
@@ -33,24 +32,28 @@ export const generateDeclarationFile = async (
     lib: ["ESNext"],
   };
 
-  const fsMap = await vfs.createDefaultMapFromCDN(
-    compilerOptions,
-    ts.version,
-    true,
-    ts,
-  );
-  fsMap.set(filename, sourceCode);
+  // const fsMap = await vfs.createDefaultMapFromCDN(
+  //   compilerOptions,
+  //   ts.version,
+  //   true,
+  //   ts,
+  // );
+  // fsMap.set(filename, sourceCode);
 
-  const system = vfs.createSystem(fsMap);
-  const env = vfs.createVirtualTypeScriptEnvironment(
-    system,
-    [filename],
-    ts,
-    compilerOptions,
-  );
+  // const system = vfs.createSystem(fsMap);
+  // const env = vfs.createVirtualTypeScriptEnvironment(
+  //   system,
+  //   [filename],
+  //   ts,
+  //   compilerOptions,
+  // );
 
-  const output = env.languageService.getEmitOutput(filename);
-  console.log(output.outputFiles);
+  // const output = env.languageService.getEmitOutput(filename);
+
+  // const declarationContent = output.outputFiles.reduce((prev, current) => {
+  //   prev += current.text;
+  //   return prev;
+  // }, "");
 
   // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
   // const program = ts.createProgram({
@@ -68,99 +71,74 @@ export const generateDeclarationFile = async (
   // // console.log(declarationFileContent);
   // const file = program.getSourceFile(filename);
   // console.log(file);
-  // const sourceFile = ts.createSourceFile(
-  //   filename,
-  //   sourceCode,
-  //   ts.ScriptTarget.ESNext,
-  // );
+  let declarationContent = "";
+  const sourceFile = ts.createSourceFile(
+    filename,
+    sourceCode,
+    ts.ScriptTarget.ESNext,
+    true,
+  );
 
-  const _declarationContent: string[] = [];
-  // ts.forEachChild(sourceFile, (node) => {
-  //   if (ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) {
-  //     _declarationContent.push(node.getText(sourceFile));
-  //   }
+  const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
+  const host: ts.CompilerHost = {
+    getSourceFile: (fileName, languageVersion) => {
+      if (fileName === filename) {
+        return sourceFile;
+      }
+      return defaultCompilerHost.getSourceFile(fileName, languageVersion);
+    },
+    writeFile: (_name, text) => {
+      declarationContent = text;
+      console.log(text);
+    },
+    getDefaultLibFileName: () => "lib.d.ts",
+    useCaseSensitiveFileNames: () => true,
+    getCanonicalFileName: (fileName) => fileName,
+    getCurrentDirectory: () => "",
+    getNewLine: () => "\n",
+    getDirectories: () => [],
+    fileExists: () => true,
+    readFile: () => "",
+  };
 
-  //   if (ts.isEnumDeclaration(node)) {
-  //   }
-
-  //   if (ts.isFunctionDeclaration(node)) {
-  //     const _name = node.name?.text;
-  //     const _comment = ts.getSyntheticLeadingComments(node);
-  //     const _param = node.parameters.map((_p) => {
-  //       const _pn = _p.name.getText(sourceFile);
-  //       const _pt = _p.type?.getText(sourceFile);
-
-  //       return `${_pn}: ${_pt}`;
-  //     }).join(", ");
-  //     const _returnType = node.type?.getText(sourceFile);
-
-  //     _declarationContent.push(
-  //       `export function ${_name}(${_param}): ${_returnType}`,
-  //     );
-  //   }
-  // });
-
-  // console.log(_declarationContent);
-
-  // const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
-  // const host: ts.CompilerHost = {
-  //   getSourceFile: (fileName, languageVersion) => {
-  //     if (fileName === filename) {
-  //       return sourceFile;
-  //     }
-  //     return defaultCompilerHost.getSourceFile(fileName, languageVersion);
-  //   },
-  //   writeFile: (_name, text) => {
-  //     declarationContent = text;
-  //   },
-  //   getDefaultLibFileName: () => "lib.d.ts",
-  //   useCaseSensitiveFileNames: () => true,
-  //   getCanonicalFileName: (fileName) => fileName,
-  //   getCurrentDirectory: () => "",
-  //   getNewLine: () => "\n",
-  //   getDirectories: () => [],
-  //   fileExists: () => true,
-  //   readFile: () => "",
-  // };
-
-  // // 创建 TypeScript 编译器实例
-  // const program = ts.createProgram(
-  //   [filename],
-  //   compilerOptions,
-  //   host,
-  // );
+  // 创建 TypeScript 编译器实例
+  const program = ts.createProgram(
+    [filename],
+    compilerOptions,
+    host,
+  );
 
   // 执行编译并处理结果
-  // const emitResult = program.emit();
+  const emitResult = program.emit();
 
-  // if (emitResult.emitSkipped) {
-  //   console.error("Compilation failed");
-  //   const allDiagnostics = ts
-  //     .getPreEmitDiagnostics(program)
-  //     .concat(emitResult.diagnostics);
+  if (emitResult.emitSkipped) {
+    console.error("Compilation failed");
+    const allDiagnostics = ts
+      .getPreEmitDiagnostics(program)
+      .concat(emitResult.diagnostics);
 
-  //   allDiagnostics.forEach((diagnostic) => {
-  //     if (diagnostic.file) {
-  //       const { line, character } = ts.getLineAndCharacterOfPosition(
-  //         diagnostic.file,
-  //         diagnostic.start!,
-  //       );
-  //       const message = ts.flattenDiagnosticMessageText(
-  //         diagnostic.messageText,
-  //         "\n",
-  //       );
-  //       console.log(
-  //         `${diagnostic.file.fileName} (${line + 1},${
-  //           character + 1
-  //         }): ${message}`,
-  //       );
-  //     } else {
-  //       console.log(
-  //         ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
-  //       );
-  //     }
-  //   });
-  // }
+    allDiagnostics.forEach((diagnostic) => {
+      if (diagnostic.file) {
+        const { line, character } = ts.getLineAndCharacterOfPosition(
+          diagnostic.file,
+          diagnostic.start!,
+        );
+        const message = ts.flattenDiagnosticMessageText(
+          diagnostic.messageText,
+          "\n",
+        );
+        console.log(
+          `${diagnostic.file.fileName} (${line + 1},${
+            character + 1
+          }): ${message}`,
+        );
+      } else {
+        console.log(
+          ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+        );
+      }
+    });
+  }
 
   return declarationContent;
 };
