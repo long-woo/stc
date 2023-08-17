@@ -5,7 +5,12 @@
     "std/": "https://deno.land/std@0.198.0/",
     "x/": "https://deno.land/x/",
     "@swc/core": "https://esm.sh/v130/*@swc/core@1.3.76",
+    "@typescript/vfs": "https://esm.sh/v130/*@typescript/vfs@1.5.0",
     "typescript": "https://esm.sh/v130/typescript@5.1.6"
   },
-  "scopes": {}
+  "scopes": {
+    "https://esm.sh/v130/": {
+      "debug": "https://esm.sh/v130/debug@4.3.4"
+    }
+  }
 }

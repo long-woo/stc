@@ -1,4 +1,5 @@
 import ts from "npm:typescript";
+import vfs from "npm:@typescript/vfs";
 
 export const generateDeclarationFile = (
   sourceCode: string,
@@ -10,6 +11,7 @@ export const generateDeclarationFile = (
       age: number;
       test: Array<string>;
     }
+     
     /**
      * Adds two numbers.
      * @param a The first number.
@@ -30,6 +32,30 @@ export const generateDeclarationFile = (
     emitDeclarationOnly: true,
   };
 
+  // const fsMap = await vfs.createDefaultMapFromCDN(
+  //   compilerOptions,
+  //   ts.version,
+  //   true,
+  //   ts,
+  // );
+  // fsMap.set(filename, sourceCode);
+
+  // const system = vfs.createSystem(fsMap);
+  // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
+  // const program = ts.createProgram({
+  //   rootNames: [...fsMap.keys()],
+  //   options: compilerOptions,
+  //   host: host.compilerHost,
+  // });
+
+  // // This will update the fsMap with new files
+  // // for the .d.ts and .js files
+  // program.emit();
+
+  // // Now I can look at the AST for the .ts file too
+  // const index = program.getSourceFile(filename);
+  // console.log(index);
+
   const sourceFile = ts.createSourceFile(
     filename,
     sourceCode,
@@ -37,32 +63,32 @@ export const generateDeclarationFile = (
   );
 
   const _declarationContent: string[] = [];
-  ts.forEachChild(sourceFile, (node) => {
-    if (ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) {
-      _declarationContent.push(node.getText(sourceFile));
-    }
+  // ts.forEachChild(sourceFile, (node) => {
+  //   if (ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) {
+  //     _declarationContent.push(node.getText(sourceFile));
+  //   }
 
-    if (ts.isEnumDeclaration(node)) {
-    }
+  //   if (ts.isEnumDeclaration(node)) {
+  //   }
 
-    if (ts.isFunctionDeclaration(node)) {
-      const _name = node.name?.text;
-      const _comment = ts.getSyntheticLeadingComments(node);
-      const _param = node.parameters.map((_p) => {
-        const _pn = _p.name.getText(sourceFile);
-        const _pt = _p.type?.getText(sourceFile);
+  //   if (ts.isFunctionDeclaration(node)) {
+  //     const _name = node.name?.text;
+  //     const _comment = ts.getSyntheticLeadingComments(node);
+  //     const _param = node.parameters.map((_p) => {
+  //       const _pn = _p.name.getText(sourceFile);
+  //       const _pt = _p.type?.getText(sourceFile);
 
-        return `${_pn}: ${_pt}`;
-      }).join(", ");
-      const _returnType = node.type?.getText(sourceFile);
+  //       return `${_pn}: ${_pt}`;
+  //     }).join(", ");
+  //     const _returnType = node.type?.getText(sourceFile);
 
-      _declarationContent.push(
-        `export function ${_name}(${_param}): ${_returnType}`,
-      );
-    }
-  });
+  //     _declarationContent.push(
+  //       `export function ${_name}(${_param}): ${_returnType}`,
+  //     );
+  //   }
+  // });
 
-  console.log(_declarationContent);
+  // console.log(_declarationContent);
 
   const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
   const host: ts.CompilerHost = {

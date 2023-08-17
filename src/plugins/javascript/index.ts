@@ -35,7 +35,7 @@ export const JavaScriptPlugin: IPlugin = {
       },
     });
 
-    const _typeDeclaration = generateDeclarationFile(_defContent);
+    const _typeDeclaration = await generateDeclarationFile(_defContent);
     console.log(_typeDeclaration);
     console.log(defContent.code);
     const pathData = parserPath(action);
