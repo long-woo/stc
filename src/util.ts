@@ -124,7 +124,7 @@ export const convertType = (type: string, ref?: string) => {
  */
 export const propCommit = (commit: string) =>
   commit
-    ? `\t/*
+    ? `\t/**
 \t * ${commit}
 \t */\n\t`
     : "\t";
