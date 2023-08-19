@@ -1,5 +1,4 @@
 import swc from "npm:@swc/core";
-// import * as esbuild from "x/esbuild@v0.19.1/mod.js";
 
 import { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../util.ts";
@@ -19,12 +18,6 @@ export const JavaScriptPlugin: IPlugin = {
   },
   async onTransform(def, action) {
     const _defContent = parserDefinition(def);
-
-    // const defContent = await esbuild.transform(_defContent, {
-    //   loader: "ts",
-    //   format: "esm",
-    // });
-    // console.log(defContent.code);
 
     const defContent = await swc.transform(_defContent, {
       jsc: {

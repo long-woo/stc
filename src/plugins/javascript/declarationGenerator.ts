@@ -1,9 +1,7 @@
 import ts from "npm:typescript";
 import vfs from "npm:@typescript/vfs";
 
-export const generateDeclarationFile = (
-  sourceCode: string,
-) => {
+export const generateDeclarationFile = async (sourceCode: string) => {
   sourceCode = `
     export type TypeTest = 1 | 0 | 3;
     export interface ISwagger {
@@ -26,93 +24,58 @@ export const generateDeclarationFile = (
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
-    target: ts.ScriptTarget.ESNext,
     declaration: true,
     emitDeclarationOnly: true,
     lib: ["ESNext"],
   };
 
-  // const fsMap = await vfs.createDefaultMapFromCDN(
-  //   compilerOptions,
-  //   ts.version,
-  //   true,
-  //   ts,
-  // );
-  // fsMap.set(filename, sourceCode);
+  // 创建一个虚拟文件系统映射，并加载 lib.d.ts 文件
+  const fsMap = await vfs.createDefaultMapFromCDN(
+    compilerOptions,
+    ts.version,
+    true,
+    ts,
+  );
+  fsMap.set(filename, sourceCode);
 
-  // const system = vfs.createSystem(fsMap);
-  // const env = vfs.createVirtualTypeScriptEnvironment(
-  //   system,
-  //   [filename],
-  //   ts,
-  //   compilerOptions,
-  // );
+  // 创建虚拟文件系统
+  const system = vfs.createSystem(fsMap);
+  // 创建虚拟 TypeScript 环境
+  const env = vfs.createVirtualTypeScriptEnvironment(
+    system,
+    [filename],
+    ts,
+    compilerOptions,
+  );
 
-  // const output = env.languageService.getEmitOutput(filename);
+  // 获取 TypeScript 编译输出
+  const output = env.languageService.getEmitOutput(filename);
+  // 将输出的声明文件内容拼接起来
+  const declarationContent = output.outputFiles.reduce((prev, current) => {
+    prev += current.text;
+    return prev;
+  }, "");
 
-  // const declarationContent = output.outputFiles.reduce((prev, current) => {
-  //   prev += current.text;
-  //   return prev;
-  // }, "");
+  // 创建虚拟编译器主机
+  const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
+  // 创建 TypeScript 程序
+  const program = ts.createProgram({
+    rootNames: [...fsMap.keys()],
+    options: compilerOptions,
+    host: host.compilerHost,
+  });
 
-  // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
-  // const program = ts.createProgram({
-  //   rootNames: [...fsMap.keys()],
-  //   options: compilerOptions,
-  //   host: host.compilerHost,
-  // });
-
-  // // This will update the fsMap with new files
-  // // for the .d.ts and .js files
-  // program.emit();
+  // 执行编译并获取输出结果
+  const emitResult = program.emit();
 
   // const declarationFilePath = filename.replace(".ts", ".d.ts");
   // // const declarationFileContent = ts.sys.readFile(declarationFilePath);
   // // console.log(declarationFileContent);
   // const file = program.getSourceFile(filename);
   // console.log(file);
-  let declarationContent = "";
-  const sourceFile = ts.createSourceFile(
-    filename,
-    sourceCode,
-    ts.ScriptTarget.ESNext,
-    true,
-  );
-
-  const defaultCompilerHost = ts.createCompilerHost(compilerOptions);
-  const host: ts.CompilerHost = {
-    getSourceFile: (fileName, languageVersion) => {
-      if (fileName === filename) {
-        return sourceFile;
-      }
-      return defaultCompilerHost.getSourceFile(fileName, languageVersion);
-    },
-    writeFile: (_name, text) => {
-      declarationContent = text;
-      console.log(text);
-    },
-    getDefaultLibFileName: () => "lib.d.ts",
-    useCaseSensitiveFileNames: () => true,
-    getCanonicalFileName: (fileName) => fileName,
-    getCurrentDirectory: () => "",
-    getNewLine: () => "\n",
-    getDirectories: () => [],
-    fileExists: () => true,
-    readFile: () => "",
-  };
-
-  // 创建 TypeScript 编译器实例
-  const program = ts.createProgram(
-    [filename],
-    compilerOptions,
-    host,
-  );
-
-  // 执行编译并处理结果
-  const emitResult = program.emit();
 
   if (emitResult.emitSkipped) {
-    console.error("Compilation failed");
+    console.error("Compilation failed.");
     const allDiagnostics = ts
       .getPreEmitDiagnostics(program)
       .concat(emitResult.diagnostics);
