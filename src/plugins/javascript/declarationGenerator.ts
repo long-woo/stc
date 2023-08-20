@@ -1,32 +1,23 @@
 import ts from "npm:typescript";
 import vfs from "npm:@typescript/vfs";
 
-export const generateDeclarationFile = async (sourceCode: string) => {
-  sourceCode = `
-    export type TypeTest = 1 | 0 | 3;
-    export interface ISwagger {
-      name: string;
-      age: number;
-      test: Array<string>;
-    }
+import Logs from "../../console.ts";
+import { getT } from "../../i18n/index.ts";
 
-    /**
-     * Adds two numbers.
-     * @param a The first number.
-     * @param b The second number.
-     * @returns The sum of a and b.
-     */
-    export function add(a: any, b: any): number {
-      return a + b;
-    }
-  `;
+/**
+ * Generates a declaration file from the given source code.
+ *
+ * @param {string} sourceCode - The source code to generate the declaration file from.
+ * @return {Promise<string>} The generated declaration file content.
+ */
+export const generateDeclarationFile = async (sourceCode: string) => {
   const filename = "temp.ts";
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
     declaration: true,
     emitDeclarationOnly: true,
-    lib: ["ESNext"],
+    // lib: ["ESNext"],
   };
 
   // 创建一个虚拟文件系统映射，并加载 lib.d.ts 文件
@@ -68,14 +59,9 @@ export const generateDeclarationFile = async (sourceCode: string) => {
   // 执行编译并获取输出结果
   const emitResult = program.emit();
 
-  // const declarationFilePath = filename.replace(".ts", ".d.ts");
-  // // const declarationFileContent = ts.sys.readFile(declarationFilePath);
-  // // console.log(declarationFileContent);
-  // const file = program.getSourceFile(filename);
-  // console.log(file);
-
   if (emitResult.emitSkipped) {
-    console.error("Compilation failed.");
+    Logs.error(getT("$t(plugin_javascript.compilation_failed)"));
+
     const allDiagnostics = ts
       .getPreEmitDiagnostics(program)
       .concat(emitResult.diagnostics);
@@ -90,13 +76,13 @@ export const generateDeclarationFile = async (sourceCode: string) => {
           diagnostic.messageText,
           "\n",
         );
-        console.log(
-          `${diagnostic.file.fileName} (${line + 1},${
+        Logs.error(
+          `${diagnostic.file.fileName} (${line + 1}, ${
             character + 1
           }): ${message}`,
         );
       } else {
-        console.log(
+        Logs.error(
           ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
         );
       }

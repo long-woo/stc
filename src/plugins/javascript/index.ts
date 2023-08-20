@@ -19,7 +19,7 @@ export const JavaScriptPlugin: IPlugin = {
   async onTransform(def, action) {
     const _defContent = parserDefinition(def);
 
-    const defContent = await swc.transform(_defContent, {
+    const _defContentOutput = await swc.transform(_defContent, {
       jsc: {
         parser: {
           syntax: "typescript",
@@ -29,8 +29,8 @@ export const JavaScriptPlugin: IPlugin = {
     });
 
     const _typeDeclaration = await generateDeclarationFile(_defContent);
-    console.log(_typeDeclaration);
-    console.log(defContent.code);
+    actionDeclareData.set("types", _typeDeclaration);
+
     const pathData = parserPath(action);
 
     const actionData = new Map<string, string>();
@@ -54,14 +54,14 @@ export const JavaScriptPlugin: IPlugin = {
         _apiDeclareContent.push(api.interface?.join("\n\n"));
       api.export?.length && _apiContent.push(api.export.join("\n\n"));
 
-      actionDeclareData.set(key, _apiDeclareContent.join("\n\n"));
+      // actionDeclareData.set(key, _apiDeclareContent.join("\n\n"));
       actionData.set(key, _apiContent.join("\n\n"));
     });
 
     return {
       definition: {
-        filename: `types.d.ts`,
-        content: _defContent,
+        filename: "types.js",
+        content: _defContentOutput.code,
       },
       action: actionData,
     };
