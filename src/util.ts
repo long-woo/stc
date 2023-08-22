@@ -162,3 +162,34 @@ export const convertValue = (value: string) => {
     return value;
   }
 };
+
+/**
+ * Fetches a client from the specified URL with optional request options.
+ *
+ * @param {string} url - The URL to fetch the client from.
+ * @param {RequestInit & { timeout?: number }} options - Optional request options.
+ * @return {Promise<Response>} A promise that resolves to the response from the server.
+ */
+export const fetchClient = async (
+  url: string,
+  options: RequestInit & { timeout?: number } = { timeout: 5000 },
+) => {
+  const responsePromise = fetch(url, options);
+
+  // 创建一个超时 Promise
+  const timeoutPromise = new Promise((_resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error(getT("$t(util.timeout)")));
+    }, options?.timeout);
+  });
+
+  // 等待任意一个 Promise 完成
+  const res = await Promise.race([responsePromise, timeoutPromise]);
+
+  if (res instanceof Response) {
+    // 请求成功，返回响应
+    return res;
+  }
+
+  throw res;
+};

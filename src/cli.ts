@@ -3,7 +3,7 @@ import ProgressBar from "x/progress@v1.3.8/mod.ts";
 
 import Logs from "./console.ts";
 import { ISwaggerOptions } from "./swagger.ts";
-import { createAppFile } from "./util.ts";
+import { createAppFile, fetchClient } from "./util.ts";
 import denoJson from "/deno.json" assert { type: "json" };
 import { getT } from "./i18n/index.ts";
 
@@ -16,8 +16,9 @@ const checkUpdate = async () => {
   Logs.info(`${getT("$t(cli.checkUpdate)")}...`);
   const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
 
-  const res = await fetch(
+  const res = await fetchClient(
     "https://api.github.com/repos/long-woo/stc/releases/latest",
+    { timeout: 1000 * 60 * 10 },
   );
 
   if (res.ok) {

@@ -4,7 +4,7 @@ import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
-import { createFile, emptyDirectory, readFile } from "./util.ts";
+import { createFile, emptyDirectory, fetchClient, readFile } from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -44,7 +44,7 @@ const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
   }
 
   // 从远程地址获取 Swagger 数据
-  const res = await fetch(urlOrPath);
+  const res = await fetchClient(urlOrPath);
   const data = await res.json();
 
   return data;
