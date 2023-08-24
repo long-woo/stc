@@ -17,53 +17,55 @@ export const JavaScriptPlugin: IPlugin = {
     pluginOptions = options;
   },
   async onTransform(def, action) {
-    const _defContent = parserDefinition(def);
-
-    const _defContentOutput = await swc.transform(_defContent, {
+    const _swcOptions: swc.Options = {
       jsc: {
         parser: {
           syntax: "typescript",
         },
         target: "esnext",
       },
-    });
+    };
+    const _defContent = parserDefinition(def);
+    const _actionData = parserPath(action);
+    const _actionMapData = new Map<string, string>();
 
-    const _typeDeclaration = await generateDeclarationFile(_defContent);
-    actionDeclareData.set("types", _typeDeclaration);
-
-    const pathData = parserPath(action);
-
-    const actionData = new Map<string, string>();
-
-    pathData.forEach((api, key) => {
-      const _import = api.import;
+    for (const [key, content] of _actionData) {
+      const _import = content.import;
       const _apiImport = [
         `import webClient from './shared/${pluginOptions.platform}/fetch'`,
       ];
       const _apiContent: Array<string> = [];
-      const _apiDeclareContent: string[] = [];
 
       if (_import.length) {
-        _apiDeclareContent.push(
-          `import { ${_import.join(", ")} } from './types'`,
+        _apiImport.push(
+          `import type { ${_import.join(", ")} } from './types'`,
         );
       }
 
       _apiContent.push(_apiImport.join("\n"));
-      api.interface?.length &&
-        _apiDeclareContent.push(api.interface?.join("\n\n"));
-      api.export?.length && _apiContent.push(api.export.join("\n\n"));
+      content.interface?.length &&
+        _apiContent.push(content.interface?.join("\n\n"));
+      content.export?.length && _apiContent.push(content.export.join("\n\n"));
 
-      // actionDeclareData.set(key, _apiDeclareContent.join("\n\n"));
-      actionData.set(key, _apiContent.join("\n\n"));
-    });
+      const _tsCode = _apiContent.join("\n\n");
+      const _jsCode = await swc.transform(_tsCode, _swcOptions);
+      const _tsCodeDeclaration = await generateDeclarationFile(_tsCode);
+
+      actionDeclareData.set(key, _tsCodeDeclaration);
+      _actionMapData.set(key, _jsCode.code);
+    }
+
+    const _defContentOutput = await swc.transform(_defContent, _swcOptions);
+    const _typeDeclaration = await generateDeclarationFile(_defContent);
+
+    actionDeclareData.set("types", _typeDeclaration);
 
     return {
       definition: {
         filename: "types.js",
         content: _defContentOutput.code,
       },
-      action: actionData,
+      action: _actionMapData,
     };
   },
   onEnd() {
