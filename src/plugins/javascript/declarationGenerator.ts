@@ -10,14 +10,15 @@ import { getT } from "../../i18n/index.ts";
  * @param {string} sourceCode - The source code to generate the declaration file from.
  * @return {Promise<string>} The generated declaration file content.
  */
-export const generateDeclarationFile = async (sourceCode: string) => {
-  const filename = "temp.ts";
+export const generateDeclarationFile = async (
+  sourceCode: string,
+): Promise<string> => {
+  const filename = `temp_${+new Date()}.ts`;
 
   // 创建一个编译选项对象
   const compilerOptions: ts.CompilerOptions = {
     declaration: true,
     emitDeclarationOnly: true,
-    // lib: ["ESNext"],
   };
 
   // 创建一个虚拟文件系统映射，并加载 lib.d.ts 文件
@@ -31,6 +32,7 @@ export const generateDeclarationFile = async (sourceCode: string) => {
 
   // 创建虚拟文件系统
   const system = vfs.createSystem(fsMap);
+
   // 创建虚拟 TypeScript 环境
   const env = vfs.createVirtualTypeScriptEnvironment(
     system,
@@ -41,6 +43,7 @@ export const generateDeclarationFile = async (sourceCode: string) => {
 
   // 获取 TypeScript 编译输出
   const output = env.languageService.getEmitOutput(filename);
+
   // 将输出的声明文件内容拼接起来
   const declarationContent = output.outputFiles.reduce((prev, current) => {
     prev += current.text;
@@ -85,6 +88,15 @@ export const generateDeclarationFile = async (sourceCode: string) => {
         Logs.error(
           ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
         );
+      }
+    });
+  } else {
+    const sourceFile = program.getSourceFile(filename);
+
+    // console.log(sourceFile);
+    sourceFile?.forEachChild((node) => {
+      if (ts.isImportDeclaration(node)) {
+        console.log(node.getText());
       }
     });
   }
