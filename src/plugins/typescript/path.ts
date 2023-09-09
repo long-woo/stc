@@ -53,26 +53,33 @@ interface IApiInternalDefinition {
 }
 
 /**
- * 接口注释
- * @param summary - 主注释
- * @param params - 参数注释
- * @param description -次要注释
- * @param title - 标题
- * @returns
+ * Generate the function comment for the given function body.
+ *
+ * @param {string} name - The name of the function.
+ * @param {string} summary - A summary of the function.
+ * @param {Array<string>} params - An optional array of parameter names.
+ * @param {string} response - The response type of the function.
+ * @param {string} description - An optional description of the function.
+ * @param {string} title - An optional title of the function.
+ * @returns {Promise<response>} Promise of the response type.
  */
 const methodCommit = (
+  name: string,
   summary: string,
   params?: Array<string>,
   response?: string,
   description?: string,
   title?: string,
 ) => {
-  const _commit = ["/**", `* ${summary}`];
+  const _commit = [
+    "/**",
+    `* ${summary || name}`,
+  ];
 
   title && _commit.push(`* @title ${title}`);
   description && _commit.push(`* @description ${description}`);
   params?.length && _commit.push(...params);
-  _commit.push(`* @returns {Promise<${response}>} - Promise<${response}>`);
+  _commit.push(`* @returns {Promise<${response}>} Promise<${response}>`);
   _commit.push("*/");
 
   return _commit.join("\n ");
@@ -308,7 +315,8 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   }
 
   const _methodCommit = methodCommit(
-    data.summary || action,
+    action,
+    data.summary,
     _params?.commit,
     _response.def,
     data.description,

@@ -1,9 +1,10 @@
 import swc from "npm:@swc/core";
 
-import { ISwaggerOptions } from "../../swagger.ts";
-import { createFile } from "../../util.ts";
-import { IPlugin } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
+import type { IPlugin } from "../typeDeclaration.ts";
+
 import { parserDefinition } from "../typescript/defintion.ts";
+import { createFile } from "../../util.ts";
 import { parserPath } from "../typescript/path.ts";
 import { generateDeclarationFile } from "./declarationGenerator.ts";
 
@@ -37,7 +38,7 @@ export const JavaScriptPlugin: IPlugin = {
       const _apiContent: Array<string> = [];
 
       if (_import.length) {
-        _apiImport.push(
+        _apiImport.unshift(
           `import type { ${_import.join(", ")} } from './types'`,
         );
       }
@@ -48,15 +49,16 @@ export const JavaScriptPlugin: IPlugin = {
       content.export?.length && _apiContent.push(content.export.join("\n\n"));
 
       const _tsCode = _apiContent.join("\n\n");
-      const _jsCode = await swc.transform(_tsCode, _swcOptions);
+      console.log(_tsCode);
       const _tsCodeDeclaration = await generateDeclarationFile(_tsCode);
+      const _jsCode = await swc.transform(_tsCode, _swcOptions);
 
       actionDeclareData.set(key, _tsCodeDeclaration);
       _actionMapData.set(key, _jsCode.code);
     }
 
-    const _defContentOutput = await swc.transform(_defContent, _swcOptions);
     const _typeDeclaration = await generateDeclarationFile(_defContent);
+    const _defContentOutput = await swc.transform(_defContent, _swcOptions);
 
     actionDeclareData.set("types", _typeDeclaration);
 

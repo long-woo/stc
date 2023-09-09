@@ -19,6 +19,7 @@ export const generateDeclarationFile = async (
   const compilerOptions: ts.CompilerOptions = {
     declaration: true,
     emitDeclarationOnly: true,
+    isolatedModules: true,
   };
 
   // 创建一个虚拟文件系统映射，并加载 lib.d.ts 文件
@@ -41,11 +42,12 @@ export const generateDeclarationFile = async (
     compilerOptions,
   );
 
+  // console.log(env.languageService.findReferences(filename, 0));
+
   // 获取 TypeScript 编译输出
   const output = env.languageService.getEmitOutput(filename);
-
   // 将输出的声明文件内容拼接起来
-  const declarationContent = output.outputFiles.reduce((prev, current) => {
+  let declarationContent = output.outputFiles.reduce((prev, current) => {
     prev += current.text;
     return prev;
   }, "");
@@ -91,14 +93,14 @@ export const generateDeclarationFile = async (
       }
     });
   } else {
-    const sourceFile = program.getSourceFile(filename);
+    // const sourceFile = program.getSourceFile(filename);
 
     // console.log(sourceFile);
-    sourceFile?.forEachChild((node) => {
-      if (ts.isImportDeclaration(node)) {
-        console.log(node.getText());
-      }
-    });
+    // sourceFile?.forEachChild((node) => {
+    //   if (ts.isImportDeclaration(node) && node.importClause?.isTypeOnly) {
+    //     declarationContent = `${node.getText()}\n${declarationContent}`;
+    //   }
+    // });
   }
 
   return declarationContent;
