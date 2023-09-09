@@ -4,6 +4,20 @@ import vfs from "npm:@typescript/vfs";
 import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
 
+const transform = (
+  context: ts.TransformationContext,
+): ts.TransformerFactory<ts.SourceFile> => {
+  return (sourceFile: ts.SourceFile) => {
+    const visitor = (node: ts.Node): ts.Node => {
+      if (ts.isCallExpression(node)) {
+        return node;
+      }
+      return ts.visitEachChild(node, visitor, context);
+    };
+    return ts.visitNode(sourceFile, visitor);
+  };
+};
+
 /**
  * Generates a declaration file from the given source code.
  *
@@ -40,9 +54,10 @@ export const generateDeclarationFile = async (
     [filename],
     ts,
     compilerOptions,
+    {
+      afterDeclarations: [transform],
+    },
   );
-
-  // console.log(env.languageService.findReferences(filename, 0));
 
   // 获取 TypeScript 编译输出
   const output = env.languageService.getEmitOutput(filename);
@@ -60,6 +75,8 @@ export const generateDeclarationFile = async (
     options: compilerOptions,
     host: host.compilerHost,
   });
+
+  // const sourceFile = program.getSourceFile(filename);
 
   // 执行编译并获取输出结果
   const emitResult = program.emit();
