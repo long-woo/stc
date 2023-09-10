@@ -1,6 +1,6 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Swagger 文档转换为接口文件",
   "main": "script/mod.js",
   "module": "esm/mod.js",
