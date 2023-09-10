@@ -49,7 +49,7 @@ export const JavaScriptPlugin: IPlugin = {
       content.export?.length && _apiContent.push(content.export.join("\n\n"));
 
       const _tsCode = _apiContent.join("\n\n");
-      console.log(_tsCode);
+      // console.log(_tsCode);
       const _tsCodeDeclaration = await generateDeclarationFile(_tsCode);
       const _jsCode = await swc.transform(_tsCode, _swcOptions);
 

@@ -4,20 +4,6 @@ import vfs from "npm:@typescript/vfs";
 import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
 
-const transform = (
-  context: ts.TransformationContext,
-): ts.TransformerFactory<ts.SourceFile> => {
-  return (sourceFile: ts.SourceFile) => {
-    const visitor = (node: ts.Node): ts.Node => {
-      if (ts.isCallExpression(node)) {
-        return node;
-      }
-      return ts.visitEachChild(node, visitor, context);
-    };
-    return ts.visitNode(sourceFile, visitor);
-  };
-};
-
 /**
  * Generates a declaration file from the given source code.
  *
@@ -54,39 +40,38 @@ export const generateDeclarationFile = async (
     [filename],
     ts,
     compilerOptions,
-    {
-      afterDeclarations: [transform],
-    },
   );
 
   // 获取 TypeScript 编译输出
   const output = env.languageService.getEmitOutput(filename);
+
   // 将输出的声明文件内容拼接起来
-  let declarationContent = output.outputFiles.reduce((prev, current) => {
+  const declarationContent = output.outputFiles.reduce((prev, current) => {
     prev += current.text;
     return prev;
   }, "");
 
   // 创建虚拟编译器主机
-  const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
-  // 创建 TypeScript 程序
-  const program = ts.createProgram({
-    rootNames: [...fsMap.keys()],
-    options: compilerOptions,
-    host: host.compilerHost,
-  });
+  // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);
+  // // 创建 TypeScript 程序
+  // const program = ts.createProgram({
+  //   rootNames: [...fsMap.keys()],
+  //   options: compilerOptions,
+  //   host: host.compilerHost,
+  // });
 
   // const sourceFile = program.getSourceFile(filename);
 
   // 执行编译并获取输出结果
-  const emitResult = program.emit();
+  // const emitResult = program.emit();
 
-  if (emitResult.emitSkipped) {
+  if (output.emitSkipped) {
     Logs.error(getT("$t(plugin_javascript.compilation_failed)"));
 
-    const allDiagnostics = ts
-      .getPreEmitDiagnostics(program)
-      .concat(emitResult.diagnostics);
+    const allDiagnostics = env.languageService.getCompilerOptionsDiagnostics()
+      .concat(env.languageService.getSyntacticDiagnostics(filename)).concat(
+        env.languageService.getSemanticDiagnostics(filename),
+      );
 
     allDiagnostics.forEach((diagnostic) => {
       if (diagnostic.file) {
@@ -109,15 +94,6 @@ export const generateDeclarationFile = async (
         );
       }
     });
-  } else {
-    // const sourceFile = program.getSourceFile(filename);
-
-    // console.log(sourceFile);
-    // sourceFile?.forEachChild((node) => {
-    //   if (ts.isImportDeclaration(node) && node.importClause?.isTypeOnly) {
-    //     declarationContent = `${node.getText()}\n${declarationContent}`;
-    //   }
-    // });
   }
 
   return declarationContent;

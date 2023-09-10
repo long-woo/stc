@@ -328,7 +328,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _method = `${_methodCommit}
 export const ${action} = (${
     _params.defMap?.join(", ") ?? ""
-  }) => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
+  }): Promise<${_response.def}> => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
     import: [..._params.import, ...(_response.import ?? [])],
