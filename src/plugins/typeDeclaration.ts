@@ -33,7 +33,7 @@ interface IPluginEvent {
   /**
    * 结束事件
    */
-  onEnd?: () => void;
+  onEnd?: () => Promise<void> | void;
 }
 
 export interface IPluginContext extends Partial<IPluginEvent> {

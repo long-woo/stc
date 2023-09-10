@@ -46,7 +46,7 @@ export const TypeScriptPlugin: IPlugin = {
 
       if (_import.length) {
         _apiImport.push(
-          `import type { ${_import.join(", ")} } from './types'`,
+          `import type { ${_import.join(", ")} } from './_types'`,
         );
       }
 
@@ -59,7 +59,7 @@ export const TypeScriptPlugin: IPlugin = {
 
     return {
       definition: {
-        filename: `type.${pluginOptions.lang}`,
+        filename: `_type.${pluginOptions.lang}`,
         content: defContent,
       },
       action: actionData,

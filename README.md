@@ -63,6 +63,51 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ![输出文件](resources/file.png)
 
+### 已有项目
+
+#### axios
+
+1.找到 `outDir` 的目录，复制 `shared > webClientBase` 文件到该目录。
+
+2.打开 `shared > axios > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
+
+3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码:
+
+```ts
+import webClient from './apis/shared/axios/fetch';
+
+webClient.create({
+  baseURL: 'https://api.xxx.com'
+  // onError(msg) {
+  //   // 处理错误信息
+  // }
+})
+```
+
+#### wechat
+
+1.找到 `outDir` 的目录，复制 `shared > webClientBase` 文件到该目录。
+
+2.打开 `shared > wechat > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
+
+3.在 `app.ts` 文件中添加以下代码:
+
+```ts
+import webClient from './apis/shared/wechat/fetch';
+// import Notify from './miniprogram_npm/@vant/weapp/notify/notify';
+
+App<IAppOption>({
+  onLaunch() {
+    webClient.create({
+      baseURL: 'https://api.xxx.com,
+      onError(msg) {
+        // Notify({ type: 'danger', message: msg, selector: '#v-notify'})
+      }
+    })
+  }
+});
+```
+
 ### Options 选项
 
 | 参数名 | 类型 | 默认值 | 说明 |
@@ -90,7 +135,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.1.7/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.2.0/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
