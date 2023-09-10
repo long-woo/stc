@@ -1,11 +1,11 @@
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
-import { typeScriptPlugin } from "./plugins/typescript/index.ts";
 import { IPluginContext } from "./plugins/typeDeclaration.ts";
 import { getDefinition } from "./definition.ts";
 import { getApiPath } from "./path.ts";
 import { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import { createFile, emptyDirectory, readFile } from "./util.ts";
+import { getT } from "./i18n/index.ts";
 
 /**
  * 创建上下文
@@ -21,7 +21,6 @@ const initPluginManager = (context: IPluginContext) => {
 
   // 注册插件
   pluginManager.register([
-    typeScriptPlugin,
     ...(context.options.plugins ?? []),
   ]);
   // 启动所有插件
@@ -40,7 +39,7 @@ const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
     try {
       return JSON.parse(content) as unknown as ISwaggerResult;
     } catch (error) {
-      throw new Error(`api 文件解析失败。原因：${error}`);
+      throw new Error(getT("$t(app.apiJsonFileError)", { error }));
     }
   }
 
@@ -82,13 +81,13 @@ export const start = async (options: ISwaggerOptions) => {
   await emptyDirectory(options.outDir);
 
   // 触发插件 onTransform 事件
-  const transformData = context.onTransform?.(defData, actionData);
+  const transformData = await context.onTransform?.(defData, actionData);
 
   // 写入类型定义文件
   if (transformData?.definition) {
     createFile(
-      `${options.outDir}/types.${options.lang}`,
-      transformData.definition,
+      `${options.outDir}/${transformData.definition.filename}`,
+      transformData.definition.content,
     );
   }
 
@@ -103,7 +102,7 @@ export const start = async (options: ISwaggerOptions) => {
   }
 
   console.log("\n");
-  Logs.success(`API 文件生成完成：\n\t${options.outDir}\n`);
+  Logs.success(`${getT("$t(app.generateFileDone)")}\n\t${options.outDir}\n`);
   // 触发插件 onEnd 事件
   context.onEnd?.();
 };

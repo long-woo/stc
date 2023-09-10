@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "/": "./",
+    "./": "./",
+    "std/": "https://deno.land/std@0.200.0/",
+    "x/": "https://deno.land/x/",
+    "@swc/core": "https://esm.sh/v130/*@swc/core@1.3.83",
+    "@typescript/vfs": "https://esm.sh/v130/*@typescript/vfs@1.5.0",
+    "typescript": "https://esm.sh/v130/typescript@5.2.2"
+  },
+  "scopes": {
+    "https://esm.sh/v130/": {
+      "@swc/types": "https://esm.sh/v130/@swc/types@0.1.4",
+      "debug": "https://esm.sh/v130/debug@4.3.4"
+    }
+  }
+}

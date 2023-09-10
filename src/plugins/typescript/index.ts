@@ -11,8 +11,9 @@ import {
 
 let pluginOptions: ISwaggerOptions;
 
-export const typeScriptPlugin: IPlugin = {
+export const TypeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
+  lang: "ts",
   /**
    * Set up the function with the given options.
    *
@@ -45,7 +46,7 @@ export const typeScriptPlugin: IPlugin = {
 
       if (_import.length) {
         _apiImport.push(
-          `import type { ${_import.join(", ")} } from './types'`,
+          `import type { ${_import.join(", ")} } from './_types'`,
         );
       }
 
@@ -57,7 +58,10 @@ export const typeScriptPlugin: IPlugin = {
     });
 
     return {
-      definition: defContent,
+      definition: {
+        filename: `_type.${pluginOptions.lang}`,
+        content: defContent,
+      },
       action: actionData,
     };
   },
@@ -70,7 +74,7 @@ export const typeScriptPlugin: IPlugin = {
       const _axiosFileContent = createAxiosFile();
 
       createFile(
-        `${pluginOptions.outDir}/shared/axios/fetch.ts`,
+        `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
         _axiosFileContent,
       );
     }
@@ -79,13 +83,13 @@ export const typeScriptPlugin: IPlugin = {
       const _wechatFileContent = createWechatFile();
 
       createFile(
-        `${pluginOptions.outDir}/shared/wechat/fetch.ts`,
+        `${pluginOptions.outDir}/shared/wechat/fetch.${pluginOptions.lang}`,
         _wechatFileContent,
       );
     }
 
     createFile(
-      `${pluginOptions.outDir}/shared/webClientBase.ts`,
+      `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
       _baseFileContent,
     );
   },

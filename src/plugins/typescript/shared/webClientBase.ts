@@ -4,11 +4,11 @@ export type IDefaultObject<T = unknown> = {
 };
 
 export interface IRequestParams {
-  path: Array<unknown>;
-  query: Array<unknown>;
-  body: Array<unknown>;
-  formData: Array<unknown>;
-  header: Array<unknown>;
+  path: IDefaultObject<unknown>;
+  query: IDefaultObject<unknown>;
+  body: IDefaultObject<unknown>;
+  formData: IDefaultObject<unknown>;
+  header: IDefaultObject<unknown>;
 }
 
 export class WebClientBase {
@@ -20,7 +20,7 @@ export class WebClientBase {
   static generateURL(url: string, path?: IDefaultObject) {
     // 替换路由参数
     const newURL = url.replace(
-      /[\{|:](\w+)[\}]?/gi,
+      /[\\{|:](\w+)[\\}]?/gi,
       (_key: string, _value: string): string => {
         return path ? path[_value] as string : "";
       },

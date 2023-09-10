@@ -4,11 +4,11 @@ export const createBaseFile = () =>
 };
 
 export interface IRequestParams {
-  path: Array<unknown>;
-  query: Array<unknown>;
-  body: Array<unknown>;
-  formData: Array<unknown>;
-  header: Array<unknown>;
+  path: IDefaultObject<unknown>;
+  query: IDefaultObject<unknown>;
+  body: IDefaultObject<unknown>;
+  formData: IDefaultObject<unknown>;
+  header: IDefaultObject<unknown>;
 }
 
 export class WebClientBase {
@@ -20,7 +20,7 @@ export class WebClientBase {
   static generateURL(url: string, path?: IDefaultObject) {
     // 替换路由参数
     const newURL = url.replace(
-      /[\\{|:](\\w+)[\\}]?/gi,
+      /[\\\{|:](\\w+)[\\\}]?/gi,
       (_key: string, _value: string): string => {
         return path ? path[_value] as string : "";
       },
@@ -122,6 +122,7 @@ type Method =
 
 export class WebClient extends WebClientBase {
   private static baseURL: string;
+  private static onError: ((msg: string) => void) | undefined;
 
   public static request<T>(
     url: string,
@@ -131,7 +132,8 @@ export class WebClient extends WebClientBase {
     const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
 
     // query 参数处理
-    const _query = req?.query ?? {};
+    const _query: IDefaultObject<string> =
+      (req?.query as IDefaultObject<string>) ?? {};
     const _params = Object.keys(_query).reduce(
       (prev: Array<string>, current) => {
         prev.push(\`\${current}=\${encodeURIComponent(_query[current])}\`);
@@ -140,19 +142,7 @@ export class WebClient extends WebClientBase {
       [],
     );
 
-    const _formData: IDefaultObject = req?.formData as IDefaultObject;
-    let _data: IDefaultObject | FormData | unknown = req?.body;
-
-    // TODO: 处理 FormData 数据
-    if (_formData) {
-      const formData = new FormData();
-
-      Object.keys(_formData).forEach((key) => {
-        formData.append(key, _formData[key]);
-      });
-
-      _data = formData;
-    }
+    const _data: IDefaultObject = req?.body ?? {};
 
     return new Promise<T>((resolve, reject) => {
       wx.request({
@@ -160,10 +150,16 @@ export class WebClient extends WebClientBase {
         method,
         data: _data,
         header: req?.header,
-        success: (res: unknown) => {
-          resolve(res.data);
+        success: (res) => {
+          const resData: any = res.data ?? {};
+
+          if (!resData.success) {
+            this.onError?.(resData.message);
+          }
+          resolve(resData);
         },
-        fail: (err: unknown) => {
+        fail: (err) => {
+          this.onError?.(err.errMsg);
           reject(err);
         },
       });
@@ -174,8 +170,11 @@ export class WebClient extends WebClientBase {
    * 创建请求，并配置
    * @param options - 请求配置
    */
-  public static create(options: { baseURL: string }) {
+  public static create(
+    options: { baseURL: string; onError?: (msg: string) => void },
+  ) {
     this.baseURL = options.baseURL;
+    this.onError = options.onError;
   }
 }
 

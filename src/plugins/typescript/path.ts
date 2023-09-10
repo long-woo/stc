@@ -8,6 +8,7 @@ import type {
 } from "../../swagger.ts";
 import { convertType, propCommit, upperCase } from "../../util.ts";
 import Logs from "../../console.ts";
+import { getT } from "../../i18n/index.ts";
 
 interface IApiRealParams {
   path?: string;
@@ -51,36 +52,34 @@ interface IApiInternalDefinition {
   childProps: Array<string>;
 }
 
-interface IApiParamsSort {
-  /**
-   * 必填参数
-   */
-  required: string[];
-  /**
-   * 可选参数
-   */
-  optional: string[];
-}
-
 /**
- * 接口注释
- * @param summary - 主注释
- * @param params - 参数注释
- * @param description -次要注释
- * @param title - 标题
- * @returns
+ * Generate the function comment for the given function body.
+ *
+ * @param {string} name - The name of the function.
+ * @param {string} summary - A summary of the function.
+ * @param {Array<string>} params - An optional array of parameter names.
+ * @param {string} response - The response type of the function.
+ * @param {string} description - An optional description of the function.
+ * @param {string} title - An optional title of the function.
+ * @returns {Promise<response>} Promise of the response type.
  */
 const methodCommit = (
+  name: string,
   summary: string,
   params?: Array<string>,
+  response?: string,
   description?: string,
   title?: string,
 ) => {
-  const _commit = ["/**", `* ${summary}`];
+  const _commit = [
+    "/**",
+    `* ${summary || name}`,
+  ];
 
   title && _commit.push(`* @title ${title}`);
   description && _commit.push(`* @description ${description}`);
   params?.length && _commit.push(...params);
+  _commit.push(`* @returns {Promise<${response}>} Promise<${response}>`);
   _commit.push("*/");
 
   return _commit.join("\n ");
@@ -97,7 +96,7 @@ const getInternalDefinition = (
   name: string,
 ): IApiInternalDefinition => {
   const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
-    let _type = convertType(current.type);
+    let _type = convertType(current.type, current.typeX ?? current.ref);
 
     if (current.properties) {
       const _defName = `${name}${upperCase(current.name)}`;
@@ -201,9 +200,9 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
             (prev.refMap[current as keyof IPathVirtualParameter] = current);
         }
       } else {
-        const _defMapCommit = `* @param {${_type}} ${item.name} - ${
-          item.description || item.name
-        }`;
+        const _defMapCommit = `* @param {${_type}} ${
+          item.required ? item.name : `[${item.name}]`
+        } - ${item.description || item.name}`;
         // 找出第一个可选参数的位置
         const _optionalIndex = prev.defMap?.findIndex((_d) =>
           _d.includes("?:")
@@ -312,12 +311,14 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _response = parseResponse(data.response, action);
 
   if (_response.def === "unknown") {
-    Logs.warn("缺少 200 状态码的信息。");
+    Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
   const _methodCommit = methodCommit(
-    data.summary || action,
+    action,
+    data.summary,
     _params?.commit,
+    _response.def,
     data.description,
   );
   const _methodParam = _params.refMap && Object.keys(_params.refMap).length
@@ -327,7 +328,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _method = `${_methodCommit}
 export const ${action} = (${
     _params.defMap?.join(", ") ?? ""
-  }) => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
+  }): Promise<${_response.def}> => webClient.request<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
     import: [..._params.import, ...(_response.import ?? [])],
@@ -344,11 +345,11 @@ export const ${action} = (${
 export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   const apiMap = new Map<string, IApiFile>();
 
-  Logs.info("解析接口...");
+  Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
     const _tag = item.tag;
     if (!_tag) {
-      Logs.error(`${item.url} 未指定 tag，跳过解析`);
+      Logs.error(getT("$t(plugin.no_tag)", { url: item.url }));
       return;
     }
 
@@ -374,6 +375,6 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
     }
   });
 
-  Logs.info("解析完成。");
+  Logs.info(getT("$t(plugin.parserActionDone)"));
   return apiMap;
 };

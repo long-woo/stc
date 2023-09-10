@@ -1,19 +1,16 @@
 {
-  "version": "1.1.7",
+  "version": "1.2.0",
   "tasks": {
     "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --outDir=out",
-    "version": "echo '1.1.7' > release/version",
+    "version": "echo '1.2.0' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A src/main.ts --output release/stc --target x86_64-apple-darwin",
     "build:mac-m": "deno compile -A src/main.ts --output release/stc-m --target aarch64-apple-darwin",
     "build:win": "deno compile -A src/main.ts --output release/stc-win --target x86_64-pc-windows-msvc",
-    "build:linux": "deno compile -A src/main.ts --output release/stc-linux --target x86_64-unknown-linux-gnu"
-  },
-  "imports": {
-    "/": "./",
-    "./": "./",
-    "std/": "https://deno.land/std@0.195.0/",
-    "x/": "https://deno.land/x/"
+    "build:linux": "deno compile -A src/main.ts --output release/stc-linux --target x86_64-unknown-linux-gnu",
+    "esm:add": "deno run -A https://esm.sh/v130 add",
+    "esm:update": "deno run -A https://esm.sh/v130 update",
+    "esm:remove": "deno run -A https://esm.sh/v130 remove"
   },
   "lint": {
     "include": [
@@ -45,5 +42,6 @@
       "out",
       "dist"
     ]
-  }
+  },
+  "importMap": "import_map.json"
 }

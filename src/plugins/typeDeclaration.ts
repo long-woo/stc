@@ -29,11 +29,11 @@ interface IPluginEvent {
   onTransform: (
     def: Map<string, IDefinitionVirtualProperty[]>,
     action: Map<string, IPathVirtualProperty>,
-  ) => IPluginTransform;
+  ) => Promise<IPluginTransform> | IPluginTransform;
   /**
    * 结束事件
    */
-  onEnd?: () => void;
+  onEnd?: () => Promise<void> | void;
 }
 
 export interface IPluginContext extends Partial<IPluginEvent> {
@@ -43,11 +43,22 @@ export interface IPluginContext extends Partial<IPluginEvent> {
   readonly options: ISwaggerOptions;
 }
 
+export interface IPluginTransformDefinition {
+  /**
+   * 文件名
+   */
+  filename: string;
+  /**
+   * 文件内容
+   */
+  content: string;
+}
+
 export interface IPluginTransform {
   /**
    * 类型定义
    */
-  definition?: string;
+  definition?: IPluginTransformDefinition;
   /**
    * 接口数据
    */
@@ -59,6 +70,10 @@ export interface IPlugin extends IPluginEvent {
    * 插件名称
    */
   readonly name: string;
+  /**
+   * 插件生成的语言，与选项的 `lang` 一致
+   */
+  readonly lang: string | string[];
   /**
    * 插件入口
    */

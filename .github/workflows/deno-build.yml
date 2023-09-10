@@ -11,6 +11,8 @@ name: Publish to release
 on:
   push:
     branches: ['master']
+    paths:
+      - deno.json
 
 permissions:
   contents: read

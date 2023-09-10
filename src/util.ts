@@ -1,6 +1,8 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
+
 import denoJson from "/deno.json" assert { type: "json" };
+import { getT } from "./i18n/index.ts";
 
 interface ICopyFileOptions {
   /**
@@ -41,10 +43,15 @@ export const createFile = async (filePath: string, content: string) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
-    new TextEncoder().encode(`// 由 stc v${denoJson.version} 生成
+    new TextEncoder().encode(
+      `// ${
+        getT("$t(util.createFileDescription)", { version: denoJson.version })
+      }
+// https://github.com/long-woo/stc
 // ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
 
-${content}`),
+${content}`,
+    ),
   );
 };
 
@@ -117,7 +124,7 @@ export const convertType = (type: string, ref?: string) => {
  */
 export const propCommit = (commit: string) =>
   commit
-    ? `\t/*
+    ? `\t/**
 \t * ${commit}
 \t */\n\t`
     : "\t";
@@ -141,3 +148,48 @@ export const getObjectKeyByValue = (
  */
 export const hasKey = (obj: Record<string, unknown>, name: string) =>
   Object.prototype.hasOwnProperty.call(obj, name);
+
+/**
+ * Converts a string value to its corresponding JavaScript data type.
+ *
+ * @param {string} value - The value to be converted.
+ * @return {any} The converted JavaScript data type.
+ */
+export const convertValue = (value: string) => {
+  try {
+    return JSON.parse(value);
+  } catch (_) {
+    return value;
+  }
+};
+
+/**
+ * Fetches a client from the specified URL with optional request options.
+ *
+ * @param {string} url - The URL to fetch the client from.
+ * @param {RequestInit & { timeout?: number }} options - Optional request options.
+ * @return {Promise<Response>} A promise that resolves to the response from the server.
+ */
+export const fetchClient = async (
+  url: string,
+  options: RequestInit & { timeout?: number } = { timeout: 5000 },
+) => {
+  const responsePromise = fetch(url, options);
+
+  // 创建一个超时 Promise
+  const timeoutPromise = new Promise((_resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error(getT("$t(util.timeout)")));
+    }, options?.timeout);
+  });
+
+  // 等待任意一个 Promise 完成
+  const res = await Promise.race([responsePromise, timeoutPromise]);
+
+  if (res instanceof Response) {
+    // 请求成功，返回响应
+    return res;
+  }
+
+  throw res;
+};
