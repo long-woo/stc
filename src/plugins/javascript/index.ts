@@ -1,4 +1,5 @@
-import swc from "npm:@swc/core";
+// import swc from "npm:@swc/core";
+import * as esbuild from "x/esbuild@v0.19.2/mod.js";
 
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type { IPlugin } from "../typeDeclaration.ts";
@@ -11,25 +12,44 @@ import {
   createBaseFile,
   createWechatFile,
 } from "../typescript/shared/index.ts";
-import { generateDeclarationFile } from "./declarationGenerator.ts";
+// import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
-let swcOptions: swc.Options;
+// let swcOptions: swc.Options;
 const actionDeclareData = new Map<string, string>();
+
+/**
+ * Transforms the given code using esbuild.
+ *
+ * @param {string} code - The code to transform.
+ * @return {Promise<string>} The transformed code.
+ */
+const esTransform = async (code: string) => {
+  const result = await esbuild.transform(code, {
+    loader: "ts",
+    target: "esnext",
+    legalComments: "inline",
+    format: "esm",
+  });
+
+  esbuild.stop();
+
+  return result.code;
+};
 
 export const JavaScriptPlugin: IPlugin = {
   name: "stc:JavaScriptPlugin",
   lang: "js",
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
-    swcOptions = {
-      jsc: {
-        parser: {
-          syntax: "typescript",
-        },
-        target: "esnext",
-      },
-    };
+    // swcOptions = {
+    //   jsc: {
+    //     parser: {
+    //       syntax: "typescript",
+    //     },
+    //     target: "esnext",
+    //   },
+    // };
   },
   async onTransform(def, action) {
     const _defContent = parserDefinition(def);
@@ -56,22 +76,24 @@ export const JavaScriptPlugin: IPlugin = {
 
       const _tsCode = _apiContent.join("\n\n");
 
-      const _tsCodeDeclaration = await generateDeclarationFile(_tsCode);
-      const _jsCode = await swc.transform(_tsCode, swcOptions);
+      // const _tsCodeDeclaration = await generateDeclarationFile(_tsCode);
+      // const _jsCode = await swc.transform(_tsCode, swcOptions);
+      const _jsCode = await esTransform(_tsCode);
 
-      actionDeclareData.set(key, _tsCodeDeclaration);
-      _actionMapData.set(key, _jsCode.code);
+      // actionDeclareData.set(key, _tsCodeDeclaration);
+      _actionMapData.set(key, _jsCode);
     }
 
-    const _typeDeclaration = await generateDeclarationFile(_defContent);
-    const _defContentOutput = await swc.transform(_defContent, swcOptions);
+    // const _typeDeclaration = await generateDeclarationFile(_defContent);
+    // const _defContentOutput = await swc.transform(_defContent, swcOptions);
+    const _defContentOutput = await esTransform(_defContent);
 
-    actionDeclareData.set("_types", _typeDeclaration);
+    // actionDeclareData.set("_types", _typeDeclaration);
 
     return {
       definition: {
         filename: "_types.js",
-        content: _defContentOutput.code,
+        content: _defContentOutput,
       },
       action: _actionMapData,
     };
@@ -86,35 +108,29 @@ export const JavaScriptPlugin: IPlugin = {
     });
 
     // 创建运行时需要的文件
-    const _baseFileContent = await swc.transform(createBaseFile(), swcOptions);
+    const _baseFileContent = await esTransform(createBaseFile());
 
     if (pluginOptions.platform === "axios") {
-      const _axiosFileContent = await swc.transform(
-        createAxiosFile(),
-        swcOptions,
-      );
+      const _axiosFileContent = await esTransform(createAxiosFile());
 
       createFile(
         `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
-        _axiosFileContent.code,
+        _axiosFileContent,
       );
     }
 
     if (pluginOptions.platform === "wechat") {
-      const _wechatFileContent = await swc.transform(
-        createWechatFile(),
-        swcOptions,
-      );
+      const _wechatFileContent = await esTransform(createWechatFile());
 
       createFile(
         `${pluginOptions.outDir}/shared/wechat/fetch.${pluginOptions.lang}`,
-        _wechatFileContent.code,
+        _wechatFileContent,
       );
     }
 
     createFile(
       `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
-      _baseFileContent.code,
+      _baseFileContent,
     );
   },
 };

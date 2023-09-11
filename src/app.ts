@@ -45,9 +45,14 @@ const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
 
   // 从远程地址获取 Swagger 数据
   const res = await fetch(urlOrPath);
-  const data = await res.json();
 
-  return data;
+  try {
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    throw new Error(getT("$t(app.apiJsonFileError)", { error }));
+  }
 };
 
 /**
