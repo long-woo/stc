@@ -6,7 +6,7 @@
     "success": "成功"
   },
   "util": {
-    "createFileDescription": "由 stc v{{version}} 生成。",
+    "createFileDescription": "由 stc v{{version}} 生成",
     "timeout": "请求超时。"
   },
   "def": {
