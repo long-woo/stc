@@ -91,7 +91,10 @@ export const emptyDirectory = (dir: string) => emptyDir(dir);
  * @param ref - ref
  */
 export const getRefType = (ref: string) =>
-  ref.replace(/^#\/(definitions|components\/schemas)\//, "");
+  decodeURIComponent(ref).replace(
+    /^#\/(definitions|components\/schemas)\//,
+    "",
+  );
 
 /**
  * 转换为 typescript 类型
