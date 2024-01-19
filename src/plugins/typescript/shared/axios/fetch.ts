@@ -1,13 +1,13 @@
 // 由 stc 生成
 import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import type { IDefaultObject, IRequestParams } from "../webClientBase";
-import { WebClientBase } from "../webClientBase";
+import type { IDefaultObject, IRequestParams } from "../webClientBase.ts";
+import { generateURL } from "../webClientBase.ts";
 
 /**
  * API 请求
  */
-export class WebClient extends WebClientBase {
+export class WebClient {
   private static axiosInstance: AxiosInstance;
   // private static onError: ((message: string) => void) | undefined;
   // private static errorIgnore: string[] = [];
@@ -17,7 +17,7 @@ export class WebClient extends WebClientBase {
     method: Method,
     req?: IRequestParams,
   ) {
-    const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
+    const _url = generateURL(url, req?.path as unknown as IDefaultObject);
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
 
     let _data: IDefaultObject | FormData | unknown = req?.body;

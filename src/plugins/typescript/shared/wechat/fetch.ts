@@ -1,6 +1,6 @@
 // 由 stc 生成
-import type { IDefaultObject, IRequestParams } from "../webClientBase";
-import { WebClientBase } from "../webClientBase";
+import type { IDefaultObject, IRequestParams } from "../webClientBase.ts";
+import { generateURL } from "../webClientBase.ts";
 
 type Method =
   | "OPTIONS"
@@ -12,7 +12,7 @@ type Method =
   | "TRACE"
   | "CONNECT";
 
-export class WebClient extends WebClientBase {
+export class WebClient {
   private static baseURL: string;
   private static onError: ((msg: string) => void) | undefined;
 
@@ -21,7 +21,7 @@ export class WebClient extends WebClientBase {
     method: Method,
     req?: IRequestParams,
   ) {
-    const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
+    const _url = generateURL(url, req?.path as unknown as IDefaultObject);
 
     // query 参数处理
     const _query: IDefaultObject<string> =
@@ -34,24 +34,22 @@ export class WebClient extends WebClientBase {
       [],
     );
 
-    const _data: IDefaultObject = req?.body ?? {};
-
     return new Promise<T>((resolve, reject) => {
       wx.request({
         url: `${this.baseURL}${_url}?${_params.join("&")}`,
         method,
-        data: _data,
-        header: req?.header,
+        data: (req?.body ?? {}) as IDefaultObject,
+        header: (req?.header ?? {}) as IDefaultObject,
         success: (res) => {
           const resData: any = res.data ?? {};
 
           if (!resData.success) {
-            this.onError?.(resData.message);
+            WebClient.onError?.(resData.message);
           }
           resolve(resData);
         },
         fail: (err) => {
-          this.onError?.(err.errMsg);
+          WebClient.onError?.(err.errMsg);
           reject(err);
         },
       });
@@ -65,8 +63,8 @@ export class WebClient extends WebClientBase {
   public static create(
     options: { baseURL: string; onError?: (msg: string) => void },
   ) {
-    this.baseURL = options.baseURL;
-    this.onError = options.onError;
+    WebClient.baseURL = options.baseURL;
+    WebClient.onError = options.onError;
   }
 }
 
