@@ -92,7 +92,7 @@ const checkUpdate = async () => {
         );
 
         Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
-        Deno.exit(0);
+        Deno.exit(1);
       }
 
       Logs.error(downloadApp.statusText);
