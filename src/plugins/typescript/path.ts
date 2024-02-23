@@ -98,9 +98,9 @@ const getInternalDefinition = (
   const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
     let _type = convertType(current.type, current.typeX ?? current.ref);
 
-    if (current.properties) {
+    if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-
+      console.log(_defName);
       _type = convertType(current.type, _defName);
 
       const _childProps = getInternalDefinition(
