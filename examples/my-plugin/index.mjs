@@ -1,8 +1,9 @@
-// import { start } from '@loongwoo/stc'
-const { start } = require('@loongwoo/stc')
-console.log(start)
+import { start } from '@loongwoo/stc'
+// const { start } = require('@loongwoo/stc')
+
 const myPlugin = {
   name: 'stc:myPlugin',
+  lang: "js",
   setup(options) {
     console.log(options)
   }

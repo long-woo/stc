@@ -19,6 +19,8 @@ import pkg from "./package.json" with { type: "json" };
 //   platform: "node",
 // });
 // console.log(res);
+await dnt.emptyDir("./npm_dist");
+
 await dnt.build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm_dist",
@@ -28,7 +30,7 @@ await dnt.build({
   typeCheck: false,
   test: false,
   scriptModule: false,
-  importMap: "deno.json",
+  importMap: "./import_map.json",
   package: pkg,
   postBuild() {
     Deno.copyFile("LICENSE", "./npm_dist/LICENSE");

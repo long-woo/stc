@@ -2,8 +2,9 @@
   "name": "@loongwoo/stc",
   "version": "1.2.4",
   "description": "Swagger 文档转换为接口文件",
-  "main": "script/mod.js",
+  "type": "module",
   "module": "esm/mod.js",
+  "types": "esm/mod.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/long-woo/stc.git"
@@ -33,12 +34,10 @@
   },
   "exports": {
     ".": {
-      "import": "./esm/mod.js",
-      "require": "./script/mod.js"
-    },
-    "./*": {
-      "import": "./esm/*",
-      "require": "./script/*"
+      "import": {
+        "types": "./esm/mod.d.ts",
+        "default": "./esm/mod.js"
+      }
     }
   }
 }
