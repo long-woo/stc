@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.1
 
       - name: Setup Deno
         uses: denoland/setup-deno@v1.1.4
@@ -23,7 +23,7 @@ jobs:
 
       # Setup .npmrc file to publish to npm
       - name: 发布到 npmjs
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'

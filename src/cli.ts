@@ -4,7 +4,7 @@ import ProgressBar from "x/progress@v1.3.8/mod.ts";
 import Logs from "./console.ts";
 import { ISwaggerOptions } from "./swagger.ts";
 import { createAppFile } from "./util.ts";
-import denoJson from "/deno.json" assert { type: "json" };
+import denoJson from "/deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -92,7 +92,7 @@ const checkUpdate = async () => {
         );
 
         Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
-        Deno.exit(0);
+        Deno.exit(1);
       }
 
       Logs.error(downloadApp.statusText);

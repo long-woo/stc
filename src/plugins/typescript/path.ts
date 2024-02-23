@@ -98,7 +98,7 @@ const getInternalDefinition = (
   const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
     let _type = convertType(current.type, current.typeX ?? current.ref);
 
-    if (current.properties) {
+    if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
 
       _type = convertType(current.type, _defName);
@@ -348,6 +348,7 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
     const _tag = item.tag;
+
     if (!_tag) {
       Logs.error(getT("$t(plugin.no_tag)", { url: item.url }));
       return;

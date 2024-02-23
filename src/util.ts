@@ -1,7 +1,7 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
 
-import denoJson from "../deno.json" assert { type: "json" };
+import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 
 interface ICopyFileOptions {
@@ -91,7 +91,10 @@ export const emptyDirectory = (dir: string) => emptyDir(dir);
  * @param ref - ref
  */
 export const getRefType = (ref: string) =>
-  ref.replace(/^#\/(definitions|components\/schemas)\//, "");
+  decodeURIComponent(ref).replace(
+    /^#\/(definitions|components\/schemas)\//,
+    "",
+  );
 
 /**
  * 转换为 typescript 类型

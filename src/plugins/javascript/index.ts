@@ -52,20 +52,36 @@ export const JavaScriptPlugin: IPlugin = {
     // };
   },
   async onTransform(def, action) {
+    const typeFileName = "_types";
     const _defContent = parserDefinition(def);
     const _actionData = parserPath(action);
     const _actionMapData = new Map<string, string>();
 
     for (const [key, content] of _actionData) {
+      // 处理导入文件相对路径，根据 key 中是否存在 `/`
+      const _keyPath = key.split("/");
+      // 移除一项
+      _keyPath.pop();
+      const _importPath = _keyPath.reduce((prev, _) => {
+        if (prev === "./") {
+          prev = "";
+        }
+
+        prev += "../";
+        return prev;
+      }, "./");
+
       const _import = content.import;
       const _apiImport = [
-        `import webClient from './shared/${pluginOptions.platform}/fetch'`,
+        `import webClient from '${_importPath}shared/${pluginOptions.platform}/fetch'`,
       ];
       const _apiContent: Array<string> = [];
 
       if (_import.length) {
         _apiImport.unshift(
-          `import type { ${_import.join(", ")} } from './_types'`,
+          `import type { ${
+            _import.join(", ")
+          } } from '${_importPath}${typeFileName}'`,
         );
       }
 
@@ -92,7 +108,7 @@ export const JavaScriptPlugin: IPlugin = {
 
     return {
       definition: {
-        filename: "_types.js",
+        filename: `${typeFileName}.js`,
         content: _defContentOutput,
       },
       action: _actionMapData,

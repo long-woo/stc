@@ -32,21 +32,37 @@ export const TypeScriptPlugin: IPlugin = {
    * @return {type} an object containing the definition content and action data
    */
   onTransform(def, action) {
+    const typeFileName = "_types";
     const defContent = parserDefinition(def);
     const pathData = parserPath(action);
 
     const actionData = new Map<string, string>();
 
     pathData.forEach((api, key) => {
+      // 处理导入文件相对路径，根据 key 中是否存在 `/`
+      const _keyPath = key.split("/");
+      // 移除一项
+      _keyPath.pop();
+      const _importPath = _keyPath.reduce((prev, _) => {
+        if (prev === "./") {
+          prev = "";
+        }
+
+        prev += "../";
+        return prev;
+      }, "./");
+
       const _import = api.import;
       const _apiImport = [
-        `import webClient from './shared/${pluginOptions.platform}/fetch'`,
+        `import webClient from '${_importPath}shared/${pluginOptions.platform}/fetch'`,
       ];
       const _apiContent: Array<string> = [];
 
       if (_import.length) {
         _apiImport.push(
-          `import type { ${_import.join(", ")} } from './_types'`,
+          `import type { ${
+            _import.join(", ")
+          } } from '${_importPath}${typeFileName}'`,
         );
       }
 
@@ -59,7 +75,7 @@ export const TypeScriptPlugin: IPlugin = {
 
     return {
       definition: {
-        filename: `_type.${pluginOptions.lang}`,
+        filename: `${typeFileName}.${pluginOptions.lang}`,
         content: defContent,
       },
       action: actionData,

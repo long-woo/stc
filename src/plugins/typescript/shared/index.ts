@@ -3,53 +3,42 @@ export const createBaseFile = () =>
   [key: string]: T;
 };
 
-export interface IRequestParams {
-  path: IDefaultObject<unknown>;
-  query: IDefaultObject<unknown>;
-  body: IDefaultObject<unknown>;
-  formData: IDefaultObject<unknown>;
-  header: IDefaultObject<unknown>;
-}
+/**
+ * 生成 URL
+ * @param url - 需要处理的 URL
+ * @param path - 路由参数
+ */
+export const generateURL = (url: string, path?: IDefaultObject) => {
+  const newURL = url.replace(
+    /[\\\{|:](\\w+)[\\\}]?/gi,
+    (_key: string, _value: string): string => {
+      return path ? (path[_value] as string) : "";
+    },
+  );
 
-export class WebClientBase {
-  /**
-   * 生成 URL
-   * @param url - 需要处理的 URL
-   * @param path - 路由参数
-   */
-  static generateURL(url: string, path?: IDefaultObject) {
-    // 替换路由参数
-    const newURL = url.replace(
-      /[\\\{|:](\\w+)[\\\}]?/gi,
-      (_key: string, _value: string): string => {
-        return path ? path[_value] as string : "";
-      },
-    );
-
-    return newURL;
-  }
-}`;
+  return newURL;
+};`;
 
 export const createAxiosFile = () =>
   `import type { AxiosDefaults, AxiosInstance, Method } from "axios";
 import axios from "axios";
-import type { IDefaultObject, IRequestParams } from "../webClientBase";
-import { WebClientBase } from "../webClientBase";
+import type { IDefaultObject } from "../webClientBase";
+import { generateURL } from "../webClientBase";
 
 /**
  * API 请求
  */
-export class WebClient extends WebClientBase {
+export class WebClient {
   private static axiosInstance: AxiosInstance;
-  // private static onError: ((message: string) => void) | undefined;
-  // private static errorIgnore: string[] = [];
+  private static onError: ((message: string) => void) | undefined;
+  private static errorIgnore: string[] = [];
 
   public static request<T>(
     url: string,
     method: Method,
-    req?: IRequestParams,
+    req?: IDefaultObject,
   ) {
-    const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
+    const _url = generateURL(url, req?.path as IDefaultObject);
     const _formData: IDefaultObject = req?.formData as IDefaultObject;
 
     let _data: IDefaultObject | FormData | unknown = req?.body;
@@ -65,7 +54,7 @@ export class WebClient extends WebClientBase {
       _data = formData;
     }
 
-    return this.axiosInstance.request<T, T>({
+    return WebClient.axiosInstance.request<T, T>({
       url: _url,
       method,
       data: _data,
@@ -81,34 +70,34 @@ export class WebClient extends WebClientBase {
    */
   public static createAxios(
     config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
-      // /**
-      //  * 错误回调函数
-      //  */
-      // error?: (message: string) => void;
-      // /**
-      //  * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
-      //  */
-      // errorIgnore?: string[];
+      /**
+       * 错误回调函数
+       */
+      error?: (message: string) => void;
+      /**
+       * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+       */
+      errorIgnore?: string[];
     },
   ) {
-    this.axiosInstance = axios.create({
+    WebClient.axiosInstance = axios.create({
       timeout: config.timeout ?? 5000,
       baseURL: config.baseURL,
       withCredentials: config.withCredentials ?? false,
     });
 
-    // this.onError = config.error;
-    // this.errorIgnore = config.errorIgnore ?? [];
+    WebClient.onError = config.error;
+    WebClient.errorIgnore = config.errorIgnore ?? [];
 
-    return this.axiosInstance;
+    return WebClient.axiosInstance;
   }
 }
 
 export default WebClient;`;
 
 export const createWechatFile = () =>
-  `import type { IDefaultObject, IRequestParams } from "../webClientBase";
-import { WebClientBase } from "../webClientBase";
+  `import type { IDefaultObject } from "../webClientBase";
+import { generateURL } from "../webClientBase";
 
 type Method =
   | "OPTIONS"
@@ -120,16 +109,16 @@ type Method =
   | "TRACE"
   | "CONNECT";
 
-export class WebClient extends WebClientBase {
+export class WebClient {
   private static baseURL: string;
   private static onError: ((msg: string) => void) | undefined;
 
   public static request<T>(
     url: string,
     method: Method,
-    req?: IRequestParams,
+    req?: IDefaultObject,
   ) {
-    const _url = this.generateURL(url, req?.path as unknown as IDefaultObject);
+    const _url = generateURL(url, req?.path as IDefaultObject);
 
     // query 参数处理
     const _query: IDefaultObject<string> =
@@ -142,24 +131,22 @@ export class WebClient extends WebClientBase {
       [],
     );
 
-    const _data: IDefaultObject = req?.body ?? {};
-
     return new Promise<T>((resolve, reject) => {
       wx.request({
-        url: \`\${this.baseURL}\${_url}?\${_params.join("&")}\`,
+        url: \`\${WebClient.baseURL}\${_url}?\${_params.join("&")}\`,
         method,
-        data: _data,
-        header: req?.header,
+        data: (req?.body ?? {}) as IDefaultObject,
+        header: (req?.header ?? {}) as IDefaultObject,
         success: (res) => {
           const resData: any = res.data ?? {};
 
           if (!resData.success) {
-            this.onError?.(resData.message);
+            WebClient.onError?.(resData.message);
           }
           resolve(resData);
         },
         fail: (err) => {
-          this.onError?.(err.errMsg);
+          WebClient.onError?.(err.errMsg);
           reject(err);
         },
       });
@@ -173,8 +160,8 @@ export class WebClient extends WebClientBase {
   public static create(
     options: { baseURL: string; onError?: (msg: string) => void },
   ) {
-    this.baseURL = options.baseURL;
-    this.onError = options.onError;
+    WebClient.baseURL = options.baseURL;
+    WebClient.onError = options.onError;
   }
 }
 

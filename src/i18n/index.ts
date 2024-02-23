@@ -1,7 +1,7 @@
 import i18next from "x/i18next@v23.4.1/index.js";
 
-import enTranslation from "./locales/en.json" assert { type: "json" };
-import zhCNTranslation from "./locales/zh-CN.json" assert { type: "json" };
+import enTranslation from "./locales/en.json" with { type: "json" };
+import zhCNTranslation from "./locales/zh-CN.json" with { type: "json" };
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 
