@@ -348,6 +348,7 @@ export const parserPath = (data: Map<string, IPathVirtualProperty>) => {
   Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
     const _tag = item.tag;
+
     if (!_tag) {
       Logs.error(getT("$t(plugin.no_tag)", { url: item.url }));
       return;

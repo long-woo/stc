@@ -39,7 +39,7 @@
     "option_version": "View version information."
   },
   "plugin": {
-    "name": "Load plugin: {{name}}",
+    "name": "Load plugin {{name}}",
     "noSetupMethod": "Plugin {{name}} has no setup method.",
     "allSetupDone": "The plugin is loaded. \n",
     "parserDef": "Parsing definition",

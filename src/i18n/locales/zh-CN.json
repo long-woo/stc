@@ -39,7 +39,7 @@
     "option_version": "显示版本信息。"
   },
   "plugin": {
-    "name": "加载插件: {{name}}",
+    "name": "加载插件 {{name}}",
     "noSetupMethod": "插件 {{name}} 没有 setup 方法。",
     "allSetupDone": "插件加载完成。\n",
     "parserDef": "解析定义",
