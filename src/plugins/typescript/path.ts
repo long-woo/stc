@@ -100,7 +100,7 @@ const getInternalDefinition = (
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-      console.log(_defName);
+
       _type = convertType(current.type, _defName);
 
       const _childProps = getInternalDefinition(
