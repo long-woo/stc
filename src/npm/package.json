@@ -30,5 +30,15 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "exports": {
+    ".": {
+      "import": "./esm/mod.js",
+      "require": "./script/mod.js"
+    },
+    "./*": {
+      "import": "./esm/*",
+      "require": "./script/*"
+    }
   }
 }

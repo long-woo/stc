@@ -1,5 +1,5 @@
 // import swc from "npm:@swc/core";
-import * as esbuild from "x/esbuild@v0.19.2/mod.js";
+import * as esbuild from "x/esbuild@v0.20.1/mod.js";
 
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type { IPlugin } from "../typeDeclaration.ts";
