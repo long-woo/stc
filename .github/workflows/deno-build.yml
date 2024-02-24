@@ -68,3 +68,8 @@ jobs:
             v ${{ env.TAG }}
           draft: false
           prerelease: false
+
+      # 发布到 JSR
+      - name: Publish to JSR
+        id: publish_jsr
+        run: deno publish
