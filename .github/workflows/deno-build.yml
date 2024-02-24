@@ -27,7 +27,7 @@ jobs:
     # 发布时需要提供写入权限
     permissions:
       contents: write
-      id-token: write
+      id-token: write # The OIDC ID token is used for authentication with JSR.
 
     steps:
       - name: Setup repo
@@ -71,6 +71,6 @@ jobs:
           prerelease: false
 
       # 发布到 JSR
-      - name: Publish to JSR
-        id: publish_jsr
-        run: deno publish
+      # - name: Publish to JSR
+      #   id: publish_jsr
+      #   run: deno publish
