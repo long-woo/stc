@@ -1,7 +1,7 @@
 {
   "name": "@loongwoo/stc",
   "version": "1.2.4",
-  "description": "Swagger 文档转换为接口文件",
+  "description": "Swagger、Apifox 文档转换为接口文件",
   "type": "module",
   "module": "esm/mod.js",
   "types": "esm/mod.d.ts",
@@ -35,6 +35,10 @@
   "exports": {
     ".": {
       "import": {
+        "types": "./esm/mod.d.ts",
+        "default": "./esm/mod.js"
+      },
+      "require": {
         "types": "./esm/mod.d.ts",
         "default": "./esm/mod.js"
       }

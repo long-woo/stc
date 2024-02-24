@@ -3,14 +3,14 @@ import { start } from '@loongwoo/stc'
 
 const myPlugin = {
   name: 'stc:myPlugin',
-  lang: "js",
+  lang: "cs",
   setup(options) {
     console.log(options)
   }
 }
 
 start({
-  lang: 'js',
+  lang: 'cs',
   outDir: './dist',
   url: 'https://petstore3.swagger.io/api/v3/openapi.json',
   plugins: [
