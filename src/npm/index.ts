@@ -1,4 +1,4 @@
-import * as dnt from "x/dnt@0.38.0/mod.ts";
+import * as dnt from "x/dnt@0.40.0/mod.ts";
 // import * as esbuild from "x/esbuild@v0.18.6/mod.js";
 import pkg from "./package.json" with { type: "json" };
 
@@ -19,6 +19,8 @@ import pkg from "./package.json" with { type: "json" };
 //   platform: "node",
 // });
 // console.log(res);
+await dnt.emptyDir("./npm_dist");
+
 await dnt.build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm_dist",
@@ -27,7 +29,8 @@ await dnt.build({
   },
   typeCheck: false,
   test: false,
-  importMap: "deno.json",
+  scriptModule: false,
+  importMap: "./import_map.json",
   package: pkg,
   postBuild() {
     Deno.copyFile("LICENSE", "./npm_dist/LICENSE");

@@ -1,4 +1,4 @@
-import { Args, parse, type ParseOptions } from "std/flags/mod.ts";
+import { Args, parseArgs, type ParseOptions } from "std/cli/parse_args.ts";
 import ProgressBar from "x/progress@v1.3.8/mod.ts";
 
 import Logs from "./console.ts";
@@ -182,7 +182,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
   };
 
   // 解析命令行参数和选项
-  const args: Args = parse(Deno.args, argsConfig);
+  const args: Args = parseArgs(Deno.args, argsConfig);
 
   // 检查更新
   await checkUpdate();

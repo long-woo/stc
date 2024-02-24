@@ -1,4 +1,5 @@
 # STC
+
 ![logo](resources/stc.svg)
 
 STC (Swagger Transform Code) is a tool for converting Swagger documents into code files.
@@ -13,14 +14,14 @@ feature:
 
 - Support for Swagger 2, 3 and Apifox.
 
-  支持 Swagger 2、3 和 支持 Apifox。
+  支持 Swagger 2、3 和 Apifox。
 
 - Support Axios, Wechat request library。
 
   支持 Axios、Wechat 请求库。
 
 - Support plug-in development.
-  
+
   支持插件开发。
 
 - Built-in transformation languages:
@@ -28,8 +29,13 @@ feature:
   内置转换语言：
 
   - TypeScript, almost equivalent to handwriting.
-  
+
     TypeScript，几乎等同于手写。
+
+  - JavaScript, from TypeScript to it.
+
+    JavaScript，从 TypeScript 转换而来。
+
   - ...
 
 ## Quick start 快速开始
@@ -43,7 +49,7 @@ feature:
   stc：Intel 系列的 Mac
 
 - stc-m: M-series Mac
-  
+
   stc-m：M 系列的 Mac
 
 - stc-linux：Linux
@@ -74,7 +80,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码:
 
 ```ts
-import webClient from './apis/shared/axios/fetch';
+import webClient from './apis/shared/axios/fetch'
 
 webClient.create({
   baseURL: 'https://api.xxx.com'
@@ -110,14 +116,14 @@ App<IAppOption>({
 
 ### Options 选项
 
-| 参数名 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| url | string |  | Swagger 文档地址，或者本地路径 |
-| outDir | string | stc_out | 输出目录 |
-| platform | string | axios | 平台，可选值：`axios`、`wechat` |
-| lang | string | ts | 语言，用于输出文件的后缀名 |
-| tag | number | | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名 |
-| filter | string[] | | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
+| 参数名   | 类型     | 默认值  | 说明                                                                                                       |
+| -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| url      | string   |         | Swagger 文档地址，或者本地路径                                                                             |
+| outDir   | string   | stc_out | 输出目录                                                                                                   |
+| platform | string   | axios   | 平台，可选值：`axios`、`wechat`                                                                            |
+| lang     | string   | ts      | 语言，用于输出文件的后缀名                                                                                 |
+| tag      | number   |         | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名                                                      |
+| filter   | string[] |         | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
 
 ## Plug-in development 插件开发
 
@@ -135,20 +141,24 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.2.1/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.2.4/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
-  name: "stc:MyPlugin",
+  name: 'stc:MyPlugin',
   lang: 'ts',
   setup(options) {
     console.log(options)
   },
   onTransform(def, action) {
     // 转换 definition
-    const defContent: string = parserDefinition( def /* 这里的 def 是 Definition 对象 */)
+    const defContent: string = parserDefinition(
+      def /* 这里的 def 是 Definition 对象 */
+    )
     // 转换 action
-    const actionContent: Map<string, string> = parserAction(action /* 这里的 action 是 Action 对象 */)
+    const actionContent: Map<string, string> = parserAction(
+      action /* 这里的 action 是 Action 对象 */
+    )
     // 返回转换后的内容
     return {
       definition: defContent,
@@ -178,16 +188,20 @@ import { start } from '@loongwoo/stc'
 
 ```ts
 export const myPlugin: IPlugin = {
-  name: "stc:MyPlugin",
+  name: 'stc:MyPlugin',
   lang: 'ts',
   setup(options) {
     console.log(options)
   },
   onTransform(def, action) {
     // 转换 definition
-    const defContent: string = parserDefinition(def /* 这里的 def 是 Definition 对象 */)
+    const defContent: string = parserDefinition(
+      def /* 这里的 def 是 Definition 对象 */
+    )
     // 转换 action
-    const actionContent: Map<string, string> = parserAction(action /* 这里的 action 是 Action 对象 */)
+    const actionContent: Map<string, string> = parserAction(
+      action /* 这里的 action 是 Action 对象 */
+    )
     // 返回转换后的内容
     return {
       definition: defContent,

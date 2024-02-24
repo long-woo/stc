@@ -1,7 +1,7 @@
 {
   "name": "my-plugin",
   "scripts": {
-    "dev": "node index.js"
+    "dev": "node index.mjs"
   },
   "devDependencies": {
     "@loongwoo/stc": "file:../../npm_dist"
