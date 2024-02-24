@@ -27,6 +27,7 @@ jobs:
     # 发布时需要提供写入权限
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - name: Setup repo
