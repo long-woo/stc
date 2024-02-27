@@ -6,25 +6,44 @@
     "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --outDir=out",
     "version": "echo '1.3.0' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
-    "build:mac": "deno compile --output release/stc src/main.ts -A --target x86_64-apple-darwin",
-    "build:mac-m": "deno compile --output release/stc-m src/main.ts -A --target aarch64-apple-darwin",
-    "build:win": "deno compile --output release/stc-win src/main.ts -A --target x86_64-pc-windows-msvc",
-    "build:linux": "deno compile --output release/stc-linux src/main.ts -A --target x86_64-unknown-linux-gnu",
+    "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
+    "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",
+    "build:win": "deno compile -A --target x86_64-pc-windows-msvc --output release/stc-win src/main.ts",
+    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts",
     "esm:add": "deno run -A https://esm.sh/v130 add",
     "esm:update": "deno run -A https://esm.sh/v130 update",
     "esm:remove": "deno run -A https://esm.sh/v130 remove"
   },
   "lint": {
-    "include": ["src/", "test/"],
-    "exclude": ["**/out/**/*", "**/shared/**/*", "dist"]
+    "include": [
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/out/**/*",
+      "**/shared/**/*",
+      "dist"
+    ]
   },
   "fmt": {
-    "include": ["src/", "test/"],
-    "exclude": ["out/**/*", "dist", "**/npm/package.json"]
+    "include": [
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "out/**/*",
+      "dist",
+      "**/npm/package.json"
+    ]
   },
   "test": {
-    "include": ["test/"],
-    "exclude": ["out", "dist"]
+    "include": [
+      "test/"
+    ],
+    "exclude": [
+      "out",
+      "dist"
+    ]
   },
   "importMap": "import_map.json"
 }
