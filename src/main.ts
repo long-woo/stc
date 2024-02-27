@@ -7,3 +7,5 @@ if (import.meta.main) {
   // 启动
   start(options);
 }
+
+export { start };
