@@ -32,8 +32,6 @@ const esTransform = async (code: string) => {
     format: "esm",
   });
 
-  esbuild.stop();
-
   return result.code;
 };
 

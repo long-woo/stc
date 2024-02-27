@@ -1,5 +1,5 @@
 import { Args, parseArgs, type ParseOptions } from "std/cli/parse_args.ts";
-import ProgressBar from "x/progress@v1.3.8/mod.ts";
+import ProgressBar from "x/progress@v1.4.5/mod.ts";
 
 import Logs from "./console.ts";
 import { ISwaggerOptions } from "./swagger.ts";

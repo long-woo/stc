@@ -19,11 +19,18 @@ import pkg from "./package.json" with { type: "json" };
 //   platform: "node",
 // });
 // console.log(res);
-await dnt.emptyDir("./npm_dist");
+
+const OUTDIR = "npm_dist";
+
+await dnt.emptyDir(`./${OUTDIR}`);
 
 await dnt.build({
-  entryPoints: ["./mod.ts"],
-  outDir: "./npm_dist",
+  entryPoints: [{
+    kind: "bin",
+    name: "stc",
+    path: "./src/main.ts",
+  }, "./mod.ts"],
+  outDir: `./${OUTDIR}`,
   shims: {
     deno: true,
   },
@@ -33,7 +40,7 @@ await dnt.build({
   importMap: "./import_map.json",
   package: pkg,
   postBuild() {
-    Deno.copyFile("LICENSE", "./npm_dist/LICENSE");
-    Deno.copyFile("README.md", "./npm_dist/README.md");
+    Deno.copyFile("LICENSE", `./${OUTDIR}/LICENSE`);
+    Deno.copyFile("README.md", `./${OUTDIR}/README.md`);
   },
 });
