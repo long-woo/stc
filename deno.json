@@ -1,10 +1,10 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "exports": "./mod.ts",
   "tasks": {
     "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --outDir=out",
-    "version": "echo '1.3.0' > release/version",
+    "version": "echo '1.4.0' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
     "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",
@@ -15,35 +15,16 @@
     "esm:remove": "deno run -A https://esm.sh/v130 remove"
   },
   "lint": {
-    "include": [
-      "src/",
-      "test/"
-    ],
-    "exclude": [
-      "**/out/**/*",
-      "**/shared/**/*",
-      "dist"
-    ]
+    "include": ["src/", "test/"],
+    "exclude": ["**/out/**/*", "**/shared/**/*", "dist"]
   },
   "fmt": {
-    "include": [
-      "src/",
-      "test/"
-    ],
-    "exclude": [
-      "out/**/*",
-      "dist",
-      "**/npm/package.json"
-    ]
+    "include": ["src/", "test/"],
+    "exclude": ["out/**/*", "dist", "**/npm/package.json"]
   },
   "test": {
-    "include": [
-      "test/"
-    ],
-    "exclude": [
-      "out",
-      "dist"
-    ]
+    "include": ["test/"],
+    "exclude": ["out", "dist"]
   },
   "importMap": "import_map.json"
 }
