@@ -29,7 +29,7 @@ await dnt.build({
     kind: "bin",
     name: "stc",
     path: "./src/main.ts",
-  }],
+  }, "./mod.ts"],
   outDir: `./${OUTDIR}`,
   shims: {
     deno: true,
