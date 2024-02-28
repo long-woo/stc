@@ -9,6 +9,7 @@ export interface IRequestParams {
   body?: IDefaultObject;
   formData?: IDefaultObject;
   header?: IDefaultObject;
+  timeout?: number;
 }
 
 /**
