@@ -1,6 +1,6 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "OpenAPI(Swagger)、Apifox 文档转换为接口文件",
   "type": "module",
   "module": "esm/mod.js",

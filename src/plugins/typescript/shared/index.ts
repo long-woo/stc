@@ -48,7 +48,7 @@ export class WebClient {
       const formData = new FormData();
 
       Object.keys(_formData).forEach((key) => {
-        formData.append(key, _formData[key]);
+        formData.append(key, _formData[key] as string | Blob);
       });
 
       _data = formData;
@@ -60,6 +60,7 @@ export class WebClient {
       data: _data,
       params: req?.query,
       headers: req?.header,
+      timeout: req?.timeout
     });
   }
 

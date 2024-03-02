@@ -9,8 +9,8 @@ import { generateURL } from "../webClientBase.ts";
  */
 export class WebClient {
   private static axiosInstance: AxiosInstance;
-  // private static onError: ((message: string) => void) | undefined;
-  // private static errorIgnore: string[] = [];
+  private static onError: ((message: string) => void) | undefined;
+  private static errorIgnore: string[] = [];
 
   public static request<T>(
     url: string,
@@ -27,7 +27,7 @@ export class WebClient {
       const formData = new FormData();
 
       Object.keys(_formData).forEach((key) => {
-        formData.append(key, _formData[key]);
+        formData.append(key, _formData[key] as string | Blob);
       });
 
       _data = formData;
@@ -39,6 +39,7 @@ export class WebClient {
       data: _data,
       params: req?.query,
       headers: req?.header,
+      timeout: req?.timeout,
     });
   }
 
@@ -49,14 +50,14 @@ export class WebClient {
    */
   public static createAxios(
     config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
-      // /**
-      //  * 错误回调函数
-      //  */
-      // error?: (message: string) => void;
-      // /**
-      //  * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
-      //  */
-      // errorIgnore?: string[];
+      /**
+       * 错误回调函数
+       */
+      error?: (message: string) => void;
+      /**
+       * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+       */
+      errorIgnore?: string[];
     },
   ) {
     this.axiosInstance = axios.create({
@@ -65,8 +66,8 @@ export class WebClient {
       withCredentials: config.withCredentials ?? false,
     });
 
-    // this.onError = config.error;
-    // this.errorIgnore = config.errorIgnore ?? [];
+    this.onError = config.error;
+    this.errorIgnore = config.errorIgnore ?? [];
 
     return this.axiosInstance;
   }
