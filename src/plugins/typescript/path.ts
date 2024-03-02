@@ -166,6 +166,11 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         prev.import.push(item.ref);
       }
 
+      // 找出第一个可选参数的位置
+      const _optionalIndex = prev.defMap?.findIndex((_d) =>
+        _d.includes("?:")
+      ) ?? -1;
+      console.log("optionalIndex", _optionalIndex);
       // 处理内部定义
       if (_multiParam || item.properties?.length) {
         // properties 存在时直接定义。
@@ -189,12 +194,21 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         }
 
         if (index === 0) {
-          // 接口参数注释
-          prev.commit?.push(
-            `* @param {${_defName}} ${current} - ${_defName}`,
-          );
-          // 接口形参
-          prev.defMap?.push(`${current}: ${_defName}`);
+          const _paramCommit =
+            `* @param {${_defName}} ${current} - ${_defName}`;
+          const _paramDef = `${current}: ${_defName}`;
+
+          if (_optionalIndex > -1) {
+            // 接口参数注释
+            prev.commit?.splice(_optionalIndex, 0, _paramCommit);
+            // 接口形参
+            prev.defMap?.splice(_optionalIndex, 0, _paramDef);
+          } else {
+            // 接口参数注释
+            prev.commit?.push(_paramCommit);
+            // 接口形参
+            prev.defMap?.push(_paramDef);
+          }
           // 接口形参使用
           prev.refMap &&
             (prev.refMap[current as keyof IPathVirtualParameter] = current);
@@ -203,10 +217,6 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         const _defMapCommit = `* @param {${_type}} ${
           item.required ? item.name : `[${item.name}]`
         } - ${item.description || item.name}`;
-        // 找出第一个可选参数的位置
-        const _optionalIndex = prev.defMap?.findIndex((_d) =>
-          _d.includes("?:")
-        ) ?? -1;
 
         if (_optionalIndex > -1) {
           // 接口参数注释
