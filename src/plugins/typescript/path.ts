@@ -170,7 +170,7 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       const _optionalIndex = prev.defMap?.findIndex((_d) =>
         _d.includes("?:")
       ) ?? -1;
-      console.log("optionalIndex", _optionalIndex);
+
       // 处理内部定义
       if (_multiParam || item.properties?.length) {
         // properties 存在时直接定义。

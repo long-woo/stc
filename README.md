@@ -34,7 +34,7 @@ feature:
 
   - JavaScript, from TypeScript to it.
 
-    JavaScript，从 TypeScript 转换而来。
+    JavaScript，由 TypeScript 转换而来。
 
   - ...
 
@@ -141,7 +141,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.4.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.4.1/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
