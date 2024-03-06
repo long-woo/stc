@@ -1,4 +1,4 @@
-import { Args, parseArgs, type ParseOptions } from "std/cli/parse_args.ts";
+import { Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
 import ProgressBar from "x/progress@v1.4.5/mod.ts";
 
 import Logs from "./console.ts";
@@ -27,14 +27,36 @@ const checkUpdate = async () => {
     const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
 
     if (version < _lastVersion) {
+      if (typeof confirm === "undefined") {
+        // 提示用户是否更新
+        console.log("\n");
+        Logs.info(getT("$t(cli.updatePrompt)", {
+          version: denoJson.version,
+          latestVersion,
+        }));
+        console.log("\n");
+        return;
+      }
+
+      // 询问是否更新
+      const _needUpdate = confirm(`${
+        getT("$t(cli.updatePrompt)", {
+          version: denoJson.version,
+          latestVersion,
+        })
+      }${getT("$t(cli.updateConfirm)")}`);
+
+      if (!_needUpdate) return;
+
       Logs.info(
         `${
-          getT("$t(cli.newVersion)", {
+          getT("$t(cli.updating)", {
             version: denoJson.version,
             latestVersion,
           })
         }...`,
       );
+
       const dir = Deno.cwd();
       const systemInfo = Deno.build;
 
@@ -92,7 +114,7 @@ const checkUpdate = async () => {
         );
 
         Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
-        Deno.exit(1);
+        Deno.exit(0);
       }
 
       Logs.error(downloadApp.statusText);
@@ -141,7 +163,7 @@ ${getT("$t(cli.option)")}
 
 ${getT("$t(cli.example)")}
   stc -o ./stc_out --url http://petstore.swagger.io/v2/swagger.json
-  stc -o ./stc_out -p axios -l ts --url http://petstore.swagger.io/v2/swagger.json
+  stc -o ./stc_out -p axios -l ts --url https://petstore3.swagger.io/api/v3/openapi.json
 `);
   Deno.exit(0);
 };

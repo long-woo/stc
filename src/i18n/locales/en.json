@@ -21,7 +21,9 @@
   },
   "cli": {
     "checkUpdate": "Check for updates",
-    "newVersion": "New version found: {{version}} → {{latestVersion}}, updating",
+    "updatePrompt": "New version found: {{version}} → {{latestVersion}}",
+    "updateConfirm": ", update?",
+    "updating": "updating",
     "updateDone": "The update is complete, version: v{{version}}, please run again.",
     "latestVersion": "Already the latest version.",
     "unknownOption": "Unknown option: {{arg}}.",

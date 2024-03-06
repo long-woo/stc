@@ -1,4 +1,4 @@
-import { assertEquals } from "std/testing/asserts.ts";
+import { assertEquals } from "std/assert/mod.ts";
 
 Deno.test("测试-输出版本信息", async () => {
   const command = new Deno.Command("deno", {
