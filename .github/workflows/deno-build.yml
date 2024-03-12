@@ -58,7 +58,7 @@ jobs:
       # 发布到 Release
       - name: Publish to Release
         id: publish_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           TAG: ${{ env.TAG }}
         with:
