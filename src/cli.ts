@@ -159,6 +159,8 @@ ${getT("$t(cli.option)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
+  --con              ${getT("$t(cli.option_con)")}
+  --add              ${getT("$t(cli.option_addMethod)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -182,6 +184,8 @@ export const main = async (): Promise<ISwaggerOptions> => {
       "lang",
       "tag",
       "filter",
+      "con",
+      "addMethod",
     ],
     alias: {
       h: "help",
@@ -190,6 +194,8 @@ export const main = async (): Promise<ISwaggerOptions> => {
       l: "lang",
       v: "version",
       f: "filter",
+      c: "con",
+      a: "addMethod",
     },
     collect: ["filter"],
     default: {
@@ -205,7 +211,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 解析命令行参数和选项
   const args: Args = parseArgs(Deno.args, argsConfig);
-
+  console.log(args)
   // 检查更新
   await checkUpdate();
 
@@ -238,6 +244,10 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const platform = args.platform ?? "axios";
   // 语言，用于输出文件的后缀名。默认：ts
   const lang = args.lang ?? "ts";
+  // 动态路径方法的连接词，默认值为 by
+  const con = args.con ?? "by";
+  // 方法名是否添加请求方法，默认值为 true
+  const addMethod = args.addMethod !== "false";
 
   return {
     url: args.url,
@@ -246,5 +256,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
     lang,
     tag: args.tag,
     filter: args.filter,
+    con,
+    addMethod
   };
 };

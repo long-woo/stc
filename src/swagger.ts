@@ -324,6 +324,14 @@ export interface ISwaggerOptions {
    * 从接口指定标签，默认使用 tags 的第一个用于文件名
    */
   readonly tag?: number;
+  /**
+   * 动态路径方法的连接词，默认值为 by
+   */
+  readonly con?: string;
+  /**
+   * 方法名是否添加请求方法，默认值为 true
+   */
+  readonly addMethod?: boolean;
 }
 
 export interface IDefinitionNameMapping {

@@ -14,6 +14,13 @@ interface ICopyFileOptions {
 }
 
 /**
+ * 大驼峰命名
+ * @param str - 字符
+ */
+export const upperCamelCase =  (str: string) =>
+  `_${str}`.replace(/[\.\_-](\w)/g, (_, s: string) => s.toUpperCase());
+
+/**
  * 首字母小写
  * @param str - 字符
  */
