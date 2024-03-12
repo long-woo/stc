@@ -159,8 +159,8 @@ ${getT("$t(cli.option)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
-  --con              ${getT("$t(cli.option_con)")}
-  --add              ${getT("$t(cli.option_addMethod)")}
+  -c, --con          ${getT("$t(cli.option_con)")}
+  -a, --addMethod    ${getT("$t(cli.option_addMethod)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -211,7 +211,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 解析命令行参数和选项
   const args: Args = parseArgs(Deno.args, argsConfig);
-  console.log(args)
   // 检查更新
   await checkUpdate();
 
