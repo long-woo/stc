@@ -14,17 +14,22 @@ import { getT } from "./i18n/index.ts";
 /**
  * 从 URL 获取方法名称
  * @param url - 接口地址
+ * @param space  - 连接字符
  * @returns
  */
-const getMethodName = (url: string) => {
+const getMethodName = (url: string, space = "by") => {
   const _url = url.split("/");
-  let _name = _url[_url.length - 1];
+  let _name = _url.pop() as string
 
-  if (_name.includes("{")) {
-    _name = _url[_url.length - 2];
+  const regExp = /^{(\w+)}$/
+  if (regExp.test(_name)) {
+    // 动态路径添加连接字符
+    _name = _url.pop() + `_${space}_` + _name.match(regExp)![1]
+    _name = _name.toLowerCase()
   }
 
-  return _name;
+  // _-命名转换未首字符大写风格驼峰命名
+  return upperCase(_name.replace(/[\_-](\w)/g, (_, s: string) => s.toUpperCase()))
 };
 
 /**
