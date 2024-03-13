@@ -7,24 +7,29 @@ import {
   ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { getRefType, hasKey, lowerCase, upperCase } from "./util.ts";
+import { getRefType, hasKey, lowerCase, upperCamelCase, upperCase } from './util.ts'
 import Logs from "./console.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
  * 从 URL 获取方法名称
  * @param url - 接口地址
+ * @param space  - 连接字符
  * @returns
  */
-const getMethodName = (url: string) => {
+const getMethodName = (url: string, space = "by") => {
   const _url = url.split("/");
-  let _name = _url[_url.length - 1];
+  let _name = _url.pop() as string
 
-  if (_name.includes("{")) {
-    _name = _url[_url.length - 2];
+  const regExp = /^{(\w+)}$/
+  if (regExp.test(_name)) {
+    // 动态路径添加连接字符
+    _name = _url.pop() + `_${space}_` + _name.match(regExp)![1]
+    _name = _name.toLowerCase()
   }
 
-  return _name;
+  // _-命名转换未首字符大写风格驼峰命名
+  return upperCamelCase(_name)
 };
 
 /**
@@ -230,15 +235,15 @@ export const getApiPath = (
     Object.keys(methods).forEach((method) => {
       const currentMethod = methods[method];
       // 方法名
-      let name = currentMethod.operationId ?? getMethodName(url);
+      let name = currentMethod.operationId ?? getMethodName(url, options?.con);
       if (!name) {
         Logs.error(getT("$t(path.notName)", { url, method }));
         return;
       }
 
-      // 方法名中不含请求方式的标识，则添加请求方式标识
-      if (!name.toLowerCase().includes(method.toLowerCase())) {
-        name = `${name}${upperCase(method)}`;
+      // 判断添加请求方式标识
+      if (options?.addMethod) {
+        name = `${upperCase(method)}${name}`;
       }
 
       // 接口对象
