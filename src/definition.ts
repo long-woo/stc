@@ -5,7 +5,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { getObjectKeyByValue, getRefType, upperCase } from "./util.ts";
+import { camelCase, getObjectKeyByValue, getRefType, hasKey } from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -60,6 +60,7 @@ const getDefinitionNameMapping = (
 
 /**
  * 原始定义对象转换为虚拟定义对象
+ *
  * @param defItem - 定义名的属性
  * @param defMapping - 定义
  * @returns
@@ -94,10 +95,10 @@ const getVirtualProperties = (
 
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
       const type = enumOption.length
-        ? defMapping.name + upperCase(current)
+        ? camelCase(`${defMapping.name}_${current}`, true)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
-      prev.push({
+      const _defItem: IDefinitionVirtualProperty = {
         name: current,
         type,
         description: prop.description ?? "",
@@ -105,7 +106,22 @@ const getVirtualProperties = (
         enumOption,
         ref: refName,
         format: prop.format ?? "",
-      });
+      };
+      console.log("==========================");
+      console.log(defMapping.name);
+      // 处理当前属性的子属性
+      if (hasKey(prop as unknown as Record<string, unknown>, "properties")) {
+        const _childDef = getDefinitionNameMapping(current, true);
+        console.log(current, _childDef.name);
+        const _childProps = getVirtualProperties(
+          prop as ISwaggerResultDefinition,
+          _childDef,
+        );
+
+        _defItem.properties = _childProps;
+      }
+
+      prev.push(_defItem);
       return prev;
     },
     [],
@@ -136,6 +152,7 @@ export const getDefinition = (
     if (defKeys.includes(name)) return;
 
     const props = getVirtualProperties(definitions[key], def);
+
     defMap.set(name, props);
   });
 

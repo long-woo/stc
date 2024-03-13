@@ -39,7 +39,7 @@
     "option_filter": "Filter interfaces, and the interfaces that meet the filter conditions will be generated.",
     "option_tag": "Specify tags from the interface url for filenames, the first one of tags is read by default.",
     "option_version": "View version information.",
-    "option_con": "Conjunctions for dynamic path methods.",
+    "option_conjunction": "Conjunction of method name.",
     "option_addMethod": "Specifies whether to add the request method to the method name."
   },
   "plugin": {
