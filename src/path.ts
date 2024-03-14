@@ -18,7 +18,8 @@ import { getT } from "./i18n/index.ts";
  * @returns
  */
 const getMethodName = (url: string, space = "by") => {
-  const _url = url.split("/");
+  // 排除URL路径中有Query参数
+  const _url = url.split("?")[0]?.split("/");
   let _name = _url.pop() as string
 
   const regExp = /^{(\w+)}$/
