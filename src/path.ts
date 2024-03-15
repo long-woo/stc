@@ -19,7 +19,12 @@ import { getT } from "./i18n/index.ts";
  */
 const getMethodName = (url: string, space = "by") => {
   const _url = url.split("/");
-  let _name = _url.pop() as string
+  // 获取URL路径Query方法名称（取第一个Params）
+  let _query = url.split("?")?.[1]?.split("&")
+    .shift()?.replace(/[,=]/g, "_");
+  // 添加_分割标记
+  _query = _query ? `_${_query}` : "";
+  let _name = _url.pop()?.split("?")[0] as string
 
   const regExp = /^{(\w+)}$/
   if (regExp.test(_name)) {
@@ -29,7 +34,7 @@ const getMethodName = (url: string, space = "by") => {
   }
 
   // _-命名转换未首字符大写风格驼峰命名
-  return upperCamelCase(_name)
+  return upperCamelCase(_name + _query)
 };
 
 /**
