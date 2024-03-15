@@ -140,7 +140,8 @@ const getPathVirtualProperty = (
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
     Object.keys(_requestBody.content).forEach((_key) => {
-      if (["application/json", "application/octet-stream"].includes(_key)) {
+      // 此处无需判断类型，此判断会导致非包含类型无法正常生成body参数
+      // if (["application/json", "application/octet-stream"].includes(_key)) {
         const _bodyContent =
           _requestBody.content[_key as keyof ISwaggerContent];
         const _bodyContentSchema = _bodyContent?.schema;
@@ -167,7 +168,7 @@ const getPathVirtualProperty = (
         };
 
         parameters.body.push(_body);
-      }
+      // }
     });
   }
 
