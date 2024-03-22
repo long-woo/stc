@@ -1,0 +1,6745 @@
+/* 由 stc v1.4.2 生成
+ *
+ * https://github.com/long-woo/stc
+ * 2024-03-22 14:41:35
+ */
+
+[
+  [
+    "WpSiteHealthTest",
+    [
+      {
+        "name": "test",
+        "type": "string",
+        "description": "正在运行的测试的名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "描述测试的标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "WpSiteHealthTestStatus",
+        "description": "测试的状态。",
+        "required": false,
+        "enumOption": [
+          "good",
+          "recommended",
+          "critical"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "badge",
+        "type": "object",
+        "description": "此测试所在的分类。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "label",
+            "type": "string",
+            "description": "",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "color",
+            "type": "BadgeColor",
+            "description": "",
+            "required": false,
+            "enumOption": [
+              "blue",
+              "orange",
+              "red",
+              "green",
+              "purple",
+              "gray"
+            ],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "更具描述性的测试目的说明，及测试对用户很重要的原因。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "actions",
+        "type": "string",
+        "description": "HTML包含了将用户引导至可以解决问题地方的操作。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "MenuLocation",
+    [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "菜单位置的名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "菜单位置的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "menu",
+        "type": "integer",
+        "description": "分配菜单的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "BlockPatternCategory",
+    [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "分类名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "采用人类可读格式显示的分类标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "采用人类可读的格式的分类描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "BlockPattern",
+    [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "区块样板名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "区块样板标题，人类可读的格式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "区块样板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "区块样板详细描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "viewport_width",
+        "type": "number",
+        "description": "为区块插入器预览准备的区块样板视图宽度。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "inserter",
+        "type": "boolean",
+        "description": "决定该样板在插入器中是否可见。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "categories",
+        "type": "array",
+        "description": "区块样板的分类别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "keywords",
+        "type": "array",
+        "description": "区块样板关键字。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "block_types",
+        "type": "array",
+        "description": "区块样板搭配使用的区块类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "post_types",
+        "type": "array",
+        "description": "该样板被限制于与此组文章类型一起使用。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "template_types",
+        "type": "array",
+        "description": "该样板适合的模板类型数组。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "PatternDirectoryItem",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "区块样板的 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "区块样板标题，人类可读的格式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "区块样板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "categories",
+        "type": "array",
+        "description": "区块样板的分类别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "keywords",
+        "type": "array",
+        "description": "区块样板关键字。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "区块样板的描述；",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "viewport_width",
+        "type": "integer",
+        "description": "预览区块样板时视口的首选宽度（以像素为单位）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "block_types",
+        "type": "array",
+        "description": "可使用此样板的区块类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "BlockDirectoryItem",
+    [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "以命名空间/区块名称的格式来命名区块。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "以人类可读的格式撰写区块标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "以人类可读的格式撰写该区块的简短描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "description": "区块别名",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rating",
+        "type": "number",
+        "description": "区块的星级等级。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rating_count",
+        "type": "integer",
+        "description": "评分数。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "active_installs",
+        "type": "integer",
+        "description": "启用此区块的站点数量。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author_block_rating",
+        "type": "number",
+        "description": "同一作者发布的区块的平均评级。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author_block_count",
+        "type": "integer",
+        "description": "同一作者发布的区块数。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "description": "区块作者的WordPress.org用户名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "description": "区块图标",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "last_updated",
+        "type": "string",
+        "description": "区块上次更新的日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "humanized_updated",
+        "type": "string",
+        "description": "以模糊的人类可读格式撰写该区块最后一次更新的日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Widget",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "小工具的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "id_base",
+        "type": "string",
+        "description": "小工具的类型。对应于 widget-types 端点的 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "sidebar",
+        "type": "string",
+        "description": "小工具所属的侧边栏。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rendered",
+        "type": "string",
+        "description": "小工具的HTML表示形式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rendered_form",
+        "type": "string",
+        "description": "小工具管理表单的HTML表示形式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "instance",
+        "type": "object",
+        "description": "小工具的实例设置（如果支持）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "encoded",
+            "type": "string",
+            "description": "实例设置的 Base64 编码表示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "hash",
+            "type": "string",
+            "description": "实例设置的加密哈希值。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "raw",
+            "type": "object",
+            "description": "未编码的实例设置（如果支持）。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": []
+          }
+        ]
+      },
+      {
+        "name": "form_data",
+        "type": "string",
+        "description": "来自小工具管理表单的 URL 编码表单数据。用于更新不支持实例的小工具（指写）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WidgetType",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "标识小工具类型的唯一别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "辨别小工具类型的可读名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "小工具的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "is_multi",
+        "type": "boolean",
+        "description": "小工具是否支持多个实例",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "classname",
+        "type": "string",
+        "description": "类名",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Sidebar",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "边栏的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "标识侧栏的唯一名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "侧边栏的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "额外的CSS类，可分配给小工具界面的侧栏。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "before_widget",
+        "type": "string",
+        "description": "分配给此侧栏时附加到每个小工具HTML输出的HTML内容。默认值是打开列表项元素。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "after_widget",
+        "type": "string",
+        "description": "分配给此侧栏时附加到每个小工具HTML输出的HTML内容。默认值是关闭列表项元素。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "before_title",
+        "type": "string",
+        "description": "显示时附加到边栏标题前的HTML内容。默认是打开h2元素。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "after_title",
+        "type": "string",
+        "description": "显示时附加到边栏标题后的HTML内容。默认是关闭h2元素。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "SidebarStatus",
+        "description": "侧边栏的状态。",
+        "required": false,
+        "enumOption": [
+          "active",
+          "inactive"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "widgets",
+        "type": "array",
+        "description": "嵌套小工具。",
+        "required": false,
+        "enumOption": [],
+        "ref": [
+          "object",
+          "string"
+        ],
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Plugin",
+    [
+      {
+        "name": "plugin",
+        "type": "string",
+        "description": "插件文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "PluginStatus",
+        "description": "插件启用状态。",
+        "required": false,
+        "enumOption": [
+          "inactive",
+          "active"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "插件名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "plugin_uri",
+        "type": "string",
+        "description": "插件的网站地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "author",
+        "type": "object",
+        "description": "插件作者。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "author_uri",
+        "type": "string",
+        "description": "插件作者的网站地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "description",
+        "type": "object",
+        "description": "插件说明。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "原始插件说明。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "插件说明已格式化以供显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "description": "插件版本号。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "network_only",
+        "type": "boolean",
+        "description": "插件是否只能在站点网络中启用。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "requires_wp",
+        "type": "string",
+        "description": "最低要求的WordPress版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "requires_php",
+        "type": "string",
+        "description": "最低要求的PHP版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "textdomain",
+        "type": "string",
+        "description": "插件的文本域。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Theme",
+    [
+      {
+        "name": "stylesheet",
+        "type": "string",
+        "description": "主题的样式表。这是主题的唯一标识。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "主题的模板。如果这是一个子主题，则其指代父主题；否则，其与此主题的样式表相同。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author",
+        "type": "object",
+        "description": "主题作者。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "主题作者名称，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题作者的HTML信息，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "author_uri",
+        "type": "object",
+        "description": "主题作者的网站。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "主题作者的网站，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题作者的网站，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "object",
+        "description": "主题的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "主题描述，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题描述，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "name",
+        "type": "object",
+        "description": "主题名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "主题名称，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题名称，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "requires_php",
+        "type": "string",
+        "description": "主题工作所需的最低PHP版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "requires_wp",
+        "type": "string",
+        "description": "主题工作所需的最低WordPress版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "screenshot",
+        "type": "string",
+        "description": "主题的截屏URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "tags",
+        "type": "object",
+        "description": "描述主题样式和功能的标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "array",
+            "description": "主题标签，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "string",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题标签，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "textdomain",
+        "type": "string",
+        "description": "主题的文本域。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "theme_supports",
+        "type": "object",
+        "description": "此主题支持的功能。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "align-wide",
+            "type": "boolean",
+            "description": "Whether theme opts in to wide alignment CSS class.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "automatic-feed-links",
+            "type": "boolean",
+            "description": "Whether posts and comments RSS feed links are added to head.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block-templates",
+            "type": "boolean",
+            "description": "Whether a theme uses block-based templates.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block-template-parts",
+            "type": "boolean",
+            "description": "Whether a theme uses block-based template parts.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "custom-background",
+            "type": [
+              "boolean",
+              "object"
+            ],
+            "description": "Custom background if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": [
+              {
+                "name": "default-image",
+                "type": "string",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": "uri"
+              },
+              {
+                "name": "default-preset",
+                "type": "CustomBackgroundDefaultPreset",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "default",
+                  "fill",
+                  "fit",
+                  "repeat",
+                  "custom"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-position-x",
+                "type": "CustomBackgroundDefaultPositionX",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "left",
+                  "center",
+                  "right"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-position-y",
+                "type": "CustomBackgroundDefaultPositionY",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "left",
+                  "center",
+                  "right"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-size",
+                "type": "CustomBackgroundDefaultSize",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "auto",
+                  "contain",
+                  "cover"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-repeat",
+                "type": "CustomBackgroundDefaultRepeat",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "repeat-x",
+                  "repeat-y",
+                  "repeat",
+                  "no-repeat"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-attachment",
+                "type": "CustomBackgroundDefaultAttachment",
+                "description": "",
+                "required": false,
+                "enumOption": [
+                  "scroll",
+                  "fixed"
+                ],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-color",
+                "type": "string",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              }
+            ]
+          },
+          {
+            "name": "custom-header",
+            "type": [
+              "boolean",
+              "object"
+            ],
+            "description": "Custom header if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": [
+              {
+                "name": "default-image",
+                "type": "string",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": "uri"
+              },
+              {
+                "name": "random-default",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "width",
+                "type": "integer",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "height",
+                "type": "integer",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "flex-height",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "flex-width",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "default-text-color",
+                "type": "string",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "header-text",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "uploads",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "video",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              }
+            ]
+          },
+          {
+            "name": "custom-logo",
+            "type": [
+              "boolean",
+              "object"
+            ],
+            "description": "Custom logo if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": [
+              {
+                "name": "width",
+                "type": "integer",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "height",
+                "type": "integer",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "flex-width",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "flex-height",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              },
+              {
+                "name": "header-text",
+                "type": "array",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "string",
+                "format": ""
+              },
+              {
+                "name": "unlink-homepage-logo",
+                "type": "boolean",
+                "description": "",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": ""
+              }
+            ]
+          },
+          {
+            "name": "customize-selective-refresh-widgets",
+            "type": "boolean",
+            "description": "Whether the theme enables Selective Refresh for Widgets being managed with the Customizer.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "dark-editor-style",
+            "type": "boolean",
+            "description": "Whether theme opts in to the dark editor style UI.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "disable-custom-colors",
+            "type": "boolean",
+            "description": "Whether the theme disables custom colors.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "disable-custom-font-sizes",
+            "type": "boolean",
+            "description": "Whether the theme disables custom font sizes.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "disable-custom-gradients",
+            "type": "boolean",
+            "description": "Whether the theme disables custom gradients.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "disable-layout-styles",
+            "type": "boolean",
+            "description": "Whether the theme disables generated layout styles.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "editor-color-palette",
+            "type": [
+              "boolean",
+              "array"
+            ],
+            "description": "Custom color palette if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "object",
+            "format": ""
+          },
+          {
+            "name": "editor-font-sizes",
+            "type": [
+              "boolean",
+              "array"
+            ],
+            "description": "Custom font sizes if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "object",
+            "format": ""
+          },
+          {
+            "name": "editor-gradient-presets",
+            "type": [
+              "boolean",
+              "array"
+            ],
+            "description": "Custom gradient presets if defined by the theme.",
+            "required": false,
+            "enumOption": [],
+            "ref": "object",
+            "format": ""
+          },
+          {
+            "name": "editor-styles",
+            "type": "boolean",
+            "description": "Whether theme opts in to the editor styles CSS wrapper.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "html5",
+            "type": [
+              "boolean",
+              "array"
+            ],
+            "description": "Allows use of HTML5 markup for search forms, comment forms, comment lists, gallery, and caption.",
+            "required": false,
+            "enumOption": [],
+            "ref": "string",
+            "format": ""
+          },
+          {
+            "name": "formats",
+            "type": "array",
+            "description": "Post formats supported.",
+            "required": false,
+            "enumOption": [],
+            "ref": "string",
+            "format": ""
+          },
+          {
+            "name": "post-thumbnails",
+            "type": [
+              "boolean",
+              "array"
+            ],
+            "description": "The post types that support thumbnails or true if all post types are supported.",
+            "required": false,
+            "enumOption": [],
+            "ref": "string",
+            "format": ""
+          },
+          {
+            "name": "responsive-embeds",
+            "type": "boolean",
+            "description": "Whether the theme supports responsive embedded content.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "title-tag",
+            "type": "boolean",
+            "description": "Whether the theme can manage the document title tag.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "wp-block-styles",
+            "type": "boolean",
+            "description": "Whether theme opts in to default WordPress block styles for viewing.",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "theme_uri",
+        "type": "object",
+        "description": "主题页面URI链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "主题网页的URI，在主题标头中找到。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "主题网页的URI，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          }
+        ]
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "description": "主题当前版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "ThemeStatus",
+        "description": "主题的命名状态。",
+        "required": false,
+        "enumOption": [
+          "inactive",
+          "active"
+        ],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Settings",
+    [
+      {
+        "name": "title",
+        "type": "string",
+        "description": "站点标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "站点副标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "description": "站点URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "description": "此地址被用作管理用途，如新用户通知。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "email"
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "description": "和您在同一个时区的城市。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date_format",
+        "type": "string",
+        "description": "对所有日期字符串适用的日期格式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "time_format",
+        "type": "string",
+        "description": "对所有时间字符串适用的时间格式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "start_of_week",
+        "type": "integer",
+        "description": "一周从周几开始。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "description": "WordPress地区语言代码。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "use_smilies",
+        "type": "boolean",
+        "description": "将表情符号如:-)和:-P转换为图片显示。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "default_category",
+        "type": "integer",
+        "description": "默认文章分类。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "default_post_format",
+        "type": "string",
+        "description": "默认文章形式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "posts_per_page",
+        "type": "integer",
+        "description": "最多显示的博客页面数量。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "show_on_front",
+        "type": "string",
+        "description": "需要在首页上显示的项目",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "page_on_front",
+        "type": "integer",
+        "description": "需要在首页上显示的页面 ID",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "page_for_posts",
+        "type": "integer",
+        "description": "需要显示最新文章的页面 ID",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "default_ping_status",
+        "type": "SettingsDefaultPingStatus",
+        "description": "允许其他博客发送链接通知（pingback和trackback）到新文章。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "default_comment_status",
+        "type": "SettingsDefaultCommentStatus",
+        "description": "允许他人在新文章上发表评论。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "site_logo",
+        "type": "integer",
+        "description": "站点 logo",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "site_icon",
+        "type": "integer",
+        "description": "站点图标。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WpGlobalStyles",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "全局样式配置的 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "styles",
+        "type": [
+          "object"
+        ],
+        "description": "全局样式。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "settings",
+        "type": [
+          "object"
+        ],
+        "description": "全局设置。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "全局样式变体的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "全局样式变体的标题，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      }
+    ]
+  ],
+  [
+    "BlockType",
+    [
+      {
+        "name": "api_version",
+        "type": "integer",
+        "description": "区块API的版本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "区块类型的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "区块类型的唯一名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "区块类型的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "icon",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "区块类型的图标。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "attributes",
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "区块属性。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "provides_context",
+        "type": "object",
+        "description": "此类区块所提供的上下文。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "uses_context",
+        "type": "array",
+        "description": "此类区块所继承的上下文的值。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "supports",
+        "type": "object",
+        "description": "区块支持。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "category",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "区块分类。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "is_dynamic",
+        "type": "boolean",
+        "description": "区块是动态渲染的？",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "editor_script_handles",
+        "type": [
+          "array"
+        ],
+        "description": "编辑器脚本句柄。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "script_handles",
+        "type": [
+          "array"
+        ],
+        "description": "公开界面和编辑器脚本的句柄。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "view_script_handles",
+        "type": [
+          "array"
+        ],
+        "description": "公开界面脚本的句柄。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "editor_style_handles",
+        "type": [
+          "array"
+        ],
+        "description": "编辑器样式句柄。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "style_handles",
+        "type": [
+          "array"
+        ],
+        "description": "公开界面和编辑器样式的句柄。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "styles",
+        "type": "array",
+        "description": "区块样式变体。",
+        "required": false,
+        "enumOption": [],
+        "ref": "object",
+        "format": ""
+      },
+      {
+        "name": "variations",
+        "type": "array",
+        "description": "区块变体。",
+        "required": false,
+        "enumOption": [],
+        "ref": "object",
+        "format": ""
+      },
+      {
+        "name": "textdomain",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "公共文本域。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "parent",
+        "type": [
+          "array",
+          "null"
+        ],
+        "description": "上级区块",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "ancestor",
+        "type": [
+          "array",
+          "null"
+        ],
+        "description": "上层区块。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "keywords",
+        "type": "array",
+        "description": "区块关键字。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "example",
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "区块示例。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "attributes",
+            "type": "object",
+            "description": "此范例中使用的属性。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": []
+          },
+          {
+            "name": "innerBlocks",
+            "type": "array",
+            "description": "此范例中使用的内部区块列表。",
+            "required": false,
+            "enumOption": [],
+            "ref": "object",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "editor_script",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "编辑器脚本的句柄。已弃用：请使用 `editor_script_handles` 作为代替。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "script",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "公开界面和编辑器脚本的句柄。已弃用：请使用 `script_handles` 作为代替。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "view_script",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "公开界面脚本的句柄。已弃用：请使用 `view_script_handles` 作为代替。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "editor_style",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "编辑器样式的句柄。已弃用：请使用 `editor_style_handles` 作为代替。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "style",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "公开界面和编辑器样式的句柄。已弃用：请使用 `style_handles` 作为代替。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "RenderedBlock",
+    [
+      {
+        "name": "rendered",
+        "type": "string",
+        "description": "渲染的区块。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "SearchResult",
+    [
+      {
+        "name": "id",
+        "type": [
+          "integer",
+          "string"
+        ],
+        "description": "对象的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "对象的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "description": "对象的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "type",
+        "type": "SearchResultType",
+        "description": "对象类型。",
+        "required": false,
+        "enumOption": [
+          "post",
+          "term",
+          "post-format"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "subtype",
+        "type": "SearchResultSubtype",
+        "description": "对象子类型。",
+        "required": false,
+        "enumOption": [
+          "post",
+          "page",
+          "category",
+          "post_tag"
+        ],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Comment",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "评论的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "用户对象的ID，如果作者是用户。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author_email",
+        "type": "string",
+        "description": "评论者的电子邮箱地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "email"
+      },
+      {
+        "name": "author_ip",
+        "type": "string",
+        "description": "评论者的IP地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "ip"
+      },
+      {
+        "name": "author_name",
+        "type": "string",
+        "description": "评论者的显示名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author_url",
+        "type": "string",
+        "description": "评论者的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "author_user_agent",
+        "type": "string",
+        "description": "评论者的 User agent。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "评论的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "评论的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "评论的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "评论发表的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "评论发表的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "评论的 网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "评论的父级ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "post",
+        "type": "integer",
+        "description": "关联文章对象的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "评论的状态。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "评论的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author_avatar_urls",
+        "type": "object",
+        "description": "评论者的头像网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "24",
+            "type": "string",
+            "description": "头像URL，图片尺寸24像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "48",
+            "type": "string",
+            "description": "头像URL，图片尺寸48像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "96",
+            "type": "string",
+            "description": "头像URL，图片尺寸96像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          }
+        ]
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      }
+    ]
+  ],
+  [
+    "ApplicationPassword",
+    [
+      {
+        "name": "uuid",
+        "type": "string",
+        "description": "该应用程序密码的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uuid"
+      },
+      {
+        "name": "app_id",
+        "type": "string",
+        "description": "由应用程序提供的用于唯一识别的 UUID。建议使用含有 URL 或 DNS 命名空间的 UUID v5。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uuid"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "应用程序密码名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "生成的密码。仅在加入应用程序后可用。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "created",
+        "type": "string",
+        "description": "创建该应用程序密码的GMT日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "last_used",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "上次使用该应用程序密码的GMT日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "last_ip",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "上次使用该应用程序密码的IP地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "ip"
+      }
+    ]
+  ],
+  [
+    "User",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "用户的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "username",
+        "type": "string",
+        "description": "用户的登录名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "用户的显示名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "first_name",
+        "type": "string",
+        "description": "用户的名字。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "last_name",
+        "type": "string",
+        "description": "用户的姓氏。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "description": "用户的电子邮箱地址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "email"
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "description": "用户的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "用户的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "用户的作者URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "locale",
+        "type": "UserLocale",
+        "description": "用户的地区语言。",
+        "required": false,
+        "enumOption": [
+          "",
+          "en_US",
+          "zh_CN"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "nickname",
+        "type": "string",
+        "description": "用户的昵称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "用户的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "registered_date",
+        "type": "string",
+        "description": "用户的注册日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "roles",
+        "type": "array",
+        "description": "用户被赋予的角色。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "用户的密码（从不被包含）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "capabilities",
+        "type": "object",
+        "description": "用户所有的权限。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "extra_capabilities",
+        "type": "object",
+        "description": "用户包含的额外权限。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "avatar_urls",
+        "type": "object",
+        "description": "用户的头像URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "24",
+            "type": "string",
+            "description": "头像URL，图片尺寸24像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "48",
+            "type": "string",
+            "description": "头像URL，图片尺寸48像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          },
+          {
+            "name": "96",
+            "type": "string",
+            "description": "头像URL，图片尺寸96像素。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "uri"
+          }
+        ]
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "persisted_preferences",
+            "type": "object",
+            "description": "",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": "",
+            "properties": [
+              {
+                "name": "_modified",
+                "type": "string",
+                "description": "日期和时间的偏好设置已更新。",
+                "required": false,
+                "enumOption": [],
+                "ref": "",
+                "format": "date-time"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ],
+  [
+    "NavMenu",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "项目的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "项目的HTML描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "项目的HTML标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "项目类型而言的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "locations",
+        "type": "array",
+        "description": "分配给菜单的位置。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "auto_add",
+        "type": "boolean",
+        "description": "是否自动添加顶级页面到此菜单。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Tag",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "项目的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "count",
+        "type": "integer",
+        "description": "项目中已发布文章的数量。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "项目的HTML描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "项目的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "项目的HTML标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "项目类型而言的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "taxonomy",
+        "type": "TagTaxonomy",
+        "description": "项目的类型属性。",
+        "required": false,
+        "enumOption": [
+          "post_tag"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      }
+    ]
+  ],
+  [
+    "Category",
+    [
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "项目的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "count",
+        "type": "integer",
+        "description": "项目中已发布文章的数量。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "项目的HTML描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "项目的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "项目的HTML标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "项目类型而言的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "taxonomy",
+        "type": "CategoryTaxonomy",
+        "description": "项目的类型属性。",
+        "required": false,
+        "enumOption": [
+          "category"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "父项目ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      }
+    ]
+  ],
+  [
+    "Taxonomy",
+    [
+      {
+        "name": "capabilities",
+        "type": "object",
+        "description": "分类法使用的所有权限。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "分类法的人类可读描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "hierarchical",
+        "type": "boolean",
+        "description": "分类法是否包含子分类法。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "labels",
+        "type": "object",
+        "description": "分类法在不同上下文中的人类可读标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "分类法的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "分类法的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "show_cloud",
+        "type": "boolean",
+        "description": "项目云是否应该被显示。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "types",
+        "type": "array",
+        "description": "关联到此分类法的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "rest_base",
+        "type": "string",
+        "description": "分类法的REST base路由。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rest_namespace",
+        "type": "string",
+        "description": "分类法的 REST 命名空间路由。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "visibility",
+        "type": "object",
+        "description": "分类法的可见度设置。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "public",
+            "type": "boolean",
+            "description": "此分类法是否可供公开使用，或是通过管理界面，或是由前端用户。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "publicly_queryable",
+            "type": "boolean",
+            "description": "此分类法是否可公开查询。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "show_ui",
+            "type": "boolean",
+            "description": "是否生成管理此分类法的缺省UI。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "show_admin_column",
+            "type": "boolean",
+            "description": "是否允许在关联的post-types数据表上自动创建分类法列。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "show_in_nav_menus",
+            "type": "boolean",
+            "description": "是否让分类法在导航菜单中可供选择。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "show_in_quick_edit",
+            "type": "boolean",
+            "description": "是否在快速/批量编辑面板显示分类法。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      }
+    ]
+  ],
+  [
+    "Status",
+    [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "状态标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "private",
+        "type": "boolean",
+        "description": "有此状态的文章是否应为私人的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "protected",
+        "type": "boolean",
+        "description": "有此状态的文章是否应为受保护的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "public",
+        "type": "boolean",
+        "description": "此状态的文章是否应于前端显示。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "queryable",
+        "type": "boolean",
+        "description": "有此状态的文章是否可被公开查询。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "show_in_list",
+        "type": "boolean",
+        "description": "是否在编辑文章类型时包含文章列表。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "状态的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date_floating",
+        "type": "boolean",
+        "description": "有此状态的文章可否设置浮动发布日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "Type",
+    [
+      {
+        "name": "capabilities",
+        "type": "object",
+        "description": "文章类型使用的所有权限。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "文章类型的人类可读描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "hierarchical",
+        "type": "boolean",
+        "description": "该文章类型是否拥有子类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "viewable",
+        "type": "boolean",
+        "description": "此文章类型是否可被查看。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "labels",
+        "type": "object",
+        "description": "文章类型不同上下文中的人类可读标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "文章类型的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章类型的英数字标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "supports",
+        "type": "object",
+        "description": "文章类型支持的所有功能。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "has_archive",
+        "type": [
+          "string",
+          "boolean"
+        ],
+        "description": "如果值为字符串，则值将被用作归档别名。 如果值为 false，则此文章类型不会归档。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "taxonomies",
+        "type": "array",
+        "description": "与文章类型关联的分类法。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "rest_base",
+        "type": "string",
+        "description": "与文章类型关联的REST base路由。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "rest_namespace",
+        "type": "string",
+        "description": "文章类型的 REST 路由命名空间。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "visibility",
+        "type": "object",
+        "description": "文章类型的可见性设置。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "show_ui",
+            "type": "boolean",
+            "description": "是否生成用于管理此文章类型的默认 UI。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "show_in_nav_menus",
+            "type": "boolean",
+            "description": "是否使文章类型可在导航菜单中选择。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "icon",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章类型的图标。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WpNavigationRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "WpNavigation",
+    [
+      {
+        "name": "date",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章发布的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "该文章发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "文章的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "文章的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "文章最后修改的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "文章最后一次修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "WpNavigationStatus",
+        "description": "文章的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "文章的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "用来保护内容和摘要的密码。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "用于显示文章的主题文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WpTemplatePartRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "string",
+        "description": "修订版本的 GUID，存放于数据库中。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的标题，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "模板的 HTML 标题，已转换以供显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的内容，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "模板使用的内容块格式的版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "WpTemplatePart",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "模板的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "标识模板的唯一别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "theme",
+        "type": "string",
+        "description": "模板的主题标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "模板的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "description": "模板来源",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "description": "自定义模板源",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "content",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的内容，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "模板使用的内容块格式的版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "title",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的标题，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "模板的 HTML 标题，已转换以供显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "模板的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "WpTemplatePartStatus",
+        "description": "模板的状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "wp_id",
+        "type": "integer",
+        "description": "文章ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "has_theme_file",
+        "type": "bool",
+        "description": "主题文件存在。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "模板作者的 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "area",
+        "type": "string",
+        "description": "模板组件用途（页眉、页脚等）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WpTemplateRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "string",
+        "description": "修订版本的 GUID，存放于数据库中。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的标题，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "模板的 HTML 标题，已转换以供显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的内容，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "模板使用的内容块格式的版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "WpTemplate",
+    [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "模板的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "标识模板的唯一别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "theme",
+        "type": "string",
+        "description": "模板的主题标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "模板的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "description": "模板来源",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "description": "自定义模板源",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "content",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的内容，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "模板使用的内容块格式的版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "title",
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "模板的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "模板的标题，因为它存在于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "模板的 HTML 标题，已转换以供显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "模板的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "WpTemplateStatus",
+        "description": "模板的状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "wp_id",
+        "type": "integer",
+        "description": "文章ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "has_theme_file",
+        "type": "bool",
+        "description": "主题文件存在。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "模板作者的 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "is_custom",
+        "type": "bool",
+        "description": "模板是否为自定义模板。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "WpBlockRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "WpBlock",
+    [
+      {
+        "name": "date",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章发布的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "该文章发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "文章的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "文章的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "文章最后修改的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "文章最后一次修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "WpBlockStatus",
+        "description": "文章的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "文章的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "用来保护内容和摘要的密码。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "用于显示文章的主题文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "NavMenuItemRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "string",
+        "description": "修订版本的 GUID，存放于数据库中。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": [
+          "string",
+          "object"
+        ],
+        "description": "对象的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "对象的标题，存放于数据库。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "对象的HTML标题，转换后显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "NavMenuItem",
+    [
+      {
+        "name": "title",
+        "type": [
+          "string",
+          "object"
+        ],
+        "description": "对象的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "对象的标题，存放于数据库。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "对象的HTML标题，转换后显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "对象的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type_label",
+        "type": "string",
+        "description": "用于描述此类菜单项的单数标签。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "NavMenuItemType",
+        "description": "原始表示的对象组，如 \"post_type \"或 \"taxonomy\"。",
+        "required": false,
+        "enumOption": [
+          "taxonomy",
+          "post_type",
+          "post_type_archive",
+          "custom"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "NavMenuItemStatus",
+        "description": "对象的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "对象的父对象ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "attr_title",
+        "type": "string",
+        "description": "此菜单项的link元素的title属性的文本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "classes",
+        "type": "array",
+        "description": "此菜单项的链接元素的类名称。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "description": "此菜单项的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "menu_order",
+        "type": "integer",
+        "description": "导航菜单项的nav_menu_item的DB ID（如果有），否则为0。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "object",
+        "type": "string",
+        "description": "对象初始的表示类型，如 “分类”、“文章”和“附件”。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "object_id",
+        "type": "integer",
+        "description": "此菜单项表示的原始对象的数据库 ID，例如文章的 ID 或分类的 term_id。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "target",
+        "type": "NavMenuItemTarget",
+        "description": "此菜单项的链接元素的target属性。",
+        "required": false,
+        "enumOption": [
+          "_blank",
+          ""
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "description": "该菜单项指向的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "xfn",
+        "type": "array",
+        "description": "该菜单项的链接中表示的XFN关系。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      },
+      {
+        "name": "invalid",
+        "type": "boolean",
+        "description": "菜单项是否表示不存在的对象。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "menus",
+        "type": "integer",
+        "description": "此对象在nav_menu分类法中指定的项。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      }
+    ]
+  ],
+  [
+    "Attachment",
+    [
+      {
+        "name": "date",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章发布的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "该文章发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "文章的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "文章的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "文章最后修改的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "文章最后一次修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "AttachmentStatus",
+        "description": "文章的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "文章的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "permalink_template",
+        "type": "string",
+        "description": "文章的固定链接模板。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "generated_slug",
+        "type": "string",
+        "description": "从文章标题自动生成的别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "文章作者的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "comment_status",
+        "type": "AttachmentCommentStatus",
+        "description": "文章是否开放评论。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "ping_status",
+        "type": "AttachmentPingStatus",
+        "description": "文章是否接受ping。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "用于显示文章的主题文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "alt_text",
+        "type": "string",
+        "description": "在附件未能显示时显示的替换文本。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "caption",
+        "type": "object",
+        "description": "附件说明文字。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "附件的说明文字，存放于数据库。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "附件的 HTML 说明文字，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "object",
+        "description": "附件的描述。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "附件的描述，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "附件的 HTML 描述，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "media_type",
+        "type": "AttachmentMediaType",
+        "description": "附件类型。",
+        "required": false,
+        "enumOption": [
+          "image",
+          "file"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "mime_type",
+        "type": "string",
+        "description": "附件的MIME类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "media_details",
+        "type": "object",
+        "description": "媒体文件具体到类型的详情。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "post",
+        "type": "integer",
+        "description": "附件所属文章的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "source_url",
+        "type": "string",
+        "description": "原始附件文件的URL。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "missing_image_sizes",
+        "type": "array",
+        "description": "附件缺少的图片尺寸列表。",
+        "required": false,
+        "enumOption": [],
+        "ref": "string",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "PageRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "excerpt",
+        "type": "object",
+        "description": "该篇文章的摘要。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的摘要，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 摘要，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "摘要是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "Page",
+    [
+      {
+        "name": "date",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章发布的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "该文章发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "文章的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "文章的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "文章最后修改的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "文章最后一次修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "PageStatus",
+        "description": "文章的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "文章的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "用来保护内容和摘要的密码。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "permalink_template",
+        "type": "string",
+        "description": "文章的固定链接模板。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "generated_slug",
+        "type": "string",
+        "description": "从文章标题自动生成的别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "文章的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "文章作者的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "excerpt",
+        "type": "object",
+        "description": "该篇文章的摘要。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的摘要，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 摘要，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "摘要是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "featured_media",
+        "type": "integer",
+        "description": "文章的特色媒体 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "comment_status",
+        "type": "PageCommentStatus",
+        "description": "文章是否开放评论。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "ping_status",
+        "type": "PagePingStatus",
+        "description": "文章是否接受ping。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "menu_order",
+        "type": "integer",
+        "description": "文章与其他文章的顺序。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "用于显示文章的主题文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      }
+    ]
+  ],
+  [
+    "PostRevision",
+    [
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "修订版本的作者 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "description": "修订版本发布的日期“站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": "string",
+        "description": "修订版本发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "修订版的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "修订版本的最后修改日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "修订版本最后修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "parent",
+        "type": "integer",
+        "description": "修订版的父级 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "修订版本的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "excerpt",
+        "type": "object",
+        "description": "该篇文章的摘要。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的摘要，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 摘要，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "摘要是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "preview_link",
+        "type": "string",
+        "description": "此文章的预览链接。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      }
+    ]
+  ],
+  [
+    "Post",
+    [
+      {
+        "name": "date",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "文章发布的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "date_gmt",
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "该文章发布的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "guid",
+        "type": "object",
+        "description": "文章的全局唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的 GUID，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 GUID，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "type": "integer",
+        "description": "文章的唯一标识符。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "description": "文章的网址。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "uri"
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "description": "文章最后修改的日期（站点时区）。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "modified_gmt",
+        "type": "string",
+        "description": "文章最后一次修改的 GMT 日期。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "date-time"
+      },
+      {
+        "name": "slug",
+        "type": "string",
+        "description": "文章的字母数字标识符，其类型是唯一的。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "status",
+        "type": "PostStatus",
+        "description": "文章的命名状态。",
+        "required": false,
+        "enumOption": [
+          "publish",
+          "future",
+          "draft",
+          "pending",
+          "private"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "文章的类型。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "用来保护内容和摘要的密码。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "permalink_template",
+        "type": "string",
+        "description": "文章的固定链接模板。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "generated_slug",
+        "type": "string",
+        "description": "从文章标题自动生成的别名。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "title",
+        "type": "object",
+        "description": "文章的标题。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的标题，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 标题，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "content",
+        "type": "object",
+        "description": "文章的内容。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的内容，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 内容，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "block_version",
+            "type": "integer",
+            "description": "该文章所使用的内容区块格式版本。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "内容是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "author",
+        "type": "integer",
+        "description": "文章作者的ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "excerpt",
+        "type": "object",
+        "description": "该篇文章的摘要。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": [
+          {
+            "name": "raw",
+            "type": "string",
+            "description": "文章的摘要，存放于数据库中。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "rendered",
+            "type": "string",
+            "description": "文章的 HTML 摘要，经转换后用于显示。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          },
+          {
+            "name": "protected",
+            "type": "boolean",
+            "description": "摘要是否受到密码保护。",
+            "required": false,
+            "enumOption": [],
+            "ref": "",
+            "format": ""
+          }
+        ]
+      },
+      {
+        "name": "featured_media",
+        "type": "integer",
+        "description": "文章的特色媒体 ID。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "comment_status",
+        "type": "PostCommentStatus",
+        "description": "文章是否开放评论。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "ping_status",
+        "type": "PostPingStatus",
+        "description": "文章是否接受ping。",
+        "required": false,
+        "enumOption": [
+          "open",
+          "closed"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "format",
+        "type": "PostFormat",
+        "description": "文章的形式。",
+        "required": false,
+        "enumOption": [
+          "standard",
+          "aside",
+          "chat",
+          "gallery",
+          "link",
+          "image",
+          "quote",
+          "status",
+          "video",
+          "audio"
+        ],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "meta",
+        "type": "object",
+        "description": "元字段。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": "",
+        "properties": []
+      },
+      {
+        "name": "sticky",
+        "type": "boolean",
+        "description": "文章是否为置顶。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "template",
+        "type": "string",
+        "description": "用于显示文章的主题文件。",
+        "required": false,
+        "enumOption": [],
+        "ref": "",
+        "format": ""
+      },
+      {
+        "name": "categories",
+        "type": "array",
+        "description": "在 category 分类法中分配给该文章的项目。",
+        "required": false,
+        "enumOption": [],
+        "ref": "integer",
+        "format": ""
+      },
+      {
+        "name": "tags",
+        "type": "array",
+        "description": "在 post_tag 分类法中分配给该文章的项目。",
+        "required": false,
+        "enumOption": [],
+        "ref": "integer",
+        "format": ""
+      }
+    ]
+  ]
+]

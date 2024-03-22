@@ -5,7 +5,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { camelCase, getObjectKeyByValue, getRefType, hasKey } from "./util.ts";
+import { camelCase, getObjectKeyByValue, getRefType, hasKey, createFile } from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -69,7 +69,7 @@ const getVirtualProperties = (
   defItem: ISwaggerResultDefinition,
   defMapping: IDefinitionNameMapping,
 ): IDefinitionVirtualProperty[] => {
-  if (defItem.type !== "object") {
+  if (!defItem.type.includes("object")) {
     Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
     return [];
   }
@@ -107,12 +107,10 @@ const getVirtualProperties = (
         ref: refName,
         format: prop.format ?? "",
       };
-      console.log("==========================");
-      console.log(defMapping.name);
+      
       // 处理当前属性的子属性
       if (hasKey(prop as unknown as Record<string, unknown>, "properties")) {
         const _childDef = getDefinitionNameMapping(current, true);
-        console.log(current, _childDef.name);
         const _childProps = getVirtualProperties(
           prop as ISwaggerResultDefinition,
           _childDef,
@@ -156,5 +154,6 @@ export const getDefinition = (
     defMap.set(name, props);
   });
 
+  createFile('./test.txt', JSON.stringify(Array.from(defMap), null, 2));
   return defMap;
 };

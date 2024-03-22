@@ -56,11 +56,13 @@ export const createFile = async (filePath: string, content: string) => {
   await Deno.writeFile(
     filePath,
     new TextEncoder().encode(
-      `// ${
+      `/* ${
         getT("$t(util.createFileDescription)", { version: denoJson.version })
       }
-// https://github.com/long-woo/stc
-// ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
+ *
+ * https://github.com/long-woo/stc
+ * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
+ */
 
 ${content}`,
     ),
