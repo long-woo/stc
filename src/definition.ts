@@ -5,7 +5,13 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { camelCase, getObjectKeyByValue, getRefType, hasKey, createFile } from "./util.ts";
+import {
+  camelCase,
+  createFile,
+  getObjectKeyByValue,
+  getRefType,
+  hasKey,
+} from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -68,6 +74,7 @@ const getDefinitionNameMapping = (
 const getVirtualProperties = (
   defItem: ISwaggerResultDefinition,
   defMapping: IDefinitionNameMapping,
+  defData: Map<string, IDefinitionVirtualProperty[]>,
 ): IDefinitionVirtualProperty[] => {
   if (!defItem.type.includes("object")) {
     Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
@@ -107,16 +114,30 @@ const getVirtualProperties = (
         ref: refName,
         format: prop.format ?? "",
       };
-      
+
       // 处理当前属性的子属性
       if (hasKey(prop as unknown as Record<string, unknown>, "properties")) {
         const _childDef = getDefinitionNameMapping(current, true);
         const _childProps = getVirtualProperties(
           prop as ISwaggerResultDefinition,
           _childDef,
+          defData,
         );
 
-        _defItem.properties = _childProps;
+        // 将 type 中存在 object，替换为新名字
+        if (_defItem.type.includes("object") && _childProps.length) {
+          const _objTypeName = defMapping.name + _childDef.name;
+
+          if (Array.isArray(_defItem.type)) {
+            const _objIndex = _defItem.type.indexOf("object");
+
+            _defItem.type.splice(_objIndex, 1, _objTypeName);
+          } else {
+            _defItem.type = _objTypeName;
+          }
+
+          defData.set(_objTypeName, _childProps);
+        }
       }
 
       prev.push(_defItem);
@@ -149,11 +170,11 @@ export const getDefinition = (
     });
     if (defKeys.includes(name)) return;
 
-    const props = getVirtualProperties(definitions[key], def);
+    const props = getVirtualProperties(definitions[key], def, defMap);
 
     defMap.set(name, props);
   });
 
-  createFile('./test.txt', JSON.stringify(Array.from(defMap), null, 2));
+  createFile("test.log", JSON.stringify(Array.from(defMap), null, 2));
   return defMap;
 };

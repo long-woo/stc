@@ -120,6 +120,9 @@ export const getRefType = (ref: string) =>
  * @returns
  */
 export const convertType = (type: string | string[], ref?: string) => {
+  if (type.includes("NavMenuItemTitle")) {
+    console.log(type, ref);
+  }
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
   if ((!type || type === "object") && ref) return ref;
 
