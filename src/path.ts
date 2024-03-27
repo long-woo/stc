@@ -146,9 +146,9 @@ const getPathVirtualProperty = (
       const _bodyContentRef = getRefType(
         _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
       );
-      const _name = _key === "application/octet-stream"
+      const _name = (_key === "application/octet-stream"
         ? "file"
-        : lowerCase(_bodyContentRef);
+        : lowerCase(_bodyContentRef)) || "body";
 
       // 处理 type 为 object 的情况，并且有 properties 属性
       const _properties = getProperties(
@@ -157,7 +157,7 @@ const getPathVirtualProperty = (
       );
 
       const _body: IDefinitionVirtualProperty = {
-        name: _name || "body",
+        name: _name,
         type: _bodyContentSchema?.type ?? "",
         required: _requestBody.required ?? true,
         description: _requestBody.description,
@@ -165,7 +165,12 @@ const getPathVirtualProperty = (
         properties: _properties,
       };
 
-      parameters.body.push(_body);
+      // body 存在相同 name 时，无需重复添加
+      if (
+        !parameters.body.some((item) => item.name === _name)
+      ) {
+        parameters.body.push(_body);
+      }
     });
   }
 
@@ -253,7 +258,7 @@ export const getApiPath = (
         return;
       }
 
-      // 判断添加请求方式标识
+      // 添加请求方式标识，如 GET，POST 等，防止重名。
       name = `${method}${upperCase(name)}`;
 
       // 接口对象
