@@ -35,33 +35,13 @@ export const parserDefinition = (
   //   "name": "title",
   //   "type": [
   //     "string",
-  //     "object",
+  //     "NavMenuItemTitle",
   //   ],
   //   "description": "对象的标题。",
   //   "required": false,
   //   "enumOption": [],
   //   "ref": "",
   //   "format": "",
-  //   "properties": [
-  //     {
-  //       "name": "raw",
-  //       "type": "string",
-  //       "description": "对象的标题，存放于数据库。",
-  //       "required": false,
-  //       "enumOption": [],
-  //       "ref": "",
-  //       "format": "",
-  //     },
-  //     {
-  //       "name": "rendered",
-  //       "type": "string",
-  //       "description": "对象的HTML标题，转换后显示。",
-  //       "required": false,
-  //       "enumOption": [],
-  //       "ref": "",
-  //       "format": "",
-  //     },
-  //   ],
   // }, {
   //   "name": "id",
   //   "type": "integer",
@@ -73,7 +53,6 @@ export const parserDefinition = (
   // }]);
   data.forEach((value, key) => {
     const props = value.reduce((prev, current) => {
-      // console.log(current.type);
       const _type = convertType(current.type, current.ref);
       const _enumOption = current.enumOption;
       const _enumData = parserEnumToUnionType(_type, _enumOption);

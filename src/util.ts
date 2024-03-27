@@ -56,7 +56,7 @@ export const createFile = async (filePath: string, content: string) => {
   await Deno.writeFile(
     filePath,
     new TextEncoder().encode(
-      `/* ${
+      `/** ${
         getT("$t(util.createFileDescription)", { version: denoJson.version })
       }
  *
@@ -119,10 +119,7 @@ export const getRefType = (ref: string) =>
  * @param ref - 引用
  * @returns
  */
-export const convertType = (type: string | string[], ref?: string) => {
-  if (type.includes("NavMenuItemTitle")) {
-    console.log(type, ref);
-  }
+export const convertType = (type: string | string[], ref?: string): string => {
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
   if ((!type || type === "object") && ref) return ref;
 
@@ -141,9 +138,8 @@ export const convertType = (type: string | string[], ref?: string) => {
   };
 
   const _newType = Array.isArray(type) ? type : [type];
-
   const _type = _newType
-    .map((item) => _action[item] ?? type)
+    .map((item) => _action[item] || item)
     .filter((item) => item)
     .join(" | ");
 

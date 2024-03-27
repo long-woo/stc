@@ -5,13 +5,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import {
-  camelCase,
-  createFile,
-  getObjectKeyByValue,
-  getRefType,
-  hasKey,
-} from "./util.ts";
+import { camelCase, getObjectKeyByValue, getRefType, hasKey } from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -106,7 +100,7 @@ const getVirtualProperties = (
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
       const _defItem: IDefinitionVirtualProperty = {
-        name: current,
+        name: camelCase(current),
         type,
         description: prop.description ?? "",
         required,
@@ -175,6 +169,5 @@ export const getDefinition = (
     defMap.set(name, props);
   });
 
-  createFile("test.log", JSON.stringify(Array.from(defMap), null, 2));
   return defMap;
 };

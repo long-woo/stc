@@ -116,7 +116,6 @@ interface ISwaggerDefinitionProperties {
   format?: string;
   items?: ISwaggerSchema;
   enum?: string[];
-  properties?: IDefaultObject<ISwaggerDefinitionProperties>;
 }
 
 export interface ISwaggerComponents {
