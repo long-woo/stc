@@ -141,8 +141,6 @@ const getPathVirtualProperty = (
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
     Object.keys(_requestBody.content).forEach((_key) => {
-      // 此处无需判断类型，此判断会导致非包含类型无法正常生成body参数
-      // if (["application/json", "application/octet-stream"].includes(_key)) {
       const _bodyContent = _requestBody.content[_key as keyof ISwaggerContent];
       const _bodyContentSchema = _bodyContent?.schema;
       const _bodyContentRef = getRefType(
@@ -168,7 +166,6 @@ const getPathVirtualProperty = (
       };
 
       parameters.body.push(_body);
-      // }
     });
   }
 
@@ -177,7 +174,7 @@ const getPathVirtualProperty = (
     pathMethod.responses[200]?.content?.["application/json"]?.schema;
 
   const _properties = getProperties(
-    _resSchema?.properties ?? {},
+    _resSchema?.properties ?? _resSchema?.items?.properties ?? {},
     _resSchema?.required ?? [],
   );
 
@@ -210,7 +207,10 @@ const parserFilter = (filters: string[]) => {
   if (!filters.length) return undefined;
 
   const regStr = filters.reduce((prev, current) => {
-    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*");
+    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*").replace(
+      /\?/g,
+      "\\?",
+    );
 
     return `${prev ? `${prev}|` : ""}(${_str})`;
   }, "");
@@ -239,6 +239,11 @@ export const getApiPath = (
     const methods = paths[url];
 
     Object.keys(methods).forEach((method) => {
+      // url去除 `?` 之后的字符
+      if (url.includes("?")) {
+        url = url.slice(0, url.indexOf("?"));
+      }
+
       const currentMethod = methods[method];
       // 方法名
       let name = currentMethod.operationId ??

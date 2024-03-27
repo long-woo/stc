@@ -22,7 +22,7 @@ export const camelCase = (str: string, pascalCase: boolean = false) => {
   if (!str) return "";
   const _newStr = pascalCase ? `_${str}` : str;
 
-  return _newStr.replace(/[\.\_-](\w)/g, (_, s: string) => s.toUpperCase());
+  return _newStr.replace(/[\.\_-]{1,}(\w)/g, (_, s: string) => s.toUpperCase());
 };
 
 /**
