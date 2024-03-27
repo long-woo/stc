@@ -1,10 +1,10 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "exports": "./mod.ts",
   "tasks": {
-    "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --outDir=out --filter=/pet",
-    "version": "echo '1.4.2' > release/version",
+    "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --outDir=out",
+    "version": "echo '1.5.0' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
     "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
     "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",

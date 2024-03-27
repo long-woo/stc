@@ -142,7 +142,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.4.2/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.5.0/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
