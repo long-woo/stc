@@ -19,7 +19,12 @@ import { getT } from "./i18n/index.ts";
  */
 const getMethodName = (url: string, space = "by") => {
   const _url = url.split("/");
-  let _name = _url.pop() as string
+  // 获取URL路径Query方法名称（取第一个Params）
+  let _query = url.split("?")?.[1]?.split("&")
+    .shift()?.replace(/[,=]/g, "_");
+  // 添加_分割标记
+  _query = _query ? `_${_query}` : "";
+  let _name = _url.pop()?.split("?")[0] as string
 
   const regExp = /^{(\w+)}$/
   if (regExp.test(_name)) {
@@ -29,7 +34,7 @@ const getMethodName = (url: string, space = "by") => {
   }
 
   // _-命名转换未首字符大写风格驼峰命名
-  return upperCamelCase(_name)
+  return upperCamelCase(_name + _query)
 };
 
 /**
@@ -135,7 +140,8 @@ const getPathVirtualProperty = (
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
     Object.keys(_requestBody.content).forEach((_key) => {
-      if (["application/json", "application/octet-stream"].includes(_key)) {
+      // 此处无需判断类型，此判断会导致非包含类型无法正常生成body参数
+      // if (["application/json", "application/octet-stream"].includes(_key)) {
         const _bodyContent =
           _requestBody.content[_key as keyof ISwaggerContent];
         const _bodyContentSchema = _bodyContent?.schema;
@@ -162,7 +168,7 @@ const getPathVirtualProperty = (
         };
 
         parameters.body.push(_body);
-      }
+      // }
     });
   }
 
