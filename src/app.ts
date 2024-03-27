@@ -89,7 +89,7 @@ export const start = async (options: ISwaggerOptions) => {
   const transformData = await context.onTransform?.(defData, actionData);
 
   // 写入类型定义文件
-  if (transformData?.definition) {
+  if (transformData?.definition?.content) {
     createFile(
       `${options.outDir}/${transformData.definition.filename}`,
       transformData.definition.content,
@@ -99,10 +99,12 @@ export const start = async (options: ISwaggerOptions) => {
   // 写入 API 文件
   if (transformData?.action) {
     transformData.action.forEach((content, filename) => {
-      createFile(
-        `${options.outDir}/${filename}.${options.lang}`,
-        content,
-      );
+      if (content) {
+        createFile(
+          `${options.outDir}/${filename}.${options.lang}`,
+          content,
+        );
+      }
     });
   }
 

@@ -14,11 +14,16 @@ interface ICopyFileOptions {
 }
 
 /**
- * 大驼峰命名
+ * 驼峰命名
  * @param str - 字符
+ * @param pascalCase - 是否首字母大写
  */
-export const upperCamelCase =  (str: string) =>
-  `_${str}`.replace(/[\.\_-]{1,}(\w)/g, (_, s: string) => s.toUpperCase());
+export const camelCase = (str: string, pascalCase: boolean = false) => {
+  if (!str) return "";
+  const _newStr = pascalCase ? `_${str}` : str;
+
+  return _newStr.replace(/[\.\_-]{1,}(\w)/g, (_, s: string) => s.toUpperCase());
+};
 
 /**
  * 首字母小写
@@ -51,11 +56,13 @@ export const createFile = async (filePath: string, content: string) => {
   await Deno.writeFile(
     filePath,
     new TextEncoder().encode(
-      `// ${
+      `/** ${
         getT("$t(util.createFileDescription)", { version: denoJson.version })
       }
-// https://github.com/long-woo/stc
-// ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
+ *
+ * https://github.com/long-woo/stc
+ * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
+ */
 
 ${content}`,
     ),
@@ -98,9 +105,12 @@ export const emptyDirectory = (dir: string) => emptyDir(dir);
  * @param ref - ref
  */
 export const getRefType = (ref: string) =>
-  decodeURIComponent(ref).replace(
-    /^#\/(definitions|components\/schemas)\//,
-    "",
+  camelCase(
+    decodeURIComponent(ref).replace(
+      /^#\/(definitions|components\/schemas)\//,
+      "",
+    ),
+    true,
   );
 
 /**
@@ -109,7 +119,7 @@ export const getRefType = (ref: string) =>
  * @param ref - 引用
  * @returns
  */
-export const convertType = (type: string, ref?: string) => {
+export const convertType = (type: string | string[], ref?: string): string => {
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
   if ((!type || type === "object") && ref) return ref;
 
@@ -123,9 +133,17 @@ export const convertType = (type: string, ref?: string) => {
     array: `Array<${ref && convertType(ref) || "unknown"}>`,
     object: "Record<string, unknown>",
     file: "File",
+    null: "null",
+    bool: "boolean",
   };
 
-  return _action[type] || type;
+  const _newType = Array.isArray(type) ? type : [type];
+  const _type = _newType
+    .map((item) => _action[item] || item)
+    .filter((item) => item)
+    .join(" | ");
+
+  return _type;
 };
 
 /**

@@ -110,7 +110,7 @@ export interface ISwaggerResultPath {
 }
 
 interface ISwaggerDefinitionProperties {
-  type: string;
+  type: string | string[];
   $ref?: string;
   description?: string;
   format?: string;
@@ -168,7 +168,7 @@ export interface IDefinitionVirtualProperty {
   /**
    * 属性类型
    */
-  type: string;
+  type: string | string[];
   /**
    * 扩展类型
    */
@@ -325,13 +325,9 @@ export interface ISwaggerOptions {
    */
   readonly tag?: number;
   /**
-   * 动态路径方法的连接词，默认值为 by
+   * 方法名的连接词，默认值为 By
    */
-  readonly con?: string;
-  /**
-   * 方法名是否添加请求方法，默认值为 true
-   */
-  readonly addMethod?: boolean;
+  readonly conjunction?: string;
 }
 
 export interface IDefinitionNameMapping {

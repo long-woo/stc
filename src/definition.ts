@@ -5,7 +5,7 @@ import {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { getObjectKeyByValue, getRefType, upperCase } from "./util.ts";
+import { camelCase, getObjectKeyByValue, getRefType, hasKey } from "./util.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -60,6 +60,7 @@ const getDefinitionNameMapping = (
 
 /**
  * 原始定义对象转换为虚拟定义对象
+ *
  * @param defItem - 定义名的属性
  * @param defMapping - 定义
  * @returns
@@ -67,8 +68,9 @@ const getDefinitionNameMapping = (
 const getVirtualProperties = (
   defItem: ISwaggerResultDefinition,
   defMapping: IDefinitionNameMapping,
+  defData: Map<string, IDefinitionVirtualProperty[]>,
 ): IDefinitionVirtualProperty[] => {
-  if (defItem.type !== "object") {
+  if (!defItem.type.includes("object")) {
     Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
     return [];
   }
@@ -94,18 +96,45 @@ const getVirtualProperties = (
 
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
       const type = enumOption.length
-        ? defMapping.name + upperCase(current)
+        ? camelCase(`${defMapping.name}_${current}`, true)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
-      prev.push({
-        name: current,
+      const _defItem: IDefinitionVirtualProperty = {
+        name: camelCase(current),
         type,
         description: prop.description ?? "",
         required,
         enumOption,
         ref: refName,
         format: prop.format ?? "",
-      });
+      };
+
+      // 处理当前属性的子属性
+      if (hasKey(prop as unknown as Record<string, unknown>, "properties")) {
+        const _childDef = getDefinitionNameMapping(current, true);
+        const _childProps = getVirtualProperties(
+          prop as ISwaggerResultDefinition,
+          _childDef,
+          defData,
+        );
+
+        // 将 type 中存在 object，替换为新名字
+        if (_defItem.type.includes("object") && _childProps.length) {
+          const _objTypeName = defMapping.name + _childDef.name;
+
+          if (Array.isArray(_defItem.type)) {
+            const _objIndex = _defItem.type.indexOf("object");
+
+            _defItem.type.splice(_objIndex, 1, _objTypeName);
+          } else {
+            _defItem.type = _objTypeName;
+          }
+
+          defData.set(_objTypeName, _childProps);
+        }
+      }
+
+      prev.push(_defItem);
       return prev;
     },
     [],
@@ -135,7 +164,8 @@ export const getDefinition = (
     });
     if (defKeys.includes(name)) return;
 
-    const props = getVirtualProperties(definitions[key], def);
+    const props = getVirtualProperties(definitions[key], def, defMap);
+
     defMap.set(name, props);
   });
 

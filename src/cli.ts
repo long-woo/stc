@@ -159,8 +159,7 @@ ${getT("$t(cli.option)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
-  -c, --con          ${getT("$t(cli.option_con)")}
-  -a, --addMethod    ${getT("$t(cli.option_addMethod)")}
+  -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -184,8 +183,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       "lang",
       "tag",
       "filter",
-      "con",
-      "addMethod",
+      "conjunction",
     ],
     alias: {
       h: "help",
@@ -194,13 +192,13 @@ export const main = async (): Promise<ISwaggerOptions> => {
       l: "lang",
       v: "version",
       f: "filter",
-      c: "con",
-      a: "addMethod",
+      c: "conjunction",
     },
     collect: ["filter"],
     default: {
       lang: "ts",
       platform: "axios",
+      conjunction: "By",
     },
     unknown: (arg: string) => {
       Logs.error(getT("$t(cli.unknownOption)", { arg }));
@@ -243,10 +241,8 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const platform = args.platform ?? "axios";
   // 语言，用于输出文件的后缀名。默认：ts
   const lang = args.lang ?? "ts";
-  // 动态路径方法的连接词，默认值为 by
-  const con = args.con ?? "by";
-  // 方法名是否添加请求方法，默认值为 true
-  const addMethod = args.addMethod !== "false";
+  // 动态路径方法的连接词，默认： By
+  const conjunction = args.conjunction ?? "By";
 
   return {
     url: args.url,
@@ -255,7 +251,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
     lang,
     tag: args.tag,
     filter: args.filter,
-    con,
-    addMethod
+    conjunction,
   };
 };

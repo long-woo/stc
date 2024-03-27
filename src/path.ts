@@ -7,38 +7,39 @@ import {
   ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { getRefType, hasKey, lowerCase, upperCamelCase, upperCase } from './util.ts'
+import { camelCase, getRefType, hasKey, lowerCase, upperCase } from "./util.ts";
 import Logs from "./console.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
  * 从 URL 获取方法名称
  * @param url - 接口地址
- * @param space  - 连接字符
+ * @param conjunction  - 连接字符
  * @returns
  */
-const getMethodName = (url: string, space = "by") => {
+const getMethodName = (url: string, conjunction: string) => {
   const _url = url.split("/");
   // 获取URL路径Query方法名称（取第一个Params）
   let _query = url.split("?")?.[1]?.split("&")
     .shift()?.replace(/[,=]/g, "_");
   // 添加_分割标记
   _query = _query ? `_${_query}` : "";
-  let _name = _url.pop()?.split("?")[0] as string
+  let _name = _url.pop()?.split("?")[0] as string;
 
-  const regExp = /^{(\w+)}$/
+  if (!_name) return _name;
+
+  const regExp = /^{(\w+)}$/;
   if (regExp.test(_name)) {
     // 动态路径添加连接字符
-    _name = _url.pop() + `_${space}_` + _name.match(regExp)![1]
-    _name = _name.toLowerCase()
+    _name = `${_url.pop()}_${conjunction}_${_name.match(regExp)![1]}`;
   }
 
-  // _-命名转换未首字符大写风格驼峰命名
-  return upperCamelCase(_name + _query)
+  // 方法名小驼峰
+  return camelCase(_name);
 };
 
 /**
- * ApiFox 属性（type 为 object 时，处理存在的属性定义）
+ * Apifox 属性（type 为 object 时，处理存在的属性定义）
  * @param properties - 属性
  * @param requiredProps - 必填属性
  * @returns
@@ -54,7 +55,7 @@ const getProperties = (
       const _propItem: IDefinitionVirtualProperty = {
         name: current,
         type: _props?.type ?? "",
-        typeX: _props.items?.type,
+        typeX: _props.items?.type.toString(),
         required: requiredProps.includes(current) ??
           false,
         title: _props?.title,
@@ -140,35 +141,38 @@ const getPathVirtualProperty = (
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
     Object.keys(_requestBody.content).forEach((_key) => {
-      // 此处无需判断类型，此判断会导致非包含类型无法正常生成body参数
-      // if (["application/json", "application/octet-stream"].includes(_key)) {
-        const _bodyContent =
-          _requestBody.content[_key as keyof ISwaggerContent];
-        const _bodyContentSchema = _bodyContent?.schema;
-        const _bodyContentRef = getRefType(
-          _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
-        );
-        const _name = _key === "application/octet-stream"
-          ? "file"
-          : lowerCase(_bodyContentRef);
+      const _bodyContent = _requestBody.content[_key as keyof ISwaggerContent];
+      const _bodyContentSchema = _bodyContent?.schema;
+      const _bodyContentRef = getRefType(
+        _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
+      );
+      const _name = (_key === "application/octet-stream"
+        ? "file"
+        : lowerCase(_bodyContentRef)) || "body";
 
-        // 处理 type 为 object 的情况，并且有 properties 属性
-        const _properties = getProperties(
-          _bodyContentSchema?.properties ?? {},
-          _bodyContentSchema?.required ?? [],
-        );
+      // 处理 type 为 object 的情况，并且有 properties 属性
+      const _properties = getProperties(
+        _bodyContentSchema?.properties ?? {},
+        _bodyContentSchema?.required ?? [],
+      );
 
-        const _body: IDefinitionVirtualProperty = {
-          name: _name || "body",
-          type: _bodyContentSchema?.type ?? "",
-          required: _requestBody.required ?? true,
-          description: _requestBody.description,
-          ref: _bodyContentRef,
-          properties: _properties,
-        };
+      const _body: IDefinitionVirtualProperty = {
+        name: _name,
+        type: _bodyContentSchema?.type ?? "",
+        required: _requestBody.required ?? true,
+        description: _requestBody.description,
+        ref: _bodyContentRef,
+        properties: _properties,
+      };
 
+      // body 存在相同 name 时，无需重复添加
+      if (
+        !parameters.body.some((item) =>
+          item.name === _name
+        )
+      ) {
         parameters.body.push(_body);
-      // }
+      }
     });
   }
 
@@ -177,7 +181,7 @@ const getPathVirtualProperty = (
     pathMethod.responses[200]?.content?.["application/json"]?.schema;
 
   const _properties = getProperties(
-    _resSchema?.properties ?? {},
+    _resSchema?.properties ?? _resSchema?.items?.properties ?? {},
     _resSchema?.required ?? [],
   );
 
@@ -210,7 +214,10 @@ const parserFilter = (filters: string[]) => {
   if (!filters.length) return undefined;
 
   const regStr = filters.reduce((prev, current) => {
-    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*");
+    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*").replace(
+      /\?/g,
+      "\\?",
+    );
 
     return `${prev ? `${prev}|` : ""}(${_str})`;
   }, "");
@@ -239,18 +246,22 @@ export const getApiPath = (
     const methods = paths[url];
 
     Object.keys(methods).forEach((method) => {
+      // url去除 `?` 之后的字符
+      if (url.includes("?")) {
+        url = url.slice(0, url.indexOf("?"));
+      }
+
       const currentMethod = methods[method];
       // 方法名
-      let name = currentMethod.operationId ?? getMethodName(url, options?.con);
+      let name = currentMethod.operationId ??
+        getMethodName(url, options!.conjunction!);
       if (!name) {
         Logs.error(getT("$t(path.notName)", { url, method }));
         return;
       }
 
-      // 判断添加请求方式标识
-      if (options?.addMethod) {
-        name = `${upperCase(method)}${name}`;
-      }
+      // 添加请求方式标识，如 GET，POST 等，防止重名。
+      name = `${method}${upperCase(name)}`;
 
       // 接口对象
       const value = getPathVirtualProperty(
