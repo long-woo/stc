@@ -29,28 +29,7 @@ export const parserDefinition = (
   const _res: Array<string> = [];
 
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
-  // console.log(data);
-  // data = new Map<string, IDefinitionVirtualProperty[]>();
-  // data.set("NavMenuItem", [{
-  //   "name": "title",
-  //   "type": [
-  //     "string",
-  //     "NavMenuItemTitle",
-  //   ],
-  //   "description": "对象的标题。",
-  //   "required": false,
-  //   "enumOption": [],
-  //   "ref": "",
-  //   "format": "",
-  // }, {
-  //   "name": "id",
-  //   "type": "integer",
-  //   "description": "对象的唯一标识符。",
-  //   "required": false,
-  //   "enumOption": [],
-  //   "ref": "",
-  //   "format": "",
-  // }]);
+
   data.forEach((value, key) => {
     const props = value.reduce((prev, current) => {
       const _type = convertType(current.type, current.ref);

@@ -74,6 +74,7 @@ const methodCommit = (
   const _commit = [
     "/**",
     `* ${summary || name}`,
+    "*",
   ];
 
   title && _commit.push(`* @title ${title}`);

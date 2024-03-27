@@ -160,7 +160,6 @@ ${getT("$t(cli.option)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
-  -A, --addMethod    ${getT("$t(cli.option_addMethod)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -176,7 +175,7 @@ ${getT("$t(cli.example)")}
 export const main = async (): Promise<ISwaggerOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version", "addMethod"],
+    boolean: ["help", "version"],
     string: [
       "url",
       "outDir",
@@ -194,7 +193,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
       v: "version",
       f: "filter",
       c: "conjunction",
-      A: "addMethod",
     },
     collect: ["filter"],
     default: {
@@ -243,7 +241,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
   const platform = args.platform ?? "axios";
   // 语言，用于输出文件的后缀名。默认：ts
   const lang = args.lang ?? "ts";
-  // 动态路径方法的连接词，默认值为 by
+  // 动态路径方法的连接词，默认： By
   const conjunction = args.conjunction ?? "By";
 
   return {
@@ -254,6 +252,5 @@ export const main = async (): Promise<ISwaggerOptions> => {
     tag: args.tag,
     filter: args.filter,
     conjunction,
-    addMethod: args.addMethod,
   };
 };

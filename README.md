@@ -116,14 +116,15 @@ App<IAppOption>({
 
 ### Options 选项
 
-| 参数名   | 类型     | 默认值  | 说明                                                                                                       |
-| -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------- |
-| url      | string   |         | Swagger 文档地址，或者本地路径                                                                             |
-| outDir   | string   | stc_out | 输出目录                                                                                                   |
-| platform | string   | axios   | 平台，可选值：`axios`、`wechat`                                                                            |
-| lang     | string   | ts      | 语言，用于输出文件的后缀名                                                                                 |
-| tag      | number   |         | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名                                                      |
+| 参数名   | 类型     | 默认值  | 说明                                                                                                |
+| -------- | -------- | ------- | ------------------------------------------------------------------------------------------------ |
+| url      | string   |         | Swagger 文档地址，或者本地路径 |
+| outDir   | string   | stc_out | 输出目录 |
+| platform | string   | axios   | 平台，可选值：`axios`、`wechat` |
+| lang     | string   | ts      | 语言，用于输出文件的后缀名 |
+| tag      | number   |         | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名 |
 | filter   | string[] |         | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
+| conjunction | string | By     | 方法的连接词，默认值为 `By` |
 
 ## Plug-in development 插件开发
 

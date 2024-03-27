@@ -249,9 +249,7 @@ export const getApiPath = (
       }
 
       // 判断添加请求方式标识
-      if (options?.addMethod) {
-        name = `${upperCase(method)}${name}`;
-      }
+      name = `${method}${upperCase(name)}`;
 
       // 接口对象
       const value = getPathVirtualProperty(

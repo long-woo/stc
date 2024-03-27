@@ -39,8 +39,7 @@
     "option_filter": "过滤接口，符合过滤条件的接口会被生成。",
     "option_tag": "从接口 url 中指定标签，用于文件名，默认读取 tags 的第一个。",
     "option_version": "显示版本信息。",
-    "option_conjunction": "方法名的连接词。",
-    "option_addMethod": "指定是否将请求方法添加到方法名中。"
+    "option_conjunction": "方法名的连接词。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",

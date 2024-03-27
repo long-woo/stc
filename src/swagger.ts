@@ -328,10 +328,6 @@ export interface ISwaggerOptions {
    * 方法名的连接词，默认值为 By
    */
   readonly conjunction?: string;
-  /**
-   * 方法名是否添加请求方法，默认值为 true
-   */
-  readonly addMethod?: boolean;
 }
 
 export interface IDefinitionNameMapping {
