@@ -167,7 +167,9 @@ const getPathVirtualProperty = (
 
       // body 存在相同 name 时，无需重复添加
       if (
-        !parameters.body.some((item) => item.name === _name)
+        !parameters.body.some((item) =>
+          item.name === _name
+        )
       ) {
         parameters.body.push(_body);
       }
