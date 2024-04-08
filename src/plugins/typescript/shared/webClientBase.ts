@@ -20,15 +20,18 @@ export interface WebClientConfig {
   params?: WebClientParams;
   timeout?: number;
   signal?: AbortSignal;
-  /**
-   * 错误回调函数
-   */
-  onError?: (message: string) => void;
+  withCredentials?: boolean;
   /**
    * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
    */
   errorIgnore?: string[];
+  abortUrls?: string[];
   config?: Pick<WebClientConfig, "timeout" | "signal">;
+  /**
+   * 错误回调函数
+   */
+  onError?: (message: string) => void;
+  onLogin?: () => void;
 }
 
 /**
@@ -46,3 +49,18 @@ export const generateURL = (url: string, path?: IDefaultObject) => {
 
   return newURL;
 };
+
+/**
+ * Returns an array of query parameters formatted as key-value pairs joined by "&".
+ *
+ * @param {IDefaultObject<string>} query - An object containing query parameters.
+ * @return {string} The formatted query parameters joined by "&".
+ */
+export const getRequestParams = (query: IDefaultObject<string>) =>
+  Object.keys(query).reduce(
+    (prev: Array<string>, current) => {
+      prev.push(`${current}=${encodeURIComponent(query[current])}`);
+      return prev;
+    },
+    [],
+  ).join("&");

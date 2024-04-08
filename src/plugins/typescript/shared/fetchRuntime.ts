@@ -5,17 +5,17 @@ import type {
   WebClientParams,
 } from "./webClientBase.ts";
 import { generateURL } from "./webClientBase.ts";
-import { request } from "./wechat/index.ts";
+
+// import { request } from "./wechat/index.ts";
+import { createAxios, request } from "./axios/index.ts";
 
 let webClientInstance: WebClientConfig;
 
 export const createWebClient = (
-  config: Pick<
-    WebClientConfig,
-    "baseURL" | "timeout" | "onError" | "errorIgnore"
-  >,
+  config: Omit<WebClientConfig, "url" | "signal" | "config">,
 ) => {
   webClientInstance = config;
+  createAxios(config);
 };
 
 export const webClient = <T>(
