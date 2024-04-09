@@ -301,7 +301,7 @@ export interface ISwaggerOptions {
    */
   readonly url: string;
   /**
-   * 输出目录
+   * 输出目录。默认：./stc_out
    */
   readonly outDir: string;
   /**
