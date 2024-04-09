@@ -5,9 +5,11 @@ import type {
   WebClientParams,
 } from "./webClientBase.ts";
 import { generateURL } from "./webClientBase.ts";
-
-// import { request } from "./wechat/index.ts";
+<% if (it.platform === "wechat") { %>
+import { request } from "./wechat/index.ts";
+<% } else { %>
 import { createAxios, request } from "./axios/index.ts";
+<% } %>
 
 let webClientInstance: WebClientConfig;
 
@@ -15,7 +17,9 @@ export const createWebClient = (
   config: Omit<WebClientConfig, "url" | "signal" | "config">,
 ) => {
   webClientInstance = config;
+<% if (it.platform === "axios") { %>
   createAxios(config);
+<% } %>
 };
 
 export const webClient = <T>(
