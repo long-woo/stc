@@ -22,7 +22,7 @@ export const createWebClient = (
 <% } %>
 };
 
-export const webClient = <T>(
+export const fetchRuntime = <T>(
   url: string,
   method: WebClientMethod,
   req?: WebClientParams,
@@ -37,3 +37,20 @@ export const webClient = <T>(
 
   return request<T>(webClientInstance);
 };
+
+export class WebClient {
+  static create (config: Omit<WebClientConfig, "url" | "signal" | "config">) {
+    createWebClient(config);
+  }
+
+  static request<T>(
+    url: string,
+    method: WebClientMethod,
+    req?: WebClientParams,
+    config?: WebClientConfig,
+  ) {
+    return fetchRuntime<T>(url, method, req, config);
+  }
+}
+
+export default WebClient;

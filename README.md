@@ -1,6 +1,6 @@
-# STC
+# <p align="center">STC</p>
 
-![logo](resources/stc.svg)
+<p  align="center"><img src="resources/stc.svg" alt="logo" /></p>
 
 STC (Swagger Transform Code) is a tool for converting Swagger documents into code files.
 
@@ -77,7 +77,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 2.打开 `shared > axios > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
 
-3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码:
+3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码：
 
 ```ts
 import webClient from './apis/shared/axios/fetch'

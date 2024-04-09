@@ -1,6 +1,6 @@
-import { createFile } from "../../util.ts";
-import { ISwaggerOptions } from "../../swagger.ts";
-import { IPlugin } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
+import type { IPlugin } from "../typeDeclaration.ts";
+import { copyFile, createFetchRuntimeFile, createFile } from "../../util.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
 import {
@@ -8,6 +8,9 @@ import {
   createBaseFile,
   createWechatFile,
 } from "./shared/index.ts";
+
+// Deno 当前版本（1.42.1）未支持
+// import webClientBaseFile from "./shared/webClientBase.ts" with { type: "text" };
 
 let pluginOptions: ISwaggerOptions;
 
@@ -84,14 +87,18 @@ export const TypeScriptPlugin: IPlugin = {
 
   onEnd() {
     // 创建运行时需要的文件
-    const _baseFileContent = createBaseFile();
+    // const _baseFileContent = createBaseFile();
 
     if (pluginOptions.platform === "axios") {
-      const _axiosFileContent = createAxiosFile();
+      // const _axiosFileContent = createAxiosFile();
 
-      createFile(
-        `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
-        _axiosFileContent,
+      // createFile(
+      //   `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
+      //   _axiosFileContent,
+      // );
+      copyFile(
+        "./src/plugins/typescript/shared/axios",
+        `${pluginOptions.outDir}/shared/axios`,
       );
     }
 
@@ -104,9 +111,11 @@ export const TypeScriptPlugin: IPlugin = {
       );
     }
 
-    createFile(
-      `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
-      _baseFileContent,
-    );
+    // createFile(
+    //   `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
+    //   webClientBaseFile,
+    // );
+
+    createFetchRuntimeFile(pluginOptions);
   },
 };

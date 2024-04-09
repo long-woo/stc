@@ -1,8 +1,10 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
+import { Eta } from "x/eta@v3.4.0/src/index.ts";
 
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
+import type { ISwaggerOptions } from "./swagger.ts";
 
 interface ICopyFileOptions {
   /**
@@ -220,4 +222,14 @@ export const fetchClient = async (
   }
 
   throw res;
+};
+
+export const createFetchRuntimeFile = (options: ISwaggerOptions) => {
+  const eta = new Eta({ views: "./src/plugins/typescript/shared" });
+
+  const _res = eta.render("./fetchRuntime", {
+    platform: options.platform,
+  });
+
+  createFile(`${options.outDir}/shared/fetchRuntime.${options.lang}`, _res);
 };
