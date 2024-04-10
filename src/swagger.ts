@@ -1,4 +1,4 @@
-import { IPlugin } from "./plugins/typeDeclaration.ts";
+import type { IPlugin } from "./plugins/typeDeclaration.ts";
 
 export type IDefaultObject<T = unknown> = {
   [key: string]: T;

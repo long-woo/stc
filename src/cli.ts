@@ -1,8 +1,8 @@
-import { Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
+import { type Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
 import ProgressBar from "x/progress@v1.4.5/mod.ts";
 
+import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";
-import { ISwaggerOptions } from "./swagger.ts";
 import { createAppFile } from "./util.ts";
 import denoJson from "/deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";

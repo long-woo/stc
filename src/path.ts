@@ -1,4 +1,4 @@
-import {
+import type {
   IDefaultObject,
   IDefinitionVirtualProperty,
   IPathVirtualParameter,

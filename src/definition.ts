@@ -1,5 +1,5 @@
 import Logs from "./console.ts";
-import {
+import type {
   IDefaultObject,
   IDefinitionNameMapping,
   IDefinitionVirtualProperty,

@@ -1,5 +1,5 @@
+import type { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
-import { IPlugin, IPluginContext } from "./typeDeclaration.ts";
 import { getT } from "../i18n/index.ts";
 import { TypeScriptPlugin } from "./typescript/index.ts";
 import { JavaScriptPlugin } from "./javascript/index.ts";
