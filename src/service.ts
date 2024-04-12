@@ -1,6 +1,6 @@
 import { Eta } from "x/eta@v3.4.0/src/index.ts";
 
-const createFetchRuntimeFile = (lang = "ts", platform = "axios") => {
+const createFetchRuntimeFile = (platform = "axios") => {
   const eta = new Eta({ views: "./src/plugins/typescript/shared" });
 
   const _res = eta.render("./fetchRuntime", {

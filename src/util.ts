@@ -223,7 +223,7 @@ export const fetchClient = async (
   throw res;
 };
 
-export const parseEta = (content: string, data: any) => {
+export const parseEta = (content: string, data: Record<string, unknown>) => {
   const _eta = new Eta();
 
   return _eta.renderString(content, data);

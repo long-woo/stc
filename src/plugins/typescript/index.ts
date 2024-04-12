@@ -91,7 +91,7 @@ export const TypeScriptPlugin: IPlugin = {
     const _baseFileContent = createBaseFile();
     const _fetchRuntimeFileContent = parseEta(
       createFetchRuntimeFile(),
-      pluginOptions,
+      pluginOptions as unknown as Record<string, unknown>,
     );
 
     if (pluginOptions.platform === "axios") {
