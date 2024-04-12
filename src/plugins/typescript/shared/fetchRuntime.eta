@@ -1,22 +1,22 @@
 import type {
   IDefaultObject,
-  WebClientConfig,
-  WebClientMethod,
-  WebClientParams,
-} from "./webClientBase.ts";
-import { generateURL } from "./webClientBase.ts";
+  ApiClientConfig,
+  ApiClientMethod,
+  ApiClientParams,
+} from "./apiClientBase.ts";
+import { generateURL } from "./apiClientBase.ts";
 <% if (it.platform === "wechat") { %>
 import { request } from "./wechat/index.ts";
 <% } else { %>
 import { createAxios, request } from "./axios/index.ts";
 <% } %>
 
-let webClientInstance: WebClientConfig;
+let apiClientInstance: ApiClientConfig;
 
-export const createWebClient = (
-  config: Omit<WebClientConfig, "url" | "signal" | "config">,
+export const createApiClient = (
+  config: Omit<ApiClientConfig, "url" | "signal" | "config">,
 ) => {
-  webClientInstance = config;
+  apiClientInstance = config;
 <% if (it.platform === "axios") { %>
   createAxios(config);
 <% } %>
@@ -24,33 +24,39 @@ export const createWebClient = (
 
 export const fetchRuntime = <T>(
   url: string,
-  method: WebClientMethod,
-  req?: WebClientParams,
-  config?: WebClientConfig,
+  method: ApiClientMethod,
+  req?: ApiClientParams,
+  config?: ApiClientConfig,
 ) => {
   const _url = generateURL(url, req?.path as unknown as IDefaultObject);
 
-  webClientInstance.url = _url;
-  webClientInstance.method = method;
-  webClientInstance.params = req;
-  webClientInstance.config = config;
+  apiClientInstance.url = _url;
+  apiClientInstance.method = method;
+  apiClientInstance.params = req;
+  apiClientInstance.config = config;
 
-  return request<T>(webClientInstance);
+  return request<T>(apiClientInstance);
 };
 
-export class WebClient {
-  static create (config: Omit<WebClientConfig, "url" | "signal" | "config">) {
-    createWebClient(config);
+/**
+ * @deprecated Planned to be removed in `v1.7.0`
+ * 
+ * 1.`webClient.create` is modified to `createApiClient`
+ * 2.`webClient.request` modified to `fetchRuntime`
+ */
+export class ApiClient {
+  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">) {
+    createApiClient(config);
   }
 
   static request<T>(
     url: string,
-    method: WebClientMethod,
-    req?: WebClientParams,
-    config?: WebClientConfig,
+    method: ApiClientMethod,
+    req?: ApiClientParams,
+    config?: ApiClientConfig,
   ) {
     return fetchRuntime<T>(url, method, req, config);
   }
 }
 
-export default WebClient;
+export default ApiClient;

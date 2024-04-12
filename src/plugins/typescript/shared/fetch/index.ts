@@ -1,5 +1,5 @@
-import type { IDefaultObject, WebClientConfig } from "../webClientBase.ts";
-import { getRequestParams } from "../webClientBase.ts";
+import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+import { getRequestParams } from "../apiClientBase.ts";
 
 /**
  * Wraps a fetch request to enforce a timeout.
@@ -21,7 +21,7 @@ const fetchWithTimeout = (
   return Promise.race([fetch(url, init), timeoutPromise]);
 };
 
-export const request = async <T>(instance: WebClientConfig) => {
+export const request = async <T>(instance: ApiClientConfig) => {
   const _params = getRequestParams(
     (instance.params?.query as IDefaultObject<string>) ?? {},
   );

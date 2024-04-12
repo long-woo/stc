@@ -1,13 +1,13 @@
-import type { IDefaultObject, WebClientConfig } from "../webClientBase.ts";
-import { getRequestParams } from "../webClientBase.ts";
+import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+import { getRequestParams } from "../apiClientBase.ts";
 
 /**
  * Generate a request to a specified URL with the given parameters.
  *
- * @param {WebClientConfig} instance - the configuration for the request
+ * @param {ApiClientConfig} instance - the configuration for the request
  * @return {Promise<T>} a promise that resolves with the response data
  */
-export const request = <T>(instance: WebClientConfig): Promise<T> => {
+export const request = <T>(instance: ApiClientConfig): Promise<T> => {
   const _params = getRequestParams(
     (instance.params?.query as IDefaultObject<string>) ?? {},
   );

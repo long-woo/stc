@@ -2,11 +2,44 @@ export const createBaseFile = () =>
   `export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
+  
+export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
+  
+export interface ApiClientParams {
+  path?: IDefaultObject;
+  query?: IDefaultObject;
+  body?: IDefaultObject;
+  formData?: IDefaultObject;
+  header?: IDefaultObject;
+}
+
+export interface ApiClientConfig {
+  baseURL?: string;
+  url?: string;
+  method?: ApiClientMethod;
+  params?: ApiClientParams;
+  timeout?: number;
+  signal?: AbortSignal;
+  withCredentials?: boolean;
+  /**
+   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+   */
+  errorIgnore?: string[];
+  abortUrls?: string[];
+  config?: Pick<ApiClientConfig, "timeout" | "signal">;
+  /**
+   * 错误回调函数
+   */
+  onError?: (message: string) => void;
+  onLogin?: () => void;
+}
 
 /**
- * 生成 URL
- * @param url - 需要处理的 URL
- * @param path - 路由参数
+ * Generates a new URL by replacing placeholders in the input URL with values from the provided path object.
+ *
+ * @param {string} url - The original URL with placeholders to be replaced.
+ * @param {IDefaultObject} [path] - An optional object containing key-value pairs to replace in the URL.
+ * @return {string} The new URL with placeholders replaced by values from the path object.
  */
 export const generateURL = (url: string, path?: IDefaultObject) => {
   const newURL = url.replace(
@@ -17,153 +50,214 @@ export const generateURL = (url: string, path?: IDefaultObject) => {
   );
 
   return newURL;
-};`;
-
-export const createAxiosFile = () =>
-  `import type { AxiosDefaults, AxiosInstance, Method } from "axios";
-import axios from "axios";
-import type { IDefaultObject } from "../webClientBase";
-import { generateURL } from "../webClientBase";
+};
 
 /**
- * API 请求
+ * Returns an array of query parameters formatted as key-value pairs joined by "&".
+ *
+ * @param {IDefaultObject<string>} query - An object containing query parameters.
+ * @return {string} The formatted query parameters joined by "&".
  */
-export class WebClient {
-  private static axiosInstance: AxiosInstance;
-  private static onError: ((message: string) => void) | undefined;
-  private static errorIgnore: string[] = [];
-
-  public static request<T>(
-    url: string,
-    method: Method,
-    req?: IDefaultObject,
-  ) {
-    const _url = generateURL(url, req?.path as IDefaultObject);
-    const _formData: IDefaultObject = req?.formData as IDefaultObject;
-
-    let _data: IDefaultObject | FormData | unknown = req?.body;
-
-    // 处理 FormData 数据
-    if (_formData) {
-      const formData = new FormData();
-
-      Object.keys(_formData).forEach((key) => {
-        formData.append(key, _formData[key] as string | Blob);
-      });
-
-      _data = formData;
-    }
-
-    return WebClient.axiosInstance.request<T, T>({
-      url: _url,
-      method,
-      data: _data,
-      params: req?.query,
-      headers: req?.header,
-      timeout: req?.timeout
-    });
-  }
-
-  /**
-   * 创建请求，并配置
-   * @param config - 请求配置
-   * @returns
-   */
-  public static createAxios(
-    config: Pick<AxiosDefaults, "baseURL" | "timeout" | "withCredentials"> & {
-      /**
-       * 错误回调函数
-       */
-      error?: (message: string) => void;
-      /**
-       * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
-       */
-      errorIgnore?: string[];
+export const getRequestParams = (query: IDefaultObject<string>) =>
+  Object.keys(query).reduce(
+    (prev: Array<string>, current) => {
+      prev.push(\`\${current}=\${encodeURIComponent(query[current])}\`);
+      return prev;
     },
+    [],
+  ).join("&");`;
+
+export const createAxiosFile = () =>
+  `import type {
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse,
+    InternalAxiosRequestConfig,
+  } from "axios";
+import axios from "axios";
+  
+import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+  
+type RequestConfig = AxiosRequestConfig<Record<string, unknown>>;
+  
+let axiosInstance: AxiosInstance;
+let abortUrls: string[] = [];
+let errorIgnore: string[] = [];
+let onError: ((message: string) => void) | undefined;
+let onLogin: (() => void) | undefined;
+const pendingMap = new Map<string, AbortController>();
+
+const addPending = (config: RequestConfig) => {
+  const url = config.url ?? "";
+  const data = config.data ?? {};
+  const controller = new AbortController();
+
+  if (
+    !url.includes("add_pending=true") &&
+    !data.addPending &&
+    !abortUrls.includes(url)
   ) {
-    WebClient.axiosInstance = axios.create({
-      timeout: config.timeout ?? 5000,
-      baseURL: config.baseURL,
-      withCredentials: config.withCredentials ?? false,
+    return;
+  }
+
+  if (!pendingMap.has(url)) {
+    config.signal = controller.signal;
+    pendingMap.set(url, controller);
+  }
+};
+
+const removePending = (config: RequestConfig) => {
+  const url = config.url ?? "";
+
+  if (url && pendingMap.has(url)) {
+    pendingMap.get(url)?.abort();
+    pendingMap.delete(url);
+  }
+};
+
+const requestInterceptor = () => {
+  axiosInstance.interceptors.request.use(
+    (config: InternalAxiosRequestConfig<any>) => {
+      removePending(config);
+      addPending(config);
+
+      return config;
+    },
+    (error: any) => {
+      return Promise.reject(error);
+    },
+  );
+};
+
+const responseInterceptor = () => {
+  axiosInstance.interceptors.response.use(
+    (response: AxiosResponse<any, any>) => {
+      const _data = response.data;
+      const _config = response.config;
+      const _errorIgnore = errorIgnore.includes(_config.url ?? "") ||
+        errorIgnore.includes(_config.baseURL ?? "");
+
+      // 全局提示。忽略排除的 url 或 baseURL
+      if (!_errorIgnore) {
+        // onError?.(_data.message);
+      }
+
+      if (response.status === 401) {
+        onLogin?.();
+      }
+
+      removePending(_config);
+      return _data;
+    },
+    (error: any) => {
+      // 取消的请求，无需抛出错误到 'onError' 回调函数
+      if (!axios.isCancel(error)) {
+        onError?.("network error.");
+      }
+
+      return Promise.reject(error);
+    },
+  );
+};
+
+/**
+ * Creates an Axios instance with the provided configuration.
+ *
+ * @param {Omit<ApiClientConfig, "url" | "signal" | "config">} config - The configuration object for the Axios instance.
+ */
+export const createAxios = (
+  config: Omit<ApiClientConfig, "url" | "signal" | "config">,
+) => {
+  axiosInstance = axios.create({
+    timeout: config.timeout ?? 5000,
+    baseURL: config.baseURL,
+    withCredentials: config.withCredentials ?? false,
+  });
+
+  errorIgnore = config.errorIgnore ?? [];
+  abortUrls = config.abortUrls ?? [];
+  onError = config.onError;
+  onLogin = config.onLogin;
+
+  requestInterceptor();
+  responseInterceptor();
+};
+
+/**
+ * Sends a request using the provided WebClientConfig instance. If formData is included in the instance parameters, it is processed and sent as FormData.
+ *
+ * @param {ApiClientConfig} instance - the configuration object for the request
+ * @return {Promise<T>} a Promise that resolves with the response data
+ */
+export const request = <T>(
+  instance: ApiClientConfig,
+): Promise<T> => {
+  const _formData: IDefaultObject = instance.params?.formData as IDefaultObject;
+
+  let _data: IDefaultObject | FormData | unknown = instance.params?.body;
+
+  // 处理 FormData 数据
+  if (_formData) {
+    const formData = new FormData();
+
+    Object.keys(_formData).forEach((key) => {
+      formData.append(key, _formData[key] as string | Blob);
     });
 
-    WebClient.onError = config.error;
-    WebClient.errorIgnore = config.errorIgnore ?? [];
-
-    return WebClient.axiosInstance;
+    _data = formData;
   }
-}
 
-export default WebClient;`;
+  return axiosInstance.request<T, T>({
+    url: instance.url,
+    method: instance.method,
+    data: _data,
+    params: instance.params?.query,
+    headers: instance.params?.header,
+    timeout: instance.config?.timeout,
+    signal: instance.config?.signal,
+  });
+};`;
 
 export const createWechatFile = () =>
-  `import type { IDefaultObject } from "../webClientBase";
-import { generateURL } from "../webClientBase";
+  `import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+import { getRequestParams } from "../apiClientBase.ts";
 
-type Method =
-  | "OPTIONS"
-  | "GET"
-  | "POST"
-  | "HEAD"
-  | "PUT"
-  | "DELETE"
-  | "TRACE"
-  | "CONNECT";
+/**
+ * Generate a request to a specified URL with the given parameters.
+ *
+ * @param {ApiClientConfig} instance - the configuration for the request
+ * @return {Promise<T>} a promise that resolves with the response data
+ */
+export const request = <T>(instance: ApiClientConfig): Promise<T> => {
+  const _params = getRequestParams(
+    (instance.params?.query as IDefaultObject<string>) ?? {},
+  );
 
-export class WebClient {
-  private static baseURL: string;
-  private static onError: ((msg: string) => void) | undefined;
+  return new Promise<T>((resolve, reject) => {
+    // @ts-ignore
+    wx.request({
+      url: \`\${instance.baseURL}\${instance.url}?\${_params}\`,
+      method: instance.method,
+      data: (instance.params?.body ?? {}) as IDefaultObject,
+      header: (instance.params?.header ?? {}) as IDefaultObject,
+      success: (
+        // @ts-ignore
+        res,
+      ) => {
+        const resData: any = res.data ?? {};
 
-  public static request<T>(
-    url: string,
-    method: Method,
-    req?: IDefaultObject,
-  ) {
-    const _url = generateURL(url, req?.path as IDefaultObject);
-
-    // query 参数处理
-    const _query: IDefaultObject<string> =
-      (req?.query as IDefaultObject<string>) ?? {};
-    const _params = Object.keys(_query).reduce(
-      (prev: Array<string>, current) => {
-        prev.push(\`\${current}=\${encodeURIComponent(_query[current])}\`);
-        return prev;
+        if (!resData.success) {
+          instance.onError?.(resData.message);
+        }
+        resolve(resData);
       },
-      [],
-    );
-
-    return new Promise<T>((resolve, reject) => {
-      wx.request({
-        url: \`\${WebClient.baseURL}\${_url}?\${_params.join("&")}\`,
-        method,
-        data: (req?.body ?? {}) as IDefaultObject,
-        header: (req?.header ?? {}) as IDefaultObject,
-        success: (res) => {
-          const resData: any = res.data ?? {};
-
-          if (!resData.success) {
-            WebClient.onError?.(resData.message);
-          }
-          resolve(resData);
-        },
-        fail: (err) => {
-          WebClient.onError?.(err.errMsg);
-          reject(err);
-        },
-      });
+      fail: (
+        // @ts-ignore
+        err,
+      ) => {
+        instance.onError?.(err.errMsg);
+        reject(err);
+      },
     });
-  }
-
-  /**
-   * 创建请求，并配置
-   * @param options - 请求配置
-   */
-  public static create(
-    options: { baseURL: string; onError?: (msg: string) => void },
-  ) {
-    WebClient.baseURL = options.baseURL;
-    WebClient.onError = options.onError;
-  }
-}
-
-export default WebClient;`;
+  });
+};`;

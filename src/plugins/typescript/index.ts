@@ -57,7 +57,7 @@ export const TypeScriptPlugin: IPlugin = {
 
       const _import = api.import;
       const _apiImport = [
-        `import webClient from '${_importPath}shared/${pluginOptions.platform}/fetch'`,
+        `import { fetchRuntime } from '${_importPath}shared/fetchRuntime'`,
       ];
       const _apiContent: Array<string> = [];
 
@@ -87,35 +87,35 @@ export const TypeScriptPlugin: IPlugin = {
 
   onEnd() {
     // 创建运行时需要的文件
-    // const _baseFileContent = createBaseFile();
+    const _baseFileContent = createBaseFile();
 
     if (pluginOptions.platform === "axios") {
-      // const _axiosFileContent = createAxiosFile();
+      const _axiosFileContent = createAxiosFile();
 
-      // createFile(
-      //   `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
-      //   _axiosFileContent,
-      // );
-      copyFile(
-        "./src/plugins/typescript/shared/axios",
-        `${pluginOptions.outDir}/shared/axios`,
+      createFile(
+        `${pluginOptions.outDir}/shared/axios/index.ts`,
+        _axiosFileContent,
       );
+      // copyFile(
+      //   "./src/plugins/typescript/shared/axios",
+      //   `${pluginOptions.outDir}/shared/axios`,
+      // );
     }
 
     if (pluginOptions.platform === "wechat") {
       const _wechatFileContent = createWechatFile();
 
       createFile(
-        `${pluginOptions.outDir}/shared/wechat/fetch.${pluginOptions.lang}`,
+        `${pluginOptions.outDir}/shared/wechat/index.ts`,
         _wechatFileContent,
       );
     }
 
-    // createFile(
-    //   `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
-    //   webClientBaseFile,
-    // );
+    createFile(
+      `${pluginOptions.outDir}/shared/apiClientBase.ts`,
+      _baseFileContent,
+    );
 
-    createFetchRuntimeFile(pluginOptions);
+    // createFetchRuntimeFile(pluginOptions);
   },
 };

@@ -3,9 +3,9 @@ export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
 
-export type WebClientMethod = "GET" | "POST" | "PUT" | "DELETE";
+export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export interface WebClientParams {
+export interface ApiClientParams {
   path?: IDefaultObject;
   query?: IDefaultObject;
   body?: IDefaultObject;
@@ -13,11 +13,11 @@ export interface WebClientParams {
   header?: IDefaultObject;
 }
 
-export interface WebClientConfig {
+export interface ApiClientConfig {
   baseURL?: string;
   url?: string;
-  method?: WebClientMethod;
-  params?: WebClientParams;
+  method?: ApiClientMethod;
+  params?: ApiClientParams;
   timeout?: number;
   signal?: AbortSignal;
   withCredentials?: boolean;
@@ -26,7 +26,7 @@ export interface WebClientConfig {
    */
   errorIgnore?: string[];
   abortUrls?: string[];
-  config?: Pick<WebClientConfig, "timeout" | "signal">;
+  config?: Pick<ApiClientConfig, "timeout" | "signal">;
   /**
    * 错误回调函数
    */
@@ -35,9 +35,11 @@ export interface WebClientConfig {
 }
 
 /**
- * 生成 URL
- * @param url - 需要处理的 URL
- * @param path - 路由参数
+ * Generates a new URL by replacing placeholders in the input URL with values from the provided path object.
+ *
+ * @param {string} url - The original URL with placeholders to be replaced.
+ * @param {IDefaultObject} [path] - An optional object containing key-value pairs to replace in the URL.
+ * @return {string} The new URL with placeholders replaced by values from the path object.
  */
 export const generateURL = (url: string, path?: IDefaultObject) => {
   const newURL = url.replace(
