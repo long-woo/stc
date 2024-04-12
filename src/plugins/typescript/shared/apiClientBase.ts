@@ -1,5 +1,5 @@
 // 由 stc 生成
-export type IDefaultObject<T = unknown> = {
+export type IDefaultObject<T = any> = {
   [key: string]: T;
 };
 
@@ -8,7 +8,7 @@ export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
 export interface ApiClientParams {
   path?: IDefaultObject;
   query?: IDefaultObject;
-  body?: IDefaultObject;
+  body?: any;
   formData?: IDefaultObject;
   header?: IDefaultObject;
 }
@@ -22,7 +22,7 @@ export interface ApiClientConfig {
   signal?: AbortSignal;
   withCredentials?: boolean;
   /**
-   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
    */
   errorIgnore?: string[];
   abortUrls?: string[];

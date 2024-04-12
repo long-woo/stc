@@ -1,11 +1,12 @@
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type { IPlugin } from "../typeDeclaration.ts";
-import { copyFile, createFetchRuntimeFile, createFile } from "../../util.ts";
+import { createFile, parseEta } from "../../util.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
 import {
   createAxiosFile,
   createBaseFile,
+  createFetchRuntimeFile,
   createWechatFile,
 } from "./shared/index.ts";
 
@@ -88,6 +89,10 @@ export const TypeScriptPlugin: IPlugin = {
   onEnd() {
     // 创建运行时需要的文件
     const _baseFileContent = createBaseFile();
+    const _fetchRuntimeFileContent = parseEta(
+      createFetchRuntimeFile(),
+      pluginOptions,
+    );
 
     if (pluginOptions.platform === "axios") {
       const _axiosFileContent = createAxiosFile();
@@ -116,6 +121,9 @@ export const TypeScriptPlugin: IPlugin = {
       _baseFileContent,
     );
 
-    // createFetchRuntimeFile(pluginOptions);
+    createFile(
+      `${pluginOptions.outDir}/shared/fetchRuntime.ts`,
+      _fetchRuntimeFileContent,
+    );
   },
 };

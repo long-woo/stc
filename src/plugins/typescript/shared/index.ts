@@ -1,5 +1,5 @@
 export const createBaseFile = () =>
-  `export type IDefaultObject<T = unknown> = {
+  `export type IDefaultObject<T = any> = {
   [key: string]: T;
 };
   
@@ -8,7 +8,7 @@ export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
 export interface ApiClientParams {
   path?: IDefaultObject;
   query?: IDefaultObject;
-  body?: IDefaultObject;
+  body?: any;
   formData?: IDefaultObject;
   header?: IDefaultObject;
 }
@@ -22,7 +22,7 @@ export interface ApiClientConfig {
   signal?: AbortSignal;
   withCredentials?: boolean;
   /**
-   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。eg. /api/test
+   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
    */
   errorIgnore?: string[];
   abortUrls?: string[];
@@ -65,7 +65,74 @@ export const getRequestParams = (query: IDefaultObject<string>) =>
       return prev;
     },
     [],
-  ).join("&");`;
+  ).join("&");
+`;
+
+export const createFetchRuntimeFile = () =>
+  `import type {
+  IDefaultObject,
+  ApiClientConfig,
+  ApiClientMethod,
+  ApiClientParams,
+} from "./apiClientBase.ts";
+import { generateURL } from "./apiClientBase.ts";
+<% if (it.platform === "wechat") { %>
+import { request } from "./wechat/index.ts";
+<% } else { %>
+import { createAxios, request } from "./axios/index.ts";
+<% } %>
+
+let apiClientInstance: ApiClientConfig;
+
+export const createApiClient = (
+  config: Omit<ApiClientConfig, "url" | "signal" | "config">,
+) => {
+  apiClientInstance = config;
+<% if (it.platform === "axios") { %>
+  createAxios(config);
+<% } %>
+};
+
+export const fetchRuntime = <T>(
+  url: string,
+  method: ApiClientMethod,
+  req?: ApiClientParams,
+  config?: ApiClientConfig,
+) => {
+  const _url = generateURL(url, req?.path as unknown as IDefaultObject);
+
+  apiClientInstance.url = _url;
+  apiClientInstance.method = method;
+  apiClientInstance.params = req;
+  apiClientInstance.config = config;
+
+  return request<T>(apiClientInstance);
+};
+
+/**
+ * @deprecated Planned to be removed in \`v1.7.0\`
+ * 
+ * 1.\`webClient.create\` is modified to \`createApiClient\`
+ * 
+ * 2.\`webClient.request\` modified to \`fetchRuntime\`
+ */
+export class ApiClient {
+  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">) {
+    createApiClient(config);
+  }
+
+  static request<T>(
+    url: string,
+    method: ApiClientMethod,
+    req?: ApiClientParams,
+    config?: ApiClientConfig,
+  ) {
+    return fetchRuntime<T>(url, method, req, config);
+  }
+}
+
+export default ApiClient;
+`;
 
 export const createAxiosFile = () =>
   `import type {
@@ -216,7 +283,8 @@ export const request = <T>(
     timeout: instance.config?.timeout,
     signal: instance.config?.signal,
   });
-};`;
+};
+`;
 
 export const createWechatFile = () =>
   `import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
@@ -260,4 +328,5 @@ export const request = <T>(instance: ApiClientConfig): Promise<T> => {
       },
     });
   });
-};`;
+};
+`;

@@ -42,6 +42,7 @@ export const fetchRuntime = <T>(
  * @deprecated Planned to be removed in `v1.7.0`
  * 
  * 1.`webClient.create` is modified to `createApiClient`
+ *
  * 2.`webClient.request` modified to `fetchRuntime`
  */
 export class ApiClient {
