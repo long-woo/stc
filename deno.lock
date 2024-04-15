@@ -1,5 +1,16 @@
 {
   "version": "3",
+  "packages": {
+    "specifiers": {
+      "npm:@types/node": "npm:@types/node@18.16.19"
+    },
+    "npm": {
+      "@types/node@18.16.19": {
+        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
+        "dependencies": {}
+      }
+    }
+  },
   "remote": {
     "https://deno.land/std@0.140.0/_util/assert.ts": "e94f2eb37cebd7f199952e242c77654e43333c1ac4c5c700e929ea3aa5489f74",
     "https://deno.land/std@0.140.0/_util/os.ts": "3b4c6e27febd119d36a416d7a97bd3b0251b77c88942c8f16ee5953ea13e2e49",
@@ -221,6 +232,17 @@
     "https://deno.land/x/dnt@0.40.0/mod.ts": "ae1890fbe592e4797e7dd88c1e270f22b8334878e9bf187c4e11ae75746fe778",
     "https://deno.land/x/dnt@0.40.0/transform.ts": "f68743a14cf9bf53bfc9c81073871d69d447a7f9e3453e0447ca2fb78926bb1d",
     "https://deno.land/x/esbuild@v0.20.1/mod.js": "d50e500b53ce67e31116beba3916b0f9275c0e1cc20bc5cadc0fc1b7a3b06fd9",
+    "https://deno.land/x/eta@v3.4.0/src/compile-string.ts": "e095c711f8e76f407c5e82af296236759f15c03903f62ff03e6b3a5903ef90c3",
+    "https://deno.land/x/eta@v3.4.0/src/compile.ts": "ad011fc5f9b65d463342a29fbce980c8000bae51b08ef39fb4252e071e5a33d7",
+    "https://deno.land/x/eta@v3.4.0/src/config.ts": "66cacec37cbd8557db0026567070a8829fdf363ac35dc18cfa53663f6c10f518",
+    "https://deno.land/x/eta@v3.4.0/src/core.ts": "b0f74d80ef0d42f5409297661279a86aec40c42efd0bd4bf31f8ee042d1fc01f",
+    "https://deno.land/x/eta@v3.4.0/src/err.ts": "4ac723a18491fe22bb2cedeb9d42f4d5e67274c61625b3ea82acffd98ec48dd7",
+    "https://deno.land/x/eta@v3.4.0/src/file-handling.ts": "f66c6387471d31fade733040ca16803c21c215cdc83235dd9090862c798df452",
+    "https://deno.land/x/eta@v3.4.0/src/index.ts": "4315d16ee52be57b49f77ae392bfd894e27046f4b919ea1b3bb695e76285272e",
+    "https://deno.land/x/eta@v3.4.0/src/parse.ts": "8cb25b4ccf58ea7f08fe9835f7eb8bf45917d6d743d28d1e25cadc9fc908cb32",
+    "https://deno.land/x/eta@v3.4.0/src/render.ts": "be7d45bf0ebf2769422908c1f353eeaff647ed5a7dd05531ccd571848152dc39",
+    "https://deno.land/x/eta@v3.4.0/src/storage.ts": "c40bd31cdd6f1218c86f70067282709e2f2c7fa7eea67547be950e1ed5d4bd4c",
+    "https://deno.land/x/eta@v3.4.0/src/utils.ts": "1994c8d228195558fb6785fb00a97cf21a457df598a6ab1945170f7a4b7f00d9",
     "https://deno.land/x/i18next@v23.10.0/BackendConnector.js": "0dbbdb393f0c85f871ebb12e6aad63323effffedeced8b7c5b90cbaae1ddc2c5",
     "https://deno.land/x/i18next@v23.10.0/EventEmitter.js": "0269fdda12ebd2eeb6dbeececdf9f72595e99b27a35e983c72d2b8b65fa6446c",
     "https://deno.land/x/i18next@v23.10.0/Formatter.js": "4b33aaacc8f191defc16d52ebf992683a6f3958dc132c135f7662ddf5ad89a9c",

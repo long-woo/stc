@@ -1,13 +1,17 @@
-import { createFile } from "../../util.ts";
-import { ISwaggerOptions } from "../../swagger.ts";
-import { IPlugin } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
+import type { IPlugin } from "../typeDeclaration.ts";
+import { createFile, parseEta } from "../../util.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
 import {
   createAxiosFile,
   createBaseFile,
+  createFetchRuntimeFile,
   createWechatFile,
 } from "./shared/index.ts";
+
+// Deno 当前版本（1.42.1）未支持
+// import webClientBaseFile from "./shared/webClientBase.ts" with { type: "text" };
 
 let pluginOptions: ISwaggerOptions;
 
@@ -54,7 +58,7 @@ export const TypeScriptPlugin: IPlugin = {
 
       const _import = api.import;
       const _apiImport = [
-        `import webClient from '${_importPath}shared/${pluginOptions.platform}/fetch'`,
+        `import { fetchRuntime } from '${_importPath}shared/fetchRuntime'`,
       ];
       const _apiContent: Array<string> = [];
 
@@ -70,12 +74,12 @@ export const TypeScriptPlugin: IPlugin = {
       api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
       api.export?.length && _apiContent.push(api.export.join("\n\n"));
 
-      actionData.set(key, _apiContent.join("\n\n"));
+      actionData.set(`${key}.ts`, _apiContent.join("\n\n"));
     });
 
     return {
       definition: {
-        filename: `${typeFileName}.${pluginOptions.lang}`,
+        filename: `${typeFileName}.ts`,
         content: defContent,
       },
       action: actionData,
@@ -85,28 +89,41 @@ export const TypeScriptPlugin: IPlugin = {
   onEnd() {
     // 创建运行时需要的文件
     const _baseFileContent = createBaseFile();
+    const _fetchRuntimeFileContent = parseEta(
+      createFetchRuntimeFile(),
+      pluginOptions as unknown as Record<string, unknown>,
+    );
 
     if (pluginOptions.platform === "axios") {
       const _axiosFileContent = createAxiosFile();
 
       createFile(
-        `${pluginOptions.outDir}/shared/axios/fetch.${pluginOptions.lang}`,
+        `${pluginOptions.outDir}/shared/axios/index.ts`,
         _axiosFileContent,
       );
+      // copyFile(
+      //   "./src/plugins/typescript/shared/axios",
+      //   `${pluginOptions.outDir}/shared/axios`,
+      // );
     }
 
     if (pluginOptions.platform === "wechat") {
       const _wechatFileContent = createWechatFile();
 
       createFile(
-        `${pluginOptions.outDir}/shared/wechat/fetch.${pluginOptions.lang}`,
+        `${pluginOptions.outDir}/shared/wechat/index.ts`,
         _wechatFileContent,
       );
     }
 
     createFile(
-      `${pluginOptions.outDir}/shared/webClientBase.${pluginOptions.lang}`,
+      `${pluginOptions.outDir}/shared/apiClientBase.ts`,
       _baseFileContent,
+    );
+
+    createFile(
+      `${pluginOptions.outDir}/shared/fetchRuntime.ts`,
+      _fetchRuntimeFileContent,
     );
   },
 };

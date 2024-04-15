@@ -1,8 +1,8 @@
-import { Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
+import { type Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
 import ProgressBar from "x/progress@v1.4.5/mod.ts";
 
+import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";
-import { ISwaggerOptions } from "./swagger.ts";
 import { createAppFile } from "./util.ts";
 import denoJson from "/deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
@@ -154,7 +154,7 @@ ${getT("$t(cli.usage)")}
 ${getT("$t(cli.option)")}
   -h, --help         ${getT("$t(cli.option_help)")}
   --url              ${getT("$t(cli.option_url)")}
-  -o, --outDir       ${getT("$t(cli.option_out)", { out: "stc_out" })}
+  -o, --outDir       ${getT("$t(cli.option_out)", { out: "./stc_out" })}
   -p, --platform     ${getT("$t(cli.option_platform)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
@@ -196,6 +196,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
     },
     collect: ["filter"],
     default: {
+      outDir: "./stc_out",
       lang: "ts",
       platform: "axios",
       conjunction: "By",
@@ -229,28 +230,13 @@ export const main = async (): Promise<ISwaggerOptions> => {
     printHelp();
   }
 
-  // 文件输出目录，默认为 Deno 当前执行的目录
-  let outDir = `${Deno.cwd()}/stc_out`;
-
-  // 若没有提供 out 选项，则使用 Deno 当前执行的目录
-  if (typeof args.outDir === "string" && args.outDir) {
-    outDir = args.outDir;
-  }
-
-  // 平台。axios、wechat
-  const platform = args.platform ?? "axios";
-  // 语言，用于输出文件的后缀名。默认：ts
-  const lang = args.lang ?? "ts";
-  // 动态路径方法的连接词，默认： By
-  const conjunction = args.conjunction ?? "By";
-
   return {
     url: args.url,
-    outDir,
-    platform,
-    lang,
+    outDir: args.outDir,
+    platform: args.platform,
+    lang: args.lang,
     tag: args.tag,
     filter: args.filter,
-    conjunction,
+    conjunction: args.conjunction,
   };
 };

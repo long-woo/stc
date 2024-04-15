@@ -1,5 +1,6 @@
 import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
 import { format as dateFormat } from "std/datetime/format.ts";
+import { Eta } from "x/eta@v3.4.0/src/index.ts";
 
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
@@ -220,4 +221,10 @@ export const fetchClient = async (
   }
 
   throw res;
+};
+
+export const parseEta = (content: string, data: Record<string, unknown>) => {
+  const _eta = new Eta();
+
+  return _eta.renderString(content, data);
 };

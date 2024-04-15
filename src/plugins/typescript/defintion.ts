@@ -1,5 +1,5 @@
+import type { IDefinitionVirtualProperty } from "../../swagger.ts";
 import Logs from "../../console.ts";
-import { IDefinitionVirtualProperty } from "../../swagger.ts";
 import { convertType, convertValue, propCommit } from "../../util.ts";
 import { getT } from "../../i18n/index.ts";
 

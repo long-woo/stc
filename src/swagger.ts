@@ -1,4 +1,4 @@
-import { IPlugin } from "./plugins/typeDeclaration.ts";
+import type { IPlugin } from "./plugins/typeDeclaration.ts";
 
 export type IDefaultObject<T = unknown> = {
   [key: string]: T;
@@ -301,7 +301,7 @@ export interface ISwaggerOptions {
    */
   readonly url: string;
   /**
-   * 输出目录
+   * 输出目录。默认：./stc_out
    */
   readonly outDir: string;
   /**

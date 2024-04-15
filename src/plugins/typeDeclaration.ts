@@ -1,4 +1,4 @@
-import {
+import type {
   IDefinitionVirtualProperty,
   IPathVirtualProperty,
   ISwaggerOptions,

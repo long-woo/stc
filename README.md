@@ -1,6 +1,6 @@
-# STC
+# <p align="center">STC</p>
 
-![logo](resources/stc.svg)
+<p  align="center"><img src="resources/stc.svg" alt="logo" /></p>
 
 STC (Swagger Transform Code) is a tool for converting Swagger documents into code files.
 
@@ -77,7 +77,7 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 2.打开 `shared > axios > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
 
-3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码:
+3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码：
 
 ```ts
 import webClient from './apis/shared/axios/fetch'
@@ -116,15 +116,17 @@ App<IAppOption>({
 
 ### Options 选项
 
-| 参数名   | 类型     | 默认值  | 说明                                                                                                |
-| -------- | -------- | ------- | ------------------------------------------------------------------------------------------------ |
-| url      | string   |         | Swagger 文档地址，或者本地路径 |
-| outDir   | string   | stc_out | 输出目录 |
-| platform | string   | axios   | 平台，可选值：`axios`、`wechat` |
-| lang     | string   | ts      | 语言，用于输出文件的后缀名 |
-| tag      | number   |         | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名 |
-| filter   | string[] |         | 过滤接口，符合过滤条件的接口会被生成。eg: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
-| conjunction | string | By     | 方法的连接词，默认值为 `By` |
+| Option      | Alias | Type     | Default   | Description                                                                                                  |
+| ----------- | ----- | -------- | --------- | ------------------------------------------------------------------------------------------------------------ |
+| url         |       | string   |           | Swagger 文档地址，或者本地路径                                                                               |
+| outDir      | o     | string   | ./stc_out | 输出目录                                                                                                     |
+| platform    | p     | string   | axios     | 平台，可选值：`axios`、`wechat`                                                                              |
+| lang        | l     | string   | ts        | 语言，用于输出文件的后缀名                                                                                   |
+| tag         |       | number   |           | 从接口 url 指定标签，默认读取 tags 的第一个用于文件名                                                        |
+| filter      | f     | string[] |           | 过滤接口，符合过滤条件的接口会被生成。示例: `--filter "/pet/*"`，生成 `/pet` 的接口，同时支持多个 `--filter` |
+| conjunction | c     | string   | By        | 方法的连接词，默认值为 `By`                                                                                  |
+| version     | v     | boolean  |           | 输出版本信息                                                                                                 |
+| help        | h     | boolean  |           | 输出帮助信息                                                                                                 |
 
 ## Plug-in development 插件开发
 
@@ -142,7 +144,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.5.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.6.0/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
