@@ -261,7 +261,9 @@ export const getApiPath = (
       }
 
       // 添加请求方式标识，如 GET，POST 等，防止重名。
-      name = `${method}${upperCase(name)}`;
+      if (!name.toLowerCase().includes(method)) {
+        name = `${method}${upperCase(name)}`;
+      }
 
       // 接口对象
       const value = getPathVirtualProperty(
