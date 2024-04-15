@@ -16,35 +16,16 @@
     "esm:remove": "deno run -A https://esm.sh/v130 remove"
   },
   "lint": {
-    "include": [
-      "src/",
-      "test/"
-    ],
-    "exclude": [
-      "**/out/**/*",
-      "**/shared/**/*",
-      "dist"
-    ]
+    "include": ["src/", "test/"],
+    "exclude": ["**/out/**/*", "**/shared/**/*", "dist"]
   },
   "fmt": {
-    "include": [
-      "src/",
-      "test/"
-    ],
-    "exclude": [
-      "out/**/*",
-      "dist",
-      "**/npm/package.json"
-    ]
+    "include": ["src/", "test/"],
+    "exclude": ["out/**/*", "dist", "**/npm/package.json"]
   },
   "test": {
-    "include": [
-      "test/"
-    ],
-    "exclude": [
-      "out",
-      "dist"
-    ]
+    "include": ["test/"],
+    "exclude": ["out", "dist"]
   },
   "importMap": "import_map.json"
 }

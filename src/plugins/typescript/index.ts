@@ -74,12 +74,12 @@ export const TypeScriptPlugin: IPlugin = {
       api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
       api.export?.length && _apiContent.push(api.export.join("\n\n"));
 
-      actionData.set(key, _apiContent.join("\n\n"));
+      actionData.set(`${key}.ts`, _apiContent.join("\n\n"));
     });
 
     return {
       definition: {
-        filename: `${typeFileName}.${pluginOptions.lang}`,
+        filename: `${typeFileName}.ts`,
         content: defContent,
       },
       action: actionData,

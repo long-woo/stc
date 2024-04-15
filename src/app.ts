@@ -99,12 +99,10 @@ export const start = async (options: ISwaggerOptions) => {
   // 写入 API 文件
   if (transformData?.action) {
     transformData.action.forEach((content, filename) => {
-      if (content) {
-        createFile(
-          `${options.outDir}/${filename}.${options.lang}`,
-          content,
-        );
-      }
+      createFile(
+        `${options.outDir}/${filename}`,
+        content,
+      );
     });
   }
 
