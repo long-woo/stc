@@ -9,6 +9,10 @@ STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工�
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
+<div align="center">
+  <img src="resources/20240422-151653.gif" alt="stc" />
+</div>
+
 feature:
 特性：
 
@@ -91,6 +95,17 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ### 已有项目
 
+假设一个项目目录为：
+
+```
+.
+├── src
+│   └── apis # 将 shared 目录复制到这里
+│       └── shared
+│       └── xxx.ts # 其他文件
+
+```
+
 #### Axios
 
 1.找到 `outDir` 的目录，复制 `shared` 整个目录到你封装的 `axios` 模块的目录下。
@@ -112,7 +127,7 @@ createApiClient({
 
 #### Wechat
 
-1.找到 `outDir` 的目录，复制 `shared` 整个目录到你封装的 `axios` 模块的目录下。
+1.找到 `outDir` 的目录，复制 `shared` 整个目录到你封装的 `wechat` 模块的目录下。
 
 2.打开 `shared > wechat > index.ts` 文件，复制 `request` 方法，添加到你封装的 `wx.request` 代码文件中。若没有封装的话，复制 `index.ts` 文件为一个新文件，以免修改被覆盖的问题。
 
