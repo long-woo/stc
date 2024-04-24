@@ -11,7 +11,7 @@ import { request } from "./wechat/index.ts";
 import { createAxios, request } from "./axios/index.ts";
 <% } %>
 
-let apiClientInstance: ApiClientConfig;
+let apiClientInstance: ApiClientConfig = {};
 
 export const createApiClient = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,

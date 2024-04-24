@@ -9,24 +9,28 @@ STC(Swagger Transform Code) 是一个 Swagger 文档转换成代码文件的工�
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
+<div align="center">
+  <img src="resources/20240422-151653.gif" alt="stc" />
+</div>
+
 feature:
 特性：
 
-- Support for Swagger 2, 3 and Apifox.
+- 🐹 Support for Swagger 2, 3 and Apifox.
 
-  支持 Swagger 2、3 和 Apifox。
+  🐹 支持 Swagger 2、3 和 Apifox。
 
-- Support Axios, Wechat request library。
+- 🌐 Support Axios, Wechat request library。
 
-  支持 Axios、Wechat 请求库。
+  🌐 支持 Axios、Wechat 请求库。
 
-- Support plug-in development.
+- 💡 Support plug-in development.
 
-  支持插件开发。
+  💡 支持插件开发。
 
-- Built-in transformation languages:
+- 🐣 Built-in transformation languages:
 
-  内置转换语言：
+  🐣 内置转换语言：
 
   - TypeScript, almost equivalent to handwriting.
 
@@ -36,9 +40,11 @@ feature:
 
     JavaScript，由 TypeScript 转换而来。
 
-  - ...
+  - 🚧 ...
 
 ## Quick start 快速开始
+
+### Download executable files 下载可执行文件
 
 [download](https://github.com/long-woo/stc/releases) by system：
 
@@ -54,6 +60,24 @@ feature:
 
 - stc-linux：Linux
 - stc-win.exe: Windows
+
+### NPM
+
+1.安装 `@loogwoo/stc` npm 包
+
+```sh
+pnpm add @loongwoo/stc -D
+```
+
+2.打开项目 `package.json` 文件，在 `scripts` 添加如下命令：
+
+```json
+{
+  "scripts": {
+    "api": "stc --url=http://127.0.0.1:4523/export/openapi/2?version=3.1"
+  }
+}
+```
 
 ### Use 使用
 
@@ -71,18 +95,29 @@ stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
 
 ### 已有项目
 
-#### axios
+假设一个项目目录为：
 
-1.找到 `outDir` 的目录，复制 `shared > webClientBase` 文件到该目录。
+```
+.
+├── src
+│   └── apis # 将 shared 目录复制到这里
+│       └── shared
+│       └── xxx.ts # 其他文件
 
-2.打开 `shared > axios > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
+```
+
+#### Axios
+
+1.找到 `outDir` 的目录，复制 `shared` 整个目录到你封装的 `axios` 模块的目录下。
+
+2.打开 `shared > axios > index.ts` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。若没有封装的话，复制 `index.ts` 文件为一个新文件，以免修改被覆盖的问题。
 
 3.以 `Vue` 为例，在 `main.ts` 文件中添加以下代码：
 
 ```ts
-import webClient from './apis/shared/axios/fetch'
+import { createApiClient } from './apis/shared/fetchRuntime';
 
-webClient.create({
+createApiClient({
   baseURL: 'https://api.xxx.com'
   // onError(msg) {
   //   // 处理错误信息
@@ -90,21 +125,21 @@ webClient.create({
 })
 ```
 
-#### wechat
+#### Wechat
 
-1.找到 `outDir` 的目录，复制 `shared > webClientBase` 文件到该目录。
+1.找到 `outDir` 的目录，复制 `shared` 整个目录到你封装的 `wechat` 模块的目录下。
 
-2.打开 `shared > wechat > fetch` 文件，复制 `request` 方法，添加到你封装的 `axios` 模块中。没有封装的话，可以复制整个 `fetch` 文件。
+2.打开 `shared > wechat > index.ts` 文件，复制 `request` 方法，添加到你封装的 `wx.request` 代码文件中。若没有封装的话，复制 `index.ts` 文件为一个新文件，以免修改被覆盖的问题。
 
 3.在 `app.ts` 文件中添加以下代码:
 
 ```ts
-import webClient from './apis/shared/wechat/fetch';
+import { createApiClient } from './apis/shared/fetchRuntime';
 // import Notify from './miniprogram_npm/@vant/weapp/notify/notify';
 
 App<IAppOption>({
   onLaunch() {
-    webClient.create({
+    createApiClient({
       baseURL: 'https://api.xxx.com,
       onError(msg) {
         // Notify({ type: 'danger', message: msg, selector: '#v-notify'})
@@ -144,7 +179,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.6.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.6.1/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
@@ -167,6 +202,9 @@ const myPlugin: IPlugin = {
       definition: defContent,
       action: actionContent // 这里的 actionContent 是 Map<string, string> 类型，key 是文件名称，value 是转换后的代码
     }
+  },
+  onEnd() {
+    console.log('end')
   }
 }
 
@@ -210,6 +248,9 @@ export const myPlugin: IPlugin = {
       definition: defContent,
       action: actionContent
     }
+  },
+  onEnd() {
+    console.log('end')
   }
 }
 ```
