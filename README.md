@@ -139,7 +139,7 @@ import { createApiClient } from './apis/shared/fetchRuntime';
 
 App<IAppOption>({
   onLaunch() {
-    webClient.create({
+    createApiClient({
       baseURL: 'https://api.xxx.com,
       onError(msg) {
         // Notify({ type: 'danger', message: msg, selector: '#v-notify'})
@@ -179,7 +179,7 @@ For convenience, STC can not only develop plugins in Deno, but also provides `@l
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.6.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@1.6.1/mod.ts'
 
 // 定义插件
 const myPlugin: IPlugin = {
