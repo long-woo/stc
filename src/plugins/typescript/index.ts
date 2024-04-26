@@ -6,6 +6,7 @@ import { parserPath } from "./path.ts";
 import {
   createAxiosFile,
   createBaseFile,
+  createFetchFile,
   createFetchRuntimeFile,
   createWechatFile,
 } from "./shared/index.ts";
@@ -113,6 +114,15 @@ export const TypeScriptPlugin: IPlugin = {
       createFile(
         `${pluginOptions.outDir}/shared/wechat/index.ts`,
         _wechatFileContent,
+      );
+    }
+
+    if (pluginOptions.platform === "fetch") {
+      const _fetchFileContent = createFetchFile();
+
+      createFile(
+        `${pluginOptions.outDir}/shared/fetch/index.ts`,
+        _fetchFileContent,
       );
     }
 
