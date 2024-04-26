@@ -307,7 +307,7 @@ export interface ISwaggerOptions {
   /**
    * 平台。默认：axios
    */
-  readonly platform?: "axios" | "wechat";
+  readonly platform?: "axios" | "wechat" | "fetch";
   /**
    * 语言，用于输出文件的后缀名。默认：ts
    */

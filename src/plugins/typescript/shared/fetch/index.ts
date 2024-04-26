@@ -35,7 +35,7 @@ export const request = async <T>(instance: ApiClientConfig) => {
       ...(instance.params?.header ?? {}),
     },
     credentials: instance.withCredentials ? "include" : "omit",
-  });
+  }, instance.timeout);
 
   if (!_res.ok) {
     instance.onError?.(_res.statusText);
@@ -45,5 +45,7 @@ export const request = async <T>(instance: ApiClientConfig) => {
     instance.onLogin?.();
   }
 
-  return _res.json();
+  const _json: T = await _res.json();
+
+  return _json;
 };

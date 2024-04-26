@@ -70,68 +70,70 @@ export const getRequestParams = (query: IDefaultObject<string>) =>
 
 export const createFetchRuntimeFile = () =>
   `import type {
-  IDefaultObject,
-  ApiClientConfig,
-  ApiClientMethod,
-  ApiClientParams,
-} from "./apiClientBase.ts";
-import { generateURL } from "./apiClientBase.ts";
-<% if (it.platform === "wechat") { %>
-import { request } from "./wechat/index.ts";
-<% } else { %>
-import { createAxios, request } from "./axios/index.ts";
-<% } %>
-
-let apiClientInstance: ApiClientConfig = {};
-
-export const createApiClient = (
-  config: Omit<ApiClientConfig, "url" | "signal" | "config">,
-) => {
-  apiClientInstance = config;
-<% if (it.platform === "axios") { %>
-  createAxios(config);
-<% } %>
-};
-
-export const fetchRuntime = <T>(
-  url: string,
-  method: ApiClientMethod,
-  req?: ApiClientParams,
-  config?: ApiClientConfig,
-) => {
-  const _url = generateURL(url, req?.path as unknown as IDefaultObject);
-
-  apiClientInstance.url = _url;
-  apiClientInstance.method = method;
-  apiClientInstance.params = req;
-  apiClientInstance.config = config;
-
-  return request<T>(apiClientInstance);
-};
-
-/**
- * @deprecated Planned to be removed in \`v1.7.0\`
- * 
- * 1.\`webClient.create\` is modified to \`createApiClient\`
- * 
- * 2.\`webClient.request\` modified to \`fetchRuntime\`
- */
-export class ApiClient {
-  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">) {
-    createApiClient(config);
-  }
-
-  static request<T>(
+    IDefaultObject,
+    ApiClientConfig,
+    ApiClientMethod,
+    ApiClientParams,
+  } from "./apiClientBase";
+  import { generateURL } from "./apiClientBase";
+  <% if (it.platform === "wechat") { %>
+  import { request } from "./wechat";
+  <% } else if (it.platform === 'fetch') { %>
+  import { request } from "./fetch";
+  <% } else { %>
+  import { createAxios, request } from "./axios";
+  <% } %>
+  
+  let apiClientInstance: ApiClientConfig = {};
+  
+  export const createApiClient = (
+    config: Omit<ApiClientConfig, "url" | "signal" | "config">,
+  ) => {
+    apiClientInstance = config;
+  <% if (it.platform === "axios") { %>
+    createAxios(config);
+  <% } %>
+  };
+  
+  export const fetchRuntime = <T>(
     url: string,
     method: ApiClientMethod,
     req?: ApiClientParams,
     config?: ApiClientConfig,
-  ) {
-    return fetchRuntime<T>(url, method, req, config);
+  ) => {
+    const _url = generateURL(url, req?.path as unknown as IDefaultObject);
+  
+    apiClientInstance.url = _url;
+    apiClientInstance.method = method;
+    apiClientInstance.params = req;
+    apiClientInstance.config = config;
+  
+    return request<T>(apiClientInstance);
+  };
+  
+  /**
+   * @deprecated Planned to be removed in \`v1.7.0\`
+   * 
+   * 1.\`webClient.create\` is modified to \`createApiClient\`
+   *
+   * 2.\`webClient.request\` modified to \`fetchRuntime\`
+   */
+  export class ApiClient {
+    static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">) {
+      createApiClient(config);
+    }
+  
+    static request<T>(
+      url: string,
+      method: ApiClientMethod,
+      req?: ApiClientParams,
+      config?: ApiClientConfig,
+    ) {
+      return fetchRuntime<T>(url, method, req, config);
+    }
   }
-}
-
-export default ApiClient;
+  
+  export default ApiClient;  
 `;
 
 export const createAxiosFile = () =>
@@ -328,5 +330,59 @@ export const request = <T>(instance: ApiClientConfig): Promise<T> => {
       },
     });
   });
+};
+`;
+
+export const createFetchFile = () =>
+  `import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+import { getRequestParams } from "../apiClientBase.ts";
+
+/**
+ * Wraps a fetch request to enforce a timeout.
+ *
+ * @param {RequestInfo} url - The resource URL.
+ * @param {RequestInit} init - Custom settings for the fetch request.
+ * @param {number} timeout - The timeout in milliseconds.
+ * @returns {Promise<Response>} A promise that either resolves with the fetch response or rejects with a timeout error.
+ */
+const fetchWithTimeout = (
+  url: RequestInfo,
+  init?: RequestInit,
+  timeout: number = 5000,
+): Promise<Response> => {
+  const timeoutPromise = new Promise<Response>((_, reject) =>
+    setTimeout(() => reject(new Error("Request timed out")), timeout)
+  );
+
+  return Promise.race([fetch(url, init), timeoutPromise]);
+};
+
+export const request = async <T>(instance: ApiClientConfig) => {
+  const _params = getRequestParams(
+    (instance.params?.query as IDefaultObject<string>) ?? {},
+  );
+  const _url = \`\${instance.baseURL}\${instance.url}\?\${_params}\`;
+
+  const _res = await fetchWithTimeout(_url, {
+    method: instance.method,
+    body: JSON.stringify(instance.params?.body ?? {}),
+    headers: {
+      "Content-Type": "application/json",
+      ...(instance.params?.header ?? {}),
+    },
+    credentials: instance.withCredentials ? "include" : "omit",
+  }, instance.timeout);
+
+  if (!_res.ok) {
+    instance.onError?.(_res.statusText);
+  }
+
+  if (_res.status === 401) {
+    instance.onLogin?.();
+  }
+
+  const _json: T = await _res.json();
+
+  return _json;
 };
 `;

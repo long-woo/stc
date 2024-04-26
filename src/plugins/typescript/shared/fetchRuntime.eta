@@ -3,12 +3,14 @@ import type {
   ApiClientConfig,
   ApiClientMethod,
   ApiClientParams,
-} from "./apiClientBase.ts";
-import { generateURL } from "./apiClientBase.ts";
+} from "./apiClientBase";
+import { generateURL } from "./apiClientBase";
 <% if (it.platform === "wechat") { %>
-import { request } from "./wechat/index.ts";
+import { request } from "./wechat";
+<% } else if (it.platform === 'fetch') { %>
+import { request } from "./fetch";
 <% } else { %>
-import { createAxios, request } from "./axios/index.ts";
+import { createAxios, request } from "./axios";
 <% } %>
 
 let apiClientInstance: ApiClientConfig = {};
