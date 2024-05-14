@@ -1,5 +1,5 @@
 // 由 stc 生成
-export type IDefaultObject<T = any> = {
+export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
 
