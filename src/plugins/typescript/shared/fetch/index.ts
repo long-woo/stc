@@ -12,7 +12,7 @@ import { getRequestParams } from "../apiClientBase.ts";
 const fetchWithTimeout = (
   url: RequestInfo,
   init?: RequestInit,
-  timeout: number = 5000,
+  timeout = 5000,
 ): Promise<Response> => {
   const timeoutPromise = new Promise<Response>((_, reject) =>
     setTimeout(() => reject(new Error("Request timed out")), timeout)
