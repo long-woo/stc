@@ -21,6 +21,12 @@ const fetchWithTimeout = (
   return Promise.race([fetch(url, init), timeoutPromise]);
 };
 
+/**
+ * Asynchronous function that sends a request using the provided ApiClientConfig instance with timeout handling.
+ *
+ * @param {ApiClientConfig} instance - the configuration object for the request
+ * @return {Promise<T>} a Promise that resolves with the response data
+ */
 export const request = async <T>(instance: ApiClientConfig) => {
   const _params = getRequestParams(
     (instance.params?.query as IDefaultObject<string>) ?? {},
