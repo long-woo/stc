@@ -10,10 +10,7 @@
     "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
     "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",
     "build:win": "deno compile -A --target x86_64-pc-windows-msvc --output release/stc-win src/main.ts",
-    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts",
-    "esm:add": "deno run -A https://esm.sh/v130 add",
-    "esm:update": "deno run -A https://esm.sh/v130 update",
-    "esm:remove": "deno run -A https://esm.sh/v130 remove"
+    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts"
   },
   "lint": {
     "include": [

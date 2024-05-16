@@ -12,7 +12,7 @@ import {
 } from "./shared/index.ts";
 
 // Deno 当前版本（1.42.1）未支持
-// import webClientBaseFile from "./shared/webClientBase.ts" with { type: "text" };
+// import webClientBaseFile from "./shared/apiClientBase.ts" with { type: "text" };
 
 let pluginOptions: ISwaggerOptions;
 
