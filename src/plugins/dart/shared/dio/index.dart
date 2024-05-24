@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../apiClientBase.dart';
+import '../api_client_base.dart';
 
-var dio;
+Dio dio = Dio();
 
 ///  添加拦截器
 void addInterceptor() {
@@ -27,38 +27,61 @@ void addInterceptor() {
 void createDio(BaseOptions options) {
   dio = Dio(BaseOptions(
       baseUrl: options.baseUrl,
-      connectTimeout: options.connectTimeout ?? Duration(seconds: 5),
-      receiveTimeout: options.receiveTimeout ?? Duration(seconds: 3)));
+      connectTimeout: options.connectTimeout ?? const Duration(seconds: 5),
+      receiveTimeout: options.receiveTimeout ?? const Duration(seconds: 3)));
 
   addInterceptor();
 }
 
-/// request 方法
-Future<T> request<T>(ApiClientConfig instance) async {
-  Options requestOptions = options ?? Options();
-  requestOptions.method = method;
-  return dio.request<T>(url, queryParameters: params, options: requestOptions);
+/// Parses the given [url] by replacing the path parameters with their corresponding values from the [pathParams] map.
+///
+/// The [url] parameter is the original URL string that may contain path parameters enclosed in curly braces.
+/// The [pathParams] parameter is a map where the keys are the path parameter names and the values are the corresponding replacement values.
+///
+/// Returns the parsed URL string with the path parameters replaced by their corresponding values.
+String parseUrl(String url, Map<String, String> pathParams) {
+  if (pathParams.isEmpty) return url;
+
+  var newUrl = url.replaceAllMapped(RegExp(r'[\{|:](\w+)[\}]?'), (m) {
+    return pathParams[m[1]] ?? '';
+  });
+
+  return newUrl;
 }
 
+/// Makes a request using the provided [ApiClientConfig] instance.
+///
+/// The [instance] parameter is the configuration for the request. It includes the URL, parameters, method, and callbacks.
+///
+/// Returns a [Future] that resolves to the response data of type [T].
+///
+/// Throws a [DioException] if the request fails. The exception contains the response data if available.
 Future<T> request<T>(ApiClientConfig instance) async {
+  // Parse the URL by replacing path parameters with their corresponding values
+  final url = parseUrl(instance.url, (instance.params?['path']) ?? {});
+
   try {
+    // Make the request using Dio
     final response = await dio.request(
-      instance.url,
-      queryParameters: instance.params?.query,
-      data: instance.params?.body,
+      url,
+      queryParameters: instance.params?['query'] ?? {},
+      data: instance.params?['body'] ?? {},
       options: Options(
         method: instance.method,
       ),
     );
 
+    // If the response status code is 401, call the onLogin callback
     if (response.statusCode == 401) {
       instance.onLogin?.call();
     }
 
+    // Return the response data as type T
     return response.data as T;
-  } on DioError catch (e) {
+  } on DioException catch (e) {
+    // If the response is not null and the status code is not ok, call the onError callback with the status message
     if (e.response != null && !e.response!.statusCode!.isOk) {
-      instance.onError?.call(e.response!.statusMessage);
+      instance.onError?.call(e.response!.statusMessage!);
     }
     rethrow; // Or handle the error as you see fit
   }
