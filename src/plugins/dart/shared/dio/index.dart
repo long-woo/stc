@@ -4,6 +4,9 @@ import '../api_client_base.dart';
 
 Dio dio = Dio();
 
+var onError;
+var onLogin;
+
 ///  添加拦截器
 void addInterceptor() {
   dio.interceptors.add(InterceptorsWrapper(
@@ -24,11 +27,14 @@ void addInterceptor() {
 }
 
 /// 创建一个 Dio 实例
-void createDio(BaseOptions options) {
+void createDio(ApiCreateConfig options) {
   dio = Dio(BaseOptions(
-      baseUrl: options.baseUrl,
-      connectTimeout: options.connectTimeout ?? const Duration(seconds: 5),
-      receiveTimeout: options.receiveTimeout ?? const Duration(seconds: 3)));
+      baseUrl: options.baseURL,
+      connectTimeout: options.connectTimeout,
+      receiveTimeout: options.receiveTimeout));
+
+  onError = options.onError;
+  onLogin = options.onLogin;
 
   addInterceptor();
 }
@@ -56,9 +62,16 @@ String parseUrl(String url, Map<String, String> pathParams) {
 /// Returns a [Future] that resolves to the response data of type [T].
 ///
 /// Throws a [DioException] if the request fails. The exception contains the response data if available.
-Future<T> request<T>(ApiClientConfig instance) async {
+Future<T> request<T>(
+    ApiClientConfig instance, T Function(Map<String, dynamic>) fromJson) async {
   // Parse the URL by replacing path parameters with their corresponding values
-  final url = parseUrl(instance.url, (instance.params?['path']) ?? {});
+  var url = parseUrl(instance.url, (instance.params?['path']) ?? {});
+
+  if (instance.baseURL != null) {
+    url = '${instance.baseURL!}$url';
+  }
+
+  print(url);
 
   try {
     // Make the request using Dio
@@ -68,22 +81,31 @@ Future<T> request<T>(ApiClientConfig instance) async {
       data: instance.params?['body'] ?? {},
       options: Options(
         method: instance.method,
+        headers: instance.params?['headers'] ?? {},
+        receiveTimeout: instance.timeout,
       ),
     );
 
     // If the response status code is 401, call the onLogin callback
     if (response.statusCode == 401) {
-      instance.onLogin?.call();
+      onLogin?.call();
     }
 
     // Return the response data as type T
-    return response.data as T;
+    return fromJson(response.data);
   } on DioException catch (e) {
+    var _message = e.response?.statusMessage ?? e.message.toString();
+
     // If the response is not null and the status code is not ok, call the onError callback with the status message
     if (e.response != null && !e.response!.statusCode!.isOk) {
-      instance.onError?.call(e.response!.statusMessage!);
+      onError?.call(_message);
+
+      if (e.response!.statusCode == 401) {
+        onLogin?.call();
+      }
     }
-    rethrow; // Or handle the error as you see fit
+
+    return fromJson({'success': false, 'message': _message});
   }
 }
 

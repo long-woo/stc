@@ -11,7 +11,7 @@ import {
   createWechatFile,
 } from "./shared/index.ts";
 
-// Deno 当前版本（1.42.1）未支持
+// Deno 当前版本（1.45.2）未支持
 // import webClientBaseFile from "./shared/apiClientBase.ts" with { type: "text" };
 
 let pluginOptions: ISwaggerOptions;

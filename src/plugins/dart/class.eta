@@ -1,0 +1,29 @@
+class <%= it.class %> {
+<% it.props.forEach(function(prop){ %>
+  <%= prop.type %><%= prop.required ? '' : '?' %> <%= prop.name %>;
+<% }) %>
+
+  <%= it.class %>({
+  <% it.props.forEach(function(prop, index){ %>
+  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><%= index === (it.props.length - 1) ? '' : ',' %>\n
+  <% }) %>
+});
+
+  factory <%= it.class %>.fromJson(Map<String, dynamic> json) {
+    return <%= it.class %>(
+  <% it.props.forEach(function(prop, index){ %>
+    <%= prop.name %>: json['<%= prop.name %>']<%= index === it.props.length -1 ? '' : ',' %>\n
+  <% }) %>
+  );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+  <% it.props.forEach(function(prop){ %>
+    data['<%= prop.name %>'] = <%= prop.name %>;
+  <% }) %>
+
+    return data;
+  }
+}
