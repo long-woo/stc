@@ -71,7 +71,7 @@ export const parserDefinition = (
 
 class <%= it.class %> {
 <% it.props.forEach(function(prop) { %>
-<% const _type = it.convertType(prop.type, prop.ref), _enumData = it.parserEnum(_type, prop.enumOption) %>
+<% const _type = it.convertType(prop.type, prop.ref) %>
 <% if (prop.description) { %>
   /// <%= prop.description %>\n
 <% } %>
