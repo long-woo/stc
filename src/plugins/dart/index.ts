@@ -1,6 +1,7 @@
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type { IPlugin } from "../typeDeclaration.ts";
 import { parserDefinition } from "./defintion.ts";
+import { parserActions } from "./action.ts";
 
 let pluginOptions: ISwaggerOptions;
 
@@ -17,6 +18,7 @@ export const DartPlugin: IPlugin = {
   onTransform(def, action) {
     const typeFileName = "_types";
     const defContent = parserDefinition(def);
+    const actions = parserActions(action);
 
     return {
       definition: {

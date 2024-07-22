@@ -1,0 +1,74 @@
+import './shared/api_client_base.dart';
+import './shared/dio/index.dart';
+
+class <%= upperCase(it.action) %>Response {
+  bool success = false;
+  String? message;
+  GetProjectStatusResponseObj? obj;
+
+  GetProjectStatusResponse({
+    required this.success,
+    this.message,
+    this.obj
+  });
+
+  factory GetProjectStatusResponse.fromJson(Map<String, dynamic> json) {
+    return GetProjectStatusResponse(
+      success: json['success'],
+      message: json['message'],
+      obj: json['obj'] == null ? null : GetProjectStatusResponseObj.fromJson(json['obj'])
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    data['success'] = success;
+    data['message'] = message;
+    data['obj'] = obj;
+
+    return data;
+  }
+}
+
+class GetProjectStatusResponseObj {
+  String id = '';
+  int status = 0;
+
+  GetProjectStatusResponseObj({
+    required this.id,
+    required this.status
+  });
+
+  factory GetProjectStatusResponseObj.fromJson(Map<String, dynamic> json) {
+    return GetProjectStatusResponseObj(
+      id: json['id'],
+      status: json['status']
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    data['id'] = id;
+    data['status'] = status;
+
+    return data;
+  }
+}
+
+/// 
+Future<<%= upperCase(it.action) %>Response> <%= it.action %>() async {
+  var _res = await request<<%= upperCase(it.action) %>Response>(
+    ApiClientConfig(
+      url: '<%= it.url %>',
+      method: '<%= it.method %>',
+      params: {
+        'query': {
+          'projectId': '7491969461726838784'
+        }
+      }
+    ), <%= upperCase(it.action) %>Response.fromJson);
+
+    return _res;
+}
