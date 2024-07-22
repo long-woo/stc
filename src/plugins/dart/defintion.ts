@@ -1,6 +1,6 @@
 import type { IDefinitionVirtualProperty } from "../../swagger.ts";
 import Logs from "../../console.ts";
-import { convertValue, parseEta, propCommit } from "../../util.ts";
+import { convertValue, parseEta } from "../../util.ts";
 import { getT } from "../../i18n/index.ts";
 
 const convertType = (type: string | string[], ref?: string) => {
@@ -40,6 +40,8 @@ const parserEnum = (
   type: string,
   data?: Array<string>,
 ) => {
+  if (!data?.length) return "";
+
   const _unionValue = data?.map(convertValue).join(",\n\t");
 
   return `enum ${type} {
@@ -59,50 +61,32 @@ export const parserDefinition = (
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
 
   data.forEach((value, key) => {
-    //   const props = value.reduce((prev, current, index) => {
-    //     const _type = convertType(current.type, current.ref);
-    //     const _enumOption = current.enumOption;
-    //     const _enumData = parserEnum(_type, _enumOption);
-    //     const _prop = `${propCommit(current.description ?? "")}${_type}${
-    //       current.required ? "" : "?"
-    //     } ${current.name};`;
-
-    //     // 构造方法
-    //     let _constructor = "";
-    //     if (index === value.length - 1) {
-    //       _constructor = `\n\t${key}({${
-    //         current.required ? "required " : ""
-    //       } this.${current.name} });`;
-    //     }
-
-    //     // 添加枚举定义
-    //     if (_enumOption?.length) {
-    //       _res.push(_enumData);
-    //     }
-
-    //     prev.splice(
-    //       prev.length - 1,
-    //       0,
-    //       ...[_prop, _constructor],
-    //     );
-    //     return prev;
-    //   }, [`class ${key} {`, "}"]);
-
     const _classContent = parseEta(
-      `class <%= it.class %> {
-<% it.props.forEach(function(prop){ %>
-  <%= prop.type %><%= prop.required ? '' : '?' %> <%= prop.name %>;
+      `<% it.props.forEach(function(prop) { %>
+<% const _type = it.convertType(prop.type, prop.ref), _enumData = it.parserEnum(_type, prop.enumOption) %>
+<% if (_enumData) { %>
+<%= _enumData %>\n
+<% } %>
+<% }) %>
+
+class <%= it.class %> {
+<% it.props.forEach(function(prop) { %>
+<% const _type = it.convertType(prop.type, prop.ref), _enumData = it.parserEnum(_type, prop.enumOption) %>
+<% if (prop.description) { %>
+  /// <%= prop.description %>\n
+<% } %>
+  <%~ _type %><% if (!prop.required) { %>?<% } %> <%= prop.name %>;
 <% }) %>
 
   <%= it.class %>({
-  <% it.props.forEach(function(prop, index){ %>
+  <% it.props.forEach(function(prop, index) { %>
   <% if (prop.required) { %>required <% } %>this.<%= prop.name %><%= index === (it.props.length - 1) ? '' : ',' %>\n
   <% }) %>
 });
 
   factory <%= it.class %>.fromJson(Map<String, dynamic> json) {
     return <%= it.class %>(
-  <% it.props.forEach(function(prop, index){ %>
+  <% it.props.forEach(function(prop, index) { %>
     <%= prop.name %>: json['<%= prop.name %>']<%= index === it.props.length -1 ? '' : ',' %>\n
   <% }) %>
   );
@@ -111,14 +95,14 @@ export const parserDefinition = (
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
 
-  <% it.props.forEach(function(prop){ %>
+  <% it.props.forEach(function(prop) { %>
     data['<%= prop.name %>'] = <%= prop.name %>;
   <% }) %>
 
     return data;
   }
 }`,
-      { class: key, props: value },
+      { class: key, props: value, convertType, parserEnum },
     );
 
     _res.push(_classContent);
