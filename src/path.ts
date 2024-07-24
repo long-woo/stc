@@ -7,7 +7,13 @@ import type {
   ISwaggerOptions,
   ISwaggerResultPath,
 } from "./swagger.ts";
-import { camelCase, getRefType, hasKey, lowerCase, upperCase } from "./util.ts";
+import {
+  camelCase,
+  getRefType,
+  hasKey,
+  lowerCase,
+  upperCase,
+} from "./common.ts";
 import Logs from "./console.ts";
 import { getT } from "./i18n/index.ts";
 
@@ -51,7 +57,6 @@ const getProperties = (
   const _properties = Object.keys(properties ?? {})
     .reduce((prev: IDefinitionVirtualProperty[], current) => {
       const _props = properties[current];
-
       const _propItem: IDefinitionVirtualProperty = {
         name: current,
         type: _props?.type ?? "",
@@ -130,6 +135,8 @@ const getPathVirtualProperty = (
           _schema?.$ref ?? _schema?.items?.$ref ?? "",
         ),
         typeX: current?.items?.type ?? _schema?.items?.type,
+        default: _schema?.default,
+        enumOption: _schema?.enum,
       };
 
       prev[current.in].push(item);

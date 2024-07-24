@@ -6,7 +6,7 @@ import type {
   IPluginTransformDefinition,
 } from "../typeDeclaration.ts";
 
-import { createFile, parseEta } from "../../util.ts";
+import { createFile, parseEta } from "../../common.ts";
 import {
   createAxiosFile,
   createBaseFile,

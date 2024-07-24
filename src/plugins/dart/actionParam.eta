@@ -1,0 +1,5 @@
+<% if (it.param.enumOption?.length) { %>
+<% const _enumParam = parserEnum(it.paramType, it.param.enumOption) %>
+<%= _enumParam %>
+<% } %>
+

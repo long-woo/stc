@@ -1,23 +1,8 @@
 import type { IDefinitionVirtualProperty } from "../../swagger.ts";
 import Logs from "../../console.ts";
-import { convertType, convertValue, propCommit } from "../../util.ts";
+import { convertType, propCommit } from "../../common.ts";
 import { getT } from "../../i18n/index.ts";
-
-/**
- * Converts an enum to a union type.
- *
- * @param {string} type - the name of the union type
- * @param {Array<string>} data - the array of enum values
- * @return {string} the union type definition
- */
-const parserEnumToUnionType = (
-  type: string,
-  data?: Array<string>,
-) => {
-  const _unionValue = data?.map(convertValue).join("' | '");
-
-  return `export type ${type} = '${_unionValue}'`;
-};
+import { parserEnumToUnionType } from "./util.ts";
 
 /**
  * 解析定义

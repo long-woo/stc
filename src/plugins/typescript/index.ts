@@ -1,6 +1,6 @@
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type { IPlugin } from "../typeDeclaration.ts";
-import { createFile, parseEta } from "../../util.ts";
+import { createFile, parseEta } from "../../common.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
 import {

@@ -6,7 +6,7 @@ import type {
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
 } from "../../swagger.ts";
-import { convertType, propCommit, upperCase } from "../../util.ts";
+import { convertType, propCommit, upperCase } from "../../common.ts";
 import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
 

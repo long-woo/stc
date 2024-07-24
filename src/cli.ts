@@ -3,7 +3,7 @@ import ProgressBar from "x/progress@v1.4.5/mod.ts";
 
 import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";
-import { createAppFile } from "./util.ts";
+import { createAppFile } from "./common.ts";
 import denoJson from "/deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 

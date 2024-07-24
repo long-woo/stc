@@ -5,7 +5,12 @@ import type {
   IDefinitionVirtualProperty,
   ISwaggerResultDefinition,
 } from "./swagger.ts";
-import { camelCase, getObjectKeyByValue, getRefType, hasKey } from "./util.ts";
+import {
+  camelCase,
+  getObjectKeyByValue,
+  getRefType,
+  hasKey,
+} from "./common.ts";
 import { getT } from "./i18n/index.ts";
 
 /**

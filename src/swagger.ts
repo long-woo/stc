@@ -38,7 +38,7 @@ export interface ISwaggerSchema {
   /**
    * v3 枚举值
    */
-  enum?: Array<string | number>;
+  enum?: string[];
   /**
    * Apifox - 属性
    */
@@ -182,9 +182,9 @@ export interface IDefinitionVirtualProperty {
    */
   required?: boolean;
   /**
-   * v2 默认值
+   * 默认值
    */
-  default?: string;
+  default?: string | number | boolean;
   /**
    * 枚举选项
    */

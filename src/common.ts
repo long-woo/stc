@@ -131,7 +131,7 @@ export const convertType = (type: string | string[], ref?: string): string => {
     string: "string",
     integer: "number",
     boolean: "boolean",
-    array: `Array<${ref && convertType(ref) || "unknown"}>`,
+    array: `${ref && convertType(ref) || "unknown"}[]`,
     object: "Record<string, unknown>",
     file: "File",
     null: "null",
@@ -145,6 +145,26 @@ export const convertType = (type: string | string[], ref?: string): string => {
     .join(" | ");
 
   return _type;
+};
+
+/**
+ * Converts an enum to a union type.
+ *
+ * @param {string} type - the name of the union type
+ * @param {string[]} data - the array of enum values
+ * @return {string} the union type definition
+ */
+export const parserEnum = (
+  type: string,
+  data?: string[],
+) => {
+  if (!data?.length) return "";
+
+  const _unionValue = data?.map(convertValue).join(",\n\t");
+
+  return `enum ${type} {
+  ${_unionValue}
+}`;
 };
 
 /**

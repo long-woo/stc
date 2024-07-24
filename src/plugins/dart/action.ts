@@ -6,9 +6,16 @@ import type {
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
 } from "../../swagger.ts";
-import { convertType, propCommit, upperCase } from "../../util.ts";
+import {
+  camelCase,
+  parseEta,
+  parserEnum,
+  propCommit,
+  upperCase,
+} from "../../common.ts";
 import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
+import { convertType } from "./util.ts";
 
 interface IApiRealParams {
   path?: string;
@@ -65,8 +72,8 @@ const methodCommit = (
     "///",
   ];
 
-  title && _commit.push(`/// [title] ${title}`);
-  description && _commit.push(`/// [description] ${description}`);
+  title && _commit.push(`/// ${title}`);
+  description && _commit.push(`/// ${description}`);
   params?.length && _commit.push(...params);
   _commit.push(`/// [Future]<${response}>`);
 
@@ -140,15 +147,37 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
   Object.keys(parameters).reduce((prev: IApiParams, current) => {
     const _params = parameters[current as keyof IPathVirtualParameter];
     const _multiParam = _params.length > 1;
-    const _defName = `${upperCase(action)}${upperCase(current)}Params`;
+    const _defName = camelCase(`${action}_${current}_params`, true);
     // const _interface = _multiParam
     //   ? [`export interface ${_defName} {`, "}"]
     //   : [];
 
     _params.forEach((item, index) => {
-      const _type = `${convertType(item.type, item.typeX ?? item.ref)}`;
-      let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
+      const _type = item.enumOption?.length
+        ? camelCase(`${_defName}_${item.name}`)
+        : `${convertType(item.type, item.typeX ?? item.ref)}`;
+      // let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
 
+      // 定义参数枚举
+      const _enumParam = parseEta(
+        `<% if (it.param.enumOption?.length) { %>
+<% const _enumParam = it.parserEnum(it.paramType, it.param.enumOption) %>
+<%= _enumParam %>
+<% } %>\n`,
+        { param: item, paramType: _type, parserEnum },
+      );
+      console.log(_enumParam);
+
+      // 定义形参
+      // 多参数，需要定义一个新对象
+      // 必填参数在前，可选参数在后
+      const _param = `<% if (it.multiParam) { %>
+
+<% } else { %>
+
+<% } %>`;
+
+      console.log(_param);
       // // 接口导入外部的定义
       // if (item.ref && !prev.import.includes(item.ref)) {
       //   prev.import.push(item.ref);
