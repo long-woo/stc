@@ -1,6 +1,25 @@
 import './shared/api_client_base.dart';
 import './shared/dio/index.dart';
 
+<% const _multiParam = it.actionParams.length > 1 %>
+
+<% it.actionParams.forEach(function(item) { %>
+<% const _type = item.enumOption?.length ? it.camelCase(`${_defName}_${item.name}`, true) : `${it.convertType(item.type, item.typeX ?? item.ref)}` %>
+<% /* 枚举定义 */ %>
+<% if (item.enumOption?.length) { %>
+  <% const _enumParam = it.parserEnum(_type, item.enumOption) %>
+  <%= _enumParam %>
+<% } %>
+
+// 定义形参
+// 多个同一类别的参数合并为新对象
+// 必填参数在前，可选参数在后
+<% if (_multiParam || item.properties?.length) { %>
+<% if (item.properties?.length) { %>
+<% } %>
+<% } %>
+<% }) %>
+
 class <%= upperCase(it.action) %>Response {
   bool success = false;
   String? message;

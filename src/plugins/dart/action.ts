@@ -154,7 +154,7 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
 
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
-        ? camelCase(`${_defName}_${item.name}`)
+        ? camelCase(`${_defName}_${item.name}`, true)
         : `${convertType(item.type, item.typeX ?? item.ref)}`;
       // let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
 
@@ -168,16 +168,6 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       );
       console.log(_enumParam);
 
-      // 定义形参
-      // 多参数，需要定义一个新对象
-      // 必填参数在前，可选参数在后
-      const _param = `<% if (it.multiParam) { %>
-
-<% } else { %>
-
-<% } %>`;
-
-      console.log(_param);
       // // 接口导入外部的定义
       // if (item.ref && !prev.import.includes(item.ref)) {
       //   prev.import.push(item.ref);
