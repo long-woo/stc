@@ -1,5 +1,38 @@
-<% if (it.param.enumOption?.length) { %>
-<% const _enumParam = parserEnum(it.paramType, it.param.enumOption) %>
-<%= _enumParam %>
+<% /* 第一个参数 */ %>
+<% if (it.firstParam) { %>
+class <%= it.defName %> {
 <% } %>
 
+<% /* 同类型的参数进行合并成新对象 */ %>
+<% if (it.multiParams) { %>
+  <% if (it.param.description) { %>
+    /// <%= it.param.description %>
+  <% } %>
+  <%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
+<% } %>
+
+<% /* 最后一个参数 */ %>
+<% if (it.lastParam) { %>
+  <%= it.defName %>({
+    <% it.params.forEach((param, index) => { %>
+      this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
+    <% }) %>
+  });
+
+  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
+    return <%= it.defName %>(
+      <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    <% it.params.forEach((param) => { %>
+    data['<%= param.name %>'] = <%= param.name %>;
+    <% }) %>
+
+    return data;
+  }
+}
+<% }%>

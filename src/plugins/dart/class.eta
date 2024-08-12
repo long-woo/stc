@@ -16,14 +16,14 @@ class <%= it.class %> {
 
   <%= it.class %>({
   <% it.props.forEach(function(prop, index) { %>
-  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><%= index === (it.props.length - 1) ? '' : ',' %>\n
+  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><% if (index < it.prop.length - 1) { %>,<% } %>\n
   <% }) %>
 });
 
   factory <%= it.class %>.fromJson(Map<String, dynamic> json) {
     return <%= it.class %>(
   <% it.props.forEach(function(prop, index) { %>
-    <%= prop.name %>: json['<%= prop.name %>']<%= index === it.props.length -1 ? '' : ',' %>\n
+    <%= prop.name %>: json['<%= prop.name %>']<% if (index < it.prop.length - 1) { %>,<% } %>\n
   <% }) %>
   );
   }

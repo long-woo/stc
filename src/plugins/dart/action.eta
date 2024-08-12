@@ -77,14 +77,14 @@ class GetProjectStatusResponseObj {
 }
 
 /// 
-Future<<%= upperCase(it.action) %>Response> <%= it.action %>() async {
+Future<<%= upperCase(it.action) %>Response> <%= it.action %>(String projectId) async {
   var _res = await request<<%= upperCase(it.action) %>Response>(
     ApiClientConfig(
       url: '<%= it.url %>',
       method: '<%= it.method %>',
       params: {
         'query': {
-          'projectId': '7491969461726838784'
+          'projectId': projectId
         }
       }
     ), <%= upperCase(it.action) %>Response.fromJson);

@@ -158,27 +158,36 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         : `${convertType(item.type, item.typeX ?? item.ref)}`;
       // let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
 
-      // 定义参数枚举
-      const _enumParam = parseEta(
-        `<% if (it.param.enumOption?.length) { %>
-<% const _enumParam = it.parserEnum(it.paramType, it.param.enumOption) %>
-<%= _enumParam %>
-<% } %>\n`,
-        { param: item, paramType: _type, parserEnum },
-      );
-      console.log(_enumParam);
+      // 外部引用
+      if (item.ref && !prev.import.includes(item.ref)) {
+        prev.import.push(item.ref);
+      }
 
-      // // 接口导入外部的定义
-      // if (item.ref && !prev.import.includes(item.ref)) {
-      //   prev.import.push(item.ref);
-      // }
+      // 定义参数枚举
+      if (item.enumOption?.length) {
+        const _enumParam = parserEnum(_type, item.enumOption);
+
+        prev.interface?.push(_enumParam);
+      }
+
+      // 同类型的参数进行合并成新对象。存在 properties 时，直接定义
+      if (_multiParam || item.properties?.length) {
+        // properties 存在时直接定义
+        if (item.properties?.length) {
+          //
+        }
+
+        // 同类型的参数进行合并成新对象
+        if (_multiParam) {
+        }
+      }
 
       // // 找出第一个可选参数的位置
       // const _optionalIndex = prev.defMap?.findIndex((_d) =>
       //   _d.includes("?:")
       // ) ?? -1;
 
-      // // 处理内部定义
+      // 处理内部定义
       // if (_multiParam || item.properties?.length) {
       //   // properties 存在时直接定义。
       //   if (item.properties?.length) {
