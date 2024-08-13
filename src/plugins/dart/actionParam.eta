@@ -3,13 +3,10 @@
 class <%= it.defName %> {
 <% } %>
 
-<% /* 同类型的参数进行合并成新对象 */ %>
-<% if (it.multiParams) { %>
-  <% if (it.param.description) { %>
-    /// <%= it.param.description %>
-  <% } %>
-  <%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
+<% if (it.param.description) { %>
+/// <%= it.param.description %>
 <% } %>
+<%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
 
 <% /* 最后一个参数 */ %>
 <% if (it.lastParam) { %>

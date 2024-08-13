@@ -218,6 +218,53 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
 
         // 同类型的参数进行合并成新对象
         if (_multiParam) {
+          const _newParam = parseEta(
+            `<% /* 第一个参数 */ %>
+<% if (it.firstParam) { %>
+class <%= it.defName %> {
+<% } %>
+<% if (it.param.description) { %>
+/// <%= it.param.description %>
+<% } %>
+<%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
+
+<% /* 最后一个参数 */ %>
+<% if (it.lastParam) { %>
+  <%= it.defName %>({
+    <% it.params.forEach((param, index) => { %>
+      this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
+    <% }) %>
+  });
+
+  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
+    return <%= it.defName %>(
+      <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    <% it.params.forEach((param) => { %>
+    data['<%= param.name %>'] = <%= param.name %>;
+    <% }) %>
+
+    return data;
+  }
+}
+<% }%>
+`,
+            {
+              firstParam: index === 0,
+              lastParam: index === _params.length - 1,
+              defName: _defName,
+              param: item,
+              paramType: _type,
+              params: _params,
+            },
+          );
+
+          prev.interface?.push(_newParam);
         }
       }
 
