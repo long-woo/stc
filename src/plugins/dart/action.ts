@@ -6,13 +6,7 @@ import type {
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
 } from "../../swagger.ts";
-import {
-  camelCase,
-  parseEta,
-  parserEnum,
-  propCommit,
-  upperCase,
-} from "../../common.ts";
+import { camelCase, parseEta, parserEnum, upperCase } from "../../common.ts";
 import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
 import { convertType } from "./util.ts";
@@ -55,8 +49,8 @@ interface IApiFile {
 }
 
 interface IApiInternalDefinition {
-  props: Array<string>;
-  childProps: Array<string>;
+  definitions: Array<string>;
+  childDefinitions: Array<string>;
 }
 
 const methodCommit = (
@@ -90,36 +84,77 @@ const getInternalDefinition = (
   properties: IDefinitionVirtualProperty[],
   name: string,
 ): IApiInternalDefinition => {
-  const _props = properties.reduce((prev: IApiInternalDefinition, current) => {
+  let _defHeader = "", _defFooter = "";
+
+  if (properties.length) {
+    _defHeader = parseEta(`class <%= it.defName %> {`, { defName: name });
+    _defFooter = parseEta(
+      `<%= it.defName %>({
+  <% it.props.forEach((prop, index) => { %>
+  this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
+  <% }) %>
+  });
+
+  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
+    return <%= it.defName %>(
+    <% it.props.forEach((prop, index) => { %>
+      <%= prop.name %>: json['<%= prop.name %>']<% if (index < it.props.length - 1) { %>,<% } %>
+    <% }) %>
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    <% it.props.forEach((prop) => { %>
+    data['<%= prop.name %>'] = <%= prop.name %>;
+    <% }) %>
+
+    return data;
+  }
+}`,
+      { defName: name, props: properties },
+    );
+  }
+
+  const _defs = properties.reduce((prev: IApiInternalDefinition, current) => {
     let _type = convertType(current.type, current.typeX ?? current.ref);
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-
       _type = convertType(current.type, _defName);
 
-      const _childProps = getInternalDefinition(
+      const _childDefinition = getInternalDefinition(
         current.properties,
         _defName,
       );
 
-      prev.childProps.push(..._childProps.props, ..._childProps.childProps);
+      prev.childDefinitions.push(
+        ..._childDefinition.definitions,
+        ..._childDefinition.childDefinitions,
+      );
     }
 
-    prev.props.splice(
-      prev.props.length - 1,
-      0,
-      `${
-        propCommit(current.title ?? current.description ?? "")
-      }${current.name}${current.required ? "" : "?"}: ${_type};`,
+    const _defBody = parseEta(
+      `<% if (it.propCommit) { %>
+      /// <%= it.propCommit %>
+      <%~ it.propType %><% if (it.prop.required) { %>?<% } %> <%= it.prop.name %>;
+    <% } %>`,
+      {
+        propCommit: current.title || current.description,
+        propType: _type,
+        prop: current,
+      },
     );
+
+    prev.definitions.splice(prev.definitions.length - 1, 0, _defBody);
     return prev;
   }, {
-    props: properties.length ? [`export interface ${name} {`, "}"] : [],
-    childProps: [],
+    definitions: properties.length ? [_defHeader, _defFooter] : [],
+    childDefinitions: [],
   });
 
-  return _props;
+  return _defs;
 };
 
 /**
@@ -132,8 +167,8 @@ const getDefinition = (
   properties: IDefinitionVirtualProperty[],
   name: string,
 ) => {
-  const _props = getInternalDefinition(properties, name);
-  const _defs = [..._props.props, ..._props.childProps];
+  const _def = getInternalDefinition(properties, name);
+  const _defs = [..._def.definitions, ..._def.childDefinitions];
 
   return _defs;
 };
@@ -174,7 +209,7 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       if (_multiParam || item.properties?.length) {
         // properties 存在时直接定义
         if (item.properties?.length) {
-          //
+          getDefinition(item.properties, _defName);
         }
 
         // 同类型的参数进行合并成新对象

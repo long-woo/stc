@@ -1,0 +1,4 @@
+<% if (it.prop.title || it.prop.description) { %>
+  /// <%= prop.title ?? prop.description %>
+  <%~ it.propType %><% if (it.prop.required) { %>?<% } %> <%= it.prop.name %>;
+<% } %>
