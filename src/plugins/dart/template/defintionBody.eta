@@ -1,4 +1,4 @@
-<% if (it.prop.title || it.prop.description) { %>
-  /// <%= prop.title ?? prop.description %>
+<% if (it.propCommit) { %>
+  /// <%= propCommit %>
   <%~ it.propType %><% if (it.prop.required) { %>?<% } %> <%= it.prop.name %>;
 <% } %>

@@ -209,7 +209,11 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       if (_multiParam || item.properties?.length) {
         // properties 存在时直接定义
         if (item.properties?.length) {
-          getDefinition(item.properties, _defName);
+          const _defs = getDefinition(item.properties, _defName);
+
+          if (_defs.length) {
+            prev.interface?.push(_defs.join("\n"));
+          }
         }
 
         // 同类型的参数进行合并成新对象
