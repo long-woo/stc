@@ -46,10 +46,13 @@ export const generateDeclarationFile = async (
   const output = env.languageService.getEmitOutput(filename);
 
   // 将输出的声明文件内容拼接起来
-  const declarationContent = output.outputFiles.reduce((prev, current) => {
-    prev += current.text;
-    return prev;
-  }, "");
+  const declarationContent = output.outputFiles.reduce(
+    (prev: string, current) => {
+      prev += current.text;
+      return prev;
+    },
+    "",
+  );
 
   // 创建虚拟编译器主机
   // const host = vfs.createVirtualCompilerHost(system, compilerOptions, ts);

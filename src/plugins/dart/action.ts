@@ -33,13 +33,29 @@ interface IApiParams {
    */
   refMap?: IApiRealParams;
   /**
-   * 接口方法参数注释
+   * 参数注释
    */
-  commit?: Array<string>;
+  commits?: Array<string>;
   /**
-   * 接口的导入类型
+   * 外部导入
    */
-  import: Array<string>;
+  imports: string[];
+  /**
+   * 参数注释
+   */
+  comments?: string[];
+  /**
+   * 必填参数
+   */
+  requiredParams?: IDefinitionVirtualProperty[];
+  /**
+   * 可选参数
+   */
+  optionalParams?: IDefinitionVirtualProperty[];
+  /**
+   * 内部定义
+   */
+  definitions?: string[];
 }
 
 interface IApiFile {
@@ -183,26 +199,24 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
     const _params = parameters[current as keyof IPathVirtualParameter];
     const _multiParam = _params.length > 1;
     const _defName = camelCase(`${action}_${current}_params`, true);
-    // const _interface = _multiParam
-    //   ? [`export interface ${_defName} {`, "}"]
-    //   : [];
 
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
         ? camelCase(`${_defName}_${item.name}`, true)
         : `${convertType(item.type, item.typeX ?? item.ref)}`;
-      // let _defMap = `${item.name}${item.required ? "" : "?"}: ${_type}`;
+      // 形参
+      const _formalParam = {
+        name: item.name,
+        type: _type,
+        description: item.title || item.description,
+      };
 
-      // 外部引用
-      if (item.ref && !prev.import.includes(item.ref)) {
-        prev.import.push(item.ref);
-      }
-
+      /* #region 内部定义 */
       // 定义参数枚举
       if (item.enumOption?.length) {
         const _enumParam = parserEnum(_type, item.enumOption);
 
-        prev.interface?.push(_enumParam);
+        prev.definitions?.push(_enumParam);
       }
 
       // 同类型的参数进行合并成新对象。存在 properties 时，直接定义
@@ -211,25 +225,21 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         if (item.properties?.length) {
           const _defs = getDefinition(item.properties, _defName);
 
-          if (_defs.length) {
-            prev.interface?.push(_defs.join("\n"));
-          }
+          prev.definitions?.push(_defs.join("\n"));
         }
 
         // 同类型的参数进行合并成新对象
         if (_multiParam) {
           const _newParam = parseEta(
-            `<% /* 第一个参数 */ %>
-<% if (it.firstParam) { %>
+            `<% if (it.firstParam) { %>
 class <%= it.defName %> {
 <% } %>
-<% if (it.param.description) { %>
-/// <%= it.param.description %>
+<% if (it.param.title || it.param.description) { %>
+/// <%= it.param.title || it.param.description %>
 <% } %>
 <%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
 
-<% /* 最后一个参数 */ %>
-<% if (it.lastParam) { %>
+<% if (it.firstParam) { %>
   <%= it.defName %>({
     <% it.params.forEach((param, index) => { %>
       this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
@@ -256,7 +266,6 @@ class <%= it.defName %> {
 `,
             {
               firstParam: index === 0,
-              lastParam: index === _params.length - 1,
               defName: _defName,
               param: item,
               paramType: _type,
@@ -264,87 +273,36 @@ class <%= it.defName %> {
             },
           );
 
-          prev.interface?.push(_newParam);
+          prev.definitions?.push(_newParam);
         }
+      } /* #endregion */
+
+      if (item.required) {
+        // 必填参数
+        prev.requiredParams?.push(_formalParam);
+      } else {
+        // 可选参数
+        prev.optionalParams?.push(_formalParam);
       }
 
-      // // 找出第一个可选参数的位置
-      // const _optionalIndex = prev.defMap?.findIndex((_d) =>
-      //   _d.includes("?:")
-      // ) ?? -1;
-
-      // 处理内部定义
-      // if (_multiParam || item.properties?.length) {
-      //   // properties 存在时直接定义。
-      //   if (item.properties?.length) {
-      //     const _props = getDefinition(item.properties, _defName);
-
-      //     if (_props.length) {
-      //       prev.interface?.push(_props.join("\n"));
-      //     }
-      //   }
-
-      //   // 合并同一类型的参数为新定义对象
-      //   if (_multiParam) {
-      //     _defMap = `${propCommit(item.description ?? "")}${_defMap}`;
-
-      //     _interface.splice(
-      //       _interface.length - 1,
-      //       0,
-      //       _defMap,
-      //     );
-      //   }
-
-      //   if (index === 0) {
-      //     const _paramCommit =
-      //       `* @param {${_defName}} ${current} - ${_defName}`;
-      //     const _paramDef = `${current}: ${_defName}`;
-
-      //     if (_optionalIndex > -1) {
-      //       // 接口参数注释
-      //       prev.commit?.splice(_optionalIndex, 0, _paramCommit);
-      //       // 接口形参
-      //       prev.defMap?.splice(_optionalIndex, 0, _paramDef);
-      //     } else {
-      //       // 接口参数注释
-      //       prev.commit?.push(_paramCommit);
-      //       // 接口形参
-      //       prev.defMap?.push(_paramDef);
-      //     }
-      //     // 接口形参使用
-      //     prev.refMap &&
-      //       (prev.refMap[current as keyof IPathVirtualParameter] = current);
-      //   }
-      // } else {
-      //   const _defMapCommit = `* @param {${_type}} ${
-      //     item.required ? item.name : `[${item.name}]`
-      //   } - ${item.description || item.name}`;
-
-      //   if (_optionalIndex > -1) {
-      //     // 接口参数注释
-      //     prev.commit?.splice(_optionalIndex, 0, _defMapCommit);
-      //     // 接口形参
-      //     prev.defMap?.splice(_optionalIndex, 0, _defMap);
-      //   } else {
-      //     // 接口参数注释
-      //     prev.commit?.push(_defMapCommit);
-      //     // 接口形参
-      //     prev.defMap?.push(_defMap);
-      //   }
-
-      //   // 接口形参使用
-      //   if (prev.refMap) {
-      //     prev.refMap[current as keyof IPathVirtualParameter] =
-      //       current === "body" ? item.name : `{ ${item.name} }`;
-      //   }
-      // }
+      // 外部引用
+      if (item.ref && !prev.imports.includes(item.ref)) {
+        prev.imports.push(item.ref);
+      }
     });
 
-    // if (_interface.length) {
-    //   prev.interface?.push(_interface.join("\n"));
-    // }
     return prev;
-  }, { commit: [], defMap: [], refMap: {}, interface: [], import: [] });
+  }, {
+    commits: [],
+    defMap: [],
+    refMap: {},
+    interface: [],
+    imports: [],
+    comments: [],
+    requiredParams: [],
+    optionalParams: [],
+    definitions: [],
+  });
 
 /**
  * 解析响应对象
@@ -421,7 +379,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
 
   const _params = parserParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
-
+  console.log(_params);
   if (_response.def === "unknown") {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
@@ -429,7 +387,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _methodCommit = methodCommit(
     action,
     data.summary,
-    _params?.commit,
+    _params?.commits,
     _response.def,
     data.description,
   );
@@ -443,7 +401,7 @@ export const ${action} = (${
   }): Promise<${_response.def}> => fetchRuntime<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
-    import: [..._params.import, ...(_response.import ?? [])],
+    import: [..._params.imports, ...(_response.import ?? [])],
     interface: [...(_params.interface ?? []), ...(_response.interface ?? [])]
       ?.join("\n"),
     export: _method,

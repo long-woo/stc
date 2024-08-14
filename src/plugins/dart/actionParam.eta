@@ -1,15 +1,12 @@
-<% /* 第一个参数 */ %>
 <% if (it.firstParam) { %>
 class <%= it.defName %> {
 <% } %>
-
 <% if (it.param.description) { %>
 /// <%= it.param.description %>
 <% } %>
 <%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
 
-<% /* 最后一个参数 */ %>
-<% if (it.lastParam) { %>
+<% if (it.firstParam) { %>
   <%= it.defName %>({
     <% it.params.forEach((param, index) => { %>
       this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
