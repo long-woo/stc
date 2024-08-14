@@ -19,6 +19,7 @@ export const DartPlugin: IPlugin = {
     const typeFileName = "_types";
     const defContent = parserDefinition(def);
     const actions = parserActions(action);
+    console.log(actions);
 
     return {
       definition: {

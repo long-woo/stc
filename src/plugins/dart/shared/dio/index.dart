@@ -62,8 +62,8 @@ String parseUrl(String url, Map<String, String> pathParams) {
 /// Returns a [Future] that resolves to the response data of type [T].
 ///
 /// Throws a [DioException] if the request fails. The exception contains the response data if available.
-Future<T> request<T>(
-    ApiClientConfig instance, T Function(Map<String, dynamic>) fromJson) async {
+Future<T> request<T>(ApiClientConfig instance,
+    T Function(Map<String, dynamic>)? fromJson) async {
   // Parse the URL by replacing path parameters with their corresponding values
   var url = parseUrl(instance.url, (instance.params?['path']) ?? {});
 
@@ -92,7 +92,7 @@ Future<T> request<T>(
     }
 
     // Return the response data as type T
-    return fromJson(response.data);
+    return fromJson != null ? fromJson(response.data) : response.data;
   } on DioException catch (e) {
     var _message = e.response?.statusMessage ?? e.message.toString();
 
@@ -105,7 +105,9 @@ Future<T> request<T>(
       }
     }
 
-    return fromJson({'success': false, 'message': _message});
+    return fromJson != null
+        ? fromJson({'success': false, 'message': _message})
+        : {'success': false, 'message': _message} as T;
   }
 }
 

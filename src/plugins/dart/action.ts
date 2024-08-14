@@ -15,7 +15,7 @@ interface IApiParams {
   /**
    * 外部导入
    */
-  imports: string[];
+  imports?: string[];
   /**
    * 必填参数
    */
@@ -145,35 +145,28 @@ const getDefinition = (
  * @param parameters - 参数
  * @param action - 方法名称
  */
-const parserParams = (parameters: IPathVirtualParameter, action: string) =>
+const parseParams = (parameters: IPathVirtualParameter, action: string) =>
   Object.keys(parameters).reduce((prev: IApiParams, current) => {
     const _params = parameters[current as keyof IPathVirtualParameter];
     const _multiParam = _params.length > 1;
     const _defName = camelCase(`${action}_${current}_params`, true);
 
+    // 形参
+    let _formalParam = {
+      name: current,
+      category: current,
+      type: _defName,
+      description: "",
+    };
+
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
         ? camelCase(`${_defName}_${item.name}`, true)
         : `${convertType(item.type, item.typeX ?? item.ref)}`;
-      // 形参
-      const _formalParam = {
-        name: item.name,
-        category: current,
-        type: _type,
-        description: item.title || item.description,
-      };
-
-      if (item.required) {
-        // 必填参数
-        prev.requiredParams?.push(_formalParam);
-      } else {
-        // 可选参数
-        prev.optionalParams?.push(_formalParam);
-      }
 
       // 外部引用
-      if (item.ref && !prev.imports.includes(item.ref)) {
-        prev.imports.push(item.ref);
+      if (item.ref && !prev.imports?.includes(item.ref)) {
+        prev.imports?.push(item.ref);
       }
 
       /* #region 内部定义 */
@@ -184,64 +177,90 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
         prev.definitions?.push(_enumParam);
       }
 
-      // 同类型的参数进行合并成新对象。存在 properties 时，直接定义
-      if (_multiParam || item.properties?.length) {
-        // properties 存在时直接定义
-        if (item.properties?.length) {
-          const _defs = getDefinition(item.properties, _defName);
+      // properties 存在时直接定义
+      if (item.properties?.length) {
+        const _defs = getDefinition(item.properties, _defName);
 
-          prev.definitions?.push(_defs.join("\n"));
-        }
+        prev.definitions?.push(_defs.join("\n"));
+      }
 
-        // 同类型的参数进行合并成新对象
-        if (_multiParam) {
-          const _newParam = parseEta(
-            `<% if (it.firstParam) { %>
+      // 同类型的参数进行合并成新对象
+      if (_multiParam) {
+        const _newParam = parseEta(
+          `<% if (it.firstParam) { %>
 class <%= it.defName %> {
 <% } %>
 <% if (it.param.title || it.param.description) { %>
-/// <%= it.param.title || it.param.description %>
+/// <%= it.param.title || it.param.description %>\n
 <% } %>
 <%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
+<% if (it.lastParam) { %>
+\n<%= it.defName %>({
+  <% it.params.forEach((param, index) => { %>
+  this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
+  <% }) %>
+});
 
-<% if (it.firstParam) { %>
-  <%= it.defName %>({
+factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
+  return <%= it.defName %>(
     <% it.params.forEach((param, index) => { %>
-      this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
+    <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>\n
     <% }) %>
-  });
+  );
+}
 
-  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
-    return <%= it.defName %>(
-      <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>
-    );
-  }
+Map<String, dynamic> toJson() {
+  final Map<String, dynamic> data = <String, dynamic>{};
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+  <% it.params.forEach((param) => { %>
+  data['<%= param.name %>'] = <%= param.name %>;
+  <% }) %>
 
-    <% it.params.forEach((param) => { %>
-    data['<%= param.name %>'] = <%= param.name %>;
-    <% }) %>
-
-    return data;
-  }
+  return data;
+}
 }
 <% }%>
 `,
-            {
-              firstParam: index === 0,
-              defName: _defName,
-              param: item,
-              paramType: _type,
-              params: _params,
-            },
-          );
+          {
+            firstParam: index === 0,
+            lastParam: index === _params.length - 1,
+            defName: _defName,
+            param: item,
+            paramType: _type,
+            params: _params,
+          },
+        );
 
-          prev.definitions?.push(_newParam);
+        prev.definitions?.push(_newParam);
+      }
+      /* #endregion */
+
+      if (!_multiParam) {
+        _formalParam = {
+          name: item.name,
+          category: current,
+          type: _type,
+          description: (item.title || item.description) ?? "",
+        };
+
+        if (item.required) {
+          // 必填参数
+          prev.requiredParams?.push(_formalParam);
+        } else {
+          // 可选参数
+          prev.optionalParams?.push(_formalParam);
         }
-      } /* #endregion */
+      }
+
+      // TODO: 多 body 参数名字处理
+      // if (current === "body") {
+      //   _formalParam.name = item.name;
+      // }
     });
+
+    if (_multiParam) {
+      prev.requiredParams?.push(_formalParam);
+    }
 
     return prev;
   }, {
@@ -326,9 +345,9 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const methodName = data.method.toUpperCase();
   Logs.info(`【${methodName}】${data.url}`);
 
-  const _params = parserParams(data.parameters ?? {}, action);
+  const _params = parseParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
-  console.log(_params);
+
   if (_response.name === "unknown") {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
@@ -336,28 +355,28 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _apiMethod = parseEta(
     `<% /* API 方法注释 */ %>
 <% if (it.summary) { %>
-/// <%= it.summary %>\n
+/// <%~ it.summary %>
 <% } %>
 <% if (it.summary && it.description) { %>
-///
+\n///
 <% } %>
 <% if (it.description) { %>
-/// <%= it.description %>
+/// <%~ it.description %>
 <% } %>
 
 Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
-<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
+<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
 <% }) %>) async {
   var _res = await request<<%~ it.responseType %>>(
     ApiClientConfig(
       url: '<%= it.url %>',
       method: '<%= it.method %>',
       params: {
-        'query': {
-          'status': status
-        }
+        <% it.params.forEach((param, index) => { %>
+        '<%= param.category %>': <%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
+        <% }) %>
       }
-    ), <%~ it.responseName %>.fromJson);
+    )<% if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
 
     return _res;
 }`,
@@ -376,9 +395,9 @@ Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param,
       method: data.method,
     },
   );
-  console.log(_apiMethod);
+
   return {
-    imports: [..._params.imports, ...(_response.imports ?? [])],
+    imports: [..._params.imports ?? [], ..._response.imports ?? []],
     definition: [
       ...(_params.definitions ?? []),
       ...(_response.definitions ?? []),
