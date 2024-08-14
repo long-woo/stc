@@ -341,7 +341,8 @@ export interface IApiParseResponseRef {
 }
 
 export interface IApiParseResponse {
-  def: string;
-  interface?: Array<string>;
-  import?: Array<string>;
+  name: string;
+  type?: string;
+  definitions?: Array<string>;
+  imports?: Array<string>;
 }

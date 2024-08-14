@@ -11,39 +11,11 @@ import Logs from "../../console.ts";
 import { getT } from "../../i18n/index.ts";
 import { convertType } from "./util.ts";
 
-interface IApiRealParams {
-  path?: string;
-  query?: string;
-  body?: string;
-  formData?: string;
-  header?: string;
-}
-
 interface IApiParams {
-  /**
-   * 接口方法形参
-   */
-  defMap?: Array<string>;
-  /**
-   * 接口方法自定义的类型
-   */
-  interface?: Array<string>;
-  /**
-   * 接口方法传入到运行时方法的参数
-   */
-  refMap?: IApiRealParams;
-  /**
-   * 参数注释
-   */
-  commits?: Array<string>;
   /**
    * 外部导入
    */
   imports: string[];
-  /**
-   * 参数注释
-   */
-  comments?: string[];
   /**
    * 必填参数
    */
@@ -59,36 +31,15 @@ interface IApiParams {
 }
 
 interface IApiFile {
-  import: Array<string>;
-  interface: Array<string>;
-  export: Array<string>;
+  imports: Array<string>;
+  definitions: Array<string>;
+  methods: Array<string>;
 }
 
 interface IApiInternalDefinition {
   definitions: Array<string>;
   childDefinitions: Array<string>;
 }
-
-const methodCommit = (
-  name: string,
-  summary: string,
-  params?: Array<string>,
-  response?: string,
-  description?: string,
-  title?: string,
-) => {
-  const _commit = [
-    `/// ${summary || name}`,
-    "///",
-  ];
-
-  title && _commit.push(`/// ${title}`);
-  description && _commit.push(`/// ${description}`);
-  params?.length && _commit.push(...params);
-  _commit.push(`/// [Future]<${response}>`);
-
-  return _commit.join("\n ");
-};
 
 /**
  * 从给定的属性数组中获取属性，生成内部定义
@@ -207,9 +158,23 @@ const parserParams = (parameters: IPathVirtualParameter, action: string) =>
       // 形参
       const _formalParam = {
         name: item.name,
+        category: current,
         type: _type,
         description: item.title || item.description,
       };
+
+      if (item.required) {
+        // 必填参数
+        prev.requiredParams?.push(_formalParam);
+      } else {
+        // 可选参数
+        prev.optionalParams?.push(_formalParam);
+      }
+
+      // 外部引用
+      if (item.ref && !prev.imports.includes(item.ref)) {
+        prev.imports.push(item.ref);
+      }
 
       /* #region 内部定义 */
       // 定义参数枚举
@@ -276,29 +241,11 @@ class <%= it.defName %> {
           prev.definitions?.push(_newParam);
         }
       } /* #endregion */
-
-      if (item.required) {
-        // 必填参数
-        prev.requiredParams?.push(_formalParam);
-      } else {
-        // 可选参数
-        prev.optionalParams?.push(_formalParam);
-      }
-
-      // 外部引用
-      if (item.ref && !prev.imports.includes(item.ref)) {
-        prev.imports.push(item.ref);
-      }
     });
 
     return prev;
   }, {
-    commits: [],
-    defMap: [],
-    refMap: {},
-    interface: [],
     imports: [],
-    comments: [],
     requiredParams: [],
     optionalParams: [],
     definitions: [],
@@ -341,26 +288,28 @@ const parseResponse = (
   let _response: IApiParseResponse;
 
   if (response.properties?.length) {
-    const _def = `${upperCase(action)}Response`;
-    const _props = getDefinition(
+    const _defName = `${upperCase(action)}Response`;
+    const _definitions = getDefinition(
       response.properties,
-      `${upperCase(action)}Response`,
+      _defName,
     );
 
     _response = {
-      def: _def,
-      interface: _props,
+      name: _defName,
+      type: _defName,
+      definitions: _definitions,
     };
   } else {
-    const _refResponse = parseResponseRef(response.ref ?? "");
-    const _responseDef = convertType(
+    const _defName = parseResponseRef(response.ref ?? "");
+    const _defNameType = convertType(
       response.type ?? "",
-      _refResponse.name,
+      _defName.name,
     );
 
     _response = {
-      def: _responseDef,
-      import: _refResponse.import,
+      name: _defName.name,
+      type: _defNameType,
+      imports: _defName.import,
     };
   }
 
@@ -380,31 +329,62 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _params = parserParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
   console.log(_params);
-  if (_response.def === "unknown") {
+  if (_response.name === "unknown") {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
-  const _methodCommit = methodCommit(
-    action,
-    data.summary,
-    _params?.commits,
-    _response.def,
-    data.description,
+  const _apiMethod = parseEta(
+    `<% /* API 方法注释 */ %>
+<% if (it.summary) { %>
+/// <%= it.summary %>\n
+<% } %>
+<% if (it.summary && it.description) { %>
+///
+<% } %>
+<% if (it.description) { %>
+/// <%= it.description %>
+<% } %>
+
+Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
+<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>
+<% }) %>) async {
+  var _res = await request<<%~ it.responseType %>>(
+    ApiClientConfig(
+      url: '<%= it.url %>',
+      method: '<%= it.method %>',
+      params: {
+        'query': {
+          'status': status
+        }
+      }
+    ), <%~ it.responseName %>.fromJson);
+
+    return _res;
+}`,
+    {
+      summary: data.summary,
+      description: data.description,
+      methodName: upperCase(action),
+      params: [
+        ..._params.requiredParams ?? [],
+        ..._params.optionalParams ?? [],
+      ],
+      responseName: _response.name,
+      responseType: _response.type,
+      action: action,
+      url: data.url,
+      method: data.method,
+    },
   );
-  const _methodParam = _params.refMap && Object.keys(_params.refMap).length
-    ? `, ${JSON.stringify(_params.refMap, undefined, 2)?.replaceAll('"', "")}`
-    : "";
-
-  const _method = `${_methodCommit}
-export const ${action} = (${
-    _params.defMap?.join(", ") ?? ""
-  }): Promise<${_response.def}> => fetchRuntime<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
-
+  console.log(_apiMethod);
   return {
-    import: [..._params.imports, ...(_response.import ?? [])],
-    interface: [...(_params.interface ?? []), ...(_response.interface ?? [])]
+    imports: [..._params.imports, ...(_response.imports ?? [])],
+    definition: [
+      ...(_params.definitions ?? []),
+      ...(_response.definitions ?? []),
+    ]
       ?.join("\n"),
-    export: _method,
+    method: _apiMethod,
   };
 };
 
@@ -428,20 +408,20 @@ export const parserActions = (data: Map<string, IPathVirtualProperty>) => {
     const _apiMap = apiMap.get(_tag);
 
     if (_apiMap) {
-      if (_api.import) {
-        const _import = Array.from(
-          new Set([..._apiMap.import, ..._api.import]),
+      if (_api.imports) {
+        const _imports = Array.from(
+          new Set([..._apiMap.imports, ..._api.imports]),
         );
 
-        _apiMap.import = _import as string[];
+        _apiMap.imports = _imports;
       }
-      _api.interface && _apiMap?.interface?.push(_api.interface);
-      _apiMap?.export?.push(_api.export);
+      _api.definition && _apiMap?.definitions?.push(_api.definition);
+      _apiMap?.methods?.push(_api.method);
     } else {
       apiMap.set(_tag, {
-        import: _api.import as string[],
-        interface: _api.interface ? [_api.interface] : [],
-        export: [_api.export],
+        imports: _api.imports,
+        definitions: _api.definition ? [_api.definition] : [],
+        methods: [_api.method],
       });
     }
   });
