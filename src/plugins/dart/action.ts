@@ -58,7 +58,7 @@ const getInternalDefinition = (
     _defFooter = parseEta(
       `<%= it.defName %>({
   <% it.props.forEach((prop, index) => { %>
-  this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
+  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
   <% }) %>
   });
 
@@ -105,7 +105,7 @@ const getInternalDefinition = (
     const _defBody = parseEta(
       `<% if (it.propCommit) { %>
       /// <%= it.propCommit %>
-      <%~ it.propType %><% if (it.prop.required) { %>?<% } %> <%= it.prop.name %>;
+      <%~ it.propType %><% if (!it.prop.required) { %>?<% } %> <%= it.prop.name %>;
     <% } %>`,
       {
         propCommit: current.title || current.description,
@@ -191,33 +191,34 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 class <%= it.defName %> {
 <% } %>
 <% if (it.param.title || it.param.description) { %>
-/// <%= it.param.title || it.param.description %>\n
+  /// <%= it.param.title || it.param.description %>\n
 <% } %>
-<%~ it.paramType %><%= it.param.required ? '?' : '' %> <%= it.param.name %>;
-<% if (it.lastParam) { %>
-\n<%= it.defName %>({
-  <% it.params.forEach((param, index) => { %>
-  this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
-  <% }) %>
-});
+  <%~ it.paramType %><%= it.param.required ? '' : '?' %> <%= it.param.name %>;
+  <% if (it.lastParam) { %>
 
-factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
-  return <%= it.defName %>(
+  <%= it.defName %>({
     <% it.params.forEach((param, index) => { %>
-    <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>\n
+    <% if (param.required) { %>required <% } %>this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
     <% }) %>
-  );
-}
+  });
 
-Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = <String, dynamic>{};
+  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
+    return <%= it.defName %>(
+      <% it.params.forEach((param, index) => { %>
+      <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>\n
+      <% }) %>
+    );
+  }
 
-  <% it.params.forEach((param) => { %>
-  data['<%= param.name %>'] = <%= param.name %>;
-  <% }) %>
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-  return data;
-}
+    <% it.params.forEach((param) => { %>
+    data['<%= param.name %>'] = <%= param.name %>;
+    <% }) %>
+
+    return data;
+  }
 }
 <% }%>
 `,
