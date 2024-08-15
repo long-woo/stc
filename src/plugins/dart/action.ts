@@ -147,7 +147,8 @@ const getDefinition = (
  */
 const parseParams = (parameters: IPathVirtualParameter, action: string) =>
   Object.keys(parameters).reduce((prev: IApiParams, current) => {
-    const _params = parameters[current as keyof IPathVirtualParameter];
+    const _category = current as keyof IPathVirtualParameter;
+    const _params = parameters[_category];
     const _multiParam = _params.length > 1;
     const _defName = camelCase(`${action}_${current}_params`, true);
 
@@ -252,11 +253,6 @@ class <%= it.defName %> {
           prev.optionalParams?.push(_formalParam);
         }
       }
-
-      // TODO: 多 body 参数名字处理
-      // if (current === "body") {
-      //   _formalParam.name = item.name;
-      // }
     });
 
     if (_multiParam) {
@@ -371,12 +367,13 @@ Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param,
   var _res = await request<<%~ it.responseType %>>(
     ApiClientConfig(
       url: '<%= it.url %>',
-      method: '<%= it.method %>',
+      method: '<%= it.method %>'<% if (it.params.length) { %>,
       params: {
-        <% it.params.forEach((param, index) => { %>
-        '<%= param.category %>': <%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
-        <% }) %>
+<% it.params.forEach((param, index) => { %>
+        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% if (index < it.params.length - 1) { %>, <% } %><% } %>\n
+<% }) %>
       }
+<% } %>
     )<% if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
 
     return _res;
