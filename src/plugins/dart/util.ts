@@ -10,7 +10,7 @@ export const convertType = (type: string | string[], ref?: string) => {
     integer: "int",
     boolean: "bool",
     array: `List<${ref && convertType(ref) || "dynamic"}>`,
-    object: "Map<string, dynamic>",
+    object: "Map<String, dynamic>",
     null: "null",
   };
 

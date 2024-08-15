@@ -361,6 +361,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
 /// <%~ it.description %>
 <% } %>
 
+<% /* API 方法 */ %>
 Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
 <%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
 <% }) %>) async {
@@ -374,7 +375,7 @@ Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param,
 <% }) %>
       }
 <% } %>
-    )<% if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
+    )<% if (it.responseType.includes('List')) { %>, (json) => [<%~ it.responseName %>.fromJson(json)]<% } else if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
 
     return _res;
 }`,
@@ -483,8 +484,8 @@ export const parserActions = (
 
     const _imports = action.imports;
     const _apiImport = [
-      `import '${_importPath}shared/api_client_base.${lang}';`,
-      `import '${_importPath}shared/dio/index.${lang}';`,
+      `import '${_importPath}shared/api_client_base.${lang}';
+      import '${_importPath}shared/dio/index.${lang}';`,
     ];
     const _apiContent: Array<string> = [];
 
