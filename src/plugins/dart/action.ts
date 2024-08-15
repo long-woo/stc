@@ -31,14 +31,14 @@ interface IApiParams {
 }
 
 interface IApiFile {
-  imports: Array<string>;
-  definitions: Array<string>;
-  methods: Array<string>;
+  imports: string[];
+  definitions: string[];
+  methods: string[];
 }
 
 interface IApiInternalDefinition {
-  definitions: Array<string>;
-  childDefinitions: Array<string>;
+  definitions: string[];
+  childDefinitions: string[];
 }
 
 /**
@@ -345,7 +345,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _params = parseParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
 
-  if (_response.name === "unknown") {
+  if (!_response.name) {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
@@ -406,11 +406,13 @@ Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param,
 };
 
 /**
- * 解析接口
- * @param data - 接口信息
+ * Generates a map of action files based on the provided data.
+ *
+ * @param {Map<string, IPathVirtualProperty>} data - The data used to generate the action files.
+ * @return {Map<string, IApiFile>} - A map of action files, where the key is the tag and the value is the corresponding IApiFile object.
  */
-export const parserActions = (data: Map<string, IPathVirtualProperty>) => {
-  const apiMap = new Map<string, IApiFile>();
+const getActionFiles = (data: Map<string, IPathVirtualProperty>) => {
+  const _actionFileMap = new Map<string, IApiFile>();
 
   Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
@@ -421,28 +423,84 @@ export const parserActions = (data: Map<string, IPathVirtualProperty>) => {
       return;
     }
 
-    const _api = generateApi(item, key);
-    const _apiMap = apiMap.get(_tag);
+    const _apiData = generateApi(item, key);
+    const _actionFile = _actionFileMap.get(_tag);
 
-    if (_apiMap) {
-      if (_api.imports) {
+    if (_actionFile) {
+      if (_apiData.imports) {
+        // 导入内容去重
         const _imports = Array.from(
-          new Set([..._apiMap.imports, ..._api.imports]),
+          new Set([..._actionFile.imports, ..._apiData.imports]),
         );
 
-        _apiMap.imports = _imports;
+        _actionFile.imports = _imports;
       }
-      _api.definition && _apiMap?.definitions?.push(_api.definition);
-      _apiMap?.methods?.push(_api.method);
+
+      _apiData.definition &&
+        _actionFile?.definitions?.push(_apiData.definition);
+      _actionFile?.methods?.push(_apiData.method);
     } else {
-      apiMap.set(_tag, {
-        imports: _api.imports,
-        definitions: _api.definition ? [_api.definition] : [],
-        methods: [_api.method],
+      _actionFileMap.set(_tag, {
+        imports: _apiData.imports,
+        definitions: _apiData.definition ? [_apiData.definition] : [],
+        methods: [_apiData.method],
       });
     }
   });
 
   Logs.info(getT("$t(plugin.parserActionDone)"));
-  return apiMap;
+  return _actionFileMap;
+};
+
+/**
+ * Parses actions from the given data and generates a map of action content.
+ *
+ * @param {Map<string, IPathVirtualProperty>} data - The data to parse actions from.
+ * @param {string} defFileName - The name of the definition file.
+ * @return {Map<string, string>} A map of action content where the key is the action file name and the value is the action content.
+ */
+export const parserActions = (
+  data: Map<string, IPathVirtualProperty>,
+  defFileName: string,
+  lang: string,
+) => {
+  const _actionContentMap = new Map<string, string>();
+  const _actionFileMap = getActionFiles(data);
+
+  _actionFileMap.forEach((action, key) => {
+    // 处理导入文件相对路径，根据 key 中是否存在 `/`
+    const _keyPath = key.split("/");
+    // 移除一项
+    _keyPath.pop();
+    const _importPath = _keyPath.reduce((prev, _) => {
+      if (prev === "./") {
+        prev = "";
+      }
+
+      prev += "../";
+      return prev;
+    }, "./");
+
+    const _imports = action.imports;
+    const _apiImport = [
+      `import '${_importPath}shared/api_client_base.${lang}';`,
+      `import '${_importPath}shared/dio/index.${lang}';`,
+    ];
+    const _apiContent: Array<string> = [];
+
+    if (_imports.length) {
+      _apiImport.push(
+        `import '${_importPath}${defFileName}.${lang}';`,
+      );
+    }
+
+    _apiContent.push(_apiImport.join("\n"));
+    action.definitions?.length &&
+      _apiContent.push(action.definitions?.join("\n\n"));
+    action.methods?.length && _apiContent.push(action.methods.join("\n\n"));
+
+    _actionContentMap.set(`${key}.${lang}`, _apiContent.join("\n\n"));
+  });
+
+  return _actionContentMap;
 };

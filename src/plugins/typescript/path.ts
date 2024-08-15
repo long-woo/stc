@@ -289,8 +289,9 @@ const parseResponse = (
     );
 
     _response = {
-      def: _def,
-      interface: _props,
+      name: _def,
+      type: _def,
+      definitions: _props,
     };
   } else {
     const _refResponse = parseResponseRef(response.ref ?? "");
@@ -300,8 +301,9 @@ const parseResponse = (
     );
 
     _response = {
-      def: _responseDef,
-      import: _refResponse.import,
+      name: _refResponse.name,
+      type: _responseDef,
+      definitions: _refResponse.import,
     };
   }
 
@@ -321,7 +323,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _params = parserParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
 
-  if (_response.def === "unknown") {
+  if (_response.name) {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
@@ -329,7 +331,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     action,
     data.summary,
     _params?.commit,
-    _response.def,
+    _response.name,
     data.description,
   );
   const _methodParam = _params.refMap && Object.keys(_params.refMap).length
@@ -339,11 +341,11 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _method = `${_methodCommit}
 export const ${action} = (${
     _params.defMap?.join(", ") ?? ""
-  }): Promise<${_response.def}> => fetchRuntime<${_response.def}>('${data.url}', '${methodName}'${_methodParam})`;
+  }): Promise<${_response.type}> => fetchRuntime<${_response.type}>('${data.url}', '${methodName}'${_methodParam})`;
 
   return {
-    import: [..._params.import, ...(_response.import ?? [])],
-    interface: [...(_params.interface ?? []), ...(_response.interface ?? [])]
+    import: [..._params.import, ...(_response.imports ?? [])],
+    interface: [...(_params.interface ?? []), ...(_response.definitions ?? [])]
       ?.join("\n"),
     export: _method,
   };

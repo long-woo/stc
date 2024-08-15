@@ -63,7 +63,7 @@ String parseUrl(String url, Map<String, String> pathParams) {
 ///
 /// Throws a [DioException] if the request fails. The exception contains the response data if available.
 Future<T> request<T>(ApiClientConfig instance,
-    T Function(Map<String, dynamic>)? fromJson) async {
+    [T Function(Map<String, dynamic>)? fromJson]) async {
   // Parse the URL by replacing path parameters with their corresponding values
   var url = parseUrl(instance.url, (instance.params?['path']) ?? {});
 

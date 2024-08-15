@@ -73,7 +73,7 @@ export interface IPlugin extends IPluginEvent {
   /**
    * 插件生成的语言，与选项的 `lang` 一致
    */
-  readonly lang: string | string[];
+  readonly lang: string;
   /**
    * 插件入口
    */
