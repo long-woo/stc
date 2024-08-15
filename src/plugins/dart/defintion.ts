@@ -15,16 +15,20 @@ export const parserDefinition = (
 
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
 
-  data.forEach((value, key) => {
-    const _classContent = parseEta(
-      `<% it.props.forEach(function(prop) { %>
-<% const _type = it.convertType(prop.type, prop.ref), _enumData = it.parserEnum(_type, prop.enumOption) %>
-<% if (_enumData) { %>
-<%= _enumData %>\n
-<% } %>
-<% }) %>
+  data.forEach((props, key) => {
+    props.forEach((prop) => {
+      const _type = convertType(prop.type, prop.ref);
+      const _enumOption = prop.enumOption;
+      const _enumData = parserEnum(_type, _enumOption);
 
-class <%= it.class %> {
+      // 添加枚举定义
+      if (_enumOption?.length) {
+        _res.push(_enumData);
+      }
+    });
+
+    const _classContent = parseEta(
+      `class <%= it.class %> {
 <% it.props.forEach(function(prop) { %>
 <% const _type = it.convertType(prop.type, prop.ref) %>
 <% if (prop.description) { %>
@@ -50,14 +54,14 @@ class <%= it.class %> {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
 
-  <% it.props.forEach(function(prop) { %>
+<% it.props.forEach(function(prop) { %>
     data['<%= prop.name %>'] = <%= prop.name %>;
-  <% }) %>
+<% }) %>
 
     return data;
   }
 }`,
-      { class: key, props: value, convertType, parserEnum },
+      { class: key, props, convertType, parserEnum },
     );
 
     _res.push(_classContent);
