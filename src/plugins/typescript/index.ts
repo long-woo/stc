@@ -1,5 +1,4 @@
-import type { ISwaggerOptions } from "../../swagger.ts";
-import type { IPlugin } from "../typeDeclaration.ts";
+import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
 import { createFile, parseEta } from "../../common.ts";
 import { parserDefinition } from "./defintion.ts";
 import { parserPath } from "./path.ts";
@@ -14,18 +13,31 @@ import {
 // Deno 当前版本（1.45.2）未支持
 // import webClientBaseFile from "./shared/apiClientBase.ts" with { type: "text" };
 
-let pluginOptions: ISwaggerOptions;
+let pluginOptions: IPluginOptions;
 
 export const TypeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
   lang: "ts",
-  /**
-   * Set up the function with the given options.
-   *
-   * @param {ISwaggerOptions} options - The options for setting up the function.
-   */
-  setup(options: ISwaggerOptions) {
-    pluginOptions = options;
+  setup(options: IPluginOptions) {
+    pluginOptions = {
+      ...options,
+      unknownType: "unknown",
+      typeMap(func, type) {
+        return {
+          string: "string",
+          integer: "number",
+          boolean: "boolean",
+          array: `${
+            type && func(type, undefined, pluginOptions) ||
+            pluginOptions.unknownType
+          }[]`,
+          object: `Record<string, ${pluginOptions.unknownType}>`,
+          file: "File",
+          null: "null",
+          bool: "boolean",
+        };
+      },
+    };
   },
 
   /**

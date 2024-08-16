@@ -1,1 +1,1 @@
-class <%= it.defName %> {
+export interface <%= it.defName %> {

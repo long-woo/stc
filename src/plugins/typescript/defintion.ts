@@ -1,6 +1,7 @@
 import type { IDefinitionVirtualProperty } from "../../swagger.ts";
 import Logs from "../../console.ts";
-import { convertType, propCommit } from "../../common.ts";
+import { convertType } from "../common.ts";
+import { propCommit } from "../../common.ts";
 import { getT } from "../../i18n/index.ts";
 import { parserEnumToUnionType } from "./util.ts";
 

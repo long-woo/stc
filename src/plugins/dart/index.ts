@@ -1,10 +1,9 @@
-import type { ISwaggerOptions } from "../../swagger.ts";
-import type { IPlugin } from "../typeDeclaration.ts";
+import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
 import { parserDefinition } from "../defintion.ts";
 import { parserActions } from "../action.ts";
 import { copyFile } from "../../common.ts";
 
-let pluginOptions: ISwaggerOptions;
+let pluginOptions: IPluginOptions;
 
 /**
  * dart 插件。
@@ -13,13 +12,31 @@ let pluginOptions: ISwaggerOptions;
 export const DartPlugin: IPlugin = {
   name: "stc:DartPlugin",
   lang: "dart",
-  unknownType: "dynamic",
-  setup(options: ISwaggerOptions) {
-    console.log(this);
-    pluginOptions = options;
+  setup(options: IPluginOptions) {
+    pluginOptions = {
+      ...options,
+      unknownType: "dynamic",
+      typeMap(func, type) {
+        return {
+          string: "String",
+          integer: "int",
+          boolean: "bool",
+          array: `List<${
+            type &&
+              func(
+                type,
+                undefined,
+                pluginOptions,
+              ) ||
+            pluginOptions.unknownType
+          }>`,
+          object: `Map<String, ${pluginOptions.unknownType}>`,
+          null: "null",
+        };
+      },
+    };
   },
   onTransform(def, action) {
-    // console.log(this);
     const typeFileName = "_types";
     const defContent = parserDefinition(def, pluginOptions);
     const actionData = parserActions(action, typeFileName, pluginOptions);

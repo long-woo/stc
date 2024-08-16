@@ -75,11 +75,25 @@ export interface IPlugin extends IPluginEvent {
    */
   readonly lang: string;
   /**
-   * 未知类型
-   */
-  readonly unknownType: string;
-  /**
    * 插件入口
    */
   setup: (options: ISwaggerOptions) => Promise<void> | void;
+}
+
+export interface IPluginOptions extends ISwaggerOptions {
+  /**
+   * 未知类型
+   */
+  readonly unknownType?: string;
+  /**
+   * 类型映射
+   */
+  readonly typeMap?: (
+    convertFunc: (
+      type: string,
+      ref?: string,
+      pluginOptions?: IPluginOptions,
+    ) => string,
+    type?: string,
+  ) => Record<string, string>;
 }

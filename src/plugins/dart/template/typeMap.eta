@@ -1,8 +1,0 @@
-<% {
-    string: "String",
-    integer: "int",
-    boolean: "bool",
-    array: `List<${ref && convertType(ref) || "dynamic"}>`,
-    object: "Map<String, dynamic>",
-    null: "null"
-  } %>

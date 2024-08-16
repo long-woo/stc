@@ -5,15 +5,10 @@ import type {
   IPathVirtualParameter,
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
-  ISwaggerOptions,
 } from "../swagger.ts";
-import {
-  camelCase,
-  convertType,
-  parseEta,
-  parserEnum,
-  upperCase,
-} from "../common.ts";
+import type { IPluginOptions } from "./typeDeclaration.ts";
+import { camelCase, parseEta, upperCase } from "../common.ts";
+import { convertType, parserEnum } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 
@@ -46,6 +41,8 @@ interface IApiInternalDefinition {
   definitions: string[];
   childDefinitions: string[];
 }
+
+let pluginOptions: IPluginOptions;
 
 /**
  * 从给定的属性数组中获取属性，生成内部定义
@@ -94,12 +91,12 @@ const getInternalDefinition = (
     let _type = convertType(
       current.type,
       current.typeX ?? current.ref,
-      "dynamic",
+      pluginOptions,
     );
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-      _type = convertType(current.type, _defName, "dynamic");
+      _type = convertType(current.type, _defName, pluginOptions);
 
       const _childDefinition = getInternalDefinition(
         current.properties,
@@ -173,7 +170,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
         ? camelCase(`${_defName}_${item.name}`, true)
-        : `${convertType(item.type, item.typeX ?? item.ref, "dynamic")}`;
+        : `${convertType(item.type, item.typeX ?? item.ref, pluginOptions)}`;
 
       // 外部引用
       if (item.ref && !prev.imports?.includes(item.ref)) {
@@ -330,7 +327,7 @@ const parseResponse = (
     const _defNameType = convertType(
       response.type ?? "",
       _defName.name,
-      "dynamic",
+      pluginOptions,
     );
 
     _response = {
@@ -474,8 +471,10 @@ const getActionFiles = (data: Map<string, IPathVirtualProperty>) => {
 export const parserActions = (
   data: Map<string, IPathVirtualProperty>,
   defFileName: string,
-  options: ISwaggerOptions,
+  options: IPluginOptions,
 ) => {
+  pluginOptions = options;
+
   const _actionContentMap = new Map<string, string>();
   const _actionFileMap = getActionFiles(data);
 
