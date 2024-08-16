@@ -1,8 +1,7 @@
 import type { IDefinitionVirtualProperty } from "../swagger.ts";
 import type { IPluginOptions } from "../plugins/typeDeclaration.ts";
 import Logs from "../console.ts";
-import { parseEta } from "../common.ts";
-import { convertType, parserEnum } from "./common.ts";
+import { convertType, parserEnum, renderTemplate } from "./common.ts";
 import { getT } from "../i18n/index.ts";
 
 /**
@@ -13,11 +12,13 @@ export const parserDefinition = (
   data: Map<string, IDefinitionVirtualProperty[]>,
   options: IPluginOptions,
 ) => {
-  const _res: Array<string> = [];
+  const _definitions: string[] = [];
 
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
   data.forEach((props, key) => {
-    props.forEach((prop) => {
+    const _definition: string[] = [`// #region ${key}`];
+
+    props.forEach((prop, index) => {
       const _type = convertType(
         prop.type,
         prop.ref,
@@ -28,50 +29,36 @@ export const parserDefinition = (
 
       // 添加枚举定义
       if (_enumOption?.length) {
-        _res.push(_enumData);
+        _definition.splice(1, 0, `${_enumData}\n`);
+      }
+
+      // 定义头
+      if (index === 0) {
+        _definition.push(renderTemplate("definitionHeader", { defName: key }));
+      }
+
+      // 定义属性
+      _definition.push(
+        renderTemplate("definitionBody", {
+          propCommit: prop.title || prop.description,
+          prop: prop,
+          propType: _type,
+        }),
+      );
+
+      // 定义尾
+      if (index === props.length - 1) {
+        _definition.push(
+          "",
+          renderTemplate("definitionFooter", { defName: key, props }),
+          "// #endregion\n",
+        );
       }
     });
 
-    const _classContent = parseEta(
-      `class <%= it.class %> {
-<% it.props.forEach(function(prop) { %>
-<% const _type = it.convertType(prop.type, prop.ref, it.pluginOptions) %>
-<% if (prop.description) { %>
-  /// <%= prop.description %>\n
-<% } %>
-  <%~ _type %><% if (!prop.required) { %>?<% } %> <%= prop.name %>;
-<% }) %>
-
-  <%= it.class %>({
-  <% it.props.forEach(function(prop, index) { %>
-  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><%= index === (it.props.length - 1) ? '' : ',' %>\n
-  <% }) %>
-});
-
-  factory <%= it.class %>.fromJson(Map<String, dynamic> json) {
-    return <%= it.class %>(
-  <% it.props.forEach(function(prop, index) { %>
-    <%= prop.name %>: json['<%= prop.name %>']<%= index === it.props.length -1 ? '' : ',' %>\n
-  <% }) %>
-  );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-
-<% it.props.forEach(function(prop) { %>
-    data['<%= prop.name %>'] = <%= prop.name %>;
-<% }) %>
-
-    return data;
-  }
-}`,
-      { class: key, props, convertType, parserEnum, pluginOptions: options },
-    );
-
-    _res.push(_classContent);
+    _definitions.push(_definition.join("\n"));
   });
 
   Logs.info(getT("$t(plugin.parserDefDone)"));
-  return _res.join("\n\n");
+  return _definitions.join("\n");
 };

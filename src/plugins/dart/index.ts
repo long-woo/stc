@@ -1,6 +1,7 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
 import { parserDefinition } from "../defintion.ts";
 import { parserActions } from "../action.ts";
+import { setupTemplate } from "../common.ts";
 import { copyFile } from "../../common.ts";
 
 let pluginOptions: IPluginOptions;
@@ -35,6 +36,8 @@ export const DartPlugin: IPlugin = {
         };
       },
     };
+
+    setupTemplate(pluginOptions);
   },
   onTransform(def, action) {
     const typeFileName = "_types";

@@ -1,6 +1,45 @@
+import { Eta } from "x/eta@v3.4.0/src/index.ts";
+
 import type { IPluginOptions } from "./typeDeclaration.ts";
 import { convertValue } from "../common.ts";
 
+let etaInstance: Eta | null = null;
+
+/**
+ * Sets up a template based on the provided plugin options.
+ *
+ * @param {IPluginOptions} options - The plugin options.
+ * @return {Eta} The set up Eta template.
+ */
+export const setupTemplate = (options: IPluginOptions) => {
+  etaInstance = new Eta({ views: `./src/plugins/${options.lang}/template` });
+
+  return etaInstance;
+};
+
+/**
+ * Renders a template based on the provided name and data.
+ *
+ * @param {string} name - The name of the template to render.
+ * @param {Record<string, unknown>} data - The data to be used in the template.
+ * @return {string} The rendered template as a string.
+ */
+export const renderTemplate = (name: string, data: Record<string, unknown>) => {
+  if (!etaInstance) {
+    throw new Error("Please call `setupTemplate` first.");
+  }
+
+  return etaInstance.render(name, data);
+};
+
+/**
+ * Converts a given type to a string representation, taking into account the provided reference and plugin options.
+ *
+ * @param {string|string[]} type - The type to be converted.
+ * @param {string} [ref] - The reference type.
+ * @param {IPluginOptions} [pluginOptions] - The plugin options.
+ * @return {string} The converted type as a string.
+ */
 export const convertType = (
   type: string | string[],
   ref?: string,

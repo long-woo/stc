@@ -1,23 +1,25 @@
-<%= it.defName %>({
-  <% it.props.forEach((prop, index) => { %>
-  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
-  <% }) %>
+  <%= it.defName %>({
+<% it.props.forEach((prop, index) => { %>
+    <% if (prop.required) { %>required <% } %>this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
+
+<% }) %>
   });
 
   factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
     return <%= it.defName %>(
-    <% it.props.forEach((prop, index) => { %>
+<% it.props.forEach((prop, index) => { %>
       <%= prop.name %>: json['<%= prop.name %>']<% if (index < it.props.length - 1) { %>,<% } %>
-    <% }) %>
+
+<% }) %>
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
 
-    <% it.props.forEach((prop) => { %>
+<% it.props.forEach((prop) => { %>
     data['<%= prop.name %>'] = <%= prop.name %>;
-    <% }) %>
+<% }) %>
 
     return data;
   }
