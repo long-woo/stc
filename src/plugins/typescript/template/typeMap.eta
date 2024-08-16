@@ -1,0 +1,10 @@
+<% {
+    string: "string",
+    integer: "number",
+    boolean: "boolean",
+    array: `${ref && convertType(ref) || 'unknown'}[]`,
+    object: "Record<string, unknown>",
+    file: "File",
+    null: "null",
+    bool: "boolean",
+  } %>

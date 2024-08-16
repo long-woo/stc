@@ -5,11 +5,17 @@ import type {
   IPathVirtualParameter,
   IPathVirtualProperty,
   IPathVirtualPropertyResponse,
-} from "../../swagger.ts";
-import { camelCase, parseEta, parserEnum, upperCase } from "../../common.ts";
-import Logs from "../../console.ts";
-import { getT } from "../../i18n/index.ts";
-import { convertType } from "./util.ts";
+  ISwaggerOptions,
+} from "../swagger.ts";
+import {
+  camelCase,
+  convertType,
+  parseEta,
+  parserEnum,
+  upperCase,
+} from "../common.ts";
+import Logs from "../console.ts";
+import { getT } from "../i18n/index.ts";
 
 interface IApiParams {
   /**
@@ -85,11 +91,15 @@ const getInternalDefinition = (
   }
 
   const _defs = properties.reduce((prev: IApiInternalDefinition, current) => {
-    let _type = convertType(current.type, current.typeX ?? current.ref);
+    let _type = convertType(
+      current.type,
+      current.typeX ?? current.ref,
+      "dynamic",
+    );
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-      _type = convertType(current.type, _defName);
+      _type = convertType(current.type, _defName, "dynamic");
 
       const _childDefinition = getInternalDefinition(
         current.properties,
@@ -163,7 +173,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
         ? camelCase(`${_defName}_${item.name}`, true)
-        : `${convertType(item.type, item.typeX ?? item.ref)}`;
+        : `${convertType(item.type, item.typeX ?? item.ref, "dynamic")}`;
 
       // 外部引用
       if (item.ref && !prev.imports?.includes(item.ref)) {
@@ -320,6 +330,7 @@ const parseResponse = (
     const _defNameType = convertType(
       response.type ?? "",
       _defName.name,
+      "dynamic",
     );
 
     _response = {
@@ -463,7 +474,7 @@ const getActionFiles = (data: Map<string, IPathVirtualProperty>) => {
 export const parserActions = (
   data: Map<string, IPathVirtualProperty>,
   defFileName: string,
-  lang: string,
+  options: ISwaggerOptions,
 ) => {
   const _actionContentMap = new Map<string, string>();
   const _actionFileMap = getActionFiles(data);
@@ -484,14 +495,14 @@ export const parserActions = (
 
     const _imports = action.imports;
     const _apiImport = [
-      `import '${_importPath}shared/api_client_base.${lang}';
-      import '${_importPath}shared/dio/index.${lang}';`,
+      `import '${_importPath}shared/api_client_base.${options.lang}';
+      import '${_importPath}shared/dio/index.${options.lang}';`,
     ];
     const _apiContent: Array<string> = [];
 
     if (_imports.length) {
       _apiImport.push(
-        `import '${_importPath}${defFileName}.${lang}';`,
+        `import '${_importPath}${defFileName}.${options.lang}';`,
       );
     }
 
@@ -500,7 +511,7 @@ export const parserActions = (
       _apiContent.push(action.definitions?.join("\n\n"));
     action.methods?.length && _apiContent.push(action.methods.join("\n\n"));
 
-    _actionContentMap.set(`${key}.${lang}`, _apiContent.join("\n\n"));
+    _actionContentMap.set(`${key}.${options.lang}`, _apiContent.join("\n\n"));
   });
 
   return _actionContentMap;

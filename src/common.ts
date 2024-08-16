@@ -114,18 +114,16 @@ export const getRefType = (ref: string) =>
     true,
   );
 
-/**
- * 转换为 typescript 类型
- * @param type - 类型
- * @param ref - 引用
- * @returns
- */
-export const convertType = (type: string | string[], ref?: string): string => {
+export const convertType = (
+  type: string | string[],
+  ref?: string,
+  defaultType: string = "unknown",
+): string => {
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
   if ((!type || type === "object") && ref) return ref;
 
   // 若 type 与 ref 相等，则表示为自定义类型
-  if (type === ref) return type || "unknown";
+  if (type === ref) return type || defaultType;
 
   const _action: Record<string, string> = {
     string: "string",

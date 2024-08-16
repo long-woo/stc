@@ -1,8 +1,10 @@
-import type { IDefinitionVirtualProperty } from "../../swagger.ts";
-import Logs from "../../console.ts";
-import { parseEta, parserEnum } from "../../common.ts";
-import { getT } from "../../i18n/index.ts";
-import { convertType } from "./util.ts";
+import type {
+  IDefinitionVirtualProperty,
+  ISwaggerOptions,
+} from "../swagger.ts";
+import Logs from "../console.ts";
+import { convertType, parseEta, parserEnum } from "../common.ts";
+import { getT } from "../i18n/index.ts";
 
 /**
  * 解析定义
@@ -10,11 +12,11 @@ import { convertType } from "./util.ts";
  */
 export const parserDefinition = (
   data: Map<string, IDefinitionVirtualProperty[]>,
+  options: ISwaggerOptions,
 ) => {
   const _res: Array<string> = [];
 
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
-
   data.forEach((props, key) => {
     props.forEach((prop) => {
       const _type = convertType(prop.type, prop.ref);

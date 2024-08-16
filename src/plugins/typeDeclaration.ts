@@ -75,6 +75,10 @@ export interface IPlugin extends IPluginEvent {
    */
   readonly lang: string;
   /**
+   * 未知类型
+   */
+  readonly unknownType: string;
+  /**
    * 插件入口
    */
   setup: (options: ISwaggerOptions) => Promise<void> | void;
