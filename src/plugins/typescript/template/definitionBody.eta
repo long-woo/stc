@@ -1,7 +1,7 @@
 <% if (it.propCommit) { %>
   /**
-    * <%~ propCommit %>
-    */
+   * <%~ it.propCommit %>
 
+   */
 <% } %>
-  <%~ it.propType %><% if (!it.prop.required) { %>?<% } %> <%= it.prop.name %>;
+  <%= it.prop.name %><% if (!it.prop.required) { %>?<% } %>: <%~ it.propType %>;

@@ -2,18 +2,19 @@
 <% if (it.summary) { %>
 /**
  * <%~ it.summary %>
- */
 <% } %>
 <% if (it.summary && it.description) { %>
-\n*
+
+ *
 <% } %>
 <% if (it.description) { %>
- */ <%~ it.description %>
-<% } %>
+ * <%~ it.description %>
 
+<% } %>
+ */
 <% /* API 方法 */ %>
 export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
-<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
-<% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method %>'<% if (it.params.length) { %>, <% it.params.forEach((param, index) => { %>
-        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% if (index < it.params.length - 1) { %>, <% } %><% } %>\n
-<% }) %><% } %>)
+<%= param.name %><%= param.required ? '?' : '' %>: <%~ param.type %><% if (index < it.params.length - 1) { %>, <% } %>
+<% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method %>'<% if (it.params.length) { %>, {<% it.params.forEach((param, index) => { %>
+        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% if (index < it.params.length - 1) { %>, <% } %><% } %>
+<% }) %>}<% } %>)

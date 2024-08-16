@@ -1,7 +1,8 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
 import { createFile, parseEta } from "../../common.ts";
-import { parserDefinition } from "./defintion.ts";
-import { parserPath } from "./path.ts";
+import { parserDefinition } from "../defintion.ts";
+import { parserActions } from "../action.ts";
+import { setupTemplate } from "../common.ts";
 import {
   createAxiosFile,
   createBaseFile,
@@ -38,6 +39,8 @@ export const TypeScriptPlugin: IPlugin = {
         };
       },
     };
+
+    setupTemplate(pluginOptions, "typescript");
   },
 
   /**
@@ -50,45 +53,8 @@ export const TypeScriptPlugin: IPlugin = {
    */
   onTransform(def, action) {
     const typeFileName = "_types";
-    const defContent = parserDefinition(def);
-    const pathData = parserPath(action);
-
-    const actionData = new Map<string, string>();
-
-    pathData.forEach((api, key) => {
-      // 处理导入文件相对路径，根据 key 中是否存在 `/`
-      const _keyPath = key.split("/");
-      // 移除一项
-      _keyPath.pop();
-      const _importPath = _keyPath.reduce((prev, _) => {
-        if (prev === "./") {
-          prev = "";
-        }
-
-        prev += "../";
-        return prev;
-      }, "./");
-
-      const _import = api.import;
-      const _apiImport = [
-        `import { fetchRuntime } from '${_importPath}shared/fetchRuntime'`,
-      ];
-      const _apiContent: Array<string> = [];
-
-      if (_import.length) {
-        _apiImport.push(
-          `import type { ${
-            _import.join(", ")
-          } } from '${_importPath}${typeFileName}'`,
-        );
-      }
-
-      _apiContent.push(_apiImport.join("\n"));
-      api.interface?.length && _apiContent.push(api.interface?.join("\n\n"));
-      api.export?.length && _apiContent.push(api.export.join("\n\n"));
-
-      actionData.set(`${key}.ts`, _apiContent.join("\n\n"));
-    });
+    const defContent = parserDefinition(def, pluginOptions);
+    const actionData = parserActions(action, typeFileName, pluginOptions);
 
     return {
       definition: {

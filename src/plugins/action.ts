@@ -406,17 +406,14 @@ export const parserActions = (
       return prev;
     }, "./");
 
-    const _imports = action.imports;
     const _apiImport = [
-      renderTemplate("actionImport", { importPath: _importPath }),
+      renderTemplate("actionImport", {
+        importPath: _importPath,
+        imports: action.imports,
+        typeFileName: defFileName,
+      }),
     ];
     const _apiContent: Array<string> = [];
-
-    if (_imports.length) {
-      _apiImport.push(
-        `import '${_importPath}${defFileName}.${options.lang}';`,
-      );
-    }
 
     _apiContent.push(_apiImport.join("\n"));
     action.definitions?.length &&

@@ -6,13 +6,16 @@ import { convertValue } from "../common.ts";
 let etaInstance: Eta | null = null;
 
 /**
- * Sets up a template based on the provided plugin options.
+ * Sets up a template instance based on the provided options and language.
  *
- * @param {IPluginOptions} options - The plugin options.
- * @return {Eta} The set up Eta template.
+ * @param {IPluginOptions} options - The plugin options to use for setting up the template.
+ * @param {string} [lang] - The optional language to use for the template.
+ * @return {Eta} The set up template instance.
  */
-export const setupTemplate = (options: IPluginOptions) => {
-  etaInstance = new Eta({ views: `./src/plugins/${options.lang}/template` });
+export const setupTemplate = (options: IPluginOptions, lang?: string) => {
+  etaInstance = new Eta({
+    views: `./src/plugins/${lang ?? options.lang}/template`,
+  });
 
   return etaInstance;
 };
