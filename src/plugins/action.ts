@@ -7,8 +7,8 @@ import type {
   IPathVirtualPropertyResponse,
 } from "../swagger.ts";
 import type { IPluginOptions } from "./typeDeclaration.ts";
-import { camelCase, parseEta, upperCase } from "../common.ts";
-import { convertType, parserEnum } from "./common.ts";
+import { camelCase, upperCase } from "../common.ts";
+import { convertType, parserEnum, renderTemplate } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 
@@ -57,34 +57,11 @@ const getInternalDefinition = (
   let _defHeader = "", _defFooter = "";
 
   if (properties.length) {
-    _defHeader = parseEta(`class <%= it.defName %> {`, { defName: name });
-    _defFooter = parseEta(
-      `<%= it.defName %>({
-  <% it.props.forEach((prop, index) => { %>
-  <% if (prop.required) { %>required <% } %>this.<%= prop.name %><% if (index < it.props.length - 1) { %>,<% } %>
-  <% }) %>
-  });
-
-  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
-    return <%= it.defName %>(
-    <% it.props.forEach((prop, index) => { %>
-      <%= prop.name %>: json['<%= prop.name %>']<% if (index < it.props.length - 1) { %>,<% } %>
-    <% }) %>
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-
-    <% it.props.forEach((prop) => { %>
-    data['<%= prop.name %>'] = <%= prop.name %>;
-    <% }) %>
-
-    return data;
-  }
-}`,
-      { defName: name, props: properties },
-    );
+    _defHeader = renderTemplate("definitionHeader", { defName: name });
+    _defFooter = renderTemplate("definitionFooter", {
+      defName: name,
+      props: properties,
+    });
   }
 
   const _defs = properties.reduce((prev: IApiInternalDefinition, current) => {
@@ -109,17 +86,11 @@ const getInternalDefinition = (
       );
     }
 
-    const _defBody = parseEta(
-      `<% if (it.propCommit) { %>
-      /// <%= it.propCommit %>
-      <%~ it.propType %><% if (!it.prop.required) { %>?<% } %> <%= it.prop.name %>;
-    <% } %>`,
-      {
-        propCommit: current.title || current.description,
-        propType: _type,
-        prop: current,
-      },
-    );
+    const _defBody = renderTemplate("definitionBody", {
+      propCommit: current.title || current.description,
+      propType: _type,
+      prop: current,
+    });
 
     prev.definitions.splice(prev.definitions.length - 1, 0, _defBody);
     return prev;
@@ -194,53 +165,27 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 
       // 同类型的参数进行合并成新对象
       if (_multiParam) {
-        const _newParam = parseEta(
-          `<% if (it.firstParam) { %>
-class <%= it.defName %> {
-<% } %>
-<% if (it.param.title || it.param.description) { %>
-  /// <%= it.param.title || it.param.description %>\n
-<% } %>
-  <%~ it.paramType %><%= it.param.required ? '' : '?' %> <%= it.param.name %>;
-  <% if (it.lastParam) { %>
+        if (index === 0) {
+          prev.definitions?.push(
+            renderTemplate("definitionHeader", { defName: _defName }),
+          );
+        }
 
-  <%= it.defName %>({
-    <% it.params.forEach((param, index) => { %>
-    <% if (param.required) { %>required <% } %>this.<%= param.name %><% if (index < it.params.length - 1) { %>,<% } %>\n
-    <% }) %>
-  });
+        prev.definitions?.push(renderTemplate("definitionBody", {
+          propCommit: item.title || item.description,
+          prop: item,
+          propType: _type,
+        }));
 
-  factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
-    return <%= it.defName %>(
-      <% it.params.forEach((param, index) => { %>
-      <%= param.name %>: json['<%= param.name %>']<% if (index < it.params.length - 1) { %>,<% } %>\n
-      <% }) %>
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-
-    <% it.params.forEach((param) => { %>
-    data['<%= param.name %>'] = <%= param.name %>;
-    <% }) %>
-
-    return data;
-  }
-}
-<% }%>
-`,
-          {
-            firstParam: index === 0,
-            lastParam: index === _params.length - 1,
-            defName: _defName,
-            param: item,
-            paramType: _type,
-            params: _params,
-          },
-        );
-
-        prev.definitions?.push(_newParam);
+        if (index === _params.length - 1) {
+          prev.definitions?.push(
+            "",
+            renderTemplate("definitionFooter", {
+              defName: _defName,
+              props: _params,
+            }),
+          );
+        }
       }
       /* #endregion */
 
@@ -357,51 +302,20 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
-  const _apiMethod = parseEta(
-    `<% /* API 方法注释 */ %>
-<% if (it.summary) { %>
-/// <%~ it.summary %>
-<% } %>
-<% if (it.summary && it.description) { %>
-\n///
-<% } %>
-<% if (it.description) { %>
-/// <%~ it.description %>
-<% } %>
-
-<% /* API 方法 */ %>
-Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
-<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
-<% }) %>) async {
-  var _res = await request<<%~ it.responseType %>>(
-    ApiClientConfig(
-      url: '<%= it.url %>',
-      method: '<%= it.method %>'<% if (it.params.length) { %>,
-      params: {
-<% it.params.forEach((param, index) => { %>
-        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% if (index < it.params.length - 1) { %>, <% } %><% } %>\n
-<% }) %>
-      }
-<% } %>
-    )<% if (it.responseType.includes('List')) { %>, (json) => [<%~ it.responseName %>.fromJson(json)]<% } else if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
-
-    return _res;
-}`,
-    {
-      summary: data.summary,
-      description: data.description,
-      methodName: upperCase(action),
-      params: [
-        ..._params.requiredParams ?? [],
-        ..._params.optionalParams ?? [],
-      ],
-      responseName: _response.name,
-      responseType: _response.type,
-      action: action,
-      url: data.url,
-      method: data.method,
-    },
-  );
+  const _apiMethod = renderTemplate("actionMethod", {
+    summary: data.summary,
+    description: data.description,
+    methodName: upperCase(action),
+    params: [
+      ..._params.requiredParams ?? [],
+      ..._params.optionalParams ?? [],
+    ],
+    responseName: _response.name,
+    responseType: _response.type,
+    action: action,
+    url: data.url,
+    method: data.method,
+  });
 
   return {
     imports: [..._params.imports ?? [], ..._response.imports ?? []],
