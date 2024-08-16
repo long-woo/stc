@@ -1,0 +1,2 @@
+import '<%= it.importPath%>shared/api_client_base.dart';
+import '<%= it.importPath%>shared/dio/index.dart';

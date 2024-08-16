@@ -408,8 +408,7 @@ export const parserActions = (
 
     const _imports = action.imports;
     const _apiImport = [
-      `import '${_importPath}shared/api_client_base.${options.lang}';
-      import '${_importPath}shared/dio/index.${options.lang}';`,
+      renderTemplate("actionImport", { importPath: _importPath }),
     ];
     const _apiContent: Array<string> = [];
 
