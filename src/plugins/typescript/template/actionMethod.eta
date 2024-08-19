@@ -1,6 +1,6 @@
 <% /* API 方法注释 */ %>
-<% if (it.summary) { %>
 /**
+<% if (it.summary) { %>
  * <%~ it.summary %>
 <% } %>
 <% if (it.summary !== it.description) { %>
