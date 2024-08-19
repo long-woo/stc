@@ -2,6 +2,7 @@
 <% if (it.summary) { %>
 /// <%~ it.summary %>
 <% } %>
+<% if (it.summary !== it.description) { %>
 <% if (it.summary && it.description) { %>
 
 ///
@@ -9,10 +10,11 @@
 <% if (it.description) { %>
 /// <%~ it.description %>
 <% } %>
+<% } %>
 
 <% /* API 方法 */ %>
 Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
-<%~ param.type %><%= param.required ? '?' : '' %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
+<%~ param.type %><% if(!param.required) { %>?<% } %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
 <% }) %>) async {
   var _res = await request<<%~ it.responseType %>>(
     ApiClientConfig(

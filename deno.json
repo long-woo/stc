@@ -3,7 +3,7 @@
   "version": "1.6.4",
   "exports": "./mod.ts",
   "tasks": {
-    "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json'",
+    "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --lang dart",
     "serve": "deno run -A --watch=src src/service.ts",
     "version": "echo '1.6.4' > release/version",
     "build:npm": "deno run -A src/npm/index.ts",
