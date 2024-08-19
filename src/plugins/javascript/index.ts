@@ -1,4 +1,4 @@
-import * as esbuild from "x/esbuild@v0.23.1/mod.js";
+import * as esbuild from "npm:esbuild";
 
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type {
