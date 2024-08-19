@@ -179,7 +179,6 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 
         if (index === _params.length - 1) {
           prev.definitions?.push(
-            "",
             renderTemplate("definitionFooter", {
               defName: _defName,
               props: _params,
