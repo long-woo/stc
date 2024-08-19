@@ -41,6 +41,7 @@ export const JavaScriptPlugin: IPlugin = {
   lang: "js",
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
+    TypeScriptPlugin.setup(options);
   },
   async onTransform(def, action) {
     const _tsTransform = await TypeScriptPlugin.onTransform(def, action);
