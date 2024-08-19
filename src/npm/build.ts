@@ -1,4 +1,4 @@
-import * as dnt from "x/dnt@0.40.0/mod.ts";
+import * as dnt from "@deno/dnt";
 import pkg from "./pkg.json" with { type: "json" };
 
 const OUTDIR = "npm_dist";

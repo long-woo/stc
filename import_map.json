@@ -2,6 +2,7 @@
   "imports": {
     "/": "./",
     "./": "./",
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "std/": "https://deno.land/std@0.218.2/",
     "x/": "https://deno.land/x/"
   },
