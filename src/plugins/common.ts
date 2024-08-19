@@ -6,15 +6,30 @@ import { convertValue } from "../common.ts";
 let etaInstance: Eta | null = null;
 
 /**
- * Sets up a template instance based on the provided options and language.
+ * Sets up the template engine with the provided options.
  *
  * @param {IPluginOptions} options - The plugin options to use for setting up the template.
- * @param {string} [lang] - The optional language to use for the template.
+ * @param {object} [template] - The template options.
  * @return {Eta} The set up template instance.
  */
-export const setupTemplate = (options: IPluginOptions, lang?: string) => {
+export const setupTemplate = (
+  options: IPluginOptions,
+  template?: {
+    /**
+     * 语言插件目录名称
+     * @default `options.lang`
+     */
+    langDirectoryName?: string;
+    /**
+     * 模板文件路径
+     * @default `./src/plugins/{{langDirectoryName}}/template`
+     */
+    path?: string;
+  },
+) => {
   etaInstance = new Eta({
-    views: `./src/plugins/${lang ?? options.lang}/template`,
+    views: template?.path ??
+      `./src/plugins/${template?.langDirectoryName ?? options.lang}/template`,
   });
 
   return etaInstance;

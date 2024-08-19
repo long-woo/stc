@@ -40,7 +40,7 @@ export const TypeScriptPlugin: IPlugin = {
       },
     };
 
-    setupTemplate(pluginOptions, "typescript");
+    setupTemplate(pluginOptions, { langDirectoryName: "typescript" });
   },
 
   /**
@@ -73,7 +73,7 @@ export const TypeScriptPlugin: IPlugin = {
       pluginOptions as unknown as Record<string, unknown>,
     );
 
-    if (pluginOptions.platform === "axios") {
+    if (pluginOptions.client === "axios") {
       const _axiosFileContent = createAxiosFile();
 
       createFile(
@@ -86,7 +86,7 @@ export const TypeScriptPlugin: IPlugin = {
       // );
     }
 
-    if (pluginOptions.platform === "wechat") {
+    if (pluginOptions.client === "wechat") {
       const _wechatFileContent = createWechatFile();
 
       createFile(
@@ -95,7 +95,7 @@ export const TypeScriptPlugin: IPlugin = {
       );
     }
 
-    if (pluginOptions.platform === "fetch") {
+    if (pluginOptions.client === "fetch") {
       const _fetchFileContent = createFetchFile();
 
       createFile(

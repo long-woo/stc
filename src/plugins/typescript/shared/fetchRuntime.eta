@@ -5,13 +5,7 @@ import type {
   ApiClientParams,
 } from "./apiClientBase";
 import { generateURL } from "./apiClientBase";
-<% if (it.platform === "wechat") { %>
-import { request } from "./wechat";
-<% } else if (it.platform === 'fetch') { %>
-import { request } from "./fetch";
-<% } else { %>
-import { createAxios, request } from "./axios";
-<% } %>
+import { <% if (it.client === 'axios') { %> createAxios, <% } %>request } from "./<%= it.client %>";
 
 let apiClientInstance: ApiClientConfig = {};
 
@@ -19,7 +13,7 @@ export const createApiClient = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,
 ) => {
   apiClientInstance = config;
-<% if (it.platform === "axios") { %>
+<% if (it.client === "axios") { %>
   createAxios(config);
 <% } %>
 };
@@ -41,8 +35,6 @@ export const fetchRuntime = <T>(
 };
 
 /**
- * @deprecated Planned to be removed in `v1.7.0`
- * 
  * 1.`webClient.create` is modified to `createApiClient`
  *
  * 2.`webClient.request` modified to `fetchRuntime`

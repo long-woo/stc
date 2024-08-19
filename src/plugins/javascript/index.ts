@@ -90,7 +90,7 @@ export const JavaScriptPlugin: IPlugin = {
       pluginOptions as unknown as Record<string, unknown>,
     ));
 
-    if (pluginOptions.platform === "axios") {
+    if (pluginOptions.client === "axios") {
       const _axiosFileContent = await esTransform(createAxiosFile());
 
       createFile(
@@ -99,7 +99,7 @@ export const JavaScriptPlugin: IPlugin = {
       );
     }
 
-    if (pluginOptions.platform === "wechat") {
+    if (pluginOptions.client === "wechat") {
       const _wechatFileContent = await esTransform(createWechatFile());
 
       createFile(

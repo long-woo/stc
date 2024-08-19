@@ -156,6 +156,7 @@ ${getT("$t(cli.option)")}
   --url              ${getT("$t(cli.option_url)")}
   -o, --outDir       ${getT("$t(cli.option_out)", { out: "./stc_out" })}
   -p, --platform     ${getT("$t(cli.option_platform)")}
+  --client           ${getT("$t(cli.option_client)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
@@ -180,6 +181,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       "url",
       "outDir",
       "platform",
+      "client",
       "lang",
       "tag",
       "filter",
@@ -199,6 +201,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       outDir: "./stc_out",
       lang: "ts",
       platform: "axios",
+      client: "axios",
       conjunction: "By",
     },
     unknown: (arg: string) => {
@@ -230,10 +233,16 @@ export const main = async (): Promise<ISwaggerOptions> => {
     printHelp();
   }
 
+  if (args.platform) {
+    Logs.warn(getT("$t(cli.deprecatedOptionPlatform)"));
+    args.client = args.platform;
+  }
+
   return {
     url: args.url,
     outDir: args.outDir,
     platform: args.platform,
+    client: args.client,
     lang: args.lang,
     tag: args.tag,
     filter: args.filter,
