@@ -136,6 +136,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       category: current,
       type: _defName,
       description: "",
+      required: true,
     };
 
     _params.forEach((item, index) => {
@@ -194,6 +195,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
           category: current,
           type: _type,
           description: (item.title || item.description) ?? "",
+          required: item.required ?? false,
         };
 
         if (item.required) {

@@ -9,22 +9,30 @@
  *
 <% } %>
 <% if (it.description) { %>
- * <%~ it.description %>
+ * @description <%~ it.description %>
 <% } %>
 <% } %>
+<% if (it.params.length) { %>
 
+ *
+<% it.params.forEach(param => { %>
+ * @param {<%~ param.type %>} <% if (!param.required) { %>[<% } %><%= param.name %><% if (!param.required) { %>]<% } %> - <%~ param.description || param.type %>
+
+<% }) %>
+<% } %>
+ * @returns {Promise<<%~ it.responseType %>>} Promise<<%~ it.responseType %>>
  */
 <% /* API 方法 */ %>
 export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
-<%= param.name %><%= param.required ? '?' : '' %>: <%~ param.type %><% if (index < it.params.length - 1) { %>, <% } %>
+<%= param.name %><% if (!param.required) { %>?<% } %>: <%~ param.type %><% if (index < it.params.length - 1) { %>, <% } %>
 <% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method %>'<% if (it.params.length) { %>, {
 <% it.params.forEach((param, index) => { %>
   <%= param.category %><% if (param.category === param.name) { %>
 
-<% } else { %>: {
+<% } else { %>: <% if (param.category === 'body') { %><%= param.name %><% } else { %>{
 		<%= param.name %>
 
-	}<% if (index < it.params.length - 1) { %>, <% } %>
+	}<% } %><% if (index < it.params.length - 1) { %>, <% } %>
 
 <% } %>
 <% }) %>
