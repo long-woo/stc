@@ -2,6 +2,8 @@
 
 <p  align="center"><img src="resources/stc.svg" alt="logo" /></p>
 
+[![JSR](https://jsr.io/badges/@deno/dnt)](https://jsr.io/@deno/dnt)
+
 STC (Swagger Transform Code) is a tool for converting Swagger(OpenApi) documents into code files.
 
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)

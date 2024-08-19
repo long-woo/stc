@@ -1,5 +1,5 @@
-import { type Args, parseArgs, type ParseOptions } from "std/cli/mod.ts";
-import ProgressBar from "x/progress@v1.4.5/mod.ts";
+import { type Args, parseArgs, type ParseOptions } from "@std/cli";
+import ProgressBar from "@deno-library/progress";
 
 import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";

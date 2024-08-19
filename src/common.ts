@@ -1,5 +1,5 @@
-import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
-import { format as dateFormat } from "std/datetime/format.ts";
+import { copy, emptyDir, ensureFile } from "@std/fs";
+import { format as dateFormat } from "@std/datetime";
 import { Eta } from "x/eta@v3.4.0/src/index.ts";
 
 import denoJson from "../deno.json" with { type: "json" };

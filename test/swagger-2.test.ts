@@ -1,5 +1,5 @@
 // https://petstore.swagger.io/v2/swagger.json
-import { assertEquals } from "std/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 
 Deno.test("测试-在命令行中", async () => {
   const command = new Deno.Command("deno", {
