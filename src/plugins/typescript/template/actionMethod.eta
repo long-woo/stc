@@ -25,7 +25,7 @@
 <% /* API 方法 */ %>
 export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
 <%= param.name %><% if (!param.required) { %>?<% } %>: <%~ param.type %><% if (index < it.params.length - 1) { %>, <% } %>
-<% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method %>'<% if (it.params.length) { %>, {
+<% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method.toUpperCase() %>'<% if (it.params.length) { %>, {
 <% it.params.forEach((param, index) => { %>
   <%= param.category %><% if (param.category === param.name) { %>
 
