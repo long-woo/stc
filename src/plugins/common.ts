@@ -83,5 +83,5 @@ export const parserEnum = (
 
   return `enum ${type} {
   ${_unionValue}
-}`;
+}\n`;
 };

@@ -418,10 +418,10 @@ export const parserActions = (
 
     _apiContent.push(_apiImport.join("\n"));
     action.definitions?.length &&
-      _apiContent.push(action.definitions?.join("\n\n"));
-    action.methods?.length && _apiContent.push(action.methods.join("\n\n"));
+      _apiContent.push(action.definitions?.join("\n"));
+    action.methods?.length && _apiContent.push(action.methods.join("\n"));
 
-    _actionContentMap.set(`${key}.${options.lang}`, _apiContent.join("\n\n"));
+    _actionContentMap.set(`${key}.${options.lang}`, _apiContent.join("\n"));
   });
 
   return _actionContentMap;
