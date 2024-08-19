@@ -2,7 +2,7 @@
 
 <p  align="center"><img src="resources/stc.svg" alt="logo" /></p>
 
-[![JSR](https://jsr.io/badges/@deno/dnt)](https://jsr.io/@deno/dnt)
+[![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
 
 STC (Swagger Transform Code) is a tool for converting Swagger(OpenApi) documents into code files.
 
