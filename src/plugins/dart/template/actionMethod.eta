@@ -22,12 +22,12 @@ Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param,
       method: '<%= it.method %>'<% if (it.params.length) { %>,
       params: {
 <% it.params.forEach((param, index) => { %>
-        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% if (index < it.params.length - 1) { %>, <% } %><% } %>
+        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% } %><% if (index < it.params.length - 1) { %>, <% } %>
 
 <% }) %>
       }
 <% } %>
-    )<% if (it.responseType.includes('List')) { %>, (json) => [<%~ it.responseName %>.fromJson(json)]<% } else if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
+    )<% if (it.responseType.includes('List<')) { %>, (json) => [<%~ it.responseName %>.fromJson(json)]<% } else if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
 
     return _res;
 }
