@@ -14,5 +14,14 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno" 
+  },
+  "[json]": {
+    "editor.defaultFormatter": "denoland.vscode-deno" 
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "denoland.vscode-deno" 
+  },
+  "[jsonl]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }
