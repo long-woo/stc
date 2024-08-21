@@ -1,6 +1,6 @@
 import * as dnt from "x/dnt@0.40.0/mod.ts";
 // import * as esbuild from "x/esbuild@v0.18.6/mod.js";
-import pkg from "./package.json" with { type: "json" };
+import pkg from "./pkg.json" with { type: "json" };
 
 // const res = await esbuild.build({
 //   entryPoints: ["./src/cli.ts"],
