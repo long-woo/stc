@@ -14,6 +14,9 @@ i18next.init({
       translation: zhCNTranslation,
     },
   },
+  interpolation: {
+    escapeValue: false,
+  },
 });
 
 const i18n = (lng?: string) => i18next.getFixedT(lng || locale);
