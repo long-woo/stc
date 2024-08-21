@@ -306,7 +306,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   const _apiMethod = renderTemplate("actionMethod", {
     summary: data.summary,
     description: data.description,
-    methodName: upperCase(action),
+    methodName: action,
     params: [
       ..._params.requiredParams ?? [],
       ..._params.optionalParams ?? [],
