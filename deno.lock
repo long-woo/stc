@@ -6,6 +6,7 @@
       "jsr:@deno-library/progress@^1.4.9": "jsr:@deno-library/progress@1.4.9",
       "jsr:@deno/cache-dir@^0.10.3": "jsr:@deno/cache-dir@0.10.3",
       "jsr:@deno/dnt@^0.41.3": "jsr:@deno/dnt@0.41.3",
+      "jsr:@eta-dev/eta@^3.5.0": "jsr:@eta-dev/eta@3.5.0",
       "jsr:@std/assert@^0.223.0": "jsr:@std/assert@0.223.0",
       "jsr:@std/assert@^0.226.0": "jsr:@std/assert@0.226.0",
       "jsr:@std/assert@^1.0.2": "jsr:@std/assert@1.0.2",
@@ -31,7 +32,9 @@
       "jsr:@ts-morph/common@^0.24.0": "jsr:@ts-morph/common@0.24.0",
       "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@typescript/vfs": "npm:@typescript/vfs@1.6.0_typescript@5.5.3",
+      "npm:bun": "npm:bun@1.1.25",
       "npm:esbuild": "npm:esbuild@0.23.1",
+      "npm:eta": "npm:eta@3.5.0",
       "npm:i18next": "npm:i18next@23.13.0",
       "npm:typescript": "npm:typescript@5.5.3"
     },
@@ -64,6 +67,9 @@
           "jsr:@std/path@1",
           "jsr:@ts-morph/bootstrap@^0.24.0"
         ]
+      },
+      "@eta-dev/eta@3.5.0": {
+        "integrity": "6b70827efc14c7cbf08498ac7a922ecab003641caf3852a6cb5b1b12ee58fb37"
       },
       "@std/assert@0.223.0": {
         "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
@@ -255,6 +261,38 @@
         "integrity": "sha512-BHpFFeslkWrXWyUPnbKm+xYYVYruCinGcftSBaa8zoF9hZO4BcSCFUvHVTtzpIY6YzUnYtuEhZ+C9iEXjxnasg==",
         "dependencies": {}
       },
+      "@oven/bun-darwin-aarch64@1.1.25": {
+        "integrity": "sha512-E7/y3K+8IcH+/i0OBPtVUmA6WfPaixR3SCm04QPCkSiekrNVftVOzkQaShmz40QsdvsFjK/5oVwCg39wCuo+7A==",
+        "dependencies": {}
+      },
+      "@oven/bun-darwin-x64-baseline@1.1.25": {
+        "integrity": "sha512-JbUSBI+CJjsAvkIeE7O9z7FEH1qjcsssn7iI4KmYoZEJK66/gnkVRhqfLNSUKEPdaEK3PyDB7UE4EAJlrcNj9g==",
+        "dependencies": {}
+      },
+      "@oven/bun-darwin-x64@1.1.25": {
+        "integrity": "sha512-xL4P+TJk7acIz4x6CKIF6BH97mjdRvwh3a3S5EsaxsNXnFFvBNPFpwEGhITCtHPSURj4x34mZq4v63znZcseNQ==",
+        "dependencies": {}
+      },
+      "@oven/bun-linux-aarch64@1.1.25": {
+        "integrity": "sha512-vZzqRb+LRiQd5SRvRde0ZsFFh1vZIy2tH3KNOxuQp/QmXLNNibmA+vNdCszeRlm3a2QKaioVLhHmuh6kpL5zhw==",
+        "dependencies": {}
+      },
+      "@oven/bun-linux-x64-baseline@1.1.25": {
+        "integrity": "sha512-9Kv1Yte/UxBdFODLXttxHBvy/k/DlzyOt4GZkYsL0h9G0ZrOucTfTpotKR2ElDszzUtQbNYOw9UYJ7OUnDkdZA==",
+        "dependencies": {}
+      },
+      "@oven/bun-linux-x64@1.1.25": {
+        "integrity": "sha512-err75vLLEXW00BvZU37mYzxzzkP0+XWZlRYS0bqVrLQeQFAuXPohuOUFKLD0UXSTtqiwSnedZQkBHFWxp3O7Sg==",
+        "dependencies": {}
+      },
+      "@oven/bun-windows-x64-baseline@1.1.25": {
+        "integrity": "sha512-hNYQFYSRx/JdMZDfqFLCQSm/nS9/JPpz7aBGuL6C1HpT0cvuPuxxpK7KnaWfrj+ws0BX2Id/s4hrdUNfbovR5Q==",
+        "dependencies": {}
+      },
+      "@oven/bun-windows-x64@1.1.25": {
+        "integrity": "sha512-Gfrnwn8s+juDiLa0pdq2RnKsAZY4oSxNrQmopZu044V0EmpLKJJWE9llHki/33ezVFXamiyJ0MJIfFeLflC0Kg==",
+        "dependencies": {}
+      },
       "@types/node@18.16.19": {
         "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
         "dependencies": {}
@@ -264,6 +302,19 @@
         "dependencies": {
           "debug": "debug@4.3.5",
           "typescript": "typescript@5.5.3"
+        }
+      },
+      "bun@1.1.25": {
+        "integrity": "sha512-N+KvGq6jcA88QgFVoOMSr2s4sZ9u+R7Tn6Hci25mdygZxa3jgaS91PMNxpEJKkyTBLOhH5E8erx+tqtRLyFbJA==",
+        "dependencies": {
+          "@oven/bun-darwin-aarch64": "@oven/bun-darwin-aarch64@1.1.25",
+          "@oven/bun-darwin-x64": "@oven/bun-darwin-x64@1.1.25",
+          "@oven/bun-darwin-x64-baseline": "@oven/bun-darwin-x64-baseline@1.1.25",
+          "@oven/bun-linux-aarch64": "@oven/bun-linux-aarch64@1.1.25",
+          "@oven/bun-linux-x64": "@oven/bun-linux-x64@1.1.25",
+          "@oven/bun-linux-x64-baseline": "@oven/bun-linux-x64-baseline@1.1.25",
+          "@oven/bun-windows-x64": "@oven/bun-windows-x64@1.1.25",
+          "@oven/bun-windows-x64-baseline": "@oven/bun-windows-x64-baseline@1.1.25"
         }
       },
       "debug@4.3.5": {
@@ -300,6 +351,10 @@
           "@esbuild/win32-ia32": "@esbuild/win32-ia32@0.23.1",
           "@esbuild/win32-x64": "@esbuild/win32-x64@0.23.1"
         }
+      },
+      "eta@3.5.0": {
+        "integrity": "sha512-e3x3FBvGzeCIHhF+zhK8FZA2vC5uFn6b4HJjegUbIWrDb4mJ7JjTGMJY9VGIbRVpmSwHopNiaJibhjIr+HfLug==",
+        "dependencies": {}
       },
       "i18next@23.13.0": {
         "integrity": "sha512-B+g0/KTKmN3+NeMKPljQxdrih6Q6lyDF5O2e/Ofd0JQsTLojJD/BSTTN04iw6OVc0yBiHeypu5hoBNV6ag44Zw==",
@@ -428,5 +483,17 @@
     "https://deno.land/x/progress@v1.4.5/mod.ts": "e26996fb5f23863c3402133896a9739ea4059b155a3d89ba207cad10b50524ea",
     "https://deno.land/x/progress@v1.4.5/multi.ts": "bf50eff76d4c1b1b1a3118e73a58631b19b0b30e0dd4166ae4ef0886efae88a5",
     "https://deno.land/x/progress@v1.4.5/time.ts": "001198ff9fe2a452830515fc944665c4369990102978b325e1c9094486cfd8ab"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@deno-library/progress@^1.4.9",
+      "jsr:@deno/dnt@^0.41.3",
+      "jsr:@eta-dev/eta@^3.5.0",
+      "jsr:@std/assert@^1.0.2",
+      "jsr:@std/cli@^1.0.3",
+      "jsr:@std/datetime@^0.225.0",
+      "jsr:@std/fmt@^1.0.0",
+      "jsr:@std/fs@^1.0.1"
+    ]
   }
 }

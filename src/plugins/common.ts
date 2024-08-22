@@ -1,4 +1,4 @@
-import { Eta } from "x/eta@v3.4.0/src/index.ts";
+import { Eta } from "@eta-dev/eta";
 
 import type { IPluginOptions } from "./typeDeclaration.ts";
 import { convertValue } from "../common.ts";

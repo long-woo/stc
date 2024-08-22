@@ -43,5 +43,17 @@
       "dist"
     ]
   },
-  "importMap": "import_map.json"
+  "imports": {
+    "./": "./",
+    "/": "./",
+    "@deno-library/progress": "jsr:@deno-library/progress@^1.4.9",
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
+    "@eta-dev/eta": "jsr:@eta-dev/eta@^3.5.0",
+    "@std/assert": "jsr:@std/assert@^1.0.2",
+    "@std/cli": "jsr:@std/cli@^1.0.3",
+    "@std/datetime": "jsr:@std/datetime@^0.225.0",
+    "@std/fmt": "jsr:@std/fmt@^1.0.0",
+    "@std/fs": "jsr:@std/fs@^1.0.1",
+    "x/": "https://deno.land/x/"
+  }
 }
