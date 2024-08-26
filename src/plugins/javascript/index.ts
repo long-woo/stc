@@ -1,4 +1,4 @@
-import * as esbuild from "x/esbuild@v0.20.1/mod.js";
+import * as esbuild from "x/esbuild@v0.23.1/mod.js";
 
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type {
@@ -116,5 +116,7 @@ export const JavaScriptPlugin: IPlugin = {
       `${pluginOptions.outDir}/shared/fetchRuntime.js`,
       _fetchRuntimeFileContent,
     );
+
+    esbuild.stop();
   },
 };

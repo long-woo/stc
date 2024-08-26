@@ -2,11 +2,34 @@
   "version": "3",
   "packages": {
     "specifiers": {
-      "npm:@types/node": "npm:@types/node@18.16.19"
+      "npm:@types/node": "npm:@types/node@18.16.19",
+      "npm:@typescript/vfs": "npm:@typescript/vfs@1.6.0_typescript@5.5.3",
+      "npm:typescript": "npm:typescript@5.5.3"
     },
     "npm": {
       "@types/node@18.16.19": {
         "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
+        "dependencies": {}
+      },
+      "@typescript/vfs@1.6.0_typescript@5.5.3": {
+        "integrity": "sha512-hvJUjNVeBMp77qPINuUvYXj4FyWeeMMKZkxEATEU3hqBAQ7qdTBCUFT7Sp0Zu0faeEtFf+ldXxMEDr/bk73ISg==",
+        "dependencies": {
+          "debug": "debug@4.3.5",
+          "typescript": "typescript@5.5.3"
+        }
+      },
+      "debug@4.3.5": {
+        "integrity": "sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==",
+        "dependencies": {
+          "ms": "ms@2.1.2"
+        }
+      },
+      "ms@2.1.2": {
+        "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==",
+        "dependencies": {}
+      },
+      "typescript@5.5.3": {
+        "integrity": "sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==",
         "dependencies": {}
       }
     }
@@ -261,6 +284,7 @@
     "https://deno.land/x/dnt@0.40.0/mod.ts": "ae1890fbe592e4797e7dd88c1e270f22b8334878e9bf187c4e11ae75746fe778",
     "https://deno.land/x/dnt@0.40.0/transform.ts": "f68743a14cf9bf53bfc9c81073871d69d447a7f9e3453e0447ca2fb78926bb1d",
     "https://deno.land/x/esbuild@v0.20.1/mod.js": "d50e500b53ce67e31116beba3916b0f9275c0e1cc20bc5cadc0fc1b7a3b06fd9",
+    "https://deno.land/x/esbuild@v0.23.1/mod.js": "f8a2bf4a1e4dcffd32690fc4562dae780405ce52ee815a094eb8b5f6e591da53",
     "https://deno.land/x/eta@v3.4.0/src/compile-string.ts": "e095c711f8e76f407c5e82af296236759f15c03903f62ff03e6b3a5903ef90c3",
     "https://deno.land/x/eta@v3.4.0/src/compile.ts": "ad011fc5f9b65d463342a29fbce980c8000bae51b08ef39fb4252e071e5a33d7",
     "https://deno.land/x/eta@v3.4.0/src/config.ts": "66cacec37cbd8557db0026567070a8829fdf363ac35dc18cfa53663f6c10f518",
