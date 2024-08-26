@@ -18,7 +18,7 @@ await dnt.build({
   typeCheck: false,
   test: false,
   scriptModule: false,
-  importMap: "./import_map.json",
+  // importMap: "./import_map.json",
   package: pkg,
   postBuild() {
     Deno.copyFile("LICENSE", `./${OUTDIR}/LICENSE`);
