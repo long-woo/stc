@@ -1,4 +1,4 @@
-import { assertEquals } from "std/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 
 Deno.test("JavaScript 插件", async () => {
   const command = new Deno.Command("deno", {
