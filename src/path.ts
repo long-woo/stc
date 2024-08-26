@@ -263,7 +263,7 @@ export const getApiPath = (
       // 添加请求方式标识，如 GET，POST 等，防止重名。设置了 operationId，以 operationId 为准
       if (
         !currentMethod.operationId &&
-        !/^(get|post|put|delete|options|head|patch)$/i.test(
+        !/^(get|post|put|delete|options|head|patch)/i.test(
           name.slice(0, method.length),
         )
       ) {
