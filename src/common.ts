@@ -1,6 +1,5 @@
 import { copy, emptyDir, ensureFile } from "@std/fs";
 import { format as dateFormat } from "@std/datetime";
-import { Eta } from "@eta-dev/eta";
 
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
@@ -19,7 +18,7 @@ interface ICopyFileOptions {
  * @param str - 字符
  * @param pascalCase - 是否首字母大写
  */
-export const camelCase = (str: string, pascalCase: boolean = false) => {
+export const camelCase = (str: string, pascalCase = false) => {
   if (!str) return "";
   const _newStr = pascalCase ? `_${str}` : str;
 
@@ -188,10 +187,4 @@ export const fetchClient = async (
   }
 
   throw res;
-};
-
-export const parseEta = (content: string, data: Record<string, unknown>) => {
-  const _eta = new Eta();
-
-  return _eta.renderString(content, data);
 };

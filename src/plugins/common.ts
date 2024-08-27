@@ -82,6 +82,24 @@ export const convertType = (
 };
 
 /**
+ * Render a template with Eta.
+ *
+ * @param content - A string of template.
+ * @param data - A object contains data.
+ * @returns A rendered string.
+ */
+export const renderEtaString = (
+  content: string,
+  data: Record<string, unknown>,
+) => {
+  if (!etaInstance) {
+    throw new Error("Please call `setupTemplate` first.");
+  }
+
+  return etaInstance?.renderString(content, data);
+};
+
+/**
  * Converts an enum to a union type.
  *
  * @param {string} type - the name of the union type
@@ -99,4 +117,20 @@ export const parserEnum = (
   return `enum ${type} {
   ${_unionValue}
 }\n`;
+};
+
+/**
+ * Converts an enum to a union type.
+ *
+ * @param {string} type - the name of the union type
+ * @param {Array<string>} data - the array of enum values
+ * @return {string} the union type definition
+ */
+export const parserEnumToUnionType = (
+  type: string,
+  data?: Array<string>,
+) => {
+  const _unionValue = data?.map(convertValue).join("' | '");
+
+  return `export type ${type} = '${_unionValue}'`;
 };

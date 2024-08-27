@@ -1,8 +1,8 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
-import { createFile, parseEta } from "../../common.ts";
+import { createFile } from "../../common.ts";
 import { parserDefinition } from "../defintion.ts";
 import { parserActions } from "../action.ts";
-import { setupTemplate } from "../common.ts";
+import { renderEtaString, setupTemplate } from "../common.ts";
 import {
   createAxiosFile,
   createBaseFile,
@@ -68,7 +68,7 @@ export const TypeScriptPlugin: IPlugin = {
   onEnd() {
     // 创建运行时需要的文件
     const _baseFileContent = createBaseFile();
-    const _fetchRuntimeFileContent = parseEta(
+    const _fetchRuntimeFileContent = renderEtaString(
       createFetchRuntimeFile(),
       pluginOptions as unknown as Record<string, unknown>,
     );

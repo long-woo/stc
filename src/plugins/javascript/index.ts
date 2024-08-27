@@ -6,7 +6,7 @@ import type {
   IPluginTransformDefinition,
 } from "../typeDeclaration.ts";
 
-import { createFile, parseEta } from "../../common.ts";
+import { createFile } from "../../common.ts";
 import {
   createAxiosFile,
   createBaseFile,
@@ -14,6 +14,8 @@ import {
   createWechatFile,
 } from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
+import { renderEtaString } from "../common.ts";
+// TODO: Deno compile 不支持 storage
 // import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
@@ -85,7 +87,7 @@ export const JavaScriptPlugin: IPlugin = {
 
     // 创建运行时需要的文件
     const _baseFileContent = await esTransform(createBaseFile());
-    const _fetchRuntimeFileContent = await esTransform(parseEta(
+    const _fetchRuntimeFileContent = await esTransform(renderEtaString(
       createFetchRuntimeFile(),
       pluginOptions as unknown as Record<string, unknown>,
     ));
@@ -117,7 +119,5 @@ export const JavaScriptPlugin: IPlugin = {
       `${pluginOptions.outDir}/shared/fetchRuntime.js`,
       _fetchRuntimeFileContent,
     );
-
-    esbuild.stop();
   },
 };
