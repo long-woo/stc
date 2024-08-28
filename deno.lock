@@ -6,21 +6,20 @@
       "jsr:@deno-library/progress@^1.4.9": "jsr:@deno-library/progress@1.4.9",
       "jsr:@deno/cache-dir@^0.10.3": "jsr:@deno/cache-dir@0.10.3",
       "jsr:@deno/dnt@^0.41.3": "jsr:@deno/dnt@0.41.3",
-      "jsr:@deno/graph@^0.73.1": "jsr:@deno/graph@0.73.1",
       "jsr:@eta-dev/eta@^3.5.0": "jsr:@eta-dev/eta@3.5.0",
       "jsr:@std/assert@^0.223.0": "jsr:@std/assert@0.223.0",
       "jsr:@std/assert@^0.226.0": "jsr:@std/assert@0.226.0",
       "jsr:@std/bytes@^0.223.0": "jsr:@std/bytes@0.223.0",
-      "jsr:@std/cli@^1.0.3": "jsr:@std/cli@1.0.4",
-      "jsr:@std/datetime@^0.225.0": "jsr:@std/datetime@0.225.1",
+      "jsr:@std/cli@^1.0.4": "jsr:@std/cli@1.0.4",
+      "jsr:@std/datetime@^0.225.1": "jsr:@std/datetime@0.225.1",
       "jsr:@std/fmt@0.221.0": "jsr:@std/fmt@0.221.0",
       "jsr:@std/fmt@1": "jsr:@std/fmt@1.0.1",
       "jsr:@std/fmt@^0.223": "jsr:@std/fmt@0.223.0",
-      "jsr:@std/fmt@^1.0.0": "jsr:@std/fmt@1.0.1",
+      "jsr:@std/fmt@^1.0.1": "jsr:@std/fmt@1.0.1",
       "jsr:@std/fs@1": "jsr:@std/fs@1.0.2",
       "jsr:@std/fs@^0.223": "jsr:@std/fs@0.223.0",
       "jsr:@std/fs@^0.229.3": "jsr:@std/fs@0.229.3",
-      "jsr:@std/fs@^1.0.1": "jsr:@std/fs@1.0.2",
+      "jsr:@std/fs@^1.0.2": "jsr:@std/fs@1.0.2",
       "jsr:@std/io@^0.223": "jsr:@std/io@0.223.0",
       "jsr:@std/path@1": "jsr:@std/path@1.0.3",
       "jsr:@std/path@1.0.0-rc.1": "jsr:@std/path@1.0.0-rc.1",
@@ -29,11 +28,8 @@
       "jsr:@std/path@^1.0.3": "jsr:@std/path@1.0.3",
       "jsr:@ts-morph/bootstrap@^0.24.0": "jsr:@ts-morph/bootstrap@0.24.0",
       "jsr:@ts-morph/common@^0.24.0": "jsr:@ts-morph/common@0.24.0",
-      "npm:@types/node": "npm:@types/node@18.16.19",
-      "npm:@typescript/vfs": "npm:@typescript/vfs@1.6.0_typescript@5.5.4",
       "npm:esbuild": "npm:esbuild@0.23.1",
-      "npm:i18next": "npm:i18next@23.14.0",
-      "npm:typescript": "npm:typescript@5.5.4"
+      "npm:i18next": "npm:i18next@23.14.0"
     },
     "jsr": {
       "@david/code-block-writer@13.0.2": {
@@ -48,7 +44,6 @@
       "@deno/cache-dir@0.10.3": {
         "integrity": "eb022f84ecc49c91d9d98131c6e6b118ff63a29e343624d058646b9d50404776",
         "dependencies": [
-          "jsr:@deno/graph@^0.73.1",
           "jsr:@std/fmt@^0.223",
           "jsr:@std/fs@^0.223",
           "jsr:@std/io@^0.223",
@@ -65,9 +60,6 @@
           "jsr:@std/path@1",
           "jsr:@ts-morph/bootstrap@^0.24.0"
         ]
-      },
-      "@deno/graph@0.73.1": {
-        "integrity": "cd69639d2709d479037d5ce191a422eabe8d71bb68b0098344f6b07411c84d41"
       },
       "@eta-dev/eta@3.5.0": {
         "integrity": "6b70827efc14c7cbf08498ac7a922ecab003641caf3852a6cb5b1b12ee58fb37"
@@ -253,23 +245,6 @@
         "integrity": "sha512-BHpFFeslkWrXWyUPnbKm+xYYVYruCinGcftSBaa8zoF9hZO4BcSCFUvHVTtzpIY6YzUnYtuEhZ+C9iEXjxnasg==",
         "dependencies": {}
       },
-      "@types/node@18.16.19": {
-        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
-        "dependencies": {}
-      },
-      "@typescript/vfs@1.6.0_typescript@5.5.4": {
-        "integrity": "sha512-hvJUjNVeBMp77qPINuUvYXj4FyWeeMMKZkxEATEU3hqBAQ7qdTBCUFT7Sp0Zu0faeEtFf+ldXxMEDr/bk73ISg==",
-        "dependencies": {
-          "debug": "debug@4.3.6",
-          "typescript": "typescript@5.5.4"
-        }
-      },
-      "debug@4.3.6": {
-        "integrity": "sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==",
-        "dependencies": {
-          "ms": "ms@2.1.2"
-        }
-      },
       "esbuild@0.23.1": {
         "integrity": "sha512-VVNz/9Sa0bs5SELtn3f7qhJCDPCF5oMEl5cO9/SSinpE9hbPVvxbd572HH5AKiP7WD8INO53GgfDDhRjkylHEg==",
         "dependencies": {
@@ -305,16 +280,8 @@
           "@babel/runtime": "@babel/runtime@7.25.4"
         }
       },
-      "ms@2.1.2": {
-        "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==",
-        "dependencies": {}
-      },
       "regenerator-runtime@0.14.1": {
         "integrity": "sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==",
-        "dependencies": {}
-      },
-      "typescript@5.5.4": {
-        "integrity": "sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==",
         "dependencies": {}
       }
     }
@@ -325,11 +292,11 @@
       "jsr:@deno-library/progress@^1.4.9",
       "jsr:@deno/dnt@^0.41.3",
       "jsr:@eta-dev/eta@^3.5.0",
-      "jsr:@std/assert@^1.0.2",
-      "jsr:@std/cli@^1.0.3",
-      "jsr:@std/datetime@^0.225.0",
-      "jsr:@std/fmt@^1.0.0",
-      "jsr:@std/fs@^1.0.1"
+      "jsr:@std/assert@^1.0.3",
+      "jsr:@std/cli@^1.0.4",
+      "jsr:@std/datetime@^0.225.1",
+      "jsr:@std/fmt@^1.0.1",
+      "jsr:@std/fs@^1.0.2"
     ]
   }
 }

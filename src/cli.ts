@@ -4,7 +4,7 @@ import ProgressBar from "@deno-library/progress";
 import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";
 import { createAppFile } from "./common.ts";
-import denoJson from "/deno.json" with { type: "json" };
+import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 
 /**
