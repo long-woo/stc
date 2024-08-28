@@ -99,8 +99,8 @@ export const createAxios = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,
 ) => {
   axiosInstance = axios.create({
-    timeout: config.timeout ?? 5000,
     baseURL: config.baseURL,
+    timeout: config.timeout ?? 5000,
     withCredentials: config.withCredentials ?? false,
   });
 

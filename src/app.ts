@@ -2,9 +2,8 @@ import type { ISwaggerOptions, ISwaggerResult } from "./swagger.ts";
 import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
-import { getDefinition } from "./definition.ts";
-import { getApiPath } from "./path.ts";
-import { createFile, emptyDirectory, readFile } from "./util.ts";
+import { getApiPath, getDefinition } from "./core.ts";
+import { createFile, emptyDirectory, readFile } from "./common.ts";
 import { getT } from "./i18n/index.ts";
 
 /**

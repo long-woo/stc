@@ -1,4 +1,4 @@
-import * as esbuild from "x/esbuild@v0.23.1/mod.js";
+import * as esbuild from "npm:esbuild";
 
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type {
@@ -6,14 +6,11 @@ import type {
   IPluginTransformDefinition,
 } from "../typeDeclaration.ts";
 
-import { createFile, parseEta } from "../../util.ts";
-import {
-  createAxiosFile,
-  createBaseFile,
-  createFetchRuntimeFile,
-  createWechatFile,
-} from "../typescript/shared/index.ts";
+import { createFile } from "../../common.ts";
+import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
+import { renderEtaString } from "../common.ts";
+// TODO: Deno compile 不支持 storage
 // import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
@@ -41,6 +38,7 @@ export const JavaScriptPlugin: IPlugin = {
   lang: "js",
   setup(options: ISwaggerOptions) {
     pluginOptions = options;
+    TypeScriptPlugin.setup(options);
   },
   async onTransform(def, action) {
     const _tsTransform = await TypeScriptPlugin.onTransform(def, action);
@@ -83,29 +81,18 @@ export const JavaScriptPlugin: IPlugin = {
     });
 
     // 创建运行时需要的文件
-    const _baseFileContent = await esTransform(createBaseFile());
-    const _fetchRuntimeFileContent = await esTransform(parseEta(
-      createFetchRuntimeFile(),
+    const _baseFileContent = await esTransform(shared.apiClientBase);
+    const _fetchRuntimeFileContent = await esTransform(renderEtaString(
+      shared.fetchRuntime,
       pluginOptions as unknown as Record<string, unknown>,
     ));
 
-    if (pluginOptions.platform === "axios") {
-      const _axiosFileContent = await esTransform(createAxiosFile());
+    const _httpClientContent = await esTransform(shared[pluginOptions.client!]);
 
-      createFile(
-        `${pluginOptions.outDir}/shared/axios/index.js`,
-        _axiosFileContent,
-      );
-    }
-
-    if (pluginOptions.platform === "wechat") {
-      const _wechatFileContent = await esTransform(createWechatFile());
-
-      createFile(
-        `${pluginOptions.outDir}/shared/wechat/index.js`,
-        _wechatFileContent,
-      );
-    }
+    createFile(
+      `${pluginOptions.outDir}/shared/${pluginOptions.client}/index.ts`,
+      _httpClientContent,
+    );
 
     createFile(
       `${pluginOptions.outDir}/shared/apiClientBase.js`,
@@ -116,7 +103,5 @@ export const JavaScriptPlugin: IPlugin = {
       `${pluginOptions.outDir}/shared/fetchRuntime.js`,
       _fetchRuntimeFileContent,
     );
-
-    esbuild.stop();
   },
 };

@@ -1,15 +1,73 @@
-// import { ISwaggerOptions } from "../../swagger.ts";
-// import { IPlugin } from "../typeDeclaration.ts";
+import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
+import { parserDefinition } from "../defintion.ts";
+import { parserActions } from "../action.ts";
+import { setupTemplate } from "../common.ts";
+import { createFile } from "../../common.ts";
+import shared from "./shared/index.ts";
+import template from "./template/index.ts";
+
+let pluginOptions: IPluginOptions;
 
 /**
  * dart 插件。
  * 依赖 [dio](https://github.com/cfug/dio)
  */
-// export const dartPlugin: IPlugin = {
-//   name: "stc:DartPlugin",
-//   setup(options: ISwaggerOptions) {
-//   },
-//   onTransform(def, action) {
-//     return {};
-//   },
-// };
+export const DartPlugin: IPlugin = {
+  name: "stc:DartPlugin",
+  lang: "dart",
+  setup(options: ISwaggerOptions) {
+    pluginOptions = {
+      ...options,
+      unknownType: "dynamic",
+      typeMap(func, type) {
+        return {
+          string: "String",
+          integer: "int",
+          boolean: "bool",
+          array: `List<${
+            type &&
+              func(
+                type,
+                undefined,
+                pluginOptions,
+              ) ||
+            pluginOptions.unknownType
+          }>`,
+          object: `Map<String, ${pluginOptions.unknownType}>`,
+          null: "null",
+        };
+      },
+      template: {
+        definitionHeader: template.definitionHeader,
+        definitionBody: template.definitionBody,
+        definitionFooter: template.definitionFooter,
+        actionImport: template.actionImport,
+        actionMethod: template.actionMethod,
+      },
+    };
+
+    setupTemplate(pluginOptions);
+  },
+  onTransform(def, action) {
+    const typeFileName = "_types";
+    const defContent = parserDefinition(def, pluginOptions);
+    const actionData = parserActions(action, typeFileName, pluginOptions);
+
+    return {
+      definition: {
+        filename: `${typeFileName}.${DartPlugin.lang}`,
+        content: defContent,
+      },
+      action: actionData,
+    };
+  },
+  onEnd() {
+    createFile(
+      `${pluginOptions.outDir}/shared/api_client_base.dart`,
+      shared.api_client_base,
+    );
+
+    createFile(`${pluginOptions.outDir}/shared/dio/index.dart`, shared.dio);
+  },
+};

@@ -38,7 +38,7 @@ export interface ISwaggerSchema {
   /**
    * v3 枚举值
    */
-  enum?: Array<string | number>;
+  enum?: string[];
   /**
    * Apifox - 属性
    */
@@ -182,9 +182,9 @@ export interface IDefinitionVirtualProperty {
    */
   required?: boolean;
   /**
-   * v2 默认值
+   * 默认值
    */
-  default?: string;
+  default?: string | number | boolean;
   /**
    * 枚举选项
    */
@@ -305,9 +305,15 @@ export interface ISwaggerOptions {
    */
   readonly outDir: string;
   /**
+   * @deprecated 请使用 `client`
+   *
    * 平台。默认：axios
    */
-  readonly platform?: "axios" | "wechat";
+  readonly platform?: "axios" | "wechat" | "fetch";
+  /**
+   * HTTP 请求的客户端。默认：axios
+   */
+  readonly client?: "axios" | "wechat" | "fetch";
   /**
    * 语言，用于输出文件的后缀名。默认：ts
    */
@@ -341,7 +347,8 @@ export interface IApiParseResponseRef {
 }
 
 export interface IApiParseResponse {
-  def: string;
-  interface?: Array<string>;
-  import?: Array<string>;
+  name: string;
+  type?: string;
+  definitions?: Array<string>;
+  imports?: Array<string>;
 }

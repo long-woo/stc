@@ -1,6 +1,5 @@
-import { copy, emptyDir, ensureFile } from "std/fs/mod.ts";
-import { format as dateFormat } from "std/datetime/format.ts";
-import { Eta } from "x/eta@v3.4.0/src/index.ts";
+import { copy, emptyDir, ensureFile } from "@std/fs";
+import { format as dateFormat } from "@std/datetime";
 
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
@@ -19,7 +18,7 @@ interface ICopyFileOptions {
  * @param str - 字符
  * @param pascalCase - 是否首字母大写
  */
-export const camelCase = (str: string, pascalCase: boolean = false) => {
+export const camelCase = (str: string, pascalCase = false) => {
   if (!str) return "";
   const _newStr = pascalCase ? `_${str}` : str;
 
@@ -52,21 +51,32 @@ export const readFile = (filePath: string) => Deno.readTextFile(filePath);
  * @param filePath - 文件路径
  * @param content - 文件内容
  */
-export const createFile = async (filePath: string, content: string) => {
+export const createFile = async (
+  filePath: string,
+  content: string,
+  { append, banner = true }: { append?: boolean; banner?: boolean } = {},
+) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
     new TextEncoder().encode(
-      `/** ${
-        getT("$t(util.createFileDescription)", { version: denoJson.version })
-      }
+      `${
+        banner
+          ? `/** ${
+            getT("$t(util.createFileDescription)", {
+              version: denoJson.version,
+            })
+          }
  *
  * https://github.com/long-woo/stc
  * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
- */
-
+ */`
+          : ""
+      }
+ 
 ${content}`,
     ),
+    { append },
   );
 };
 
@@ -113,39 +123,6 @@ export const getRefType = (ref: string) =>
     ),
     true,
   );
-
-/**
- * 转换为 typescript 类型
- * @param type - 类型
- * @param ref - 引用
- * @returns
- */
-export const convertType = (type: string | string[], ref?: string): string => {
-  // 当只有 ref 或者 type 为 object 时，直接返回 ref
-  if ((!type || type === "object") && ref) return ref;
-
-  // 若 type 与 ref 相等，则表示为自定义类型
-  if (type === ref) return type || "unknown";
-
-  const _action: Record<string, string> = {
-    string: "string",
-    integer: "number",
-    boolean: "boolean",
-    array: `Array<${ref && convertType(ref) || "unknown"}>`,
-    object: "Record<string, unknown>",
-    file: "File",
-    null: "null",
-    bool: "boolean",
-  };
-
-  const _newType = Array.isArray(type) ? type : [type];
-  const _type = _newType
-    .map((item) => _action[item] || item)
-    .filter((item) => item)
-    .join(" | ");
-
-  return _type;
-};
 
 /**
  * 属性注释
@@ -221,10 +198,4 @@ export const fetchClient = async (
   }
 
   throw res;
-};
-
-export const parseEta = (content: string, data: Record<string, unknown>) => {
-  const _eta = new Eta();
-
-  return _eta.renderString(content, data);
 };

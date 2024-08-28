@@ -1,0 +1,33 @@
+<% /* API 方法注释 */ %>
+<% if (it.summary) { %>
+/// <%~ it.summary %>
+<% } %>
+<% if (it.summary !== it.description) { %>
+<% if (it.summary && it.description) { %>
+
+///
+<% } %>
+<% if (it.description) { %>
+/// <%~ it.description %>
+<% } %>
+<% } %>
+
+<% /* API 方法 */ %>
+Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
+<%~ param.type %><% if(!param.required) { %>?<% } %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>
+<% }) %>) async {
+  var _res = await request<<%~ it.responseType %>>(
+    ApiClientConfig(
+      url: '<%= it.url %>',
+      method: '<%= it.method %>'<% if (it.params.length) { %>,
+      params: {
+<% it.params.forEach((param, index) => { %>
+        '<%= param.category %>': <% if (param.category === param.name) { %><%= param.name %><% } else { %>{'<%= param.name %>' : <%= param.name %>}<% } %><% if (index < it.params.length - 1) { %>, <% } %>
+
+<% }) %>
+      }
+<% } %>
+    )<% if (it.responseType.includes('List<')) { %>, (json) => [<%~ it.responseName %>.fromJson(json)]<% } else if (it.responseName) { %>, <%~ it.responseName %>.fromJson<% } %>);
+
+    return _res;
+}

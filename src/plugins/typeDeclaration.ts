@@ -73,9 +73,55 @@ export interface IPlugin extends IPluginEvent {
   /**
    * 插件生成的语言，与选项的 `lang` 一致
    */
-  readonly lang: string | string[];
+  readonly lang: string;
   /**
    * 插件入口
    */
   setup: (options: ISwaggerOptions) => Promise<void> | void;
+}
+
+export interface IPluginOptions extends ISwaggerOptions {
+  /**
+   * 未知类型
+   */
+  readonly unknownType?: string;
+  /**
+   * 类型映射
+   */
+  readonly typeMap?: (
+    convertFunc: (
+      type: string,
+      ref?: string,
+      pluginOptions?: IPluginOptions,
+    ) => string,
+    type?: string,
+  ) => Record<string, string>;
+  template: IPluginTemplate;
+}
+
+interface IPluginTemplate {
+  /**
+   * 枚举
+   */
+  readonly enum?: string;
+  /**
+   * 定义文件头
+   */
+  readonly definitionHeader: string;
+  /**
+   * 定义文件主体部分
+   */
+  readonly definitionBody: string;
+  /**
+   * 定义文件尾
+   */
+  readonly definitionFooter: string;
+  /**
+   * 接口文件导入
+   */
+  readonly actionImport: string;
+  /**
+   * 接口文件方法
+   */
+  readonly actionMethod: string;
 }

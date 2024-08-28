@@ -12,7 +12,7 @@ import { getRequestParams } from "../apiClientBase.ts";
 const fetchWithTimeout = (
   url: RequestInfo,
   init?: RequestInit,
-  timeout: number = 5000,
+  timeout = 5000,
 ): Promise<Response> => {
   const timeoutPromise = new Promise<Response>((_, reject) =>
     setTimeout(() => reject(new Error("Request timed out")), timeout)
@@ -21,6 +21,12 @@ const fetchWithTimeout = (
   return Promise.race([fetch(url, init), timeoutPromise]);
 };
 
+/**
+ * Asynchronous function that sends a request using the provided ApiClientConfig instance with timeout handling.
+ *
+ * @param {ApiClientConfig} instance - the configuration object for the request
+ * @return {Promise<T>} a Promise that resolves with the response data
+ */
 export const request = async <T>(instance: ApiClientConfig) => {
   const _params = getRequestParams(
     (instance.params?.query as IDefaultObject<string>) ?? {},
@@ -35,7 +41,7 @@ export const request = async <T>(instance: ApiClientConfig) => {
       ...(instance.params?.header ?? {}),
     },
     credentials: instance.withCredentials ? "include" : "omit",
-  });
+  }, instance.timeout);
 
   if (!_res.ok) {
     instance.onError?.(_res.statusText);
@@ -45,5 +51,7 @@ export const request = async <T>(instance: ApiClientConfig) => {
     instance.onLogin?.();
   }
 
-  return _res.json();
+  const _json: T = await _res.json();
+
+  return _json;
 };

@@ -1,6 +1,6 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.6.4",
+  "version": "2.0.0",
   "description": "OpenApi/Swagger/Apifox document conversion tool.\nOpenAPI(Swagger)、Apifox 文档转换为接口文件。",
   "type": "module",
   "module": "esm/mod.js",

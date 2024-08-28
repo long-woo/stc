@@ -1,19 +1,17 @@
 {
   "name": "@loongwoo/stc",
-  "version": "1.6.4",
+  "version": "2.0.0",
   "exports": "./mod.ts",
   "tasks": {
-    "dev": "deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json'",
+    "pack": "deno run -A src/pack.ts",
+    "dev": "deno task pack && deno run -A --watch=src src/main.ts --url 'https://petstore3.swagger.io/api/v3/openapi.json' --lang dart",
     "serve": "deno run -A --watch=src src/service.ts",
-    "version": "echo '1.6.4' > release/version",
-    "build:npm": "deno run -A src/npm/index.ts",
+    "version": "echo '2.0.0' > release/version",
+    "build:npm": "deno run -A src/npm/build.ts",
     "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
     "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",
-    "build:win": "deno compile -A --target x86_64-pc-windows-msvc --output release/stc-win src/main.ts",
-    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts",
-    "esm:add": "deno run -A https://esm.sh/v130 add",
-    "esm:update": "deno run -A https://esm.sh/v130 update",
-    "esm:remove": "deno run -A https://esm.sh/v130 remove"
+    "build:win": "deno compile -A --target x86_64-pc-windows-msvc --icon resources/stc.svg --output release/stc-win src/main.ts",
+    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts"
   },
   "lint": {
     "include": [
@@ -23,7 +21,9 @@
     "exclude": [
       "**/out/**/*",
       "**/shared/**/*",
-      "dist"
+      "**/template/**/*",
+      "dist",
+      "release"
     ]
   },
   "fmt": {
@@ -32,8 +32,11 @@
       "test/"
     ],
     "exclude": [
+      "**/shared/**/*",
+      "**/template/**/*",
       "out/**/*",
-      "dist"
+      "dist",
+      "release"
     ]
   },
   "test": {
@@ -46,5 +49,17 @@
       "dist"
     ]
   },
-  "importMap": "import_map.json"
+  "imports": {
+    "./": "./",
+    "/": "./",
+    "@deno-library/progress": "jsr:@deno-library/progress@^1.4.9",
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
+    "@eta-dev/eta": "jsr:@eta-dev/eta@^3.5.0",
+    "@std/assert": "jsr:@std/assert@^1.0.3",
+    "@std/cli": "jsr:@std/cli@^1.0.4",
+    "@std/datetime": "jsr:@std/datetime@^0.225.1",
+    "@std/fmt": "jsr:@std/fmt@^1.0.1",
+    "@std/fs": "jsr:@std/fs@^1.0.2",
+    "x/": "https://deno.land/x/"
+  }
 }

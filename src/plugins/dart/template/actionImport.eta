@@ -1,0 +1,5 @@
+import '<%= it.importPath%>shared/api_client_base.dart';
+import 'shared/dio/index.dart';
+<% if (it.imports.length) { %>
+import '<%= it.importPath %><%= it.typeFileName %>.dart';
+<% } %>

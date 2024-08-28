@@ -3,9 +3,10 @@ import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 import { TypeScriptPlugin } from "./typescript/index.ts";
 import { JavaScriptPlugin } from "./javascript/index.ts";
+import { DartPlugin } from "./dart/index.ts";
 
 export class PluginManager {
-  private plugins: IPlugin[] = [TypeScriptPlugin, JavaScriptPlugin];
+  private plugins: IPlugin[] = [TypeScriptPlugin, JavaScriptPlugin, DartPlugin];
 
   register(plugin: IPlugin | IPlugin[]) {
     this.plugins = [
@@ -35,15 +36,15 @@ export class PluginManager {
       await plugin.setup(_options);
 
       // 触发插件 onload 事件
-      context.onLoad = plugin.onLoad;
+      context.onLoad = (data) => plugin.onLoad?.(data);
       // 触发插件 onDefinition 事件
-      context.onDefinition = plugin.onDefinition;
+      context.onDefinition = (data) => plugin.onDefinition?.(data);
       // 触发插件 onAction 事件
-      context.onAction = plugin.onAction;
+      context.onAction = (data) => plugin.onAction?.(data);
       // 触发插件 onTransform 事件
-      context.onTransform = plugin.onTransform;
+      context.onTransform = (def, action) => plugin.onTransform?.(def, action);
       // 触发插件 onEnd 事件
-      context.onEnd = plugin.onEnd;
+      context.onEnd = () => plugin.onEnd?.();
     }
     Logs.info(getT("$t(plugin.allSetupDone)"));
   }

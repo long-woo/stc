@@ -1,4 +1,4 @@
-import i18next from "x/i18next@v23.10.0/index.js";
+import i18next from "npm:i18next";
 
 import enTranslation from "./locales/en.json" with { type: "json" };
 import zhCNTranslation from "./locales/zh-CN.json" with { type: "json" };

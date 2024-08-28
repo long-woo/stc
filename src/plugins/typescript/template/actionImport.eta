@@ -1,0 +1,4 @@
+import { fetchRuntime } from '<%= it.importPath %>shared/fetchRuntime'
+<% if (it.imports.length) { %>
+import type { <%= it.imports.join(', ') %> } from '<%= it.importPath %><%= it.typeFileName %>'
+<% } %>
