@@ -24,9 +24,9 @@ STC (Swagger Transform Code) is a tool for converting Swagger(OpenApi) documents
   - Dart, dependency on **`dio`**.
   - 🚧 Swift ...
 
-## Quick start 快速开始
+## Quick start
 
-### Download executable files 下载可执行文件
+### Download executable files
 
 [download](https://github.com/long-woo/stc/releases) by system：
 - stc: Intel-based Mac
