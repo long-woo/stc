@@ -149,7 +149,7 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@1.6.4/mod.ts'
+import { start } from 'https://deno.land/x/stc@2.0.0/mod.ts'
 
 // Defining plugins
 const myPlugin: IPlugin = {
@@ -159,21 +159,21 @@ const myPlugin: IPlugin = {
     console.log(options)
   },
   onTransform(def, action) {
-    // 转换 definition
+    // definition
     const defContent: string = parserDefinition(
-      def /* 这里的 def 是 Definition 对象 */
+      def
     )
-    // 转换 action
+    // action
     const actionContent: Map<string, string> = parserAction(
-      action /* 这里的 action 是 Action 对象 */
+      action
     )
-    // 返回转换后的内容
+
     return {
       definition: {
         filename: '_types.ts',
         content: defContent,
       },
-      action: actionContent // 这里的 actionContent 是 Map<string, string> 类型，key 是文件名称，value 是转换后的代码
+      action: actionContent // Here actionContent is of type Map<string, string>, key is the file name, value is the converted code.
     }
   },
   onEnd() {
@@ -208,15 +208,15 @@ export const myPlugin: IPlugin = {
     console.log(options)
   },
   onTransform(def, action) {
-    // 转换 definition
+    // definition
     const defContent: string = parserDefinition(
-      def /* 这里的 def 是 Definition 对象 */
+      def
     )
-    // 转换 action
+    // action
     const actionContent: Map<string, string> = parserAction(
-      action /* 这里的 action 是 Action 对象 */
+      action
     )
-    // 返回转换后的内容
+
     return {
       definition: defContent,
       action: actionContent
@@ -232,7 +232,7 @@ export const myPlugin: IPlugin = {
 
 ```ts
 start({
-  // ...其他配置
+  // ...other options
   plugins: [myPlugin]
 })
 ```
