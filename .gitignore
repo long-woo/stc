@@ -11,6 +11,3 @@ examples/**/yarn.lock
 examples/**/package-lock.json
 
 .DS_Store
-
-**/shared/index.ts
-**/template/index.ts

@@ -18,11 +18,6 @@ jobs:
         uses: denoland/setup-deno@1.4.0
         with:
           deno-version: v1.x
-      
-      # 处理 deno compile 静态资源不打包
-      # shared/template 目录文件，转换为 js 文件
-      - name: 处理 deno compile 静态资源不打包
-        run: deno task pack
 
       # Uncomment this step to verify the use of 'deno fmt' on each commit.
       - name: Verify formatting
