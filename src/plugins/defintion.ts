@@ -1,7 +1,7 @@
 import type { IDefinitionVirtualProperty } from "../swagger.ts";
 import type { IPluginOptions } from "../plugins/typeDeclaration.ts";
 import Logs from "../console.ts";
-import { convertType, parserEnum, renderTemplate } from "./common.ts";
+import { convertType, parserEnum, renderEtaString } from "./common.ts";
 import { getT } from "../i18n/index.ts";
 
 /**
@@ -34,12 +34,14 @@ export const parserDefinition = (
 
       // 定义头
       if (index === 0) {
-        _definition.push(renderTemplate("definitionHeader", { defName: key }));
+        _definition.push(
+          renderEtaString(options.template.definitionHeader, { defName: key }),
+        );
       }
 
       // 定义属性
       _definition.push(
-        renderTemplate("definitionBody", {
+        renderEtaString(options.template.definitionBody, {
           propCommit: prop.title || prop.description,
           prop: prop,
           propType: _type,
@@ -50,7 +52,10 @@ export const parserDefinition = (
       if (index === props.length - 1) {
         _definition.push(
           "",
-          renderTemplate("definitionFooter", { defName: key, props }),
+          renderEtaString(options.template.definitionFooter, {
+            defName: key,
+            props,
+          }),
           "// #endregion\n",
         );
       }

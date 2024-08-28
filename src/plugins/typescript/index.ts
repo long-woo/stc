@@ -1,15 +1,11 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../common.ts";
 import { parserDefinition } from "../defintion.ts";
 import { parserActions } from "../action.ts";
 import { renderEtaString, setupTemplate } from "../common.ts";
-import {
-  createAxiosFile,
-  createBaseFile,
-  createFetchFile,
-  createFetchRuntimeFile,
-  createWechatFile,
-} from "./shared/index.ts";
+import shared from "./shared/index.ts";
+import template from "./template/index.ts";
 
 // Deno 当前版本（1.45.2）未支持
 // import webClientBaseFile from "./shared/apiClientBase.ts" with { type: "text" };
@@ -19,7 +15,7 @@ let pluginOptions: IPluginOptions;
 export const TypeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
   lang: "ts",
-  setup(options: IPluginOptions) {
+  setup(options: ISwaggerOptions) {
     pluginOptions = {
       ...options,
       unknownType: "unknown",
@@ -37,6 +33,13 @@ export const TypeScriptPlugin: IPlugin = {
           null: "null",
           bool: "boolean",
         };
+      },
+      template: {
+        definitionHeader: template.definitionHeader,
+        definitionBody: template.definitionBody,
+        definitionFooter: template.definitionFooter,
+        actionImport: template.actionImport,
+        actionMethod: template.actionMethod,
       },
     };
 
@@ -67,46 +70,21 @@ export const TypeScriptPlugin: IPlugin = {
 
   onEnd() {
     // 创建运行时需要的文件
-    const _baseFileContent = createBaseFile();
     const _fetchRuntimeFileContent = renderEtaString(
-      createFetchRuntimeFile(),
+      shared.fetchRuntime,
       pluginOptions as unknown as Record<string, unknown>,
     );
 
-    if (pluginOptions.client === "axios") {
-      const _axiosFileContent = createAxiosFile();
+    const _httpClientContent = shared[pluginOptions.client!];
 
-      createFile(
-        `${pluginOptions.outDir}/shared/axios/index.ts`,
-        _axiosFileContent,
-      );
-      // copyFile(
-      //   "./src/plugins/typescript/shared/axios",
-      //   `${pluginOptions.outDir}/shared/axios`,
-      // );
-    }
-
-    if (pluginOptions.client === "wechat") {
-      const _wechatFileContent = createWechatFile();
-
-      createFile(
-        `${pluginOptions.outDir}/shared/wechat/index.ts`,
-        _wechatFileContent,
-      );
-    }
-
-    if (pluginOptions.client === "fetch") {
-      const _fetchFileContent = createFetchFile();
-
-      createFile(
-        `${pluginOptions.outDir}/shared/fetch/index.ts`,
-        _fetchFileContent,
-      );
-    }
+    createFile(
+      `${pluginOptions.outDir}/shared/${pluginOptions.client}/index.ts`,
+      _httpClientContent,
+    );
 
     createFile(
       `${pluginOptions.outDir}/shared/apiClientBase.ts`,
-      _baseFileContent,
+      shared.apiClientBase,
     );
 
     createFile(

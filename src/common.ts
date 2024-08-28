@@ -51,21 +51,32 @@ export const readFile = (filePath: string) => Deno.readTextFile(filePath);
  * @param filePath - 文件路径
  * @param content - 文件内容
  */
-export const createFile = async (filePath: string, content: string) => {
+export const createFile = async (
+  filePath: string,
+  content: string,
+  { append, banner = true }: { append?: boolean; banner?: boolean } = {},
+) => {
   await ensureFile(filePath);
   await Deno.writeFile(
     filePath,
     new TextEncoder().encode(
-      `/** ${
-        getT("$t(util.createFileDescription)", { version: denoJson.version })
-      }
+      `${
+        banner
+          ? `/** ${
+            getT("$t(util.createFileDescription)", {
+              version: denoJson.version,
+            })
+          }
  *
  * https://github.com/long-woo/stc
  * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
- */
-
+ */`
+          : ""
+      }
+ 
 ${content}`,
     ),
+    { append },
   );
 };
 

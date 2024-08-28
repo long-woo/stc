@@ -7,12 +7,7 @@ import type {
 } from "../typeDeclaration.ts";
 
 import { createFile } from "../../common.ts";
-import {
-  createAxiosFile,
-  createBaseFile,
-  createFetchRuntimeFile,
-  createWechatFile,
-} from "../typescript/shared/index.ts";
+import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
 import { renderEtaString } from "../common.ts";
 // TODO: Deno compile 不支持 storage
@@ -86,29 +81,18 @@ export const JavaScriptPlugin: IPlugin = {
     });
 
     // 创建运行时需要的文件
-    const _baseFileContent = await esTransform(createBaseFile());
+    const _baseFileContent = await esTransform(shared.apiClientBase);
     const _fetchRuntimeFileContent = await esTransform(renderEtaString(
-      createFetchRuntimeFile(),
+      shared.fetchRuntime,
       pluginOptions as unknown as Record<string, unknown>,
     ));
 
-    if (pluginOptions.client === "axios") {
-      const _axiosFileContent = await esTransform(createAxiosFile());
+    const _httpClientContent = await esTransform(shared[pluginOptions.client!]);
 
-      createFile(
-        `${pluginOptions.outDir}/shared/axios/index.js`,
-        _axiosFileContent,
-      );
-    }
-
-    if (pluginOptions.client === "wechat") {
-      const _wechatFileContent = await esTransform(createWechatFile());
-
-      createFile(
-        `${pluginOptions.outDir}/shared/wechat/index.js`,
-        _wechatFileContent,
-      );
-    }
+    createFile(
+      `${pluginOptions.outDir}/shared/${pluginOptions.client}/index.ts`,
+      _httpClientContent,
+    );
 
     createFile(
       `${pluginOptions.outDir}/shared/apiClientBase.js`,

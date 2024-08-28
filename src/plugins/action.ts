@@ -8,7 +8,7 @@ import type {
 } from "../swagger.ts";
 import type { IPluginOptions } from "./typeDeclaration.ts";
 import { camelCase, upperCase } from "../common.ts";
-import { convertType, parserEnum, renderTemplate } from "./common.ts";
+import { convertType, parserEnum, renderEtaString } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 
@@ -57,8 +57,10 @@ const getInternalDefinition = (
   let _defHeader = "", _defFooter = "";
 
   if (properties.length) {
-    _defHeader = renderTemplate("definitionHeader", { defName: name });
-    _defFooter = renderTemplate("definitionFooter", {
+    _defHeader = renderEtaString(pluginOptions.template.definitionHeader, {
+      defName: name,
+    });
+    _defFooter = renderEtaString(pluginOptions.template.definitionFooter, {
       defName: name,
       props: properties,
     });
@@ -86,7 +88,7 @@ const getInternalDefinition = (
       );
     }
 
-    const _defBody = renderTemplate("definitionBody", {
+    const _defBody = renderEtaString(pluginOptions.template.definitionBody, {
       propCommit: current.title || current.description,
       propType: _type,
       prop: current,
@@ -168,19 +170,23 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (_multiParam) {
         if (index === 0) {
           prev.definitions?.push(
-            renderTemplate("definitionHeader", { defName: _defName }),
+            renderEtaString(pluginOptions.template.definitionHeader, {
+              defName: _defName,
+            }),
           );
         }
 
-        prev.definitions?.push(renderTemplate("definitionBody", {
-          propCommit: item.title || item.description,
-          prop: item,
-          propType: _type,
-        }));
+        prev.definitions?.push(
+          renderEtaString(pluginOptions.template.definitionBody, {
+            propCommit: item.title || item.description,
+            prop: item,
+            propType: _type,
+          }),
+        );
 
         if (index === _params.length - 1) {
           prev.definitions?.push(
-            renderTemplate("definitionFooter", {
+            renderEtaString(pluginOptions.template.definitionFooter, {
               defName: _defName,
               props: _params,
             }),
@@ -303,7 +309,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
-  const _apiMethod = renderTemplate("actionMethod", {
+  const _apiMethod = renderEtaString(pluginOptions.template.actionMethod, {
     summary: data.summary,
     description: data.description,
     methodName: action,
@@ -408,7 +414,7 @@ export const parserActions = (
     }, "./");
 
     const _apiImport = [
-      renderTemplate("actionImport", {
+      renderEtaString(pluginOptions.template.actionImport, {
         importPath: _importPath,
         imports: action.imports,
         typeFileName: defFileName,

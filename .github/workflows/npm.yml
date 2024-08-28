@@ -16,6 +16,11 @@ jobs:
         uses: denoland/setup-deno@1.4.0
         with:
           deno-version: v1.x
+      
+      # 处理 deno compile 静态资源不打包
+      # shared/template 目录文件，转换为 js 文件
+      - name: 处理 deno compile 静态资源不打包
+        run: deno task pack
 
       # 使用 dnt(https​://deno.land/x/dnt​@0.38.0/mod.ts) 打包
       - name: 构建成 npm 包

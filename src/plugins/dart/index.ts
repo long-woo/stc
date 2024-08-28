@@ -1,8 +1,11 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
+import type { ISwaggerOptions } from "../../swagger.ts";
 import { parserDefinition } from "../defintion.ts";
 import { parserActions } from "../action.ts";
 import { setupTemplate } from "../common.ts";
-import { copyFile } from "../../common.ts";
+import { createFile } from "../../common.ts";
+import shared from "./shared/index.ts";
+import template from "./template/index.ts";
 
 let pluginOptions: IPluginOptions;
 
@@ -13,7 +16,7 @@ let pluginOptions: IPluginOptions;
 export const DartPlugin: IPlugin = {
   name: "stc:DartPlugin",
   lang: "dart",
-  setup(options: IPluginOptions) {
+  setup(options: ISwaggerOptions) {
     pluginOptions = {
       ...options,
       unknownType: "dynamic",
@@ -35,6 +38,13 @@ export const DartPlugin: IPlugin = {
           null: "null",
         };
       },
+      template: {
+        definitionHeader: template.definitionHeader,
+        definitionBody: template.definitionBody,
+        definitionFooter: template.definitionFooter,
+        actionImport: template.actionImport,
+        actionMethod: template.actionMethod,
+      },
     };
 
     setupTemplate(pluginOptions);
@@ -53,6 +63,11 @@ export const DartPlugin: IPlugin = {
     };
   },
   onEnd() {
-    copyFile("./src/plugins/dart/shared", `${pluginOptions.outDir}/shared`);
+    createFile(
+      `${pluginOptions.outDir}/shared/api_client_base.dart`,
+      shared.api_client_base,
+    );
+
+    createFile(`${pluginOptions.outDir}/shared/dio/index.dart`, shared.dio);
   },
 };

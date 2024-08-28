@@ -51,6 +51,24 @@ export const renderTemplate = (name: string, data: Record<string, unknown>) => {
 };
 
 /**
+ * Render a template with Eta.
+ *
+ * @param content - A string of template.
+ * @param data - A object contains data.
+ * @returns A rendered string.
+ */
+export const renderEtaString = (
+  content: string,
+  data: Record<string, unknown>,
+) => {
+  if (!etaInstance) {
+    throw new Error("Please call `setupTemplate` first.");
+  }
+
+  return etaInstance?.renderString(content, data);
+};
+
+/**
  * Converts a given type to a string representation, taking into account the provided reference and plugin options.
  *
  * @param {string|string[]} type - The type to be converted.
@@ -79,24 +97,6 @@ export const convertType = (
     .join(" | ");
 
   return _type;
-};
-
-/**
- * Render a template with Eta.
- *
- * @param content - A string of template.
- * @param data - A object contains data.
- * @returns A rendered string.
- */
-export const renderEtaString = (
-  content: string,
-  data: Record<string, unknown>,
-) => {
-  if (!etaInstance) {
-    throw new Error("Please call `setupTemplate` first.");
-  }
-
-  return etaInstance?.renderString(content, data);
 };
 
 /**

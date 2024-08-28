@@ -38,6 +38,11 @@ jobs:
         with:
           deno-version: v1.x
 
+      # 处理 deno compile 静态资源不打包
+      # shared/template 目录文件，转换为 js 文件
+      - name: 处理 deno compile 静态资源不打包
+        run: deno task pack
+
       # 执行编译命令
       - name: Run compile mac
         run: deno task build:mac

@@ -96,4 +96,32 @@ export interface IPluginOptions extends ISwaggerOptions {
     ) => string,
     type?: string,
   ) => Record<string, string>;
+  template: IPluginTemplate;
+}
+
+interface IPluginTemplate {
+  /**
+   * 枚举
+   */
+  readonly enum?: string;
+  /**
+   * 定义文件头
+   */
+  readonly definitionHeader: string;
+  /**
+   * 定义文件主体部分
+   */
+  readonly definitionBody: string;
+  /**
+   * 定义文件尾
+   */
+  readonly definitionFooter: string;
+  /**
+   * 接口文件导入
+   */
+  readonly actionImport: string;
+  /**
+   * 接口文件方法
+   */
+  readonly actionMethod: string;
 }

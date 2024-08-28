@@ -1,4 +1,3 @@
-// 由 stc 生成
 export type IDefaultObject<T = unknown> = {
   [key: string]: T;
 };
