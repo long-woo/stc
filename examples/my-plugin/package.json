@@ -2,6 +2,7 @@
   "name": "my-plugin",
   "scripts": {
     "dev": "node index.mjs",
+    "api": "stc --url https://petstore3.swagger.io/api/v3/openapi.json --lang js",
     "test": "stc --version"
   },
   "devDependencies": {
