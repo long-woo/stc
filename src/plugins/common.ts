@@ -1,7 +1,6 @@
 import { Eta } from "@eta-dev/eta";
 
 import type { IPluginOptions } from "./typeDeclaration.ts";
-import { convertValue } from "../common.ts";
 
 let etaInstance: Eta | null = null;
 
@@ -97,40 +96,4 @@ export const convertType = (
     .join(" | ");
 
   return _type;
-};
-
-/**
- * Converts an enum to a union type.
- *
- * @param {string} type - the name of the union type
- * @param {string[]} data - the array of enum values
- * @return {string} the union type definition
- */
-export const parserEnum = (
-  type: string,
-  data?: string[],
-) => {
-  if (!data?.length) return "";
-
-  const _unionValue = data?.map(convertValue).join(",\n\t");
-
-  return `enum ${type} {
-  ${_unionValue}
-}\n`;
-};
-
-/**
- * Converts an enum to a union type.
- *
- * @param {string} type - the name of the union type
- * @param {Array<string>} data - the array of enum values
- * @return {string} the union type definition
- */
-export const parserEnumToUnionType = (
-  type: string,
-  data?: Array<string>,
-) => {
-  const _unionValue = data?.map(convertValue).join("' | '");
-
-  return `export type ${type} = '${_unionValue}'`;
 };

@@ -35,6 +35,7 @@ export const TypeScriptPlugin: IPlugin = {
         };
       },
       template: {
+        enum: template.enum,
         definitionHeader: template.definitionHeader,
         definitionBody: template.definitionBody,
         definitionFooter: template.definitionFooter,

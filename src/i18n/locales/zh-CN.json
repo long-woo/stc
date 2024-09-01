@@ -52,7 +52,10 @@
     "parserAction": "解析接口",
     "parserActionDone": "解析接口完成。",
     "no_200_response": "缺少 200 状态码的信息。",
-    "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。"
+    "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。",
+    "template": {
+      "enumRequired": "缺失枚举模板。"
+    }
   },
   "plugin_javascript": {
     "compilation_failed": "编译失败。"

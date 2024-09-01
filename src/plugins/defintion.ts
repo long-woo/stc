@@ -1,8 +1,9 @@
 import type { IDefinitionVirtualProperty } from "../swagger.ts";
 import type { IPluginOptions } from "../plugins/typeDeclaration.ts";
 import Logs from "../console.ts";
-import { convertType, parserEnum, renderEtaString } from "./common.ts";
+import { convertType, renderEtaString } from "./common.ts";
 import { getT } from "../i18n/index.ts";
+import { convertValue } from "../common.ts";
 
 /**
  * 解析定义
@@ -25,10 +26,20 @@ export const parserDefinition = (
         options,
       );
       const _enumOption = prop.enumOption;
-      const _enumData = parserEnum(_type, _enumOption);
 
       // 添加枚举定义
       if (_enumOption?.length) {
+        // if (!options.template.enum) {
+        //   const _enumMsg = getT("$t(plugin.template.enumRequired)");
+
+        //   Logs.error(_enumMsg);
+        //   throw _enumMsg;
+        // }
+
+        const _enumData = renderEtaString(
+          options.template.enum,
+          { name: _type, data: _enumOption, convertValue },
+        );
         _definition.splice(1, 0, `${_enumData}\n`);
       }
 

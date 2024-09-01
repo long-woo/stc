@@ -8,9 +8,10 @@ import type {
 } from "../swagger.ts";
 import type { IPluginOptions } from "./typeDeclaration.ts";
 import { camelCase, upperCase } from "../common.ts";
-import { convertType, parserEnum, renderEtaString } from "./common.ts";
+import { convertType, renderEtaString } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
+import { convertValue } from "../common.ts";
 
 interface IApiParams {
   /**
@@ -154,9 +155,12 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       /* #region 内部定义 */
       // 定义参数枚举
       if (item.enumOption?.length) {
-        const _enumParam = parserEnum(_type, item.enumOption);
+        const _enumData = renderEtaString(
+          pluginOptions.template.enum,
+          { name: _type, data: item.enumOption, convertValue },
+        );
 
-        prev.definitions?.push(_enumParam);
+        prev.definitions?.push(_enumData);
       }
 
       // properties 存在时直接定义
