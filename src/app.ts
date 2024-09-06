@@ -58,7 +58,7 @@ const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
  * 启动
  * @param options - 配置
  */
-export const start = async (options: ISwaggerOptions) => {
+export const start = async (options: ISwaggerOptions): Promise<void> => {
   // 创建上下文
   const context = createContext({ options });
 
