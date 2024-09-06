@@ -2,18 +2,19 @@
 
 <p  align="center"><img src="resources/stc.svg" alt="logo" /></p>
 
-[![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
-
 STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox into code.
 
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
+[![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
+![NPM Version](https://img.shields.io/npm/v/%40loongwoo%2Fstc)
+
 <div align="center">
   <img src="resources/20240422-151653.gif" alt="stc" />
 </div>
 
-## Feature:
+## Features
 
 - 🐹 Support for Swagger 2/3(OpenApi) and Apifox.
 - 💡 Support plug-in development.
@@ -149,7 +150,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@2.1.0/mod.ts'
+// import { start } from 'https://deno.land/x/stc@2.1.0/mod.ts'
+import { start } from 'jsr:@loongwoo/stc@^2.1.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {
