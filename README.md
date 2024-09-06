@@ -4,7 +4,7 @@
 
 [![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
 
-STC (Swagger Transform Code) is a tool for converting Swagger(OpenApi) documents into code files.
+STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox into code.
 
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
@@ -149,7 +149,7 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-import { start } from 'https://deno.land/x/stc@2.0.0/mod.ts'
+import { start } from 'https://deno.land/x/stc@2.1.0/mod.ts'
 
 // Defining plugins
 const myPlugin: IPlugin = {

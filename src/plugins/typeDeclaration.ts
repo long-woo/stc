@@ -103,7 +103,7 @@ interface IPluginTemplate {
   /**
    * 枚举
    */
-  readonly enum?: string;
+  readonly enum: string;
   /**
    * 定义文件头
    */

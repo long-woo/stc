@@ -39,6 +39,7 @@ export const DartPlugin: IPlugin = {
         };
       },
       template: {
+        enum: template.enum,
         definitionHeader: template.definitionHeader,
         definitionBody: template.definitionBody,
         definitionFooter: template.definitionFooter,
