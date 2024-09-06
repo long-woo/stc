@@ -71,6 +71,6 @@ jobs:
           prerelease: false
 
       # 发布到 JSR
-      # - name: Publish to JSR
-      #   id: publish_jsr
-      #   run: deno publish
+      - name: Publish to JSR
+        id: publish_jsr
+        run: deno publish
