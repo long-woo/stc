@@ -328,6 +328,13 @@ const getPathVirtualProperty = (
         : lowerCase(_bodyContentRef)) || "body";
 
       // 处理 type 为 object 的情况，并且有 properties 属性
+      if (
+        _bodyContentSchema?.type === "object" &&
+        !Object.keys(_bodyContentSchema?.properties ?? {}).length
+      ) {
+        return;
+      }
+
       const _properties = getProperties(
         _bodyContentSchema?.properties ?? {},
         _bodyContentSchema?.required ?? [],
@@ -352,6 +359,7 @@ const getPathVirtualProperty = (
       }
     });
   }
+  console.log(parameters);
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema ??

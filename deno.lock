@@ -29,6 +29,7 @@
       "jsr:@ts-morph/bootstrap@^0.24.0": "jsr:@ts-morph/bootstrap@0.24.0",
       "jsr:@ts-morph/common@^0.24.0": "jsr:@ts-morph/common@0.24.0",
       "npm:esbuild": "npm:esbuild@0.23.1",
+      "npm:esbuild@^0.23.1": "npm:esbuild@0.23.1",
       "npm:i18next": "npm:i18next@23.14.0",
       "npm:i18next@^23.14.0": "npm:i18next@23.14.0"
     },
