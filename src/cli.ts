@@ -211,6 +211,9 @@ export const main = async (): Promise<ISwaggerOptions> => {
     },
   };
 
+  // 清空控制台信息
+  Logs.clear();
+
   // 解析命令行参数和选项
   const args: Args = parseArgs(Deno.args, argsConfig);
   // 检查更新
@@ -233,7 +236,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
     printHelp();
   }
 
-  if (args.platform) {
+  if (args.platform !== "axios") {
     Logs.warn(getT("$t(cli.deprecatedOptionPlatform)"));
     args.client = args.platform;
   }

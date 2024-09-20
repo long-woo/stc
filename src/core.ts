@@ -359,7 +359,6 @@ const getPathVirtualProperty = (
       }
     });
   }
-  console.log(parameters);
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema ??

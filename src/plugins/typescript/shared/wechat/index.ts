@@ -1,5 +1,5 @@
-import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
-import { getRequestParams } from "../apiClientBase.ts";
+import type { ApiClientConfig, IDefaultObject } from "../apiClientBase";
+import { getRequestParams } from "../apiClientBase";
 
 /**
  * Generate a request to a specified URL with the given parameters.

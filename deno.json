@@ -4,7 +4,7 @@
   "exports": "./mod.ts",
   "tasks": {
     "pack": "deno run -A src/pack.ts",
-    "dev": "deno task pack && deno run -A --watch=src src/main.ts --url='http://127.0.0.1:4523/export/openapi/2?version=3.0' --tag=2",
+    "dev": "deno task pack && deno run -A --watch=src src/main.ts --url='https://petstore3.swagger.io/api/v3/openapi.json' --lang=js",
     "serve": "deno run -A --watch=src src/service.ts",
     "version": "echo '2.1.0' > release/version",
     "build:npm": "deno run -A src/npm/build.ts",
@@ -13,6 +13,7 @@
     "build:win": "deno compile -A --target x86_64-pc-windows-msvc --icon resources/stc.svg --output release/stc-win src/main.ts",
     "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output release/stc-linux src/main.ts"
   },
+  "exclude": ["**/shared/**/*"],
   "lint": {
     "include": [
       "src/",

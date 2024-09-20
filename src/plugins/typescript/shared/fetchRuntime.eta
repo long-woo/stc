@@ -11,7 +11,7 @@ let apiClientInstance: ApiClientConfig = {};
 
 export const createApiClient = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,
-) => {
+): void => {
   apiClientInstance = config;
 <% if (it.client === "axios") { %>
   createAxios(config);
@@ -23,7 +23,7 @@ export const fetchRuntime = <T>(
   method: ApiClientMethod,
   req?: ApiClientParams,
   config?: ApiClientConfig,
-) => {
+): Promise<T> => {
   const _url = generateURL(url, req?.path as unknown as IDefaultObject);
 
   apiClientInstance.url = _url;
@@ -40,7 +40,7 @@ export const fetchRuntime = <T>(
  * 2.`webClient.request` modified to `fetchRuntime`
  */
 export class ApiClient {
-  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">) {
+  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">): void {
     createApiClient(config);
   }
 
@@ -49,7 +49,7 @@ export class ApiClient {
     method: ApiClientMethod,
     req?: ApiClientParams,
     config?: ApiClientConfig,
-  ) {
+  ): Promise<T> {
     return fetchRuntime<T>(url, method, req, config);
   }
 }
