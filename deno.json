@@ -1,6 +1,6 @@
 {
   "name": "@loongwoo/stc",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "exports": "./mod.ts",
   "tasks": {
     "pack": "deno run -A src/pack.ts",
