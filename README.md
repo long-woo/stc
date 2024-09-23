@@ -16,20 +16,21 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 
 ## Features
 
-- 🐹 Support for Swagger 2/3(OpenApi) and Apifox.
+- 🐹 Support for **Swagger 2/3(OpenApi)** and **Apifox**.
 - 💡 Support plug-in development.
 - 🐣 Built-in transformation languages:
-  - TypeScript, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
+  - **TypeScript**, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
    > `xhr/ajax、ofetch` planned
-  - JavaScript, from TypeScript to it.
-  - Dart, dependency on **`dio`**.
-  - 🚧 Swift ...
+  - **JavaScript**, from TypeScript to it.
+  - **Dart**, dependency on **`dio`**.
+  - 🚧 **Swift** ...
 
 ## Quick start
 
 ### Download executable files
 
 [download](https://github.com/long-woo/stc/releases) by system：
+
 - stc: Intel-based Mac
 - stc-m: M-series Mac
 - stc-linux：Linux
@@ -150,8 +151,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.1.0/mod.ts'
-import { start } from 'jsr:@loongwoo/stc@^2.1.0'
+// import { start } from 'https://deno.land/x/stc@2.2.0/mod.ts'
+import { start } from 'jsr:@loongwoo/stc@^2.2.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {

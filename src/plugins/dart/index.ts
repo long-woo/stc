@@ -57,7 +57,7 @@ export const DartPlugin: IPlugin = {
 
     return {
       definition: {
-        filename: `${typeFileName}.${DartPlugin.lang}`,
+        filename: `${typeFileName}.${this.lang}`,
         content: defContent,
       },
       action: actionData,
@@ -65,10 +65,13 @@ export const DartPlugin: IPlugin = {
   },
   onEnd() {
     createFile(
-      `${pluginOptions.outDir}/shared/api_client_base.dart`,
+      `${pluginOptions.outDir}/shared/api_client_base.${this.lang}`,
       shared.api_client_base,
     );
 
-    createFile(`${pluginOptions.outDir}/shared/dio/index.dart`, shared.dio);
+    createFile(
+      `${pluginOptions.outDir}/shared/dio/index.${this.lang}`,
+      shared.dio,
+    );
   },
 };

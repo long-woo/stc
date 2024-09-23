@@ -62,9 +62,6 @@ export const start = async (options: ISwaggerOptions): Promise<void> => {
   // 创建上下文
   const context = createContext({ options });
 
-  // 清空控制台信息
-  Logs.clear();
-
   // 初始化插件管理器
   initPluginManager(context);
 

@@ -6,7 +6,7 @@ import type {
 } from "axios";
 import axios from "axios";
 
-import type { ApiClientConfig, IDefaultObject } from "../apiClientBase.ts";
+import type { ApiClientConfig, IDefaultObject } from "../apiClientBase";
 
 type RequestConfig = AxiosRequestConfig<Record<string, unknown>>;
 
@@ -97,7 +97,7 @@ const responseInterceptor = () => {
  */
 export const createAxios = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,
-) => {
+): void => {
   axiosInstance = axios.create({
     baseURL: config.baseURL,
     timeout: config.timeout ?? 5000,

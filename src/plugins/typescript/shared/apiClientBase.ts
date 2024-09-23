@@ -40,7 +40,7 @@ export interface ApiClientConfig {
  * @param {IDefaultObject} [path] - An optional object containing key-value pairs to replace in the URL.
  * @return {string} The new URL with placeholders replaced by values from the path object.
  */
-export const generateURL = (url: string, path?: IDefaultObject) => {
+export const generateURL = (url: string, path?: IDefaultObject): string => {
   const newURL = url.replace(
     /[\\{|:](\w+)[\\}]?/gi,
     (_key: string, _value: string): string => {
@@ -57,7 +57,7 @@ export const generateURL = (url: string, path?: IDefaultObject) => {
  * @param {IDefaultObject<string>} query - An object containing query parameters.
  * @return {string} The formatted query parameters joined by "&".
  */
-export const getRequestParams = (query: IDefaultObject<string>) =>
+export const getRequestParams = (query: IDefaultObject<string>): string =>
   Object.keys(query).reduce(
     (prev: Array<string>, current) => {
       prev.push(`${current}=${encodeURIComponent(query[current])}`);
