@@ -49,12 +49,12 @@ export const JavaScriptPlugin: IPlugin = {
     };
     const _actionMapData = new Map<string, string>();
 
-    if (_tsTransform?.definition) {
-      _definition.content = await esTransform(_tsTransform.definition.content);
+    if (_tsTransform?.definition && _tsTransform.definition.content) {
       const _typeDeclaration = generateDeclarationFile(
         _tsTransform.definition.content,
       );
 
+      _definition.content = await esTransform(_tsTransform.definition.content);
       actionDeclareData.set("_types", _typeDeclaration);
     }
 
