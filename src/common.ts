@@ -123,17 +123,6 @@ export const getRefType = (ref: string) =>
   );
 
 /**
- * 属性注释
- * @param commit - 注释
- */
-export const propCommit = (commit: string) =>
-  commit
-    ? `\t/**
-\t * ${commit}
-\t */\n\t`
-    : "\t";
-
-/**
  * 根据值获取对象的 key
  * @param obj - 对象
  * @param value - 值

@@ -128,7 +128,6 @@ App<IAppOption>({
 | ----------- | ----- | -------- | --------- | ------------------------------------------------------------------------------------------------------------ |
 | url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path.                                                      |
 | outDir      | o     | string   | ./stc_out | Output Directory.                                                                                            |
-| ~~platform~~| p     | string   | axios     | Platform, optional values: `axios`, `wechat`. **Will be deprecated soon, please use `client`.**              |
 | client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
 | lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |
 | tag         |       | number   |           | Specify the tag from the interface url. By default, the first tag is read for the file name.                 |

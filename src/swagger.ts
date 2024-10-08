@@ -305,12 +305,6 @@ export interface ISwaggerOptions {
    */
   readonly outDir: string;
   /**
-   * @deprecated 请使用 `client`
-   *
-   * 平台。默认：axios
-   */
-  readonly platform?: "axios" | "wechat" | "fetch";
-  /**
    * HTTP 请求的客户端。默认：axios
    */
   readonly client?: "axios" | "wechat" | "fetch";
