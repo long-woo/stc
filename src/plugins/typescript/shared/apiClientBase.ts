@@ -1,4 +1,4 @@
-export type IDefaultObject<T = unknown> = {
+export interface IDefaultObject<T = unknown> {
   [key: string]: T;
 };
 

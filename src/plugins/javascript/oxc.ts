@@ -1,4 +1,4 @@
-import oxc from "npm:oxc-transform@^0.30.1";
+import oxc from "npm:oxc-transform@^0.30.5";
 
 import Logs from "../../console.ts";
 
@@ -8,12 +8,14 @@ import Logs from "../../console.ts";
  * @param {string} sourceCode - The source code to generate the declaration file from.
  * @return {string} The generated declaration file content.
  */
-export const generateDeclarationFile = (sourceCode: string) => {
-  const filename = `temp_${+new Date()}.ts`;
-
-  const { errors, code } = oxc.isolatedDeclaration(filename, sourceCode, {
-    sourcemap: false,
-  });
+export const generateDeclarationFile = (sourceCode: string): string => {
+  const { errors, code } = oxc.isolatedDeclaration(
+    `temp_${+new Date()}.ts`,
+    sourceCode,
+    {
+      sourcemap: false,
+    },
+  );
 
   if (errors.length > 0) {
     Logs.error(errors.join("\n"));
@@ -21,4 +23,37 @@ export const generateDeclarationFile = (sourceCode: string) => {
   }
 
   return code;
+};
+
+/**
+ * Transforms the given source code into TypeScript, returning an object with the transformed code and declaration.
+ *
+ * @param {string} source - The source code to transform.
+ * @return {{ code: string, declaration: string }} An object with the transformed code and declaration.
+ */
+export const oxcTransform = (
+  source: string,
+): { code: string; declaration?: string } => {
+  const { code, declaration, errors } = oxc.transform(
+    `temp_${+new Date()}.ts`,
+    source,
+    {
+      typescript: {
+        allowDeclareFields: false,
+        declaration: {
+          sourcemap: false,
+        },
+      },
+    },
+  );
+
+  if (errors.length > 0) {
+    Logs.error(errors.join("\n"));
+    return { code: "", declaration: "" };
+  }
+
+  return {
+    code,
+    declaration,
+  };
 };

@@ -1,5 +1,3 @@
-import * as esbuild from "npm:esbuild@^0.23.1";
-
 import type { ISwaggerOptions } from "../../swagger.ts";
 import type {
   IPlugin,
@@ -10,29 +8,12 @@ import { createFile } from "../../common.ts";
 import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
 import { renderEtaString } from "../common.ts";
-import { generateDeclarationFile } from "./oxc.ts";
+import { generateDeclarationFile, oxcTransform } from "./oxc.ts";
 // TODO: Deno compile 不支持 storage
 // import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
 const actionDeclareData = new Map<string, string>();
-
-/**
- * Transforms the given code using esbuild.
- *
- * @param {string} code - The code to transform.
- * @return {Promise<string>} The transformed code.
- */
-const esTransform = async (code: string) => {
-  const result = await esbuild.transform(code, {
-    loader: "ts",
-    target: "esnext",
-    legalComments: "inline",
-    format: "esm",
-  });
-
-  return result.code;
-};
 
 export const JavaScriptPlugin: IPlugin = {
   name: "stc:JavaScriptPlugin",
@@ -54,17 +35,15 @@ export const JavaScriptPlugin: IPlugin = {
         _tsTransform.definition.content,
       );
 
-      _definition.content = await esTransform(_tsTransform.definition.content);
       actionDeclareData.set("_types", _typeDeclaration);
     }
 
     if (_tsTransform?.action) {
       for (const [key, content] of _tsTransform.action) {
-        const _tsCodeDeclaration = generateDeclarationFile(content);
-        const _jsCode = await esTransform(content);
+        const { code, declaration } = oxcTransform(content);
 
-        actionDeclareData.set(key, _tsCodeDeclaration);
-        _actionMapData.set(key.replace(/\.ts/, `.${this.lang}`), _jsCode);
+        actionDeclareData.set(key, declaration ?? "");
+        _actionMapData.set(key.replace(/\.ts/, `.${this.lang}`), code);
       }
     }
 
@@ -73,29 +52,29 @@ export const JavaScriptPlugin: IPlugin = {
       action: _actionMapData,
     };
   },
-  async onEnd() {
+  onEnd() {
     // 创建运行时需要的文件
-    const _baseFileContent = await esTransform(shared.apiClientBase);
+    const _baseFile = oxcTransform(shared.apiClientBase);
     const _parserFetchRuntime = renderEtaString(
       shared.fetchRuntime,
       pluginOptions as unknown as Record<string, unknown>,
     );
-    const _fetchRuntimeFileContent = await esTransform(_parserFetchRuntime);
-    const _httpClientContent = await esTransform(shared[pluginOptions.client!]);
+    const _fetchRuntimeFile = oxcTransform(_parserFetchRuntime);
+    const _httpClient = oxcTransform(shared[pluginOptions.client!]);
 
     createFile(
       `${pluginOptions.outDir}/shared/${pluginOptions.client}/index.${this.lang}`,
-      _httpClientContent,
+      _httpClient.code,
     );
 
     createFile(
       `${pluginOptions.outDir}/shared/apiClientBase.${this.lang}`,
-      _baseFileContent,
+      _baseFile.code,
     );
 
     createFile(
       `${pluginOptions.outDir}/shared/fetchRuntime.${this.lang}`,
-      _fetchRuntimeFileContent,
+      _fetchRuntimeFile.code,
     );
 
     // 创建接口声明文件
@@ -107,15 +86,15 @@ export const JavaScriptPlugin: IPlugin = {
     });
     createFile(
       `${pluginOptions.outDir}/shared/apiClientBase.d.ts`,
-      generateDeclarationFile(shared.apiClientBase),
+      _baseFile.declaration ?? "",
     );
     createFile(
       `${pluginOptions.outDir}/shared/fetchRuntime.d.ts`,
-      generateDeclarationFile(_parserFetchRuntime),
+      _fetchRuntimeFile.declaration ?? "",
     );
     createFile(
       `${pluginOptions.outDir}/shared/${pluginOptions.client}/index.d.ts`,
-      generateDeclarationFile(shared[pluginOptions.client!]),
+      _httpClient.declaration ?? "",
     );
   },
 };
