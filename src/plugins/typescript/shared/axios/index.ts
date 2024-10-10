@@ -114,17 +114,17 @@ export const createAxios = (
 };
 
 /**
- * Sends a request using the provided WebClientConfig instance. If formData is included in the instance parameters, it is processed and sent as FormData.
+ * Makes a request using the provided configuration.
  *
- * @param {ApiClientConfig} instance - the configuration object for the request
- * @return {Promise<T>} a Promise that resolves with the response data
+ * @param {ApiClientConfig} config - The configuration object for the request.
+ * @return {Promise<T>} A promise that resolves with the response data.
  */
 export const request = <T>(
-  instance: ApiClientConfig,
+  config: ApiClientConfig,
 ): Promise<T> => {
-  const _formData: IDefaultObject = instance.params?.formData as IDefaultObject;
+  const _formData: IDefaultObject = config.params?.formData as IDefaultObject;
 
-  let _data: IDefaultObject | FormData | unknown = instance.params?.body;
+  let _data: IDefaultObject | FormData | unknown = config.params?.body;
 
   // 处理 FormData 数据
   if (_formData) {
@@ -138,12 +138,12 @@ export const request = <T>(
   }
 
   return axiosInstance.request<T, T>({
-    url: instance.url,
-    method: instance.method,
+    url: config.url,
+    method: config.method,
     data: _data,
-    params: instance.params?.query,
-    headers: instance.params?.header,
-    timeout: instance.config?.timeout,
-    signal: instance.config?.signal,
+    params: config.params?.query,
+    headers: config.params?.header,
+    timeout: config.config?.timeout,
+    signal: config.config?.signal,
   });
 };
