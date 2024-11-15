@@ -83,7 +83,15 @@ const getVirtualProperties = (
   defMapping: IDefinitionNameMapping,
   defData: Map<string, IDefinitionVirtualProperty[]>,
 ): IDefinitionVirtualProperty[] => {
-  if (!defItem.type.includes("object")) {
+  // "ConnectionStatus": {
+  //       "enum": [
+  //         0,
+  //         1
+  //       ],
+  //       "type": "integer",
+  //       "format": "int32"
+  //     },
+  if (!defItem.type.includes("object") && !defItem.enum) {
     Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
     return [];
   }

@@ -124,6 +124,7 @@ export interface ISwaggerComponents {
 
 export interface ISwaggerResultDefinition {
   type: string;
+  enum?: (number | string)[];
   required?: string[];
   properties: IDefaultObject<ISwaggerDefinitionProperties>;
 }
