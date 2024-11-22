@@ -15,7 +15,12 @@ interface IPluginEvent {
    * 类型定义事件
    * @param data - 类型定义
    */
-  onDefinition?: (data: Map<string, IDefinitionVirtualProperty[]>) => void;
+  onDefinition?: (
+    data: Map<
+      string,
+      IDefinitionVirtualProperty | IDefinitionVirtualProperty[]
+    >,
+  ) => void;
   /**
    * 接口数据事件
    * @param data - 接口数据
@@ -27,7 +32,7 @@ interface IPluginEvent {
    * @param action - 接口数据
    */
   onTransform: (
-    def: Map<string, IDefinitionVirtualProperty[]>,
+    def: Map<string, IDefinitionVirtualProperty | IDefinitionVirtualProperty[]>,
     action: Map<string, IPathVirtualProperty>,
   ) => Promise<IPluginTransform> | IPluginTransform;
   /**
