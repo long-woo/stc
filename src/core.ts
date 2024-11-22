@@ -96,9 +96,9 @@ const getVirtualProperties = (
     return [];
   }
 
-  const props = defItem.properties;
+  const props = defItem.properties ?? {};
   const mappings = defMapping.mappings ?? {};
-
+  console.log(props, defItem);
   const vProps = Object.keys(props).reduce(
     (prev: IDefinitionVirtualProperty[], current) => {
       const prop = props[current];

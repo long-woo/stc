@@ -1,0 +1,82 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Api",
+    "version": "1.0"
+  },
+  "paths": {
+  },
+  "components": {
+    "schemas": {
+      "ConnectionInfoModel": {
+        "required": [
+          "connectionType"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "minLength": 4,
+            "type": "string",
+            "nullable": true
+          },
+          "connectionType": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 300,
+            "type": "string",
+            "nullable": true
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ConnectionStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConnectionStatus": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
+}
