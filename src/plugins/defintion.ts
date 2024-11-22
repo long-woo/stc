@@ -10,7 +10,7 @@ import { convertValue } from "../common.ts";
  * @param data - 参数
  */
 export const parserDefinition = (
-  data: Map<string, IDefinitionVirtualProperty[]>,
+  data: Map<string, IDefinitionVirtualProperty | IDefinitionVirtualProperty[]>,
   options: IPluginOptions,
 ) => {
   const _definitions: string[] = [];
