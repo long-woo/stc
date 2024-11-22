@@ -70,7 +70,7 @@ export const createFile = async (
  *
  * https://github.com/long-woo/stc
  * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
- */\n`
+ */\n\n`
           : ""
       }${content}`,
     ),

@@ -1,13 +1,12 @@
-// https://petstore3.swagger.io/api/v3/openapi.json
 import { assertEquals } from "@std/assert";
 
-Deno.test("v3", async () => {
+Deno.test("本地文件", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
       "-A",
       "src/main.ts",
-      "--url=https://petstore3.swagger.io/api/v3/openapi.json",
+      "--url=test/demo1.json",
       "--outDir=out",
     ],
   });

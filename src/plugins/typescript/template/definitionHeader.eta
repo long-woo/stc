@@ -1,1 +1,3 @@
+// #region <%= it.defName %>
+
 export interface <%= it.defName %> {

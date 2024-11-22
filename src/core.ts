@@ -81,14 +81,17 @@ const getDefinitionNameMapping = (
 const getVirtualProperties = (
   defItem: ISwaggerResultDefinition,
   defMapping: IDefinitionNameMapping,
-  defData: Map<string, IDefinitionVirtualProperty[]>,
+  defData: Map<
+    string,
+    IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
+  >,
 ): IDefinitionVirtualProperty[] => {
   if (!defItem.type.includes("object")) {
     Logs.error(getT("$t(def.parserTypeError)", { type: defItem.type }));
     return [];
   }
 
-  const props = defItem.properties;
+  const props = defItem.properties ?? {};
   const mappings = defMapping.mappings ?? {};
 
   const vProps = Object.keys(props).reduce(
@@ -163,8 +166,11 @@ const getVirtualProperties = (
  */
 export const getDefinition = (
   definitions: IDefaultObject<ISwaggerResultDefinition>,
-): Map<string, IDefinitionVirtualProperty[]> => {
-  const defMap = new Map<string, IDefinitionVirtualProperty[]>();
+): Map<string, IDefinitionVirtualProperty[] | IDefinitionVirtualProperty> => {
+  const defMap = new Map<
+    string,
+    IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
+  >();
 
   Object.keys(definitions).forEach((key) => {
     const def = getDefinitionNameMapping(key, true);
@@ -177,7 +183,18 @@ export const getDefinition = (
     });
     if (defKeys.includes(name)) return;
 
-    const props = getVirtualProperties(definitions[key], def, defMap);
+    const defItem = definitions[key];
+    let props: IDefinitionVirtualProperty | IDefinitionVirtualProperty[] = [];
+
+    // 处理枚举
+    if (defItem.enum) {
+      props = {
+        type: defItem.type,
+        enumOption: defItem.enum,
+      } as IDefinitionVirtualProperty;
+    } else {
+      props = getVirtualProperties(defItem, def, defMap);
+    }
 
     defMap.set(name, props);
   });

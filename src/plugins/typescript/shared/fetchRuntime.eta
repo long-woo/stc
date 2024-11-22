@@ -7,12 +7,12 @@ import type {
 import { generateURL } from "./apiClientBase";
 import { <% if (it.client === 'axios') { %> createAxios, <% } %>request } from "./<%= it.client %>";
 
-let apiClientInstance: ApiClientConfig = {};
+let apiClientConfig: ApiClientConfig = {};
 
 export const createApiClient = (
   config: Omit<ApiClientConfig, "url" | "signal" | "config">,
 ): void => {
-  apiClientInstance = config;
+  apiClientConfig = config;
 <% if (it.client === "axios") { %>
   createAxios(config);
 <% } %>
@@ -26,12 +26,12 @@ export const fetchRuntime = <T>(
 ): Promise<T> => {
   const _url = generateURL(url, req?.path as unknown as IDefaultObject);
 
-  apiClientInstance.url = _url;
-  apiClientInstance.method = method;
-  apiClientInstance.params = req;
-  apiClientInstance.config = config;
+  apiClientConfig.url = _url;
+  apiClientConfig.method = method;
+  apiClientConfig.params = req;
+  apiClientConfig.config = config;
 
-  return request<T>(apiClientInstance);
+  return request<T>(apiClientConfig);
 };
 
 /**
