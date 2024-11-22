@@ -189,7 +189,7 @@ export interface IDefinitionVirtualProperty {
   /**
    * 枚举选项
    */
-  enumOption?: string[];
+  enumOption?: (string | number)[];
   /**
    * 自定义类型
    */

@@ -14,10 +14,25 @@ export const parserDefinition = (
   options: IPluginOptions,
 ) => {
   const _definitions: string[] = [];
-
   Logs.info(`${getT("$t(plugin.parserDef)")}...`);
+
   data.forEach((props, key) => {
-    const _definition: string[] = [`// #region ${key}`];
+    const _definition: string[] = [];
+
+    // 枚举处理
+    if (!Array.isArray(props)) {
+      const _enumOption = (props as IDefinitionVirtualProperty).enumOption;
+
+      if (_enumOption?.length) {
+        const _enumData = renderEtaString(
+          options.template.enum,
+          { name: key, data: _enumOption, convertValue },
+        );
+
+        _definitions.push(_enumData);
+      }
+      return;
+    }
 
     props.forEach((prop, index) => {
       const _type = convertType(
@@ -40,7 +55,7 @@ export const parserDefinition = (
           options.template.enum,
           { name: _type, data: _enumOption, convertValue },
         );
-        _definition.splice(1, 0, `${_enumData}\n`);
+        _definition.unshift(`${_enumData}`);
       }
 
       // 定义头
@@ -62,12 +77,10 @@ export const parserDefinition = (
       // 定义尾
       if (index === props.length - 1) {
         _definition.push(
-          "",
           renderEtaString(options.template.definitionFooter, {
             defName: key,
             props,
           }),
-          "// #endregion\n",
         );
       }
     });

@@ -1,1 +1,4 @@
+// #region <%= it.name %>
+
 export type <%= it.name %> = '<%~ it.data.map(it.convertValue).join("' | '") %>';
+// #endregion

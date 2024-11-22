@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 
-Deno.test("测试-输出版本信息", async () => {
+Deno.test("version", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
@@ -15,7 +15,7 @@ Deno.test("测试-输出版本信息", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("测试-输出帮助信息", async () => {
+Deno.test("help", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
@@ -30,7 +30,7 @@ Deno.test("测试-输出帮助信息", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("测试 filter", async () => {
+Deno.test("filter", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
@@ -47,7 +47,7 @@ Deno.test("测试 filter", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("测试 con", async () => {
+Deno.test("conjunction", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
@@ -59,6 +59,5 @@ Deno.test("测试 con", async () => {
   });
   const { code } = await command.output();
 
-  // console.log(new TextDecoder().decode(stdout));
   assertEquals(0, code);
 });
