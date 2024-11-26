@@ -16,6 +16,8 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 
 ## Features
 
+> 🚧 Encapsulate the "shared" directory.
+
 - 🐹 Support for **Swagger 2/3(OpenApi)** and **Apifox**.
 - 💡 Support plug-in development.
 - 🐣 Built-in transformation languages:
