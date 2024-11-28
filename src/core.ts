@@ -1,4 +1,4 @@
-import micromatch from "npm:micromatch";
+import micromatch from "npm:micromatch@4.0.8";
 
 import Logs from "./console.ts";
 import type {
