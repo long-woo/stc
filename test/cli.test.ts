@@ -37,13 +37,13 @@ Deno.test("filter", async () => {
       "-A",
       "src/main.ts",
       "--url=https://petstore3.swagger.io/api/v3/openapi.json",
-      "--filter=/pet/*",
-      "-f=/user/*",
+      "--filter=/user*",
+      "-f=!/user/createWithList",
     ],
   });
-  const { code } = await command.output();
+  const { code, stdout } = await command.output();
 
-  // console.log(new TextDecoder().decode(stdout));
+  console.log(new TextDecoder().decode(stdout));
   assertEquals(0, code);
 });
 

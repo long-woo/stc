@@ -133,7 +133,7 @@ App<IAppOption>({
 | client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
 | lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |
 | tag         |       | number   |           | Specify the tag from the interface url. By default, the first tag is read for the file name.                 |
-| filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet/*"`, generate an interface for `/pet`, and support multiple `--filter` |
+| filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
 | conjunction | c     | string   | By        | The method's connector, the default value is `By`.                                                           |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |

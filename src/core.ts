@@ -1,3 +1,5 @@
+import micromatch from "npm:micromatch";
+
 import Logs from "./console.ts";
 import type {
   IDefaultObject,
@@ -411,21 +413,6 @@ const getPathVirtualProperty = (
   return value;
 };
 
-const parserFilter = (filters: string[]) => {
-  if (!filters.length) return undefined;
-
-  const regStr = filters.reduce((prev, current) => {
-    const _str = current.replace(/\//g, "\\/").replace(/\*/g, ".*").replace(
-      /\?/g,
-      "\\?",
-    );
-
-    return `${prev ? `${prev}|` : ""}(${_str})`;
-  }, "");
-
-  return new RegExp(regStr);
-};
-
 /**
  * 获取接口地址对象
  * @param paths - 接口地址
@@ -439,18 +426,18 @@ export const getApiPath = (
 
   Object.keys(paths).forEach((url) => {
     // 过滤接口，符合过滤条件的接口会被生成
-    if (options?.filter?.length && !parserFilter(options.filter)?.test(url)) {
-      return;
-    }
+    if (
+      options?.filter?.length && !micromatch.all(url, options.filter, {
+        bash: true,
+      })
+    ) return;
 
     // 请求方式
     const methods = paths[url];
 
     Object.keys(methods).forEach((method) => {
       // url去除 `?` 之后的字符
-      if (url.includes("?")) {
-        url = url.slice(0, url.indexOf("?"));
-      }
+      if (url.includes("?")) url = url.slice(0, url.indexOf("?"));
 
       const currentMethod = methods[method];
       // 方法名
