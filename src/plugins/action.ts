@@ -357,7 +357,8 @@ const getActionFiles = (data: Map<string, IPathVirtualProperty>) => {
       return;
     }
 
-    const _apiData = generateApi(item, key);
+    const actionName = key.slice(key.indexOf("@") + 1);
+    const _apiData = generateApi(item, actionName);
     const _actionFile = _actionFileMap.get(_tag);
 
     if (_actionFile) {

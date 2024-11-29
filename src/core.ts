@@ -440,9 +440,11 @@ export const getApiPath = (
       if (url.includes("?")) url = url.slice(0, url.indexOf("?"));
 
       const currentMethod = methods[method];
+
       // 方法名
       let name = currentMethod.operationId ??
         getMethodName(url, options!.conjunction!);
+
       if (!name) {
         Logs.error(getT("$t(path.notName)", { url, method }));
         return;
@@ -466,6 +468,7 @@ export const getApiPath = (
         options?.tag,
       );
 
+      name = `${value.tag}@${name}`;
       pathMap.set(name, value);
     });
   });
