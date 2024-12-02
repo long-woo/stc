@@ -13,7 +13,8 @@
     "parserTypeError": "The {{type}} type could not be resolved."
   },
   "path": {
-    "notName": "The {{method}} of {{url}} cannot get the method name, so it is ignored."
+    "notName": "{{url}} {{method}} cannot get the method name, so it will be ignored.",
+    "duplicate": "{{url}} {{method}} has the same method name {{name}}, you can set the `--actionIndex` option."
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",
@@ -39,7 +40,8 @@
     "option_filter": "Filter interfaces, and the interfaces that meet the filter conditions will be generated.",
     "option_tag": "Specify tags from the interface url for filenames, the first one of tags is read by default.",
     "option_version": "View version information.",
-    "option_conjunction": "Conjunction of method name. [default: \"By\"]."
+    "option_conjunction": "Conjunction of method name. [default: \"By\"].",
+    "option_actionIndex": "Method name index. [default: -1]."
   },
   "plugin": {
     "name": "Load plugin {{name}}",

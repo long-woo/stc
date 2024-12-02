@@ -329,6 +329,10 @@ export interface ISwaggerOptions {
    * 方法名的连接词，默认值为 By
    */
   readonly conjunction?: string;
+  /**
+   * 方法名的下标，默认值为 -1
+   */
+  readonly actionIndex?: number;
 }
 
 export interface IDefinitionNameMapping {

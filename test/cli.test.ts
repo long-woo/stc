@@ -61,3 +61,19 @@ Deno.test("conjunction", async () => {
 
   assertEquals(0, code);
 });
+
+Deno.test("actionIndex", async () => {
+  const command = new Deno.Command("deno", {
+    args: [
+      "run",
+      "-A",
+      "src/main.ts",
+      "--url=./test/action-index.json",
+      "--actionIndex=-2",
+    ],
+  });
+
+  const { code } = await command.output();
+
+  assertEquals(0, code);
+});
