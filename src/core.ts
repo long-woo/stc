@@ -210,16 +210,21 @@ export const getDefinition = (
  * 从 URL 获取方法名称
  * @param url - 接口地址
  * @param conjunction  - 连接字符
+ * @param index - 下标, 默认 -1
  * @returns
  */
-const getMethodName = (url: string, conjunction: string) => {
+const getMethodName = (
+  url: string,
+  conjunction: string,
+  index: number = -1,
+) => {
   const _url = url.split("/");
   // 获取URL路径Query方法名称（取第一个Params）
   let _query = url.split("?")?.[1]?.split("&")
     .shift()?.replace(/[,=]/g, "_");
   // 添加_分割标记
   _query = _query ? `_${_query}` : "";
-  let _name = _url.pop()?.split("?")[0] as string;
+  let _name = _url.slice(index).join("_")?.split("?")[0] as string;
 
   if (!_name) return _name;
 
@@ -443,7 +448,7 @@ export const getApiPath = (
 
       // 方法名
       let name = currentMethod.operationId ??
-        getMethodName(url, options!.conjunction!);
+        getMethodName(url, options!.conjunction!, options?.actionIndex);
 
       if (!name) {
         Logs.error(getT("$t(path.notName)", { url, method }));
@@ -469,6 +474,18 @@ export const getApiPath = (
       );
 
       name = `${value.tag}@${name}`;
+
+      if (pathMap.has(name)) {
+        Logs.error(
+          getT("$t(path.duplicate)", {
+            url,
+            method,
+            name: name.slice(name.indexOf("@") + 1),
+          }),
+        );
+
+        return;
+      }
       pathMap.set(name, value);
     });
   });

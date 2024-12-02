@@ -160,6 +160,7 @@ ${getT("$t(cli.option)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
+  --actionIndex      ${getT("$t(cli.option_actionIndex)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -184,6 +185,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
       "tag",
       "filter",
       "conjunction",
+      "actionIndex",
     ],
     alias: {
       h: "help",
@@ -240,5 +242,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
     tag: args.tag,
     filter: args.filter,
     conjunction: args.conjunction,
+    actionIndex: args.actionIndex,
   };
 };
