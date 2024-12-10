@@ -1,7 +1,7 @@
 // https://petstore3.swagger.io/api/v3/openapi.json
 import { assertEquals } from "@std/assert";
 
-Deno.test("测试 解决动态路径生成方法被覆盖的问题", async () => {
+Deno.test("解决动态路径生成方法被覆盖的问题", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
@@ -17,7 +17,7 @@ Deno.test("测试 解决动态路径生成方法被覆盖的问题", async () =>
   assertEquals(0, code);
 });
 
-Deno.test("测试 支持URL路径Query参数解析", async () => {
+Deno.test("支持URL路径Query参数解析", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
