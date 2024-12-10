@@ -1,4 +1,4 @@
-import oxc from "npm:oxc-transform@^0.30.5";
+import oxc from "npm:oxc-transform@^0.39";
 
 import Logs from "../../console.ts";
 

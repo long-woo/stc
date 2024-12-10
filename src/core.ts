@@ -218,20 +218,20 @@ const getMethodName = (
   conjunction: string,
   index: number = -1,
 ) => {
-  const _url = url.split("/");
-  // 获取URL路径Query方法名称（取第一个Params）
-  let _query = url.split("?")?.[1]?.split("&")
-    .shift()?.replace(/[,=]/g, "_");
-  // 添加_分割标记
-  _query = _query ? `_${_query}` : "";
-  let _name = _url.slice(index).join("_")?.split("?")[0] as string;
+  let _url = url;
+  if (url.indexOf("?") > -1) {
+    _url = url.substring(0, url.indexOf("?"));
+  }
+
+  const _urls = _url.split("/");
+  let _name = _urls.slice(index).join("_");
 
   if (!_name) return _name;
 
-  const regExp = /^{(\w+)}$/;
+  const regExp = /[\\{|:](\w+)[\\}]/;
   if (regExp.test(_name)) {
     // 动态路径添加连接字符
-    _name = `${_url.pop()}_${conjunction}_${_name.match(regExp)![1]}`;
+    _name = `${conjunction}_${_name.match(regExp)![1]}`;
   }
 
   // 方法名小驼峰
@@ -386,7 +386,8 @@ const getPathVirtualProperty = (
 
   // 响应
   const _resSchema = pathMethod.responses[200]?.schema ??
-    pathMethod.responses[200]?.content?.["application/json"]?.schema;
+    pathMethod.responses[200]?.content?.["application/json"]?.schema ??
+    pathMethod.responses[200]?.content?.["text/plain"]?.schema;
 
   const _properties = getProperties(
     _resSchema?.properties ?? _resSchema?.items?.properties ?? {},
@@ -473,7 +474,7 @@ export const getApiPath = (
         options?.tag,
       );
 
-      name = `${value.tag}@${name}`;
+      name = `${url}@${name}`;
 
       if (pathMap.has(name)) {
         Logs.error(
@@ -486,6 +487,7 @@ export const getApiPath = (
 
         return;
       }
+
       pathMap.set(name, value);
     });
   });
