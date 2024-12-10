@@ -56,6 +56,7 @@ export interface ISwaggerContentSchema {
 export interface ISwaggerContent {
   "application/json"?: ISwaggerContentSchema;
   "application/octet-stream"?: ISwaggerContentSchema;
+  "text/plain": ISwaggerContentSchema;
 }
 
 interface ISwaggerMethodResponseStatus {
