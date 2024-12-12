@@ -13,8 +13,8 @@
     "parserTypeError": "The {{type}} type could not be resolved."
   },
   "path": {
-    "notName": "{{url}} {{method}} cannot get the method name, so it will be ignored.",
-    "duplicate": "{{url}} {{method}} has the same method name {{name}}, you can set the `--actionIndex` option."
+    "notName": "{{url}} [{{method}}] cannot get the method name, so it will be ignored.",
+    "duplicate": "{{url}} [{{method}}] has the same method name {{name}}, you can set the `--actionIndex` option."
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",

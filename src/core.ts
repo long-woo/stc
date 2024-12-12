@@ -228,10 +228,12 @@ const getMethodName = (
 
   if (!_name) return _name;
 
-  const regExp = /[\\{|:](\w+)[\\}]/;
-  if (regExp.test(_name)) {
+  const regExp = /[\\{|:](\w+)[\\}]/g;
+  if (regExp.test(_url)) {
+    // 取最后一个动态路径
+    const _lastName = _url.match(regExp)?.pop()?.replace(/[\\{|:\\}]/g, "");
     // 动态路径添加连接字符
-    _name = `${conjunction}_${_name.match(regExp)![1]}`;
+    _name = `${conjunction}_${_lastName}`;
   }
 
   // 方法名小驼峰
@@ -474,7 +476,7 @@ export const getApiPath = (
         options?.tag,
       );
 
-      name = `${url}@${name}`;
+      name = `${value.tag}@${name}`;
 
       if (pathMap.has(name)) {
         Logs.error(
