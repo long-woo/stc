@@ -228,10 +228,31 @@ const getMethodName = (
 
   if (!_name) return _name;
 
-  const regExp = /[\\{|:](\w+)[\\}]/;
-  if (regExp.test(_name)) {
+  const regExp = /[\\{|:](\w+)[\\}]/g;
+  const regReplace = /[\\{|:\\}]/g
+  if (regExp.test(_url)) {
+    // 取最后一个动态路径
+    const _lastName = _url.match(regExp)?.pop()?.replace(regReplace, "");
+
+    // 若 _name 中存在动态路径，判断是否与 _lastName 重复
+    if (regExp.test(_name)) {
+      const _namePath = _name.match(regExp)?.reduce<string[]>((prev, current) => {
+        const _n = current.replace(regReplace, "")
+
+        // 移除与 _lastName 重复的
+        if (_n !== _lastName) {
+          prev.push(_n)
+        }
+        return prev
+      }, []).join('_') ?? ''
+
+      if (_namePath) {
+        _name = `${conjunction}_${_namePath}`
+      }
+    }
+
     // 动态路径添加连接字符
-    _name = `${conjunction}_${_name.match(regExp)![1]}`;
+    _name = `${_name}_${conjunction}_${_lastName}`;
   }
 
   // 方法名小驼峰
@@ -474,7 +495,7 @@ export const getApiPath = (
         options?.tag,
       );
 
-      name = `${url}@${name}`;
+      name = `${value.tag}@${name}`;
 
       if (pathMap.has(name)) {
         Logs.error(

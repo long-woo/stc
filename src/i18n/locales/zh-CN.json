@@ -13,8 +13,8 @@
     "parserTypeError": "{{type}} 类型无法解析。"
   },
   "path": {
-    "notName": "{{url}} {{method}} 无法获取方法名称，故忽略。",
-    "duplicate": "{{url}} {{method}} 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项。"
+    "notName": "{{url}} 【{{method}}】 无法获取方法名称，故忽略。",
+    "duplicate": "{{url}} 【{{method}}】 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项。"
   },
   "app": {
     "apiJsonFileError": "API 文件解析失败。原因：{{error}}",

@@ -10,6 +10,8 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 [![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
 ![NPM Version](https://img.shields.io/npm/v/%40loongwoo%2Fstc)
 
+> New scope enabled since 2.8.0 **@lonu**
+
 <div align="center">
   <img src="resources/20240422-151653.gif" alt="stc" />
 </div>
@@ -153,8 +155,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.7.1/mod.ts'
-import { start } from 'jsr:@loongwoo/stc@^2.7.1'
+// import { start } from 'https://deno.land/x/stc@2.7.2/mod.ts'
+import { start } from 'jsr:@loongwoo/stc@^2.7.2'
 
 // Defining plugins
 const myPlugin: IPlugin = {
