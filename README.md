@@ -155,8 +155,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.7.2/mod.ts'
-import { start } from 'jsr:@loongwoo/stc@^2.7.2'
+// import { start } from 'https://deno.land/x/stc@2.7.3/mod.ts'
+import { start } from 'jsr:@loongwoo/stc@^2.7.3'
 
 // Defining plugins
 const myPlugin: IPlugin = {

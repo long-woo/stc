@@ -1,4 +1,11 @@
+<% 
+  const option = it.data.map(item => { 
+    const val = it.convertValue(item)
+
+    return typeof val === 'number' ? val : `'${val}'`
+  })
+%>
 // #region <%= it.name %>
 
-export type <%= it.name %> = '<%~ it.data.map(it.convertValue).join("' | '") %>';
+export type <%= it.name %> = <%~ option.join(" | ") %>;
 // #endregion
