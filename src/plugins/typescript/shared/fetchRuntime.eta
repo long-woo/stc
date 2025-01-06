@@ -22,7 +22,7 @@ export const fetchRuntime = <T>(
   url: string,
   method: ApiClientMethod,
   req?: ApiClientParams,
-  config?: ApiClientConfig,
+  config?: ApiClientConfig['config'],
 ): Promise<T> => {
   const _url = generateURL(url, req?.path as unknown as IDefaultObject);
 
@@ -33,25 +33,3 @@ export const fetchRuntime = <T>(
 
   return request<T>(apiClientConfig);
 };
-
-/**
- * 1.`webClient.create` is modified to `createApiClient`
- *
- * 2.`webClient.request` modified to `fetchRuntime`
- */
-export class ApiClient {
-  static create (config: Omit<ApiClientConfig, "url" | "signal" | "config">): void {
-    createApiClient(config);
-  }
-
-  static request<T>(
-    url: string,
-    method: ApiClientMethod,
-    req?: ApiClientParams,
-    config?: ApiClientConfig,
-  ): Promise<T> {
-    return fetchRuntime<T>(url, method, req, config);
-  }
-}
-
-export default ApiClient;

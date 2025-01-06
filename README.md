@@ -7,10 +7,8 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 ![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
-[![JSR](https://jsr.io/badges/@loongwoo/stc)](https://jsr.io/@loongwoo/stc)
-![NPM Version](https://img.shields.io/npm/v/%40loongwoo%2Fstc)
-
-> New scope enabled since 2.8.0 **@lonu**
+[![JSR](https://jsr.io/badges/@lonu/stc)](https://jsr.io/@lonu/stc)
+![NPM Version](https://img.shields.io/npm/v/%40lonu%2Fstc)
 
 <div align="center">
   <img src="resources/20240422-151653.gif" alt="stc" />
@@ -45,7 +43,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 1.Install the `@loogwoo/stc` npm package.
 
 ```sh
-pnpm add @loongwoo/stc -D
+pnpm add @lonu/stc -D
 ```
 
 2.Open the project's `package.json` file and add the following command to `scripts`:
@@ -143,7 +141,7 @@ App<IAppOption>({
 
 ## Plug-in development
 
-For convenience, STC can not only develop plugins in Deno, but also provides `@loongwoo/stc` npm library, which can develop plugins in Node environment.
+For convenience, STC can not only develop plugins in Deno, but also provides `@lonu/stc` npm library, which can develop plugins in Node environment.
 
 [examples](https://github.com/long-woo/stc/tree/master/examples)
 
@@ -156,7 +154,7 @@ Create a `myPlugin.ts` file:
 ```ts
 // 引用模块
 // import { start } from 'https://deno.land/x/stc@2.7.3/mod.ts'
-import { start } from 'jsr:@loongwoo/stc@^2.7.3'
+import { start } from 'jsr:@lonu/stc@^2.8.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {
@@ -199,10 +197,10 @@ start({
 
 1. Create a `myPlugin.ts` file.
 
-2. Add the `@loongwoo/stc` reference and use the `start` method:
+2. Add the `@lonu/stc` reference and use the `start` method:
 
 ```ts
-import { start } from '@loongwoo/stc'
+import { start } from '@lonu/stc'
 ```
 
 3. Implement the code that converts `definition` and `action` into the target language in the plugin's `onTransform` hook function.
