@@ -20,12 +20,13 @@
 
 <% }) %>
 <% } %>
+ * @param {ApiClientConfig['config']} [config] - ApiClientConfig['config']
  * @returns {Promise<<%~ it.responseType %>>} Promise<<%~ it.responseType %>>
  */
 <% /* API 方法 */ %>
 export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
 <%= param.name %><% if (!param.required) { %>?<% } %>: <%~ param.type %><% if (index < it.params.length - 1) { %>, <% } %>
-<% }) %>): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method.toUpperCase() %>'<% if (it.params.length) { %>, {
+<% }) %><% if (it.params.length) { %>, <% } %>config?: ApiClientConfig['config']): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method.toUpperCase() %>'<% if (it.params.length) { %>, {
 <% it.params.forEach((param, index) => { %>
   <%= param.category %><% if (param.category === param.name) { %>
 <% } else { %>: <% if (param.category === 'body') { %><%= param.name %><% } else { %>{
@@ -35,4 +36,4 @@ export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
 <% } %><% if (index < it.params.length - 1) { %>, <% } %>
 
 <% }) %>
-}<% } %>)
+}<% } %>, config)

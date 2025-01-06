@@ -13,24 +13,23 @@ export interface ApiClientParams {
 }
 
 export interface ApiClientConfig {
-  baseURL?: string;
-  url?: string;
-  method?: ApiClientMethod;
-  params?: ApiClientParams;
-  timeout?: number;
-  signal?: AbortSignal;
-  withCredentials?: boolean;
+  baseURL?: string
+  url?: string
+  method?: ApiClientMethod
+  params?: ApiClientParams
+  timeout?: number
+  signal?: AbortSignal
+  withCredentials?: boolean
   /**
    * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
    */
-  errorIgnore?: string[];
-  abortUrls?: string[];
-  config?: Pick<ApiClientConfig, "timeout" | "signal">;
+  errorIgnore?: string[]
+  config?: Pick<ApiClientConfig, 'baseURL' | 'timeout' | 'signal'>
   /**
    * 错误回调函数
    */
-  onError?: (message: string) => void;
-  onLogin?: () => void;
+  onError?: (message: string) => void
+  onLogin?: () => void
 }
 
 /**
