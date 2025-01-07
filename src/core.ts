@@ -249,6 +249,9 @@ const getMethodName = (
 
       if (_namePath) {
         _name = `${conjunction}_${_namePath}`;
+      } else {
+        // 移除动态路径名
+        _name = _name.replace(regExp, "");
       }
     }
 
