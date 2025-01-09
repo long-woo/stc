@@ -10,9 +10,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 [![JSR](https://jsr.io/badges/@lonu/stc)](https://jsr.io/@lonu/stc)
 ![NPM Version](https://img.shields.io/npm/v/%40lonu%2Fstc)
 
-<div align="center">
-  <img src="resources/20240422-151653.gif" alt="stc" />
-</div>
+<img src="resources/20240422-151653.gif" height="580px" alt="stc" />
 
 ## Features
 
@@ -241,3 +239,11 @@ start({
   plugins: [myPlugin]
 })
 ```
+
+## Who's Using This?
+
+<div align="center">
+  <img src="./resources/company/lyh.png" style="height: 50px;"  />
+  <br/>
+  <img src="./resources/company/gfk.png" style="height: 50px;" />
+</div>
