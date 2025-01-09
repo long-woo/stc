@@ -241,3 +241,9 @@ start({
   plugins: [myPlugin]
 })
 ```
+
+# <p align="center">Who's Using This?</p>
+
+<div align="center">
+<img src="./resources/company/lyh.png" height="50px" /> <img src="./resources/company/gfk.png" height="50px" style="margin-left: 10px;" />
+</div>
