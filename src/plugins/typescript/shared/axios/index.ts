@@ -1,7 +1,6 @@
 import type {
   AxiosHeaders,
   AxiosInstance,
-  AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
@@ -11,7 +10,7 @@ import type { ApiClientConfig, IDefaultObject } from "../apiClientBase";
 
 let axiosInstance: AxiosInstance;
 let errorIgnore: string[] = [];
-let onError: ((message: string) => void) | undefined;
+let onError: ((message: string | Record<string, unknown>) => void) | undefined;
 let onLogin: (() => void) | undefined;
 
 const requestInterceptor = () => {
