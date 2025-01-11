@@ -1,0 +1,5 @@
+import Foundation
+<% if (it.hasModels) { %>
+import Models
+<% } %>
+import APIClient

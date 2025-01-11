@@ -1,0 +1,7 @@
+/// <%= it.description %>
+public enum <%= it.name %> {
+    <% it.enums.forEach(function(item) { %>
+    /// <%= item.description %>
+    case <%= item.name %><% if (item.value) { %> = "<%= item.value %>"<% } %>
+    <% }) %>
+}
