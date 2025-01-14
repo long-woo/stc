@@ -4,9 +4,15 @@ import { getT } from "../i18n/index.ts";
 import { TypeScriptPlugin } from "./typescript/index.ts";
 import { JavaScriptPlugin } from "./javascript/index.ts";
 import { DartPlugin } from "./dart/index.ts";
+// import { SwiftPlugin } from "./swift/index.ts";
 
 export class PluginManager {
-  private plugins: IPlugin[] = [TypeScriptPlugin, JavaScriptPlugin, DartPlugin];
+  private plugins: IPlugin[] = [
+    TypeScriptPlugin,
+    JavaScriptPlugin,
+    DartPlugin,
+    // SwiftPlugin,
+  ];
 
   register(plugin: IPlugin | IPlugin[]) {
     this.plugins = [

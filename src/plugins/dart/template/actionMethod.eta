@@ -12,6 +12,9 @@
 <% } %>
 <% } %>
 
+<% if (it.deprecated) { %>
+@deprecated
+<% } %>
 <% /* API 方法 */ %>
 Future<<%~ it.responseType %>> <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
 <%~ param.type %><% if(!param.required) { %>?<% } %> <%= param.name %><% if (index < it.params.length - 1) { %>, <% } %>

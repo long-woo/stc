@@ -1,7 +1,7 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
 import type { ISwaggerOptions } from "../../swagger.ts";
 import { createFile } from "../../common.ts";
-import { parserDefinition } from "../defintion.ts";
+import { parserDefinition } from "../definition.ts";
 import { parserActions } from "../action.ts";
 import { renderEtaString, setupTemplate } from "../common.ts";
 import shared from "./shared/index.ts";

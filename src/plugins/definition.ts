@@ -1,5 +1,5 @@
 import type { IDefinitionVirtualProperty } from "../swagger.ts";
-import type { IPluginOptions } from "../plugins/typeDeclaration.ts";
+import type { IPluginOptions } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
 import { convertType, renderEtaString } from "./common.ts";
 import { getT } from "../i18n/index.ts";

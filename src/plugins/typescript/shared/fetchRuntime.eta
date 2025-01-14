@@ -5,7 +5,7 @@ import type {
   IDefaultObject
 } from "./apiClientBase";
 import { generateURL } from "./apiClientBase";
-import { <% if (it.client === 'axios') { %> createAxios, <% } %>request } from "./<%= it.client %>";
+import { <% if (it.client === 'axios') { %>createAxios, <% } %>request } from "./<%= it.client %>";
 
 let apiClientConfig: ApiClientConfig = {};
 

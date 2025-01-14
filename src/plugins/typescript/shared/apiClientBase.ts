@@ -28,7 +28,7 @@ export interface ApiClientConfig {
   /**
    * 错误回调函数
    */
-  onError?: (message: string) => void
+  onError?: (message: string | Record<string, unknown>) => void
   onLogin?: () => void
 }
 
