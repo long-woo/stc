@@ -108,6 +108,7 @@ export interface ISwaggerResultPath {
    */
   requestBody: ISwaggerMethodBody;
   responses: ISwaggerMethodResponses;
+  deprecated: boolean;
 }
 
 interface ISwaggerDefinitionProperties {
@@ -261,6 +262,10 @@ export interface IPathVirtualProperty {
    * 标签，用于文件名
    */
   tag: string;
+  /**
+   * 废弃
+   */
+  deprecated: boolean;
 }
 
 export interface IPathVirtualPropertyResponse {

@@ -1,5 +1,9 @@
 <% /* API 方法注释 */ %>
 /**
+<% if (it.deprecated) { %>
+ * @deprecated
+ *
+<% } %>
 <% if (it.summary) { %>
  * <%~ it.summary %>
 <% } %>

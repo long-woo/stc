@@ -326,6 +326,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     action: action,
     url: data.url,
     method: data.method,
+    deprecated: data.deprecated,
   });
 
   return {

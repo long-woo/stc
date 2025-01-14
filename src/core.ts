@@ -439,6 +439,7 @@ const getPathVirtualProperty = (
     summary: pathMethod.summary,
     description: pathMethod.description,
     tag: _tag,
+    deprecated: pathMethod.deprecated ?? false,
   };
 
   return value;
