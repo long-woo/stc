@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 
-Deno.test("Swift Plugin - Code Generation", async (t) => {
+Deno.test("Swift Plugin - Code Generation", async () => {
   const command = new Deno.Command("deno", {
     args: [
       "run",
