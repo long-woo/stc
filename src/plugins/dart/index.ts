@@ -64,6 +64,8 @@ export const DartPlugin: IPlugin = {
     };
   },
   onEnd() {
+    if (!pluginOptions.shared) return;
+
     createFile(
       `${pluginOptions.outDir}/shared/api_client_base.${this.lang}`,
       shared.api_client_base,

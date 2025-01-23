@@ -134,6 +134,7 @@ App<IAppOption>({
 | filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
 | conjunction | c     | string   | By        | The method's connector, the default value is `By`.                                                           |
 | actionIndex |      | number   | -1        | The method name index, the default value is `-1`.                                                            |
+| shared      |      | boolean  | true      | Whether to generate the shared directory. [default: true].                                                   |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
 
@@ -152,7 +153,7 @@ Create a `myPlugin.ts` file:
 ```ts
 // 引用模块
 // import { start } from 'https://deno.land/x/stc@2.7.1/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.9.0'
+import { start } from 'jsr:@lonu/stc@^2.10.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {

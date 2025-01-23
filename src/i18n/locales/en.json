@@ -41,7 +41,8 @@
     "option_tag": "Specify tags from the interface url for filenames, the first one of tags is read by default.",
     "option_version": "View version information.",
     "option_conjunction": "Conjunction of method name. [default: \"By\"].",
-    "option_actionIndex": "Method name index. [default: -1]."
+    "option_actionIndex": "Method name index. [default: -1].",
+    "option_shared": "Whether to generate the shared directory. [default: true]."
   },
   "plugin": {
     "name": "Load plugin {{name}}",

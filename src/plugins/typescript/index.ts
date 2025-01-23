@@ -70,6 +70,8 @@ export const TypeScriptPlugin: IPlugin = {
   },
 
   onEnd() {
+    if (!pluginOptions.shared) return;
+
     // 创建运行时需要的文件
     const _fetchRuntimeFileContent = renderEtaString(
       shared.fetchRuntime,

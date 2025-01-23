@@ -161,6 +161,7 @@ ${getT("$t(cli.option)")}
   --tag              ${getT("$t(cli.option_tag)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
   --actionIndex      ${getT("$t(cli.option_actionIndex)")}
+  --shared           ${getT("$t(cli.option_shared)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -176,7 +177,7 @@ ${getT("$t(cli.example)")}
 export const main = async (): Promise<ISwaggerOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version"],
+    boolean: ["help", "version", "shared"],
     string: [
       "url",
       "outDir",
@@ -201,6 +202,8 @@ export const main = async (): Promise<ISwaggerOptions> => {
       lang: "ts",
       client: "axios",
       conjunction: "By",
+      actionIndex: "-1",
+      shared: true,
     },
     unknown: (arg: string) => {
       Logs.error(getT("$t(cli.unknownOption)", { arg }));
@@ -243,5 +246,6 @@ export const main = async (): Promise<ISwaggerOptions> => {
     filter: args.filter,
     conjunction: args.conjunction,
     actionIndex: args.actionIndex,
+    shared: args.shared,
   };
 };

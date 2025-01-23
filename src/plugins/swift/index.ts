@@ -64,6 +64,8 @@ export const SwiftPlugin: IPlugin = {
     };
   },
   onEnd() {
+    if (!pluginOptions.shared) return;
+
     // Copy template files to output directory
     createFile(
       `${pluginOptions.outDir}/shared/APIClientBase.${this.lang}`,
