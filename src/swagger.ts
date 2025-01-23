@@ -332,13 +332,17 @@ export interface ISwaggerOptions {
    */
   readonly tag?: number;
   /**
-   * 方法名的连接词，默认值为 By
+   * 方法名的连接。默认：By
    */
   readonly conjunction?: string;
   /**
-   * 方法名的下标，默认值为 -1
+   * 方法名的下标。默认：-1
    */
   readonly actionIndex?: number;
+  /**
+   * 是否生成 shared 目录。默认：true
+   */
+  readonly shared?: boolean;
 }
 
 export interface IDefinitionNameMapping {

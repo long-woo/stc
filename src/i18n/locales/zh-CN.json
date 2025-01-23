@@ -41,7 +41,8 @@
     "option_tag": "从接口 url 中指定标签，用于文件名，默认读取 tags 的第一个。",
     "option_version": "显示版本信息。",
     "option_conjunction": "方法名的连接词。 [默认: \"By\"]。",
-    "option_actionIndex": "方法名的索引。 [默认: -1]。"
+    "option_actionIndex": "方法名的索引。 [默认: -1]。",
+    "option_shared": "是否生成 shared 目录。 [默认: true]。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",

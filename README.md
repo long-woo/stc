@@ -134,6 +134,7 @@ App<IAppOption>({
 | filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
 | conjunction | c     | string   | By        | The method's connector, the default value is `By`.                                                           |
 | actionIndex |      | number   | -1        | The method name index, the default value is `-1`.                                                            |
+| shared      |      | boolean  | true      | Whether to generate the shared directory. [default: true].                                                   |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
 

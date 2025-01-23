@@ -53,6 +53,8 @@ export const JavaScriptPlugin: IPlugin = {
     };
   },
   onEnd() {
+    if (!pluginOptions.shared) return;
+
     // 创建运行时需要的文件
     const _baseFile = oxcTransform(shared.apiClientBase);
     const _parserFetchRuntime = renderEtaString(
