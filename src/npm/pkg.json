@@ -1,6 +1,6 @@
 {
   "name": "@lonu/stc",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "A tool for converting OpenApi/Swagger/Apifox into code.",
   "type": "module",
   "module": "esm/mod.js",
