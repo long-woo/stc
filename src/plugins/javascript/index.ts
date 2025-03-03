@@ -9,8 +9,6 @@ import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
 import { renderEtaString } from "../common.ts";
 import { generateDeclarationFile, oxcTransform } from "./oxc.ts";
-// TODO: Deno compile 不支持 storage
-// import { generateDeclarationFile } from "./declarationGenerator.ts";
 
 let pluginOptions: ISwaggerOptions;
 const actionDeclareData = new Map<string, string>();

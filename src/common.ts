@@ -1,4 +1,5 @@
-import { copy, emptyDir, ensureFile } from "@std/fs";
+import type { ExpandGlobOptions } from "@std/fs";
+import { copy, emptyDir, ensureFile, expandGlob } from "@std/fs";
 import { format as dateFormat } from "@std/datetime";
 
 import denoJson from "../deno.json" with { type: "json" };
@@ -185,4 +186,17 @@ export const fetchClient = async (
   }
 
   throw res;
+};
+
+export const removeFile = async (
+  glob: string | URL,
+  options?: ExpandGlobOptions,
+) => {
+  const _files = await Array.fromAsync(
+    expandGlob(glob, options),
+  );
+
+  for await (const _file of _files) {
+    await Deno.remove(_file.path);
+  }
 };
