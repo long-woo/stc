@@ -38,7 +38,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 
 ### NPM
 
-1.Install the `@loogwoo/stc` npm package.
+1.Install the `@lonu/stc` npm package.
 
 ```sh
 pnpm add @lonu/stc -D
@@ -153,7 +153,7 @@ Create a `myPlugin.ts` file:
 ```ts
 // 引用模块
 // import { start } from 'https://deno.land/x/stc@2.7.1/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.10.0'
+import { start } from 'jsr:@lonu/stc@^2.10.1'
 
 // Defining plugins
 const myPlugin: IPlugin = {

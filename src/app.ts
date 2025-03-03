@@ -3,7 +3,7 @@ import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
-import { createFile, emptyDirectory, readFile } from "./common.ts";
+import { createFile, emptyDirectory, readFile, removeFile } from "./common.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
@@ -78,8 +78,14 @@ export const start = async (options: ISwaggerOptions): Promise<void> => {
   // 触发插件 onAction 事件
   context.onAction?.(actionData);
 
-  // 清空输出目录
-  await emptyDirectory(options.outDir);
+  if (options.shared) {
+    // 清空输出目录
+    await emptyDirectory(options.outDir);
+  } else {
+    await removeFile(`${options.outDir}/**/*.*`, {
+      exclude: [`${options.outDir}/shared/**/*`],
+    });
+  }
 
   // 触发插件 onTransform 事件
   const transformData = await context.onTransform?.(defData, actionData);
