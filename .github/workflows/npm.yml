@@ -23,7 +23,7 @@ jobs:
 
       # Setup .npmrc file to publish to npm
       - name: 发布到 npmjs
-        uses: actions/setup-node@v4.2.0
+        uses: actions/setup-node@v4.3.0
         with:
           node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
