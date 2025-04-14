@@ -10,7 +10,7 @@
     "timeout": "请求超时。"
   },
   "def": {
-    "parserTypeError": "{{type}} 类型无法解析。"
+    "parserTypeError": "{{name}} 类型 {{type}}，非 object 类型无法解析。"
   },
   "path": {
     "notName": "{{url}} 【{{method}}】 无法获取方法名称，故忽略。",

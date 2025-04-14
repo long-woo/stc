@@ -1,0 +1,2702 @@
+{
+  "paths": {},
+  "components": {
+    "schemas": {
+      "BooleanResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataType": {
+        "enum": [
+          "String"
+        ],
+        "type": "string"
+      },
+      "FactField": {
+        "required": [
+          "dataType",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LanguageType": {
+        "enum": [
+          "Java"
+        ],
+        "type": "string"
+      },
+      "MetaAction": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/MetaActionStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaAction"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaActionPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaAction"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionStatus": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "MetaActionUpdateRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifact": {
+        "required": [
+          "meta",
+          "name",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetaArtifactType"
+          },
+          "languageType": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "metaFunctions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaFunction"
+            },
+            "nullable": true
+          },
+          "rulesetReferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetArtifactReference"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactRequestData": {
+        "required": [
+          "meta",
+          "name",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetaArtifactType"
+          },
+          "languageType": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaFunctionUpdateRequestData"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaArtifact"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactType": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "MetaArtifactUpdateRequestData": {
+        "required": [
+          "meta",
+          "name",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetaArtifactType"
+          },
+          "languageType": {
+            "$ref": "#/components/schemas/LanguageType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactViewModel": {
+        "required": [
+          "meta",
+          "name",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetaArtifactType"
+          },
+          "languageType": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "metaFunctions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaFunction"
+            },
+            "nullable": true
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactViewModelPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaArtifactViewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactViewModelPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaArtifactViewModelPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaArtifactViewModelResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaArtifactViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinition": {
+        "required": [
+          "fields",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FactField"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaFactDefinition"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaFactDefinitionPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FactField"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaFactDefinition"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionUpdateRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FactField"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionViewModel": {
+        "required": [
+          "fields",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FactField"
+            },
+            "nullable": true
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFactDefinitionViewModelResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaFactDefinitionViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunction": {
+        "required": [
+          "className",
+          "name",
+          "namespace"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "metaArtifactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "sign": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "className": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/MetaFunctionStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaFunction"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaFunctionPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionRequestData": {
+        "required": [
+          "className",
+          "name",
+          "namespace"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "sign": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "className": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaFunction"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaFunctionStatus": {
+        "enum": [
+          "Deleted"
+        ],
+        "type": "string"
+      },
+      "MetaFunctionUpdateRequestData": {
+        "required": [
+          "className",
+          "name",
+          "namespace"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "sign": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "className": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariable": {
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          },
+          "defaultValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariableListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaVariable"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariablePagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetaVariable"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariablePagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaVariablePagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariableQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariableRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          },
+          "defaultValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariableResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/MetaVariable"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaVariableUpdateRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          },
+          "defaultValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Project": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectViewModel": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectViewModelPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectViewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectViewModelPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/ProjectViewModelPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublishRuleflowRequestData": {
+        "type": "object",
+        "properties": {
+          "ruleflowId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublishedRuleflowBasic": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ruleflowIdId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "publishTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublishedRuleflowBasicIListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublishedRuleflowBasic"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReferenceItem": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Rule": {
+        "required": [
+          "actions",
+          "conditions",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rulesetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RuleType"
+          },
+          "ruleTemplateId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateVariables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            },
+            "nullable": true
+          },
+          "templateData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "referenceRuleflowIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleFlowQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleRequestData": {
+        "required": [
+          "actions",
+          "conditions",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "rulesetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RuleType"
+          },
+          "ruleTemplateId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateVariables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            },
+            "nullable": true
+          },
+          "templateData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "referenceRuleflowIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/Rule"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleType": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "RuleUpdateRequestData": {
+        "required": [
+          "actions",
+          "conditions",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "rulesetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RuleType"
+          },
+          "ruleTemplateId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateVariables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            },
+            "nullable": true
+          },
+          "templateData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "nullable": true
+          },
+          "referenceRuleflowIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowBasicInfo": {
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RuleflowStatus"
+          },
+          "rulesetIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowBasicInfoResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/RuleflowBasicInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowBasicViewModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RuleflowStatus"
+          },
+          "referenceRuleflows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceItem"
+            },
+            "nullable": true
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowBasicViewModelPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleflowBasicViewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowBasicViewModelPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/RuleflowBasicViewModelPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowCreateRequestData": {
+        "required": [
+          "projectId"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowDetailViewModel": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetVariable"
+            },
+            "nullable": true
+          },
+          "flow": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RuleflowStatus"
+          },
+          "rulesets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ruleset"
+            },
+            "nullable": true
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetFact"
+            },
+            "nullable": true
+          },
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowDetailViewModelResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/RuleflowDetailViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowReorderData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RuleflowStatus": {
+        "enum": [
+          "Deleted"
+        ],
+        "type": "string"
+      },
+      "RuleflowUpdateRequestData": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "flow": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetVariable"
+            },
+            "nullable": true
+          },
+          "rulesetIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ruleset": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ruleflows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleflowBasicInfo"
+            },
+            "nullable": true
+          },
+          "extension": {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetVariable"
+            },
+            "nullable": true
+          },
+          "firstMatch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            },
+            "nullable": true
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetFact"
+            },
+            "nullable": true
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetArtifactReference"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetArtifactReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rulesetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "metaArtifactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "namespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetFact": {
+        "required": [
+          "factDefinition"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isInput": {
+            "type": "boolean"
+          },
+          "isOutput": {
+            "type": "boolean"
+          },
+          "rulesetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "metaFactDefinitionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "factDefinition": {
+            "$ref": "#/components/schemas/MetaFactDefinition"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetFactUpdateRequestData": {
+        "type": "object",
+        "properties": {
+          "isInput": {
+            "type": "boolean"
+          },
+          "isOutput": {
+            "type": "boolean"
+          },
+          "metaFactDefinitionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetRequestData": {
+        "required": [
+          "name",
+          "projectId"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetVariable"
+            },
+            "nullable": true
+          },
+          "firstMatch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetFactUpdateRequestData"
+            },
+            "nullable": true
+          },
+          "artifactReferenceIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetArtifactReference"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetStatus": {
+        "enum": [
+          "Enabled",
+          "Deleted"
+        ],
+        "type": "string"
+      },
+      "RulesetUpdateRequestData": {
+        "required": [
+          "name",
+          "projectId"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetVariable"
+            },
+            "nullable": true
+          },
+          "firstMatch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetFactUpdateRequestData"
+            },
+            "nullable": true
+          },
+          "artifactReferenceIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetArtifactReference"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetVariable": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          },
+          "defaultValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalDisable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetViewModel": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "referenceRuleflows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceItem"
+            },
+            "nullable": true
+          },
+          "createUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetViewModelPagedResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RulesetViewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetViewModelPagedResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/RulesetViewModelPagedResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RulesetViewModelResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "$ref": "#/components/schemas/RulesetViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Variable": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

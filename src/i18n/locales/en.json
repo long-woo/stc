@@ -10,7 +10,7 @@
     "timeout": "Request timed out."
   },
   "def": {
-    "parserTypeError": "The {{type}} type could not be resolved."
+    "parserTypeError": "Cannot parse {{name}} type {{type}} as it is not an object type."
   },
   "path": {
     "notName": "{{url}} [{{method}}] cannot get the method name, so it will be ignored.",
