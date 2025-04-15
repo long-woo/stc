@@ -17,7 +17,7 @@ const parserBaseAndEnum = (
     : convertType(props.type, props.ref, options);
 
   const res = renderEtaString(
-    options.template.enum,
+    options.template!.enum,
     { name, data, convertValue, isEnum },
   );
 
@@ -68,13 +68,13 @@ export const parserDefinition = (
       // 定义头
       if (index === 0) {
         _definition.push(
-          renderEtaString(options.template.definitionHeader, { defName: key }),
+          renderEtaString(options.template!.definitionHeader, { defName: key }),
         );
       }
 
       // 定义属性
       _definition.push(
-        renderEtaString(options.template.definitionBody, {
+        renderEtaString(options.template!.definitionBody, {
           propCommit: prop.title || prop.description,
           prop: prop,
           propType: _type,
@@ -84,7 +84,7 @@ export const parserDefinition = (
       // 定义尾
       if (index === props.length - 1) {
         _definition.push(
-          renderEtaString(options.template.definitionFooter, {
+          renderEtaString(options.template!.definitionFooter, {
             defName: key,
             props,
           }),

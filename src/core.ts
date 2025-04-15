@@ -2,13 +2,13 @@ import micromatch from "npm:micromatch@4.0.8";
 
 import Logs from "./console.ts";
 import type {
+  DefaultConfigOptions,
   IDefaultObject,
   IDefinitionNameMapping,
   IDefinitionVirtualProperty,
   IPathVirtualParameter,
   IPathVirtualProperty,
   ISwaggerContent,
-  ISwaggerOptions,
   ISwaggerResultDefinition,
   ISwaggerResultPath,
 } from "./swagger.ts";
@@ -456,7 +456,7 @@ const getPathVirtualProperty = (
  */
 export const getApiPath = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
-  options?: ISwaggerOptions,
+  options?: DefaultConfigOptions,
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();
 

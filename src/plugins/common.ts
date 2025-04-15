@@ -1,6 +1,6 @@
 import { Eta } from "@eta-dev/eta";
 
-import type { IPluginOptions } from "./typeDeclaration.ts";
+import type { IPluginOptions, IPluginSetup } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 
@@ -70,26 +70,26 @@ export const renderEtaString = (
 };
 
 /**
- * Converts a given type to a string representation, taking into account the provided reference and plugin options.
+ * Converts a given type to a string representation, taking into account the provided reference and plugin setup.
  *
  * @param {string|string[]} type - The type to be converted.
  * @param {string} [ref] - The reference type.
- * @param {IPluginOptions} [pluginOptions] - The plugin options.
+ * @param {pluginSetup | IPluginOptions} [pluginSetup] - The plugin setup.
  * @return {string} The converted type as a string.
  */
 export const convertType = (
   type: string | string[],
   ref?: string,
-  pluginOptions?: IPluginOptions,
+  pluginSetup?: IPluginSetup | IPluginOptions,
 ): string => {
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
   if ((!type || type === "object") && ref) return ref;
 
   // 若 type 与 ref 相等，则表示为自定义类型
-  if (type === ref) return type || (pluginOptions?.unknownType ?? "");
+  if (type === ref) return type || (pluginSetup?.unknownType ?? "");
 
   const _action: Record<string, string> =
-    pluginOptions?.typeMap?.(convertType, ref) ?? {};
+    pluginSetup?.typeMap?.(convertType, ref) ?? {};
 
   const _newType = Array.isArray(type) ? type : [type];
   const _type = _newType
@@ -101,7 +101,7 @@ export const convertType = (
 };
 
 export const validTemplate = (template: IPluginOptions["template"]) => {
-  if (!template.actionImport) {
+  if (!template?.actionImport) {
     const _msg = getT("$t(plugin.template.actionImportRequired)");
     Logs.error(_msg);
     throw _msg;

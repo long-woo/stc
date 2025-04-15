@@ -1,7 +1,7 @@
 import type {
+  DefaultConfigOptions,
   IDefinitionVirtualProperty,
   IPathVirtualProperty,
-  ISwaggerOptions,
   ISwaggerResult,
 } from "../swagger.ts";
 
@@ -10,7 +10,7 @@ interface IPluginEvent {
    * 加载完成事件
    * @param data - 原始数据
    */
-  onLoad?: (data: ISwaggerResult) => void;
+  onLoad?: (data: ISwaggerResult, options: IPluginOptions) => void;
   /**
    * 类型定义事件
    * @param data - 类型定义
@@ -20,12 +20,16 @@ interface IPluginEvent {
       string,
       IDefinitionVirtualProperty | IDefinitionVirtualProperty[]
     >,
+    options: IPluginOptions,
   ) => void;
   /**
    * 接口数据事件
    * @param data - 接口数据
    */
-  onAction?: (data: Map<string, IPathVirtualProperty>) => void;
+  onAction?: (
+    data: Map<string, IPathVirtualProperty>,
+    options: IPluginOptions,
+  ) => void;
   /**
    * 转换事件
    * @param def - 类型定义
@@ -34,18 +38,19 @@ interface IPluginEvent {
   onTransform: (
     def: Map<string, IDefinitionVirtualProperty | IDefinitionVirtualProperty[]>,
     action: Map<string, IPathVirtualProperty>,
+    options: IPluginOptions,
   ) => Promise<IPluginTransform> | IPluginTransform;
   /**
    * 结束事件
    */
-  onEnd?: () => Promise<void> | void;
+  onEnd?: (options: IPluginOptions) => Promise<void> | void;
 }
 
 export interface IPluginContext extends Partial<IPluginEvent> {
   /**
    * 选项
    */
-  readonly options: ISwaggerOptions;
+  readonly options: IPluginOptions;
 }
 
 export interface IPluginTransformDefinition {
@@ -82,27 +87,39 @@ export interface IPlugin extends IPluginEvent {
   /**
    * 插件入口
    */
-  setup: (options: ISwaggerOptions) => Promise<void> | void;
+  setup: (context: IPluginContext) => Promise<IPluginSetup> | IPluginSetup;
 }
 
-export interface IPluginOptions extends ISwaggerOptions {
+export interface IPluginSetup {
   /**
    * 未知类型
    */
-  readonly unknownType?: string;
+  unknownType?: string;
   /**
    * 类型映射
    */
-  readonly typeMap?: (
+  typeMap: (
     convertFunc: (
       type: string,
       ref?: string,
-      pluginOptions?: IPluginOptions,
+      pluginOptions?: IPluginSetup,
     ) => string,
     type?: string,
   ) => Record<string, string>;
   template: IPluginTemplate;
+  /**
+   * 语言插件目录名称
+   * @default `options.lang`
+   */
+  langDirectoryName?: string;
+  /**
+   * 模板文件路径
+   * @default `./src/plugins/{{langDirectoryName}}/template`
+   */
+  templatePath?: string;
 }
+
+export type IPluginOptions = DefaultConfigOptions & Partial<IPluginSetup>;
 
 interface IPluginTemplate {
   /**

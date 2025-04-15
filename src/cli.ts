@@ -1,7 +1,7 @@
 import { type Args, parseArgs, type ParseOptions } from "@std/cli";
 import ProgressBar from "@deno-library/progress";
 
-import type { ISwaggerOptions } from "./swagger.ts";
+import type { DefaultConfigOptions } from "./swagger.ts";
 import Logs from "./console.ts";
 import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
@@ -185,7 +185,7 @@ ${getT("$t(cli.example)")}
 /**
  * 主入口
  */
-export const main = async (): Promise<ISwaggerOptions> => {
+export const main = async (): Promise<DefaultConfigOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
     boolean: ["help", "version", "shared"],
