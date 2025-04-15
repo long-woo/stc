@@ -83,13 +83,14 @@ const getDefinitionNameMapping = (
 const getVirtualProperties = (
   defItem: ISwaggerResultDefinition,
   defMapping: IDefinitionNameMapping,
+  defs: IDefaultObject<ISwaggerResultDefinition>,
   defData: Map<
     string,
     IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
   >,
 ): IDefinitionVirtualProperty[] => {
   if (!defItem.type.includes("object")) {
-    Logs.error(
+    Logs.warn(
       getT("$t(def.parserTypeError)", {
         name: defMapping.name,
         type: defItem.type,
@@ -118,9 +119,15 @@ const getVirtualProperties = (
       }
 
       // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
-      const type = enumOption.length
+      let type = enumOption.length
         ? camelCase(`${defMapping.name}_${current}`, true)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
+
+      // 如果 ref 的自定义类型为基础类型，且 type 为空
+      if (!type && !defs[refName].type.includes("object")) {
+        type = defs[refName].type;
+        refName = "";
+      }
 
       const _defItem: IDefinitionVirtualProperty = {
         name: camelCase(current),
@@ -138,6 +145,7 @@ const getVirtualProperties = (
         const _childProps = getVirtualProperties(
           prop as ISwaggerResultDefinition,
           _childDef,
+          defs,
           defData,
         );
 
@@ -193,13 +201,13 @@ export const getDefinition = (
     const defItem = definitions[key];
     let props: IDefinitionVirtualProperty | IDefinitionVirtualProperty[] = [];
 
-    if (defItem.type.includes("object")) {
-      props = getVirtualProperties(defItem, def, defMap);
-    } else {
+    if (defItem.enum?.length) {
       props = {
         type: defItem.type,
         enumOption: defItem.enum,
       } as IDefinitionVirtualProperty;
+    } else {
+      props = getVirtualProperties(defItem, def, definitions, defMap);
     }
 
     defMap.set(name, props);

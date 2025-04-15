@@ -157,7 +157,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (item.enumOption?.length) {
         const _enumData = renderEtaString(
           pluginOptions.template!.enum,
-          { name: _type, data: item.enumOption, convertValue },
+          { name: _type, data: item.enumOption, convertValue, isEnum: true },
         );
 
         prev.definitions?.push(_enumData);
