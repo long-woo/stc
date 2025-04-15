@@ -55,7 +55,11 @@
     "no_200_response": "缺少 200 状态码的信息。",
     "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。",
     "template": {
-      "enumRequired": "缺失枚举模板。"
+      "enumRequired": "缺失 enum.eta 模板文件",
+      "actionImportRequired": "缺失 actionImport.eta 模板文件",
+      "definitionHeader": "缺失 definitionHeader.eta 模板文件",
+      "definitionBody": "缺失 definitionBody.eta 模板文件",
+      "definitionFooter": "缺失 definitionFooter.eta 模板文件"
     }
   },
   "plugin_javascript": {

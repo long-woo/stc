@@ -4,6 +4,7 @@ import { getT } from "../i18n/index.ts";
 import { TypeScriptPlugin } from "./typescript/index.ts";
 import { JavaScriptPlugin } from "./javascript/index.ts";
 import { DartPlugin } from "./dart/index.ts";
+import { validTemplate } from "./common.ts";
 // import { SwiftPlugin } from "./swift/index.ts";
 
 export class PluginManager {
@@ -40,6 +41,7 @@ export class PluginManager {
 
       // 执行插件 setup 方法
       await plugin.setup(_options);
+      // validTemplate(plugin);
 
       // 触发插件 onload 事件
       context.onLoad = (data) => plugin.onLoad?.(data);

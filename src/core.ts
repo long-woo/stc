@@ -19,7 +19,7 @@ import {
   hasKey,
   lowerCase,
   upperCase,
-} from "./common.ts";
+} from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
 // #region 处理定义数据
@@ -193,14 +193,13 @@ export const getDefinition = (
     const defItem = definitions[key];
     let props: IDefinitionVirtualProperty | IDefinitionVirtualProperty[] = [];
 
-    // 处理枚举
-    if (defItem.enum) {
+    if (defItem.type.includes("object")) {
+      props = getVirtualProperties(defItem, def, defMap);
+    } else {
       props = {
         type: defItem.type,
         enumOption: defItem.enum,
       } as IDefinitionVirtualProperty;
-    } else {
-      props = getVirtualProperties(defItem, def, defMap);
     }
 
     defMap.set(name, props);

@@ -7,11 +7,11 @@ import type {
   IPathVirtualPropertyResponse,
 } from "../swagger.ts";
 import type { IPluginOptions } from "./typeDeclaration.ts";
-import { camelCase, upperCase } from "../common.ts";
+import { camelCase, upperCase } from "../utils.ts";
 import { convertType, renderEtaString } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
-import { convertValue } from "../common.ts";
+import { convertValue } from "../utils.ts";
 
 interface IApiParams {
   /**

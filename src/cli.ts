@@ -3,7 +3,7 @@ import ProgressBar from "@deno-library/progress";
 
 import type { ISwaggerOptions } from "./swagger.ts";
 import Logs from "./console.ts";
-import { createAppFile } from "./common.ts";
+import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 
@@ -15,8 +15,8 @@ const drawLogo = () => {
  \____ \   | |  | |      
  _____) )  | |  | |_____ 
 (______/   |_|   \______)
-  `)
-}
+  `);
+};
 
 /**
  * 检查更新并处理更新过程（如果有新版本可用）。

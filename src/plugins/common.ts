@@ -1,6 +1,8 @@
 import { Eta } from "@eta-dev/eta";
 
 import type { IPluginOptions } from "./typeDeclaration.ts";
+import Logs from "../console.ts";
+import { getT } from "../i18n/index.ts";
 
 let etaInstance: Eta | null = null;
 
@@ -96,4 +98,42 @@ export const convertType = (
     .join(" | ");
 
   return _type;
+};
+
+export const validTemplate = (template: IPluginOptions["template"]) => {
+  if (!template.actionImport) {
+    const _msg = getT("$t(plugin.template.actionImportRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
+
+  if (!template.actionMethod) {
+    const _msg = getT("$t(plugin.template.actionMethodRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
+
+  if (!template.definitionHeader) {
+    const _msg = getT("$t(plugin.template.definitionHeaderRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
+
+  if (!template.definitionBody) {
+    const _msg = getT("$t(plugin.template.definitionBodyRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
+
+  if (!template.definitionFooter) {
+    const _msg = getT("$t(plugin.template.definitionFooterRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
+
+  if (!template.enum) {
+    const _msg = getT("$t(plugin.template.enumRequired)");
+    Logs.error(_msg);
+    throw _msg;
+  }
 };

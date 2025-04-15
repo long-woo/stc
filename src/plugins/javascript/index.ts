@@ -4,7 +4,7 @@ import type {
   IPluginTransformDefinition,
 } from "../typeDeclaration.ts";
 
-import { createFile } from "../../common.ts";
+import { createFile } from "../../utils.ts";
 import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
 import { renderEtaString } from "../common.ts";

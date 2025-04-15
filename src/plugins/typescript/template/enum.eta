@@ -1,9 +1,9 @@
 <% 
-  const option = it.data.map(item => { 
+  const option = it.isEnum ? it.data.map(item => { 
     const val = it.convertValue(item)
 
     return typeof val === 'number' ? val : `'${val}'`
-  })
+  }) : [it.data]
 %>
 // #region <%= it.name %>
 

@@ -3,7 +3,7 @@ import type { ISwaggerOptions } from "../../swagger.ts";
 import { parserDefinition } from "../definition.ts";
 import { parserActions } from "../action.ts";
 import { setupTemplate } from "../common.ts";
-import { createFile } from "../../common.ts";
+import { createFile } from "../../utils.ts";
 import shared from "./shared/index.ts";
 import template from "./template/index.ts";
 

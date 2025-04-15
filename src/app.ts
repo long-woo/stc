@@ -3,7 +3,7 @@ import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
-import { createFile, emptyDirectory, readFile, removeFile } from "./common.ts";
+import { createFile, emptyDirectory, readFile, removeFile } from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
 /**
