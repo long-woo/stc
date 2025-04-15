@@ -1,5 +1,5 @@
 import { expandGlob } from "@std/fs";
-import { createFile, readFile } from "./common.ts";
+import { createFile, readFile } from "./utils.ts";
 
 /**
  * Reads the shared directories of all plugins.

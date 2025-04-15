@@ -1,9 +1,9 @@
 import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
-import type { ISwaggerOptions } from "../../swagger.ts";
+import type { DefaultConfigOptions } from "../../swagger.ts";
 import { parserDefinition } from "../definition.ts";
 import { parserActions } from "../action.ts";
 import { setupTemplate } from "../common.ts";
-import { createFile } from "../../common.ts";
+import { createFile } from "../../utils.ts";
 import template from "./template/index.ts";
 import shared from "./shared/index.ts";
 
@@ -16,7 +16,7 @@ let pluginOptions: IPluginOptions;
 export const SwiftPlugin: IPlugin = {
   name: "stc:SwiftPlugin",
   lang: "swift",
-  setup(options: ISwaggerOptions) {
+  setup(options: DefaultConfigOptions) {
     pluginOptions = {
       ...options,
       unknownType: "Any",

@@ -1,11 +1,22 @@
 import { type Args, parseArgs, type ParseOptions } from "@std/cli";
 import ProgressBar from "@deno-library/progress";
 
-import type { ISwaggerOptions } from "./swagger.ts";
+import type { DefaultConfigOptions } from "./swagger.ts";
 import Logs from "./console.ts";
-import { createAppFile } from "./common.ts";
+import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
+
+const drawLogo = () => {
+  console.log(`
+    ______ _______ _______ 
+ / _____|_______|_______)
+( (____     _    _       
+ \____ \   | |  | |      
+ _____) )  | |  | |_____ 
+(______/   |_|   \______)
+  `);
+};
 
 /**
  * 检查更新并处理更新过程（如果有新版本可用）。
@@ -174,7 +185,7 @@ ${getT("$t(cli.example)")}
 /**
  * 主入口
  */
-export const main = async (): Promise<ISwaggerOptions> => {
+export const main = async (): Promise<DefaultConfigOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
     boolean: ["help", "version", "shared"],
@@ -214,6 +225,7 @@ export const main = async (): Promise<ISwaggerOptions> => {
 
   // 清空控制台信息
   Logs.clear();
+  drawLogo();
 
   // 解析命令行参数和选项
   const args: Args = parseArgs(Deno.args, argsConfig);

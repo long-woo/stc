@@ -7,11 +7,11 @@ import type {
   IPathVirtualPropertyResponse,
 } from "../swagger.ts";
 import type { IPluginOptions } from "./typeDeclaration.ts";
-import { camelCase, upperCase } from "../common.ts";
+import { camelCase, upperCase } from "../utils.ts";
 import { convertType, renderEtaString } from "./common.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
-import { convertValue } from "../common.ts";
+import { convertValue } from "../utils.ts";
 
 interface IApiParams {
   /**
@@ -58,10 +58,10 @@ const getInternalDefinition = (
   let _defHeader = "", _defFooter = "";
 
   if (properties.length) {
-    _defHeader = renderEtaString(pluginOptions.template.definitionHeader, {
+    _defHeader = renderEtaString(pluginOptions.template!.definitionHeader, {
       defName: name,
     });
-    _defFooter = renderEtaString(pluginOptions.template.definitionFooter, {
+    _defFooter = renderEtaString(pluginOptions.template!.definitionFooter, {
       defName: name,
       props: properties,
     });
@@ -89,7 +89,7 @@ const getInternalDefinition = (
       );
     }
 
-    const _defBody = renderEtaString(pluginOptions.template.definitionBody, {
+    const _defBody = renderEtaString(pluginOptions.template!.definitionBody, {
       propCommit: current.title || current.description,
       propType: _type,
       prop: current,
@@ -156,8 +156,8 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       // 定义参数枚举
       if (item.enumOption?.length) {
         const _enumData = renderEtaString(
-          pluginOptions.template.enum,
-          { name: _type, data: item.enumOption, convertValue },
+          pluginOptions.template!.enum,
+          { name: _type, data: item.enumOption, convertValue, isEnum: true },
         );
 
         prev.definitions?.push(_enumData);
@@ -174,14 +174,14 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (_multiParam) {
         if (index === 0) {
           prev.definitions?.push(
-            renderEtaString(pluginOptions.template.definitionHeader, {
+            renderEtaString(pluginOptions.template!.definitionHeader, {
               defName: _defName,
             }),
           );
         }
 
         prev.definitions?.push(
-          renderEtaString(pluginOptions.template.definitionBody, {
+          renderEtaString(pluginOptions.template!.definitionBody, {
             propCommit: item.title || item.description,
             prop: item,
             propType: _type,
@@ -190,7 +190,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 
         if (index === _params.length - 1) {
           prev.definitions?.push(
-            renderEtaString(pluginOptions.template.definitionFooter, {
+            renderEtaString(pluginOptions.template!.definitionFooter, {
               defName: _defName,
               props: _params,
             }),
@@ -313,7 +313,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
 
-  const _apiMethod = renderEtaString(pluginOptions.template.actionMethod, {
+  const _apiMethod = renderEtaString(pluginOptions.template!.actionMethod, {
     summary: data.summary,
     description: data.description,
     methodName: action,
@@ -420,7 +420,7 @@ export const parserActions = (
     }, "./");
 
     const _apiImport = [
-      renderEtaString(pluginOptions.template.actionImport, {
+      renderEtaString(pluginOptions.template!.actionImport, {
         importPath: _importPath,
         imports: action.imports,
         typeFileName: defFileName,

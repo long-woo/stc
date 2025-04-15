@@ -1,0 +1,84 @@
+{
+  "paths": {},
+  "components": {
+    "schemas": {
+      "DataType": {
+        "enum": [
+          "String"
+        ],
+        "type": "string"
+      },
+      "FactField": {
+        "required": [
+          "dataType",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/DataType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LanguageType": {
+        "enum": [
+          "Java"
+        ],
+        "type": "string"
+      },
+      "MetaAction": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/MetaActionStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaActionStatus": {
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
+}

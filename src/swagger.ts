@@ -302,7 +302,7 @@ export interface ISecurityVirtualProperty {
   scopes: IDefaultObject;
 }
 
-export interface ISwaggerOptions {
+export interface DefaultConfigOptions {
   /**
    * 远程地址或本地 json 文件路径
    */

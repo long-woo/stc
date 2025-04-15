@@ -1,13 +1,9 @@
-import type { IPlugin, IPluginOptions } from "../typeDeclaration.ts";
-import type { ISwaggerOptions } from "../../swagger.ts";
+import type { IPlugin, IPluginSetup } from "../typeDeclaration.ts";
 import { parserDefinition } from "../definition.ts";
 import { parserActions } from "../action.ts";
-import { setupTemplate } from "../common.ts";
-import { createFile } from "../../common.ts";
+import { createFile } from "../../utils.ts";
 import shared from "./shared/index.ts";
 import template from "./template/index.ts";
-
-let pluginOptions: IPluginOptions;
 
 /**
  * dart 插件。
@@ -16,9 +12,8 @@ let pluginOptions: IPluginOptions;
 export const DartPlugin: IPlugin = {
   name: "stc:DartPlugin",
   lang: "dart",
-  setup(options: ISwaggerOptions) {
-    pluginOptions = {
-      ...options,
+  setup() {
+    const pluginSetup: IPluginSetup = {
       unknownType: "dynamic",
       typeMap(func, type) {
         return {
@@ -30,11 +25,11 @@ export const DartPlugin: IPlugin = {
               func(
                 type,
                 undefined,
-                pluginOptions,
+                pluginSetup,
               ) ||
-            pluginOptions.unknownType
+            pluginSetup.unknownType
           }>`,
-          object: `Map<String, ${pluginOptions.unknownType}>`,
+          object: `Map<String, ${pluginSetup.unknownType}>`,
           null: "null",
         };
       },
@@ -48,12 +43,12 @@ export const DartPlugin: IPlugin = {
       },
     };
 
-    setupTemplate(pluginOptions);
+    return pluginSetup;
   },
-  onTransform(def, action) {
+  onTransform(def, action, options) {
     const typeFileName = "_types";
-    const defContent = parserDefinition(def, pluginOptions);
-    const actionData = parserActions(action, typeFileName, pluginOptions);
+    const defContent = parserDefinition(def, options);
+    const actionData = parserActions(action, typeFileName, options);
 
     return {
       definition: {
@@ -63,16 +58,16 @@ export const DartPlugin: IPlugin = {
       action: actionData,
     };
   },
-  onEnd() {
-    if (!pluginOptions.shared) return;
+  onEnd(options) {
+    if (!options.shared) return;
 
     createFile(
-      `${pluginOptions.outDir}/shared/api_client_base.${this.lang}`,
+      `${options.outDir}/shared/api_client_base.${this.lang}`,
       shared.api_client_base,
     );
 
     createFile(
-      `${pluginOptions.outDir}/shared/dio/index.${this.lang}`,
+      `${options.outDir}/shared/dio/index.${this.lang}`,
       shared.dio,
     );
   },

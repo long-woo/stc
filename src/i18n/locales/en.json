@@ -10,7 +10,7 @@
     "timeout": "Request timed out."
   },
   "def": {
-    "parserTypeError": "The {{type}} type could not be resolved."
+    "parserTypeError": "Cannot parse {{name}} type {{type}} as it is not an object type."
   },
   "path": {
     "notName": "{{url}} [{{method}}] cannot get the method name, so it will be ignored.",
@@ -55,7 +55,11 @@
     "no_200_response": "Missing information for 200 status code.",
     "no_tag": "{{url}} does not specify a tag, skip parsing. Please use the --tag parameter.",
     "template": {
-      "enumRequired": "Missing enum template."
+      "enumRequired": "Missing enum.eta template file",
+      "actionImportRequired": "Missing actionImport.eta template file",
+      "definitionHeader": "Missing definitionHeader.eta template file",
+      "definitionBody": "Missing definitionBody.eta template file",
+      "definitionFooter": "Missing definitionFooter.eta template file"
     }
   },
   "plugin_javascript": {

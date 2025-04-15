@@ -3,7 +3,26 @@ import type { IPluginOptions } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
 import { convertType, renderEtaString } from "./common.ts";
 import { getT } from "../i18n/index.ts";
-import { convertValue } from "../common.ts";
+import { convertValue } from "../utils.ts";
+
+const parserBaseAndEnum = (
+  name: string,
+  props: IDefinitionVirtualProperty,
+  options: IPluginOptions,
+) => {
+  const _enumOption = props.enumOption;
+  const isEnum = (_enumOption?.length ?? 0) > 0;
+  const data = isEnum
+    ? _enumOption
+    : convertType(props.type, props.ref, options);
+
+  const res = renderEtaString(
+    options.template!.enum,
+    { name, data, convertValue, isEnum },
+  );
+
+  return res;
+};
 
 /**
  * 解析定义
@@ -19,18 +38,15 @@ export const parserDefinition = (
   data.forEach((props, key) => {
     const _definition: string[] = [];
 
-    // 枚举处理
+    // 基础类型、枚举处理
     if (!Array.isArray(props)) {
-      const _enumOption = (props as IDefinitionVirtualProperty).enumOption;
+      const _data = parserBaseAndEnum(
+        key,
+        props as IDefinitionVirtualProperty,
+        options,
+      );
 
-      if (_enumOption?.length) {
-        const _enumData = renderEtaString(
-          options.template.enum,
-          { name: key, data: _enumOption, convertValue },
-        );
-
-        _definitions.push(_enumData);
-      }
+      _definitions.push(_data);
       return;
     }
 
@@ -44,30 +60,21 @@ export const parserDefinition = (
 
       // 添加枚举定义
       if (_enumOption?.length) {
-        // if (!options.template.enum) {
-        //   const _enumMsg = getT("$t(plugin.template.enumRequired)");
+        const _enumData = parserBaseAndEnum(_type, prop, options);
 
-        //   Logs.error(_enumMsg);
-        //   throw _enumMsg;
-        // }
-
-        const _enumData = renderEtaString(
-          options.template.enum,
-          { name: _type, data: _enumOption, convertValue },
-        );
         _definition.unshift(`${_enumData}`);
       }
 
       // 定义头
       if (index === 0) {
         _definition.push(
-          renderEtaString(options.template.definitionHeader, { defName: key }),
+          renderEtaString(options.template!.definitionHeader, { defName: key }),
         );
       }
 
       // 定义属性
       _definition.push(
-        renderEtaString(options.template.definitionBody, {
+        renderEtaString(options.template!.definitionBody, {
           propCommit: prop.title || prop.description,
           prop: prop,
           propType: _type,
@@ -77,7 +84,7 @@ export const parserDefinition = (
       // 定义尾
       if (index === props.length - 1) {
         _definition.push(
-          renderEtaString(options.template.definitionFooter, {
+          renderEtaString(options.template!.definitionFooter, {
             defName: key,
             props,
           }),
