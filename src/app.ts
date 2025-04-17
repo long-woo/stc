@@ -37,20 +37,15 @@ const createContext = (context: IPluginContext) => {
  * @returns
  */
 const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
-  if (!/^http(s?):\/\//.test(urlOrPath)) {
-    const content = await readFile(urlOrPath);
-
-    try {
-      return JSON.parse(content) as unknown as ISwaggerResult;
-    } catch (error) {
-      throw new Error(getT("$t(app.apiJsonFileError)", { error }));
-    }
-  }
-
-  // 从远程地址获取 Swagger 数据
-  const res = await fetch(urlOrPath);
-
   try {
+    if (!/^http(s?):\/\//.test(urlOrPath)) {
+      const content = await readFile(urlOrPath);
+
+      return JSON.parse(content) as unknown as ISwaggerResult;
+    }
+
+    // 从远程地址获取 Swagger 数据
+    const res = await fetch(urlOrPath);
     const data = await res.json();
 
     return data;

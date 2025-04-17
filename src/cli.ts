@@ -38,10 +38,11 @@ const checkUpdate = async () => {
     const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
 
     if (version < _lastVersion) {
+      // 非 deno compile 的可执行文件，仅提示更新
       if (typeof confirm === "undefined") {
-        // 提示用户是否更新
+        // 提示有新版本
         console.log("\n");
-        Logs.info(getT("$t(cli.updatePrompt)", {
+        Logs.warn(getT("$t(cli.updatePrompt)", {
           version: denoJson.version,
           latestVersion,
         }));
