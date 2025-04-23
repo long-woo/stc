@@ -1,3 +1,4 @@
+import fastDiff from "fast-diff";
 import type { DefaultConfigOptions, ISwaggerResult } from "./swagger.ts";
 import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
@@ -76,13 +77,15 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   // 触发插件 onAction 事件
   context.onAction?.(actionData, context.options);
 
-  if (options.shared) {
-    // 清空输出目录
-    await emptyDirectory(options.outDir);
-  } else {
-    await removeFile(`${options.outDir}/**/*.*`, {
-      exclude: [`${options.outDir}/shared/**/*`],
-    });
+  if (options.clean) {
+    if (options.shared) {
+      // 清空输出目录
+      await emptyDirectory(options.outDir);
+    } else {
+      await removeFile(`${options.outDir}/**/*.*`, {
+        exclude: [`${options.outDir}/shared/**/*`],
+      });
+    }
   }
 
   // 触发插件 onTransform 事件
@@ -94,10 +97,16 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
 
   // 写入类型定义文件
   if (transformData?.definition?.content) {
-    createFile(
-      `${options.outDir}/${transformData.definition.filename}`,
-      transformData.definition.content,
+    const name = `${options.outDir}/${transformData.definition.filename}`;
+    const newContent = transformData.definition.content;
+
+    const oldContent = await readFile(name);
+    console.log(
+      oldContent.match(
+        /^\/\*\*.+\*\s+\*\s+`?https:\/\/github\.com\/long-woo\/stc`?\s+\*\s+\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+\*\//s,
+      ),
     );
+    createFile(name, newContent);
   }
 
   // 写入 API 文件

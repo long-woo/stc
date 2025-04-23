@@ -1,5 +1,5 @@
 import type { ExpandGlobOptions } from "@std/fs";
-import { copy, emptyDir, ensureFile, expandGlob } from "@std/fs";
+import { copy, emptyDir, ensureFile, exists, expandGlob } from "@std/fs";
 import { format as dateFormat } from "@std/datetime";
 
 import denoJson from "../deno.json" with { type: "json" };
@@ -44,7 +44,11 @@ export const upperCase = (str: string) =>
  * 读取文件
  * @param filePath - 文件路径
  */
-export const readFile = (filePath: string) => Deno.readTextFile(filePath);
+export const readFile = async (filePath: string) => {
+  // 检查路径是否存在
+  if (!(await exists(filePath))) return "";
+  return Deno.readTextFile(filePath);
+};
 
 /**
  * 创建文件。如果不存在会被自动创建，存在会被覆盖

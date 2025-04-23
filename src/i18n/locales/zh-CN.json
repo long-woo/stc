@@ -42,7 +42,8 @@
     "option_version": "显示版本信息。",
     "option_conjunction": "方法名的连接词。 [默认: \"By\"]。",
     "option_actionIndex": "方法名的索引。 [默认: -1]。",
-    "option_shared": "是否生成 shared 目录。 [默认: true]。"
+    "option_shared": "是否生成 shared 目录。 [默认: true]。",
+    "option_clean": "是否清空输出目录。 [默认: true]。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",
