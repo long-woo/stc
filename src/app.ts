@@ -78,14 +78,15 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   context.onAction?.(actionData, context.options);
 
   if (options.clean) {
-    if (options.shared) {
-      // 清空输出目录
-      await emptyDirectory(options.outDir);
-    } else {
-      await removeFile(`${options.outDir}/**/*.*`, {
-        exclude: [`${options.outDir}/shared/**/*`],
-      });
+    const exclude = [`${options.outDir}/.stc.lock`];
+
+    if (!options.shared) {
+      exclude.push(`${options.outDir}/shared/**/*`);
     }
+
+    await removeFile(`${options.outDir}/**/*.*`, {
+      exclude,
+    });
   }
 
   // 触发插件 onTransform 事件
@@ -100,12 +101,6 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
     const name = `${options.outDir}/${transformData.definition.filename}`;
     const newContent = transformData.definition.content;
 
-    const oldContent = await readFile(name);
-    console.log(
-      oldContent.match(
-        /^\/\*\*.+\*\s+\*\s+`?https:\/\/github\.com\/long-woo\/stc`?\s+\*\s+\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+\*\//s,
-      ),
-    );
     createFile(name, newContent);
   }
 
@@ -118,6 +113,11 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
       );
     });
   }
+
+  // 保存数据
+  createFile(`${options.outDir}/.stc.lock`, JSON.stringify(data, null, 2), {
+    banner: false,
+  });
 
   console.log("\n");
   Logs.success(`${getT("$t(app.generateFileDone)")}\n\t${options.outDir}\n`);
