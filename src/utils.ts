@@ -204,3 +204,13 @@ export const removeFile = async (
     await Deno.remove(_file.path);
   }
 };
+
+export const removeFileBanner = async (path: string) => {
+  const file = await readFile(path);
+  const content = file.replace(
+    /\/\*\*.+`?https:\/\/github\.com\/long-woo\/stc`?\s+\*\s+(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+\*\/\s+/s,
+    "",
+  );
+
+  return content;
+};

@@ -1,11 +1,13 @@
-import fastDiff from "fast-diff";
+import * as diff from "diff";
 import type { DefaultConfigOptions, ISwaggerResult } from "./swagger.ts";
 import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
-import { createFile, emptyDirectory, readFile, removeFile } from "./utils.ts";
+import { createFile, readFile, removeFile, removeFileBanner } from "./utils.ts";
 import { getT } from "./i18n/index.ts";
+
+const LOCK_FILE = ".stc.lock";
 
 /**
  * 初始化插件管理器
@@ -37,17 +39,49 @@ const createContext = (context: IPluginContext) => {
  * @param urlOrPath - 远程地址或本地
  * @returns
  */
-const getData = async (urlOrPath: string): Promise<ISwaggerResult> => {
+const getData = async (
+  urlOrPath: string,
+  outDir: string,
+): Promise<ISwaggerResult> => {
   try {
+    // const lockFile = await readFile(`${outDir}/${LOCK_FILE}`);
+    let data: ISwaggerResult;
+
+    // 从本地文件获取 Swagger 数据
     if (!/^http(s?):\/\//.test(urlOrPath)) {
       const content = await readFile(urlOrPath);
 
-      return JSON.parse(content) as unknown as ISwaggerResult;
+      data = JSON.parse(content) as unknown as ISwaggerResult;
+    } else {
+      // 从远程地址获取 Swagger 数据
+      const res = await fetch(urlOrPath);
+
+      data = await res.json();
     }
 
-    // 从远程地址获取 Swagger 数据
-    const res = await fetch(urlOrPath);
-    const data = await res.json();
+    // 对比 path 和 definitions/schemas 数据是否有变化，有变化则使用新数据
+    // if (lockFile) {
+    //   const oldData = JSON.parse(lockFile) as unknown as ISwaggerResult;
+    //   createFile(
+    //     `${outDir}/.stc_new.lock`,
+    //     JSON.stringify(data, null, 2),
+    //     {
+    //       banner: false,
+    //     },
+    //   );
+    //   const isChange = diff["diffLines"](
+    //     JSON.stringify(oldData, null, 2),
+    //     JSON.stringify(data, null, 2),
+    //   );
+
+    //   createFile(
+    //     `${outDir}/.stc_diff.lock`,
+    //     JSON.stringify(isChange, null, 2),
+    //     {
+    //       banner: false,
+    //     },
+    //   );
+    // }
 
     return data;
   } catch (error) {
@@ -63,7 +97,7 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   // 创建上下文
   const context = createContext({ options });
 
-  const data = await getData(options.url);
+  const data = await getData(options.url, options.outDir);
 
   // 触发插件 onload 事件
   context.onLoad?.(data, context.options);
@@ -78,7 +112,7 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   context.onAction?.(actionData, context.options);
 
   if (options.clean) {
-    const exclude = [`${options.outDir}/.stc.lock`];
+    const exclude = [`${options.outDir}/${LOCK_FILE}`];
 
     if (!options.shared) {
       exclude.push(`${options.outDir}/shared/**/*`);
@@ -101,6 +135,22 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
     const name = `${options.outDir}/${transformData.definition.filename}`;
     const newContent = transformData.definition.content;
 
+    if (!options.clean) {
+      const oldContent = await removeFileBanner(name);
+
+      if (oldContent) {
+        const diffResult = diff["diffLines"](oldContent, newContent);
+
+        // createFile(
+        //   `${options.outDir}/.stc_diff.lock`,
+        //   JSON.stringify(diffResult, null, 2),
+        //   {
+        //     banner: false,
+        //   },
+        // );
+      }
+    }
+
     createFile(name, newContent);
   }
 
@@ -115,7 +165,7 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   }
 
   // 保存数据
-  createFile(`${options.outDir}/.stc.lock`, JSON.stringify(data, null, 2), {
+  createFile(`${options.outDir}/${LOCK_FILE}`, JSON.stringify(data, null, 2), {
     banner: false,
   });
 
