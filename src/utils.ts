@@ -245,20 +245,22 @@ export const createDiffFile = async (
     if (oldContent) {
       const diffResult = diff.diffLines(oldContent, newContent);
 
-      isChange = diffResult.length !== 1;
+      isChange = diffResult.some((item: Record<string, boolean>) =>
+        item.added || item.removed
+      );
 
       if (isChange) {
         newContent = "";
 
         for (const item of diffResult) {
-          if (item.removed) return;
+          if (item.removed) continue;
 
           newContent += item.value;
         }
       }
 
       // createFile(
-      //   `${options.outDir}/.stc_diff.lock`,
+      //   `./stc_out/.stc_diff.lock`,
       //   JSON.stringify(diffResult, null, 2),
       //   {
       //     banner: false,
