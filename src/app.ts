@@ -1,16 +1,9 @@
-import * as diff from "diff";
 import type { DefaultConfigOptions, ISwaggerResult } from "./swagger.ts";
 import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
-import {
-  createDiffFile,
-  createFile,
-  readFile,
-  removeFile,
-  removeFileBanner,
-} from "./utils.ts";
+import { createDiffFile, createFile, readFile, removeFile } from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
 const LOCK_FILE = ".stc.lock";
