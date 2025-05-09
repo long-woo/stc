@@ -193,6 +193,11 @@ export const fetchClient = async (
   throw res;
 };
 
+/**
+ * 移除文件
+ * @param glob - 匹配文件
+ * @param options - 选项
+ */
 export const removeFile = async (
   glob: string | URL,
   options?: ExpandGlobOptions,
@@ -206,6 +211,10 @@ export const removeFile = async (
   }
 };
 
+/**
+ * 清除文件 banner
+ * @param path - 文件路径
+ */
 export const removeFileBanner = async (path: string) => {
   const file = await readFile(path);
   const content = file.replace(
@@ -216,6 +225,12 @@ export const removeFileBanner = async (path: string) => {
   return content;
 };
 
+/**
+ * 生成差异文件
+ * @param source - 源文件
+ * @param content - 内容
+ * @param clean - 是否清除差异
+ */
 export const createDiffFile = async (
   source: string,
   content: string,

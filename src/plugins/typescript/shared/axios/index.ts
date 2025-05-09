@@ -105,7 +105,7 @@ export const request = <T>(
     method: config.method,
     data: _data,
     params: config.params?.query,
-    headers: config.params?.header as AxiosHeaders,
+    headers: {...config.params?.header, ...config.config.headers} as AxiosHeaders,
     timeout: config.config?.timeout,
     signal: config.config?.signal,
     baseURL: config.config?.baseURL,
