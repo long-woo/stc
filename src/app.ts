@@ -4,7 +4,13 @@ import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
-import { createFile, readFile, removeFile, removeFileBanner } from "./utils.ts";
+import {
+  createDiffFile,
+  createFile,
+  readFile,
+  removeFile,
+  removeFileBanner,
+} from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
 const LOCK_FILE = ".stc.lock";
@@ -133,34 +139,15 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   // 写入类型定义文件
   if (transformData?.definition?.content) {
     const name = `${options.outDir}/${transformData.definition.filename}`;
-    const newContent = transformData.definition.content;
+    const content = transformData.definition.content;
 
-    if (!options.clean) {
-      const oldContent = await removeFileBanner(name);
-
-      if (oldContent) {
-        const diffResult = diff["diffLines"](oldContent, newContent);
-
-        // createFile(
-        //   `${options.outDir}/.stc_diff.lock`,
-        //   JSON.stringify(diffResult, null, 2),
-        //   {
-        //     banner: false,
-        //   },
-        // );
-      }
-    }
-
-    createFile(name, newContent);
+    createDiffFile(name, content, options.clean);
   }
 
   // 写入 API 文件
   if (transformData?.action) {
     transformData.action.forEach((content, filename) => {
-      createFile(
-        `${options.outDir}/${filename}`,
-        content,
-      );
+      createDiffFile(`${options.outDir}/${filename}`, content, options.clean);
     });
   }
 

@@ -1,3 +1,4 @@
+import * as diff from "diff";
 import type { ExpandGlobOptions } from "@std/fs";
 import { copy, emptyDir, ensureFile, exists, expandGlob } from "@std/fs";
 import { format as dateFormat } from "@std/datetime";
@@ -213,4 +214,43 @@ export const removeFileBanner = async (path: string) => {
   );
 
   return content;
+};
+
+export const createDiffFile = async (
+  source: string,
+  content: string,
+  clean: boolean = true,
+) => {
+  let isChange = true;
+  let newContent = content;
+
+  if (!clean) {
+    const oldContent = await removeFileBanner(source);
+
+    if (oldContent) {
+      const diffResult = diff.diffLines(oldContent, newContent);
+
+      isChange = diffResult.length !== 1;
+
+      if (isChange) {
+        newContent = "";
+
+        for (const item of diffResult) {
+          if (item.removed) return;
+
+          newContent += item.value;
+        }
+      }
+
+      // createFile(
+      //   `${options.outDir}/.stc_diff.lock`,
+      //   JSON.stringify(diffResult, null, 2),
+      //   {
+      //     banner: false,
+      //   },
+      // );
+    }
+  }
+
+  if (isChange) createFile(source, newContent);
 };
