@@ -40,7 +40,7 @@ const createContext = (context: IPluginContext) => {
  */
 const getData = async (
   urlOrPath: string,
-  outDir: string,
+  _outDir: string,
 ): Promise<ISwaggerResult> => {
   try {
     // const lockFile = await readFile(`${outDir}/${LOCK_FILE}`);
