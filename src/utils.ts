@@ -1,5 +1,6 @@
+import * as diff from "diff";
 import type { ExpandGlobOptions } from "@std/fs";
-import { copy, emptyDir, ensureFile, expandGlob } from "@std/fs";
+import { copy, emptyDir, ensureFile, exists, expandGlob } from "@std/fs";
 import { format as dateFormat } from "@std/datetime";
 
 import denoJson from "../deno.json" with { type: "json" };
@@ -44,7 +45,11 @@ export const upperCase = (str: string) =>
  * 读取文件
  * @param filePath - 文件路径
  */
-export const readFile = (filePath: string) => Deno.readTextFile(filePath);
+export const readFile = async (filePath: string) => {
+  // 检查路径是否存在
+  if (!(await exists(filePath))) return "";
+  return Deno.readTextFile(filePath);
+};
 
 /**
  * 创建文件。如果不存在会被自动创建，存在会被覆盖
@@ -188,6 +193,11 @@ export const fetchClient = async (
   throw res;
 };
 
+/**
+ * 移除文件
+ * @param glob - 匹配文件
+ * @param options - 选项
+ */
 export const removeFile = async (
   glob: string | URL,
   options?: ExpandGlobOptions,
@@ -199,4 +209,65 @@ export const removeFile = async (
   for await (const _file of _files) {
     await Deno.remove(_file.path);
   }
+};
+
+/**
+ * 清除文件 banner
+ * @param path - 文件路径
+ */
+export const removeFileBanner = async (path: string) => {
+  const file = await readFile(path);
+  const content = file.replace(
+    /\/\*\*.+`?https:\/\/github\.com\/long-woo\/stc`?\s+\*\s+(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+\*\/\s+/s,
+    "",
+  );
+
+  return content;
+};
+
+/**
+ * 生成差异文件
+ * @param source - 源文件
+ * @param content - 内容
+ * @param clean - 是否清除差异
+ */
+export const createDiffFile = async (
+  source: string,
+  content: string,
+  clean: boolean = true,
+) => {
+  let isChange = true;
+  let newContent = content;
+
+  if (!clean) {
+    const oldContent = await removeFileBanner(source);
+
+    if (oldContent) {
+      const diffResult = diff.diffLines(oldContent, newContent);
+
+      isChange = diffResult.some((item: Record<string, boolean>) =>
+        item.added || item.removed
+      );
+
+      if (isChange) {
+        newContent = "";
+
+        for (const item of diffResult) {
+          if (item.removed) continue;
+
+          newContent += item.value;
+        }
+      }
+
+      // createFile(
+      //   `./stc_out/.stc_diff.lock`,
+      //   JSON.stringify(diffResult, null, 2),
+      //   {
+      //     banner: false,
+      //   },
+      // );
+    }
+  }
+
+  if (isChange) createFile(source, newContent);
 };

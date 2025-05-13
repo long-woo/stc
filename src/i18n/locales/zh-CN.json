@@ -10,7 +10,7 @@
     "timeout": "请求超时。"
   },
   "def": {
-    "parserTypeError": "{{name}} 类型 {{type}}，非 object 类型无法解析。"
+    "parserTypeError": "{{name}} 类型为 {{type}}，非 object 类型已忽略。"
   },
   "path": {
     "notName": "{{url}} 【{{method}}】 无法获取方法名称，故忽略。",
@@ -42,7 +42,8 @@
     "option_version": "显示版本信息。",
     "option_conjunction": "方法名的连接词。 [默认: \"By\"]。",
     "option_actionIndex": "方法名的索引。 [默认: -1]。",
-    "option_shared": "是否生成 shared 目录。 [默认: true]。"
+    "option_shared": "是否生成 shared 目录。 [默认: true]。",
+    "option_clean": "是否清空输出目录。 [默认: true]。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",
@@ -55,11 +56,11 @@
     "no_200_response": "缺少 200 状态码的信息。",
     "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。",
     "template": {
-      "enumRequired": "缺失 enum.eta 模板文件",
-      "actionImportRequired": "缺失 actionImport.eta 模板文件",
-      "definitionHeader": "缺失 definitionHeader.eta 模板文件",
-      "definitionBody": "缺失 definitionBody.eta 模板文件",
-      "definitionFooter": "缺失 definitionFooter.eta 模板文件"
+      "enumRequired": "缺失 enum.eta 模板文件。",
+      "actionImportRequired": "缺失 actionImport.eta 模板文件。",
+      "definitionHeader": "缺失 definitionHeader.eta 模板文件。",
+      "definitionBody": "缺失 definitionBody.eta 模板文件。",
+      "definitionFooter": "缺失 definitionFooter.eta 模板文件。"
     }
   },
   "plugin_javascript": {

@@ -38,10 +38,11 @@ const checkUpdate = async () => {
     const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
 
     if (version < _lastVersion) {
+      // 非 deno compile 的可执行文件，仅提示更新
       if (typeof confirm === "undefined") {
-        // 提示用户是否更新
+        // 提示有新版本
         console.log("\n");
-        Logs.info(getT("$t(cli.updatePrompt)", {
+        Logs.warn(getT("$t(cli.updatePrompt)", {
           version: denoJson.version,
           latestVersion,
         }));
@@ -173,6 +174,7 @@ ${getT("$t(cli.option)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
   --actionIndex      ${getT("$t(cli.option_actionIndex)")}
   --shared           ${getT("$t(cli.option_shared)")}
+  --clean            ${getT("$t(cli.option_clean)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -188,7 +190,7 @@ ${getT("$t(cli.example)")}
 export const main = async (): Promise<DefaultConfigOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version", "shared"],
+    boolean: ["help", "version", "shared", "clean"],
     string: [
       "url",
       "outDir",
@@ -215,6 +217,7 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       conjunction: "By",
       actionIndex: "-1",
       shared: true,
+      clean: true,
     },
     unknown: (arg: string) => {
       Logs.error(getT("$t(cli.unknownOption)", { arg }));
@@ -259,5 +262,6 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     conjunction: args.conjunction,
     actionIndex: args.actionIndex,
     shared: args.shared,
+    clean: args.clean,
   };
 };

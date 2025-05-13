@@ -384,17 +384,21 @@ const getPathVirtualProperty = (
       const _bodyContentRef = getRefType(
         _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
       );
-      const _name = (_key === "application/octet-stream"
-        ? "file"
-        : lowerCase(_bodyContentRef)) || "body";
 
       // 处理 type 为 object 的情况，并且有 properties 属性
       if (
         _bodyContentSchema?.type === "object" &&
         !Object.keys(_bodyContentSchema?.properties ?? {}).length
-      ) {
-        return;
-      }
+      ) return;
+
+      const _name =
+        (["application/octet-stream", "multipart/form-data"].includes(_key)
+          ? "file"
+          : lowerCase(_bodyContentRef)) || "body";
+
+      const _type = _name === "file"
+        ? "FormData"
+        : _bodyContentSchema?.type ?? "";
 
       const _properties = getProperties(
         _bodyContentSchema?.properties ?? {},
@@ -403,7 +407,7 @@ const getPathVirtualProperty = (
 
       const _body: IDefinitionVirtualProperty = {
         name: _name,
-        type: _bodyContentSchema?.type ?? "",
+        type: _type,
         required: _requestBody.required ?? true,
         description: _requestBody.description,
         ref: _bodyContentRef,
@@ -412,9 +416,7 @@ const getPathVirtualProperty = (
 
       // body 存在相同 name 时，无需重复添加
       if (
-        !parameters.body.some((item) =>
-          item.name === _name
-        )
+        !parameters.body.some((item) => item.name === _name)
       ) {
         parameters.body.push(_body);
       }

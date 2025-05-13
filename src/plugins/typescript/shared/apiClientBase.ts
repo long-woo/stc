@@ -24,7 +24,7 @@ export interface ApiClientConfig {
    * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
    */
   errorIgnore?: string[]
-  config?: Pick<ApiClientConfig, 'baseURL' | 'timeout' | 'signal'>
+  config?: Pick<ApiClientConfig, 'baseURL' | 'timeout' | 'signal'> & { headers?: IDefaultObject}
   /**
    * 错误回调函数
    */

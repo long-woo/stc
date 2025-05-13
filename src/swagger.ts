@@ -343,6 +343,10 @@ export interface DefaultConfigOptions {
    * 是否生成 shared 目录。默认：true
    */
   readonly shared?: boolean;
+  /**
+   * 是否清空输出目录。默认：true
+   */
+  readonly clean?: boolean;
 }
 
 export interface IDefinitionNameMapping {
