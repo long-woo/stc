@@ -135,6 +135,7 @@ App<IAppOption>({
 | conjunction | c     | string   | By        | The method's connector, the default value is `By`.                                                           |
 | actionIndex |      | number   | -1        | The method name index, the default value is `-1`.                                                            |
 | shared      |      | boolean  | true      | Whether to generate the shared directory. [default: true].                                                   |
+| clean       |       | boolean  | true      | Whether to clean the output directory before generating. [default: true].                                   |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
 
