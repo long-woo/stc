@@ -1,6 +1,10 @@
-import { start } from "@loongwoo/stc";
+import { start } from "@lonu/stc";
 
-// TODO: v2.13.0 /** @type {import('@loongwoo/stc/plugins/typeDeclaration.d.ts')} */
+// 导入解析方法
+// import { parserDefinition } from "@lonu/stc/plugin/definition";
+// import { parserActions } from '@lonu/stc/plugin/action'
+
+/** @type {import('@lonu/stc/plugin/types').IPlugin} */
 const myPlugin = {
   name: "stc:myPlugin",
   lang: "cs",
