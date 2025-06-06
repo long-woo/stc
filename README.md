@@ -160,8 +160,11 @@ import { start } from 'jsr:@lonu/stc@^2.12.0'
 const myPlugin: IPlugin = {
   name: 'stc:MyPlugin',
   lang: 'ts',
-  setup(options) {
-    console.log(options)
+  setup(context: IPluginContext) {
+    // type map
+    return {
+
+    }
   },
   onTransform(def, action) {
     // definition
@@ -186,9 +189,9 @@ const myPlugin: IPlugin = {
   }
 }
 
-// 使用插件
+// use plugin
 start({
-  // ...其他配置
+  // ...other options
   plugins: [myPlugin]
 })
 ```
@@ -209,8 +212,11 @@ import { start } from '@lonu/stc'
 export const myPlugin: IPlugin = {
   name: 'stc:MyPlugin',
   lang: 'ts',
-  setup(options) {
-    console.log(options)
+  setup(context: IPluginContext) {
+    // type map
+    return {
+
+    }
   },
   onTransform(def, action) {
     // definition
