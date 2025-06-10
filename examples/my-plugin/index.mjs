@@ -8,8 +8,8 @@ import { start } from "@lonu/stc";
 const myPlugin = {
   name: "stc:myPlugin",
   lang: "cs",
-  setup(options) {
-    console.log(options);
+  setup(context) {
+    console.log(context);
     // 类型映射
     return {};
   },
