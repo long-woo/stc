@@ -93,3 +93,18 @@ Deno.test("shared", async () => {
 
   assertEquals(0, code);
 });
+
+Deno.test("additionalProperties", async () => {
+  const command = new Deno.Command("deno", {
+    args: [
+      "run",
+      "-A",
+      "src/main.ts",
+      "--url=./test/additional-properties.json",
+    ],
+  });
+
+  const { code } = await command.output();
+
+  assertEquals(0, code);
+});

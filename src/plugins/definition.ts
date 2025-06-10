@@ -78,6 +78,9 @@ export const parserDefinition = (
           propCommit: prop.title || prop.description,
           prop: prop,
           propType: _type,
+          nullable: prop.nullable
+            ? convertType("null", undefined, options)
+            : "",
         }),
       );
 

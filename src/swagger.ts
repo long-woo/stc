@@ -118,6 +118,10 @@ interface ISwaggerDefinitionProperties {
   format?: string;
   items?: ISwaggerSchema;
   enum?: string[];
+  additionalProperties?:
+    | boolean
+    | Pick<ISwaggerDefinitionProperties, "type" | "$ref">;
+  nullable?: boolean;
 }
 
 export interface ISwaggerComponents {
@@ -169,11 +173,11 @@ export interface IDefinitionVirtualProperty {
    */
   name: string;
   /**
-   * 属性类型
+   * 属性类型。数组的情况，通常是 action 的返回值会多个
    */
   type: string | string[];
   /**
-   * 扩展类型
+   * 类型的扩展，比如：Array<string>，该字段赋值为 Array，则 type 为 string
    */
   typeX?: string;
   /**
@@ -212,6 +216,10 @@ export interface IDefinitionVirtualProperty {
    * Apifox - 属性定义
    */
   items?: IDefinitionVirtualProperty;
+  /**
+   * 是否为 null
+   */
+  nullable?: boolean;
 }
 
 export interface IPathVirtualParameter {

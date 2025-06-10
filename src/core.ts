@@ -111,7 +111,15 @@ const getVirtualProperties = (
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性 ref
-      let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
+      let refName = getDefinitionNameMapping(
+        prop.$ref ??
+          (typeof prop.additionalProperties === "object" &&
+              "$ref" in prop.additionalProperties
+            ? prop.additionalProperties.$ref
+            : "") ??
+          "",
+      )
+        .name;
       if (prop.items) {
         refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
           (prop.items.type ??
@@ -124,7 +132,10 @@ const getVirtualProperties = (
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
       // 如果 ref 的自定义类型为基础类型，且 type 为空
-      if (!type && !defs[refName].type.includes("object")) {
+      if (
+        !type && !defs[refName].type.includes("object") &&
+        !defs[refName].enum?.length
+      ) {
         type = defs[refName].type;
         refName = "";
       }
@@ -137,6 +148,7 @@ const getVirtualProperties = (
         enumOption,
         ref: refName,
         format: prop.format ?? "",
+        nullable: prop.nullable,
       };
 
       // 处理当前属性的子属性

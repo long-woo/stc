@@ -1,6 +1,6 @@
 {
   "name": "@lonu/stc",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "description": "A tool for converting OpenApi/Swagger/Apifox into code.",
   "type": "module",
   "module": "esm/mod.js",
@@ -44,6 +44,17 @@
         "types": "./esm/mod.d.ts",
         "default": "./esm/mod.js"
       }
+    },
+    "./plugin/definition": {
+      "import": "./esm/src/plugins/definition.js",
+      "types": "./esm/src/plugins/definition.d.ts"
+    },
+    "./plugin/action": {
+      "import": "./esm/src/plugins/action.js",
+      "types": "./esm/src/plugins/action.d.ts"
+    },
+    "./plugin/types": {
+      "types": "./esm/src/plugins/typeDeclaration.d.ts"
     }
   }
 }

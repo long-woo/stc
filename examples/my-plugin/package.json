@@ -6,6 +6,6 @@
     "test": "stc --version"
   },
   "devDependencies": {
-    "@loongwoo/stc": "file:../../npm_dist"
+    "@lonu/stc": "file:../../npm_dist"
   }
 }
