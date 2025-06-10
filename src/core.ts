@@ -111,7 +111,15 @@ const getVirtualProperties = (
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性 ref
-      let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
+      let refName = getDefinitionNameMapping(
+        prop.$ref ??
+          (typeof prop.additionalProperties === "object" &&
+              "$ref" in prop.additionalProperties
+            ? prop.additionalProperties.$ref
+            : "") ??
+          "",
+      )
+        .name;
       if (prop.items) {
         refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
           (prop.items.type ??
@@ -128,6 +136,19 @@ const getVirtualProperties = (
         type = defs[refName].type;
         refName = "";
       }
+
+      // 如果 nullable 为 true
+      // if (prop.nullable) {
+      //   const _newType = Array.isArray(type)
+      //     ? type
+      //     : (type === "object" ? [refName] : [type]);
+
+      //   type = [..._newType, "null"];
+      // }
+
+      // if (defMapping.name === "MetaVariableDataTypeMapResponse") {
+      //   console.log(type, refName);
+      // }
 
       const _defItem: IDefinitionVirtualProperty = {
         name: camelCase(current),

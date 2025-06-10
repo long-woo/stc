@@ -118,6 +118,10 @@ interface ISwaggerDefinitionProperties {
   format?: string;
   items?: ISwaggerSchema;
   enum?: string[];
+  additionalProperties?:
+    | boolean
+    | Pick<ISwaggerDefinitionProperties, "type" | "$ref">;
+  nullable?: boolean;
 }
 
 export interface ISwaggerComponents {
@@ -173,7 +177,7 @@ export interface IDefinitionVirtualProperty {
    */
   type: string | string[];
   /**
-   * 扩展类型
+   * 类型的扩展，比如：Array<string>，该字段赋值为 Array，则 type 为 string
    */
   typeX?: string;
   /**
