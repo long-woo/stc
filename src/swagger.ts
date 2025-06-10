@@ -173,7 +173,7 @@ export interface IDefinitionVirtualProperty {
    */
   name: string;
   /**
-   * 属性类型
+   * 属性类型。数组的情况，通常是 action 的返回值会多个
    */
   type: string | string[];
   /**
@@ -216,6 +216,10 @@ export interface IDefinitionVirtualProperty {
    * Apifox - 属性定义
    */
   items?: IDefinitionVirtualProperty;
+  /**
+   * 是否为 null
+   */
+  nullable?: boolean;
 }
 
 export interface IPathVirtualParameter {

@@ -132,23 +132,13 @@ const getVirtualProperties = (
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
       // 如果 ref 的自定义类型为基础类型，且 type 为空
-      if (!type && !defs[refName].type.includes("object")) {
+      if (
+        !type && !defs[refName].type.includes("object") &&
+        !defs[refName].enum?.length
+      ) {
         type = defs[refName].type;
         refName = "";
       }
-
-      // 如果 nullable 为 true
-      // if (prop.nullable) {
-      //   const _newType = Array.isArray(type)
-      //     ? type
-      //     : (type === "object" ? [refName] : [type]);
-
-      //   type = [..._newType, "null"];
-      // }
-
-      // if (defMapping.name === "MetaVariableDataTypeMapResponse") {
-      //   console.log(type, refName);
-      // }
 
       const _defItem: IDefinitionVirtualProperty = {
         name: camelCase(current),
@@ -158,6 +148,7 @@ const getVirtualProperties = (
         enumOption,
         ref: refName,
         format: prop.format ?? "",
+        nullable: prop.nullable,
       };
 
       // 处理当前属性的子属性
