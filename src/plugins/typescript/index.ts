@@ -16,15 +16,20 @@ export const TypeScriptPlugin: IPlugin = {
     const pluginSetup: IPluginSetup = {
       unknownType: "unknown",
       typeMap(func, type) {
+        const _newType =
+          type && func(type, undefined, undefined, pluginSetup) ||
+          pluginSetup.unknownType;
+
+        if (type === "MetaVariableDataTypeInfo") {
+          console.log("_newType", _newType);
+        }
+
         return {
           string: "string",
           integer: "number",
           boolean: "boolean",
-          array: `${
-            type && func(type, undefined, pluginSetup) ||
-            pluginSetup.unknownType
-          }[]`,
-          object: `Record<string, ${pluginSetup.unknownType}>`,
+          array: `${_newType}[]`,
+          object: `Record<string, ${_newType}>`,
           file: "File",
           null: "null",
           bool: "boolean",

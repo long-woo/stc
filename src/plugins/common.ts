@@ -80,6 +80,7 @@ export const renderEtaString = (
 export const convertType = (
   type: string | string[],
   ref?: string,
+  additionalRef?: string,
   pluginSetup?: IPluginSetup | IPluginOptions,
 ): string => {
   // 当只有 ref 或者 type 为 object 时，直接返回 ref
@@ -89,7 +90,7 @@ export const convertType = (
   if (type === ref) return type || (pluginSetup?.unknownType ?? "");
 
   const _action: Record<string, string> =
-    pluginSetup?.typeMap?.(convertType, ref) ?? {};
+    pluginSetup?.typeMap?.(convertType, ref || additionalRef) ?? {};
 
   const _newType = Array.isArray(type) ? type : [type];
   const _type = _newType

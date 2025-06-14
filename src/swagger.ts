@@ -220,6 +220,10 @@ export interface IDefinitionVirtualProperty {
    * 是否为 null
    */
   nullable?: boolean;
+  /**
+   * 属性引用
+   */
+  additionalRef?: string;
 }
 
 export interface IPathVirtualParameter {

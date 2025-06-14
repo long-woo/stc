@@ -102,6 +102,7 @@ export interface IPluginSetup {
     convertFunc: (
       type: string,
       ref?: string,
+      additionalRef?: string,
       pluginOptions?: IPluginSetup,
     ) => string,
     type?: string,

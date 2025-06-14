@@ -111,14 +111,7 @@ const getVirtualProperties = (
       // 属性枚举选项值
       const enumOption = prop.enum || [];
       // 属性 ref
-      let refName = getDefinitionNameMapping(
-        prop.$ref ??
-          (typeof prop.additionalProperties === "object" &&
-              "$ref" in prop.additionalProperties
-            ? prop.additionalProperties.$ref
-            : "") ??
-          "",
-      )
+      let refName = getDefinitionNameMapping(prop.$ref ?? "")
         .name;
       if (prop.items) {
         refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
@@ -140,6 +133,11 @@ const getVirtualProperties = (
         refName = "";
       }
 
+      const additionalRef = typeof prop.additionalProperties === "object" &&
+          "$ref" in prop.additionalProperties
+        ? getDefinitionNameMapping(prop.additionalProperties.$ref ?? "").name
+        : undefined;
+
       const _defItem: IDefinitionVirtualProperty = {
         name: camelCase(current),
         type,
@@ -149,6 +147,7 @@ const getVirtualProperties = (
         ref: refName,
         format: prop.format ?? "",
         nullable: prop.nullable,
+        additionalRef,
       };
 
       // 处理当前属性的子属性
@@ -220,6 +219,10 @@ export const getDefinition = (
       } as IDefinitionVirtualProperty;
     } else {
       props = getVirtualProperties(defItem, def, definitions, defMap);
+    }
+
+    if (def.name === "MetaVariableDataTypeMapResponse") {
+      console.log(props);
     }
 
     defMap.set(name, props);

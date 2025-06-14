@@ -14,7 +14,7 @@ const parserBaseAndEnum = (
   const isEnum = (_enumOption?.length ?? 0) > 0;
   const data = isEnum
     ? _enumOption
-    : convertType(props.type, props.ref, options);
+    : convertType(props.type, props.ref, props.additionalRef, options);
 
   const res = renderEtaString(
     options.template!.enum,
@@ -54,6 +54,7 @@ export const parserDefinition = (
       const _type = convertType(
         prop.type,
         prop.ref,
+        prop.additionalRef,
         options,
       );
       const _enumOption = prop.enumOption;
@@ -79,7 +80,7 @@ export const parserDefinition = (
           prop: prop,
           propType: _type,
           nullable: prop.nullable
-            ? convertType("null", undefined, options)
+            ? convertType("null", undefined, undefined, options)
             : "",
         }),
       );

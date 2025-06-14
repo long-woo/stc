@@ -71,12 +71,18 @@ const getInternalDefinition = (
     let _type = convertType(
       current.type,
       current.typeX ?? current.ref,
+      current.additionalRef,
       pluginOptions,
     );
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-      _type = convertType(current.type, _defName, pluginOptions);
+      _type = convertType(
+        current.type,
+        _defName,
+        current.additionalRef,
+        pluginOptions,
+      );
 
       const _childDefinition = getInternalDefinition(
         current.properties,
@@ -145,7 +151,14 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     _params.forEach((item, index) => {
       const _type = item.enumOption?.length
         ? camelCase(`${_defName}_${item.name}`, true)
-        : `${convertType(item.type, item.typeX ?? item.ref, pluginOptions)}`;
+        : `${
+          convertType(
+            item.type,
+            item.typeX ?? item.ref,
+            item.additionalRef,
+            pluginOptions,
+          )
+        }`;
 
       // 外部引用
       if (item.ref && !prev.imports?.includes(item.ref)) {
@@ -283,6 +296,7 @@ const parseResponse = (
     const _defNameType = convertType(
       response.type ?? "",
       _defName.name,
+      undefined,
       pluginOptions,
     );
 
