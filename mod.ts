@@ -2,11 +2,16 @@
  * @example
  * ```ts
  * import { start } from "https://deno.land/x/stc@$X_VERSION/mod.ts";
+ * // 导入解析方法
+ * import { parserDefinition } from "npm:@lonu/stc/plugin/definition";
+ * import { parserActions } from 'npm:@lonu/stc/plugin/action'
  * 
  * const myPlugin: IPlugin = {
  *  name: "stc:MyPlugin",
- *  setup(options) {
- *    console.log(options)
+ *  setup(context) {
+ *  console.log(context);
+ *    // 类型映射
+ *    return {};
  *  },
  *  onTransform(def, action) {
  *    // 转换 definition
