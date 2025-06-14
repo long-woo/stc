@@ -25,6 +25,7 @@ export const DartPlugin: IPlugin = {
               func(
                 type,
                 undefined,
+                undefined,
                 pluginSetup,
               ) ||
             pluginSetup.unknownType
