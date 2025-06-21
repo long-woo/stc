@@ -258,14 +258,6 @@ export const createDiffFile = async (
           newContent += item.value;
         }
       }
-
-      // createFile(
-      //   `./stc_out/.stc_diff.lock`,
-      //   JSON.stringify(diffResult, null, 2),
-      //   {
-      //     banner: false,
-      //   },
-      // );
     }
   }
 
