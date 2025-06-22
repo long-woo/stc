@@ -6,9 +6,6 @@ import { renderEtaString } from "../common.ts";
 import shared from "./shared/index.ts";
 import template from "./template/index.ts";
 
-// Deno 当前版本（1.45.2）未支持
-// import webClientBaseFile from "./shared/apiClientBase.ts" with { type: "text" };
-
 export const TypeScriptPlugin: IPlugin = {
   name: "stc:TypeScriptPlugin",
   lang: "ts",
@@ -19,10 +16,6 @@ export const TypeScriptPlugin: IPlugin = {
         const _newType =
           type && func(type, undefined, undefined, pluginSetup) ||
           pluginSetup.unknownType;
-
-        if (type === "MetaVariableDataTypeInfo") {
-          console.log("_newType", _newType);
-        }
 
         return {
           string: "string",

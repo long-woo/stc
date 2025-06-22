@@ -1,0 +1,30 @@
+/// <%= it.description %>
+<% if (it.deprecated) { %>
+@available(*, deprecated, message: "This API is deprecated")
+<% } %>
+public func <%= it.name %>(
+    <% it.parameters.forEach(function(param, index) { %>
+    <%= param.name %>: <%= param.type %><% if (param.optional) { %>?<% } %><% if (index < it.parameters.length - 1) { %>,<% } %>
+    <% }) %>
+) async throws -> <%= it.responseType %> {
+    <% if (it.pathParams && it.pathParams.length > 0) { %>
+    let pathParams: [String: String] = [
+        <% it.pathParams.forEach(function(param, index) { %>
+        "<%= param.name %>": String(<%= param.value %>)<% if (index < it.pathParams.length - 1) { %>,<% } %>
+        <% }) %>
+    ]
+    let parsedUrl = "<%= it.url %>".parsePathParams(pathParams)
+    <% } %>
+    
+    <% if (it.requestBody) { %>
+    let params: [String: Any] = <%= it.requestBody %>
+    <% } %>
+    
+    let config = APIClientConfig(
+        url: <% if (it.pathParams && it.pathParams.length > 0) { %>parsedUrl<% } else { %>"<%= it.url %>"<% } %>,
+        method: "<%= it.method %>"<% if (it.requestBody) { %>,
+        params: params<% } %>
+    )
+    
+    return try await APIClient.shared.request(config, type: <%= it.responseType %>.self)
+}

@@ -61,6 +61,11 @@
     "@std/datetime": "jsr:@std/datetime@^0.225.1",
     "@std/fmt": "jsr:@std/fmt@^1.0.1",
     "@std/fs": "jsr:@std/fs@^1.0.2",
-    "diff": "npm:diff@^7.0.0"
+    "diff": "npm:diff@^7.0.0",
+    "analytics": "npm:analytics@0.8.16",
+    "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
+    "micromatch": "npm:micromatch@4.0.8",
+    "i18next":"npm:i18next@^23.14.0",
+    "oxc-transform": "npm:oxc-transform@^0.63.0"
   }
 }

@@ -26,10 +26,6 @@
     "url": "https://github.com/long-woo/stc/issues"
   },
   "homepage": "https://github.com/long-woo/stc#readme",
-  "files": [
-    "esm",
-    "script"
-  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -55,6 +51,10 @@
     },
     "./plugin/types": {
       "types": "./esm/src/plugins/typeDeclaration.d.ts"
+    },
+    "./plugin/common": {
+      "import": "./esm/src/plugins/common.js",
+      "types": "./esm/src/plugins/common.d.ts"
     }
   }
 }

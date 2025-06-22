@@ -1,5 +1,8 @@
 import { start } from "@lonu/stc";
 
+// 导入解析 eta 文件
+import { buildEta } from "@lonu/stc/plugin/common";
+
 // 导入解析方法
 // import { parserDefinition } from "@lonu/stc/plugin/definition";
 // import { parserActions } from '@lonu/stc/plugin/action'
@@ -8,10 +11,33 @@ import { start } from "@lonu/stc";
 const myPlugin = {
   name: "stc:myPlugin",
   lang: "cs",
-  setup(context) {
+  async setup(context) {
+    // template 的文件是伪代码。
+    const template = await buildEta("./template");
+
     console.log(context);
+
     // 类型映射
-    return {};
+    return {
+      unknownType: "",
+      typeMap(func, type) {
+        const _newType =
+          type && func(type, undefined, undefined, pluginSetup) ||
+          pluginSetup.unknownType;
+
+        return {
+          string: "string",
+          integer: "int",
+          boolean: "boolean",
+          array: `List<${_newType}>`,
+          object: "object",
+          file: "File",
+          null: "null",
+          bool: "boolean",
+        };
+      },
+      template,
+    };
   },
 };
 
