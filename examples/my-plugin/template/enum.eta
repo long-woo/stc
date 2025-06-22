@@ -1,0 +1,4 @@
+/// <%= it.description %>
+enum <%= it.name %> {
+    <%= it.data.map(it.convertValue).join(",\n\t")%>
+}

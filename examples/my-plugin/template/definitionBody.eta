@@ -1,0 +1,7 @@
+/// <%= it.description %>
+public struct <%= it.name %>: Codable {
+    <% it.properties.forEach(function(item) { %>
+    /// <%= item.description %>
+    public let <%= item.name %>: <%= item.type %><% if (item.optional) { %>?<% } %>
+    <% }) %>
+}

@@ -21,10 +21,16 @@ export interface ApiClientConfig {
   signal?: AbortSignal
   withCredentials?: boolean
   /**
-   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
+   * @deprecated
+   * 
+   * 请改成 `errorIgnores`
    */
   errorIgnore?: string[]
-  config?: Pick<ApiClientConfig, 'baseURL' | 'timeout' | 'signal'> & { headers?: IDefaultObject}
+  /**
+   * 忽略错误发生的 url 或 baseURL，不触发 error 回调函数。示例：/api/test
+   */
+  errorIgnores?: string[]
+  config?: Pick<ApiClientConfig, 'baseURL' | 'timeout' | 'signal'> & { headers?: IDefaultObject, errorIgnore?: boolean}
   /**
    * 错误回调函数
    */

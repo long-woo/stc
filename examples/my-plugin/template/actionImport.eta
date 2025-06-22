@@ -1,0 +1,5 @@
+// using ...
+
+<% if (it.imports.length) { %>
+import '<%= it.importPath %><%= it.typeFileName %>.dart';
+<% } %>

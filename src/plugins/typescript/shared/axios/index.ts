@@ -9,7 +9,7 @@ import axios from "axios";
 import type { ApiClientConfig, IDefaultObject } from "../apiClientBase";
 
 let axiosInstance: AxiosInstance;
-let errorIgnore: string[] = [];
+let errorIgnores: string[] = [];
 let onError: ((message: string | Record<string, unknown>) => void) | undefined;
 let onLogin: (() => void) | undefined;
 
@@ -29,8 +29,8 @@ const responseInterceptor = () => {
     (response: AxiosResponse<any, any>) => {
       const _data = response.data;
       const _config = response.config;
-      const _errorIgnore = errorIgnore.includes(_config.url ?? "") ||
-        errorIgnore.includes(_config.baseURL ?? "");
+      const _errorIgnore = errorIgnores.includes(_config.url ?? "") ||
+        errorIgnores.includes(_config.baseURL ?? "");
 
       // 全局提示。忽略排除的 url 或 baseURL
       if (!_errorIgnore) {
@@ -68,7 +68,7 @@ export const createAxios = (
     withCredentials: config.withCredentials ?? false,
   });
 
-  errorIgnore = config.errorIgnore ?? [];
+  errorIgnores = config.errorIgnore ?? config.errorIgnores ?? [];
   onError = config.onError;
   onLogin = config.onLogin;
 
@@ -85,6 +85,7 @@ export const createAxios = (
 export const request = <T>(
   config: ApiClientConfig,
 ): Promise<T> => {
+  const _url = config.url
   const _formData: IDefaultObject = config.params?.formData as IDefaultObject;
 
   let _data: IDefaultObject | FormData | unknown = config.params?.body;
@@ -100,8 +101,12 @@ export const request = <T>(
     _data = formData;
   }
 
+  if (config.config.errorIgnore && _url && !errorIgnores.includes(_url)) {
+    errorIgnores.push(_url)
+  }
+
   return axiosInstance.request<T, T>({
-    url: config.url,
+    url: _url,
     method: config.method,
     data: _data,
     params: config.params?.query,

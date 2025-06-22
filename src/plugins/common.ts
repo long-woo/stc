@@ -1,8 +1,10 @@
+import { expandGlob } from "@std/fs";
 import { Eta } from "@eta-dev/eta";
 
 import type { IPluginOptions, IPluginSetup } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
+import { readFile } from "../utils.ts";
 
 let etaInstance: Eta | null = null;
 
@@ -137,4 +139,30 @@ export const validTemplate = (template: IPluginOptions["template"]) => {
     Logs.error(_msg);
     throw _msg;
   }
+};
+
+/**
+ * 构建 ETA 模板映射表
+ *
+ * 扫描指定目录下的所有 `.eta` 模板文件，将其内容读取并构建为文件名到内容的映射表，
+ * 最终生成一个包含所有模板内容的 `index.ts` 自动导出文件。
+ *
+ * @param dir - 包含 ETA 模板文件的目录路径
+ * @returns Promise<void>
+ */
+export const buildEta = async (dir: string) => {
+  const _files = await Array.fromAsync(expandGlob(`${dir}/*.eta`));
+  const _fileMap = Object.create({});
+
+  for await (const _file of _files) {
+    const _filename = _file.name.split(".eta")[0];
+    // 读取文件内容
+    const _content = await readFile(_file.path);
+
+    if (_filename) {
+      _fileMap[_filename] = _content;
+    }
+  }
+
+  return _fileMap;
 };
