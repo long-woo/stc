@@ -6,6 +6,7 @@ import Logs from "./console.ts";
 import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
+import { trackEvent } from "./ga.ts";
 
 const drawLogo = () => {
   console.log(`
@@ -251,6 +252,12 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     Logs.error(getT("$t(cli.requiredUrl)"));
     printHelp();
   }
+
+  trackEvent("cli", {
+    client: args.client,
+    lang: args.lang,
+    version: denoJson.version,
+  });
 
   return {
     url: args.url,
