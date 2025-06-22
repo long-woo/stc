@@ -52,21 +52,19 @@ const checkUpdate = async () => {
       }
 
       // 询问是否更新
-      const _needUpdate = confirm(`${
-        getT("$t(cli.updatePrompt)", {
-          version: denoJson.version,
-          latestVersion,
-        })
-      }${getT("$t(cli.updateConfirm)")}`);
+      const _needUpdate = confirm(`${getT("$t(cli.updatePrompt)", {
+        version: denoJson.version,
+        latestVersion,
+      })
+        }${getT("$t(cli.updateConfirm)")}`);
 
       if (!_needUpdate) return;
 
       Logs.info(
-        `${
-          getT("$t(cli.updating)", {
-            version: denoJson.version,
-            latestVersion,
-          })
+        `${getT("$t(cli.updating)", {
+          version: denoJson.version,
+          latestVersion,
+        })
         }...`,
       );
 
@@ -80,8 +78,7 @@ const checkUpdate = async () => {
         "x86_64-unknown-linux-gnu": "stc-linux",
       };
       const downloadUrl =
-        `https://github.com/long-woo/stc/releases/download/${latestVersion}/${
-          appNameMap[systemInfo.target]
+        `https://github.com/long-woo/stc/releases/download/${latestVersion}/${appNameMap[systemInfo.target]
         }`;
       const downloadApp = await fetch(downloadUrl);
 
@@ -253,7 +250,7 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     printHelp();
   }
 
-  trackEvent("cli", {
+  trackEvent("cli_options", {
     client: args.client,
     lang: args.lang,
     version: denoJson.version,

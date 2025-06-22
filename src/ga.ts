@@ -16,5 +16,5 @@ const analytics = Analytics({
  * @param data - 可选的事件数据对象
  */
 export const trackEvent = (event: string, data?: Record<string, unknown>) => {
-  analytics.track(event, data);
+  analytics.track(event, data)
 };
