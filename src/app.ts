@@ -15,9 +15,7 @@ const initPluginManager = (context: IPluginContext) => {
   const pluginManager = new PluginManager();
 
   // 注册插件
-  pluginManager.register([
-    ...(context.options.plugins ?? []),
-  ]);
+  pluginManager.register(context.options.plugins ?? []);
   // 启动所有插件
   pluginManager.setupAll(context);
 };

@@ -55,6 +55,7 @@
     "parserActionDone": "解析接口完成。",
     "no_200_response": "缺少 200 状态码的信息。",
     "no_tag": "{{url}} 未指定 tag，跳过解析。请使用 --tag 参数。",
+    "alreadyRegistered": "内置插件 {{names}} 不能被重复注册。",
     "template": {
       "enumRequired": "缺失 enum.eta 模板文件。",
       "actionImportRequired": "缺失 actionImport.eta 模板文件。",
