@@ -15,10 +15,19 @@ export class PluginManager {
     // SwiftPlugin,
   ];
 
-  register(plugin: IPlugin | IPlugin[]) {
+  register(plugins: IPlugin[]) {
+    const pluginNames = plugins.map((item) => item.name).join(", ");
+    // 如果插件已经存在，则不重复注册
+    if (this.plugins.every((item) => pluginNames.includes(item.name))) {
+      Logs.warn(
+        getT("$t(plugin.alreadyRegistered)", { names: pluginNames }),
+      );
+      return;
+    }
+
     this.plugins = [
       ...this.plugins,
-      ...(Array.isArray(plugin) ? plugin : [plugin]),
+      ...(Array.isArray(plugins) ? plugins : [plugins]),
     ];
   }
 

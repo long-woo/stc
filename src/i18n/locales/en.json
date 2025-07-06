@@ -55,6 +55,7 @@
     "parserActionDone": "Parsing url data is complete.",
     "no_200_response": "Missing information for 200 status code.",
     "no_tag": "{{url}} does not specify a tag, skip parsing. Please use the --tag parameter.",
+    "alreadyRegistered": "Plugin {{names}} is already registered.",
     "template": {
       "enumRequired": "Missing enum.eta template file.",
       "actionImportRequired": "Missing actionImport.eta template file.",
