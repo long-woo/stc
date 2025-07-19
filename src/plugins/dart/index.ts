@@ -16,21 +16,16 @@ export const DartPlugin: IPlugin = {
     const pluginSetup: IPluginSetup = {
       unknownType: "dynamic",
       typeMap(func, type) {
+        const _newType =
+          type && func(type, undefined, undefined, pluginSetup) ||
+          pluginSetup.unknownType;
+
         return {
           string: "String",
           integer: "int",
           boolean: "bool",
-          array: `List<${
-            type &&
-              func(
-                type,
-                undefined,
-                undefined,
-                pluginSetup,
-              ) ||
-            pluginSetup.unknownType
-          }>`,
-          object: `Map<String, ${pluginSetup.unknownType}>`,
+          array: `List<${_newType}>`,
+          object: `Map<String, ${_newType}>`,
           null: "null",
         };
       },

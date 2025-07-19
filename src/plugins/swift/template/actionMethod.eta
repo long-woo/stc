@@ -1,28 +1,62 @@
-/// <%= it.description %>
+<% /* API 方法注释 */ %>
+<% if (it.summary) { %>
+/// <%~ it.summary %>
+<% } %>
+<% if (it.summary !== it.description) { %>
+<% if (it.summary && it.description) { %>
+///
+<% } %>
+<% if (it.description) { %>
+/// <%~ it.description %>
+<% } %>
+<% } %>
+
 <% if (it.deprecated) { %>
 @available(*, deprecated, message: "This API is deprecated")
 <% } %>
-public func <%= it.name %>(
-    <% it.parameters.forEach(function(param, index) { %>
-    <%= param.name %>: <%= param.type %><% if (param.optional) { %>?<% } %><% if (index < it.parameters.length - 1) { %>,<% } %>
-    <% }) %>
-) async throws -> <%= it.responseType %> {
-    <% if (it.pathParams && it.pathParams.length > 0) { %>
+<% /* API 方法 */ %>
+public func <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
+    <%= param.name %>: <%= param.type %><% if (!param.required) { %>?<% } %><% if (index < it.params.length - 1) { %>,<% } %>
+<% }) %>) async throws -> <%= it.responseType %> {
+    <% /* 处理路径参数 */ %>
+    <% const pathParams = it.params.filter(p => p.category === 'path'); %>
+    <% if (pathParams.length > 0) { %>
     let pathParams: [String: String] = [
-        <% it.pathParams.forEach(function(param, index) { %>
-        "<%= param.name %>": String(<%= param.value %>)<% if (index < it.pathParams.length - 1) { %>,<% } %>
+        <% pathParams.forEach((param, index) => { %>
+        "<%= param.name %>": String(<%= param.name %>)<% if (index < pathParams.length - 1) { %>,<% } %>
         <% }) %>
     ]
     let parsedUrl = "<%= it.url %>".parsePathParams(pathParams)
     <% } %>
     
-    <% if (it.requestBody) { %>
-    let params: [String: Any] = <%= it.requestBody %>
+    <% /* 处理请求参数 */ %>
+    <% const bodyParams = it.params.filter(p => p.category === 'body' || p.category === 'formData'); %>
+    <% const queryParams = it.params.filter(p => p.category === 'query'); %>
+    <% if (bodyParams.length > 0 || queryParams.length > 0) { %>
+    var params: [String: Any] = [:]
+    <% bodyParams.forEach(param => { %>
+    <% if (param.required) { %>
+    params["<%= param.category %>"] = <%= param.name %>
+    <% } else { %>
+    if let <%= param.name %> = <%= param.name %> {
+        params["<%= param.category %>"] = <%= param.name %>
+    }
+    <% } %>
+    <% }) %>
+    <% queryParams.forEach(param => { %>
+    <% if (param.required) { %>
+    params["<%= param.category %>"] = <%= param.name %>
+    <% } else { %>
+    if let <%= param.name %> = <%= param.name %> {
+        params["<%= param.category %>"] = <%= param.name %>
+    }
+    <% } %>
+    <% }) %>
     <% } %>
     
     let config = APIClientConfig(
-        url: <% if (it.pathParams && it.pathParams.length > 0) { %>parsedUrl<% } else { %>"<%= it.url %>"<% } %>,
-        method: "<%= it.method %>"<% if (it.requestBody) { %>,
+        url: <% if (pathParams.length > 0) { %>parsedUrl<% } else { %>"<%= it.url %>"<% } %>,
+        method: "<%= it.method %>"<% if (bodyParams.length > 0 || queryParams.length > 0) { %>,
         params: params<% } %>
     )
     

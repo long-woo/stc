@@ -5,14 +5,14 @@ import { TypeScriptPlugin } from "./typescript/index.ts";
 import { JavaScriptPlugin } from "./javascript/index.ts";
 import { DartPlugin } from "./dart/index.ts";
 import { setupTemplate, validTemplate } from "./common.ts";
-// import { SwiftPlugin } from "./swift/index.ts";
+import { SwiftPlugin } from "./swift/index.ts";
 
 export class PluginManager {
   private plugins: IPlugin[] = [
     TypeScriptPlugin,
     JavaScriptPlugin,
     DartPlugin,
-    // SwiftPlugin,
+    SwiftPlugin,
   ];
 
   register(plugins: IPlugin[]) {

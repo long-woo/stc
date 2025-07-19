@@ -1,7 +1,9 @@
-/// <%= it.description %>
-public enum <%= it.name %> {
-    <% it.enums.forEach(function(item) { %>
-    /// <%= item.description %>
-    case <%= item.name %><% if (item.value) { %> = "<%= item.value %>"<% } %>
+<% if (it.isEnum) { %>
+public enum <%= it.name %>: String, Codable {
+    <% it.data.forEach(function(item) { %>
+    case <%= it.convertValue(item).replace(/[^a-zA-Z0-9_]/g, '_') %> = "<%= item %>"
     <% }) %>
 }
+<% } else { %>
+public typealias <%= it.name %> = <%= it.data %>
+<% } %>
