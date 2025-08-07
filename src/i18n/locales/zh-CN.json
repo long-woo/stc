@@ -14,7 +14,7 @@
   },
   "path": {
     "notName": "{{url}} 【{{method}}】 无法获取方法名称，故忽略。",
-    "duplicate": "{{url}} 【{{method}}】 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项。"
+    "duplicate": "{{url}} 【{{method}}】 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项，或者为每个方法添加 `operationId`。"
   },
   "app": {
     "apiJsonFileError": "API 文件解析失败。原因：{{error}}",
