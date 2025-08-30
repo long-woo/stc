@@ -10,7 +10,7 @@ name: Publish to release
 
 on:
   push:
-    branches: ['master']
+    branches: ['master', 'main']
     paths:
       - deno.json
 
