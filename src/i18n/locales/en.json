@@ -18,7 +18,7 @@
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",
-    "generateFileDone": "API file is generated:"
+    "generateFileDone": "API file is generated ({{total}} apis):"
   },
   "cli": {
     "checkUpdate": "Check for updates",

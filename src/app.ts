@@ -148,7 +148,7 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   });
 
   console.log("\n");
-  Logs.success(`${getT("$t(app.generateFileDone)")}\n\t${options.outDir}\n`);
+  Logs.success(`${getT("$t(app.generateFileDone)", {total: actionData.size})}\n\t${options.outDir}\n`);
   // 触发插件 onEnd 事件
   context.onEnd?.(context.options);
 };
