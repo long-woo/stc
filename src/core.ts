@@ -126,7 +126,7 @@ const getVirtualProperties = (
 
       // 如果 ref 的自定义类型为基础类型，且 type 为空
       if (
-        !type && !defs[refName].type.includes("object") &&
+        !type && defs[refName] && !defs[refName].type.includes("object") &&
         !defs[refName].enum?.length
       ) {
         type = defs[refName].type;

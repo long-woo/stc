@@ -14,11 +14,11 @@
   },
   "path": {
     "notName": "{{url}} 【{{method}}】 无法获取方法名称，故忽略。",
-    "duplicate": "{{url}} 【{{method}}】 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项。"
+    "duplicate": "{{url}} 【{{method}}】 的 {{name}} 方法名重复，可设置 `--actionIndex` 选项，或者为每个方法添加 `operationId`。"
   },
   "app": {
     "apiJsonFileError": "API 文件解析失败。原因：{{error}}",
-    "generateFileDone": "API 文件生成完成："
+    "generateFileDone": "API 文件生成完成（共 {{total}} 个接口）："
   },
   "cli": {
     "checkUpdate": "检查更新",

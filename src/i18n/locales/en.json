@@ -14,11 +14,11 @@
   },
   "path": {
     "notName": "{{url}} [{{method}}] cannot get the method name, so it will be ignored.",
-    "duplicate": "{{url}} [{{method}}] has the same method name {{name}}, you can set the `--actionIndex` option."
+    "duplicate": "{{url}} [{{method}}] has the same method name {{name}}, you can set the `--actionIndex` option, or add `operationId` for each method."
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",
-    "generateFileDone": "API file is generated:"
+    "generateFileDone": "API file is generated ({{total}} apis):"
   },
   "cli": {
     "checkUpdate": "Check for updates",
