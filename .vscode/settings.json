@@ -9,6 +9,9 @@
   "deno.codeLens.referencesAllFunctions": true,
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   },

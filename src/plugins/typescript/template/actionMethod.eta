@@ -4,17 +4,21 @@
  * @deprecated
  *
 <% } %>
+ * <%~ it.url %>
+
+ *
 <% if (it.summary) { %>
  * <%~ it.summary %>
+
+ *
 <% } %>
 <% if (it.summary !== it.description) { %>
 <% if (it.description) { %>
-
  * @description <%~ it.description %>
-<% } %>
-<% } %>
-
+ 
  *
+<% } %>
+<% } %>
 <% if (it.params.length) { %>
 <% it.params.forEach(param => { %>
  * @param {<%~ param.type %>} <% if (!param.required) { %>[<% } %><%= param.name %><% if (!param.required) { %>]<% } %> - <%~ param.description || param.type %>

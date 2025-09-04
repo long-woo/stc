@@ -500,10 +500,10 @@ export const getApiPath = (
       // url去除 `?` 之后的字符
       if (url.includes("?")) url = url.slice(0, url.indexOf("?"));
 
-      const currentMethod = methods[method];
+      const currentAction = methods[method];
 
       // 方法名
-      let name = currentMethod.operationId ??
+      let name = currentAction.operationId ??
         getMethodName(url, options!.conjunction!, options?.actionIndex);
 
       if (!name) {
@@ -512,12 +512,8 @@ export const getApiPath = (
       }
 
       // 添加请求方式标识，如 GET，POST 等，防止重名。设置了 operationId，以 operationId 为准
-      if (
-        !currentMethod.operationId &&
-        !/^(get|post|put|delete|options|head|patch)/i.test(
-          name.slice(0, method.length),
-        )
-      ) {
+      if (!currentAction.operationId) {
+        name = name.replace(/^(get|post|put|delete|options|head|patch)/i, "");
         name = `${method}${upperCase(name)}`;
       }
 
@@ -525,7 +521,7 @@ export const getApiPath = (
       const value = getPathVirtualProperty(
         url,
         method,
-        currentMethod,
+        currentAction,
         options?.tag,
       );
 

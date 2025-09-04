@@ -1,4 +1,5 @@
 <% /* API 方法注释 */ %>
+/// <%~ it.url %>
 <% if (it.summary) { %>
 /// <%~ it.summary %>
 <% } %>
