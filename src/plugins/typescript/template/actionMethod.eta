@@ -5,14 +5,17 @@
  *
 <% } %>
  * <%~ it.url %>
+
  *
 <% if (it.summary) { %>
  * <%~ it.summary %>
+
  *
 <% } %>
 <% if (it.summary !== it.description) { %>
 <% if (it.description) { %>
  * @description <%~ it.description %>
+ 
  *
 <% } %>
 <% } %>
