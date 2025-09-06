@@ -41,8 +41,8 @@ export const JavaScriptPlugin: IPlugin = {
       for (const [key, content] of _tsTransform.action) {
         const { code, declaration } = oxcTransform(content);
 
-        actionDeclareData.set(key, declaration ?? "");
-        _actionMapData.set(key.replace(/\.ts/, `.${this.lang}`), code);
+        actionDeclareData.set(key.replace(/\.js/, ""), declaration ?? "");
+        _actionMapData.set(key, code);
       }
     }
 
