@@ -4,7 +4,7 @@
   "exports": "./mod.ts",
   "tasks": {
     "pack": "deno run -A src/pack.ts",
-    "dev": "deno task pack && deno run -A --watch=src src/main.ts --url='https://petstore3.swagger.io/api/v3/openapi.json' --lang=swift",
+    "dev": "deno task pack && deno run -A --watch=src src/main.ts --url='https://petstore3.swagger.io/api/v3/openapi.json' --lang=js",
     "serve": "deno run -A --watch=src src/service.ts",
     "version": "echo '2.14.3' > release/version",
     "build:npm": "deno run -A src/npm/build.ts",
