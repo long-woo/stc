@@ -3,7 +3,7 @@ import type {
   IPluginTransformDefinition,
 } from "../typeDeclaration.ts";
 
-import { createFile } from "../../utils.ts";
+import { createDiffFile, createFile } from "../../utils.ts";
 import shared from "../typescript/shared/index.ts";
 import { TypeScriptPlugin } from "../typescript/index.ts";
 import { renderEtaString } from "../common.ts";
@@ -52,6 +52,15 @@ export const JavaScriptPlugin: IPlugin = {
     };
   },
   onEnd(options) {
+    // 创建接口声明文件
+    actionDeclareData.forEach((item, key) => {
+      createDiffFile(
+        `${options.outDir}/${key}.d.ts`,
+        item,
+        options.clean,
+      );
+    });
+
     if (!options.shared) return;
 
     // 创建运行时需要的文件
@@ -78,13 +87,6 @@ export const JavaScriptPlugin: IPlugin = {
       _fetchRuntimeFile.code,
     );
 
-    // 创建接口声明文件
-    actionDeclareData.forEach((item, key) => {
-      createFile(
-        `${options.outDir}/${key}.d.ts`,
-        item,
-      );
-    });
     createFile(
       `${options.outDir}/shared/apiClientBase.d.ts`,
       _baseFile.declaration ?? "",
