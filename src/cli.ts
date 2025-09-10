@@ -10,12 +10,12 @@ import { trackEvent } from "./ga.ts";
 
 const drawLogo = () => {
   console.log(`
-    ______ _______ _______ 
+  __________ _______ ___
  / _____|_______|_______)
-( (____     _    _       
- \____ \   | |  | |      
+( (____     _    _      
+ \\____ \\   | |  | |      
  _____) )  | |  | |_____ 
-(______/   |_|   \______)
+(______/   |_|   \\______)
   `);
 };
 
@@ -176,6 +176,7 @@ ${getT("$t(cli.option)")}
   --actionIndex      ${getT("$t(cli.option_actionIndex)")}
   --shared           ${getT("$t(cli.option_shared)")}
   --clean            ${getT("$t(cli.option_clean)")}
+  --globalHeader, --gh  ${getT("$t(cli.option_globalHeader)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -201,6 +202,7 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       "filter",
       "conjunction",
       "actionIndex",
+      "globalHeader",
     ],
     alias: {
       h: "help",
@@ -209,8 +211,9 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       v: "version",
       f: "filter",
       c: "conjunction",
+      gh: "globalHeader",
     },
-    collect: ["filter"],
+    collect: ["filter", "globalHeader"],
     default: {
       outDir: "./stc_out",
       lang: "ts",
@@ -270,5 +273,6 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     actionIndex: args.actionIndex,
     shared: args.shared,
     clean: args.clean,
+    globalHeader: args.globalHeader,
   };
 };

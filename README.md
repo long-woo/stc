@@ -136,6 +136,7 @@ App<IAppOption>({
 | actionIndex |      | number   | -1        | The method name index, the default value is `-1`.                                                            |
 | shared      |      | boolean  | true      | Whether to generate the shared directory. [default: true].                                                   |
 | clean       |       | boolean  | true      | Whether to clean the output directory before generating. [default: true].                                   |
+| globalHeader | gh | string[] |  | Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter. |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
 
@@ -153,8 +154,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.14.5/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.14.5'
+// import { start } from 'https://deno.land/x/stc@2.15.0/mod.ts'
+import { start } from 'jsr:@lonu/stc@^2.15.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {

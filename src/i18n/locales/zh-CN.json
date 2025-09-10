@@ -37,13 +37,14 @@
     "option_out": "输出目录，默认为 stc 当前执行的目录下 {{out}}。",
     "option_client": "http 请求客户端。 当 lang 为 ts/js 时，可选值：axios、wechat、fetch。",
     "option_lang": "语言，用于输出文件的后缀名， [默认: \"ts\"]。",
-    "option_filter": "过滤接口，符合过滤条件的接口会被生成。",
+    "option_filter": "过滤接口，符合过滤条件的接口会被生成，可设置多个。",
     "option_tag": "从接口 url 中指定标签，用于文件名，默认读取 tags 的第一个。",
     "option_version": "显示版本信息。",
     "option_conjunction": "方法名的连接词。 [默认: \"By\"]。",
     "option_actionIndex": "方法名的索引。 [默认: -1]。",
     "option_shared": "是否生成 shared 目录。 [默认: true]。",
-    "option_clean": "是否清空输出目录。 [默认: true]。"
+    "option_clean": "是否清空输出目录。 [默认: true]。",
+    "option_globalHeader": "全局 header key 配置，可设置多个。当单个 API 存在相同的 key，将不会作为参数出现。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",
