@@ -108,3 +108,19 @@ Deno.test("additionalProperties", async () => {
 
   assertEquals(0, code);
 });
+
+Deno.test("globalHeader(gh)", async () => {
+  const command = new Deno.Command("deno", {
+    args: [
+      "run",
+      "-A",
+      "src/main.ts",
+      "--url=https://petstore3.swagger.io/api/v3/openapi.json",
+      "--globalHeader=authorization",
+      "--gh=custom-header",
+    ],
+  });
+  const { code } = await command.output();
+
+  assertEquals(0, code);
+});

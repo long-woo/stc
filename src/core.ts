@@ -356,36 +356,42 @@ const getProperties = (
  * @param url - 接口地址
  * @param method - 请求方式
  * @param pathMethod - 请求对象
- * @param tagIndex - 从 url 指定标签
+ * @param options - 配置项
  * @returns
  */
 const getPathVirtualProperty = (
   url: string,
   method: string,
   pathMethod: ISwaggerResultPath,
-  tagIndex?: number,
+  options?: DefaultConfigOptions,
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
   const parameters =
     (pathMethod.parameters?.sort((_a, _b) =>
       Number(_b.required) - Number(_a.required)
     ) ?? []).reduce((prev: IPathVirtualParameter, current) => {
-      const _schema = current.schema;
-      const item: IDefinitionVirtualProperty = {
-        name: current.name,
-        type: current.type ?? _schema?.type ?? "",
-        required: current.required,
-        description: current.description,
-        format: current.format ?? _schema?.format,
-        ref: getRefType(
-          _schema?.$ref ?? _schema?.items?.$ref ?? "",
-        ),
-        typeX: current?.items?.type ?? _schema?.items?.type,
-        default: _schema?.default,
-        enumOption: _schema?.enum,
-      };
+      if (
+        (current.in === "header" &&
+          !options?.globalHeader?.includes(current.name.toLowerCase())) ||
+        current.in !== "header"
+      ) {
+        const _schema = current.schema;
+        const item: IDefinitionVirtualProperty = {
+          name: current.name,
+          type: current.type ?? _schema?.type ?? "",
+          required: current.required,
+          description: current.description,
+          format: current.format ?? _schema?.format,
+          ref: getRefType(
+            _schema?.$ref ?? _schema?.items?.$ref ?? "",
+          ),
+          typeX: current?.items?.type ?? _schema?.items?.type,
+          default: _schema?.default,
+          enumOption: _schema?.enum,
+        };
 
-      prev[current.in].push(item);
+        prev[current.in].push(item);
+      }
 
       return prev;
     }, { path: [], query: [], body: [], formData: [], header: [] });
@@ -450,8 +456,8 @@ const getPathVirtualProperty = (
 
   // 标签，用于文件名
   let _tag = pathMethod.tags?.[0];
-  if (tagIndex !== undefined) {
-    _tag = url.split("/")[tagIndex];
+  if (options?.tag) {
+    _tag = url.split("/")[options?.tag];
   }
 
   const value: IPathVirtualProperty = {
@@ -477,6 +483,7 @@ const getPathVirtualProperty = (
 /**
  * 获取接口地址对象
  * @param paths - 接口地址
+ * @param options - 配置项
  * @returns
  */
 export const getApiPath = (
@@ -522,7 +529,7 @@ export const getApiPath = (
         url,
         method,
         currentAction,
-        options?.tag,
+        options,
       );
 
       name = `${value.tag}@${name}`;

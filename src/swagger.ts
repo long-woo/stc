@@ -359,6 +359,10 @@ export interface DefaultConfigOptions {
    * 是否清空输出目录。默认：true
    */
   readonly clean?: boolean;
+  /**
+   * 全局请求头
+   */
+  readonly globalHeader?: string[];
 }
 
 export interface IDefinitionNameMapping {
