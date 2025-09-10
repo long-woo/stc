@@ -149,16 +149,14 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     };
 
     _params.forEach((item, index) => {
-      const _type = item.enumOption?.length
-        ? camelCase(`${_defName}_${item.name}`, true)
-        : `${
-          convertType(
-            item.type,
-            item.typeX ?? item.ref,
-            item.additionalRef,
-            pluginOptions,
-          )
-        }`;
+      let _type = `${
+        convertType(
+          item.type,
+          item.typeX ?? item.ref,
+          item.additionalRef,
+          pluginOptions,
+        )
+      }`;
 
       // 外部引用
       if (item.ref && !prev.imports?.includes(item.ref)) {
@@ -168,6 +166,8 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       /* #region 内部定义 */
       // 定义参数枚举
       if (item.enumOption?.length) {
+        _type = camelCase(`${_defName}_${item.name}`, true);
+
         const _enumData = renderEtaString(
           pluginOptions.template!.enum,
           { name: _type, data: item.enumOption, convertValue, isEnum: true },
@@ -180,6 +180,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (item.properties?.length) {
         const _defs = getDefinition(item.properties, _defName);
 
+        _type = _defName;
         prev.definitions?.push(_defs.join("\n"));
       }
 
@@ -322,7 +323,7 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
 
   const _params = parseParams(data.parameters ?? {}, action);
   const _response = parseResponse(data.response, action);
-
+  // console.log(_params);
   if (!_response.name) {
     Logs.warn(getT("$t(plugin.no_200_response)"));
   }
