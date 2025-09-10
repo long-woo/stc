@@ -10,7 +10,7 @@ name: Publish to release
 
 on:
   push:
-    branches: ['master', 'main']
+    branches: ["master", "main"]
     paths:
       - deno.json
 
@@ -55,18 +55,37 @@ jobs:
           deno task version
           echo "TAG=$(cat ./release/version)" >> $GITHUB_ENV
 
+      # 生成变更日志
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          # 获取上一个tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            # 如果没有上一个tag，获取所有提交记录
+            CHANGELOG=$(git log --pretty=format:"* %s" --no-merges)
+          else
+            # 获取从上一个tag到现在的提交记录
+            CHANGELOG=$(git log --pretty=format:"* %s" --no-merges ${PREV_TAG}..HEAD)
+          fi
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       # 发布到 Release
       - name: Publish to Release
         id: publish_release
         uses: softprops/action-gh-release@v2
         env:
           TAG: ${{ env.TAG }}
+          CHANGELOG: ${{ env.CHANGELOG }}
         with:
           files: ./release/!(version)
           name: ${{ env.TAG }}
           tag_name: ${{ env.TAG }}
           body: |
-            v ${{ env.TAG }}
+            ## What's Changed
+            ${{ env.CHANGELOG }}
           draft: false
           prerelease: false
 
