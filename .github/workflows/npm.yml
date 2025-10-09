@@ -15,7 +15,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2.0.3
         with:
-          deno-version: v1.x
+          deno-version: 2.x
 
       # 使用 dnt(https​://deno.land/x/dnt​@0.38.0/mod.ts) 打包
       - name: 构建成 npm 包
