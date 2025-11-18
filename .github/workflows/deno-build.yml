@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Setup repo
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2.0.3
