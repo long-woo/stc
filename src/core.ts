@@ -504,6 +504,7 @@ export const getApiPath = (
     const methods = paths[url];
 
     Object.keys(methods).forEach((method) => {
+      if (options?.noDeprecated && methods[method].deprecated) return;
       // url去除 `?` 之后的字符
       if (url.includes("?")) url = url.slice(0, url.indexOf("?"));
 
