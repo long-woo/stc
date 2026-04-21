@@ -363,6 +363,10 @@ export interface DefaultConfigOptions {
    * 全局请求头
    */
   readonly globalHeader?: string[];
+  /**
+   * 是否不生成废弃接口。默认：false
+   */
+  readonly noDeprecated?: boolean;
 }
 
 export interface IDefinitionNameMapping {

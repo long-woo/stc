@@ -12,10 +12,13 @@ let axiosInstance: AxiosInstance;
 let errorIgnores: string[] = [];
 let onError: ((message: string | Record<string, unknown>) => void) | undefined;
 let onLogin: (() => void) | undefined;
+let onRequestInterceptor: ((config: InternalAxiosRequestConfig<any>) => void) | undefined;
+let onResponseInterceptor: ((response: AxiosResponse<any, any>) => any) | undefined;
 
 const requestInterceptor = () => {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig<any>) => {
+      onRequestInterceptor?.(config);
       return config;
     },
     (error: any) => {
@@ -31,6 +34,8 @@ const responseInterceptor = () => {
       const _config = response.config;
       const _errorIgnore = errorIgnores.includes(_config.url ?? "") ||
         errorIgnores.includes(_config.baseURL ?? "");
+
+      onResponseInterceptor?.(response);
 
       // 全局提示。忽略排除的 url 或 baseURL
       if (!_errorIgnore) {
@@ -71,6 +76,8 @@ export const createAxios = (
   errorIgnores = config.errorIgnore ?? config.errorIgnores ?? [];
   onError = config.onError;
   onLogin = config.onLogin;
+  onRequestInterceptor = config.onRequestInterceptor;
+  onResponseInterceptor = config.onResponseInterceptor;
 
   requestInterceptor();
   responseInterceptor();

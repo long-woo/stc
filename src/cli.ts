@@ -177,6 +177,7 @@ ${getT("$t(cli.option)")}
   --shared           ${getT("$t(cli.option_shared)")}
   --clean            ${getT("$t(cli.option_clean)")}
   --globalHeader, --gh  ${getT("$t(cli.option_globalHeader)")}
+  --noDeprecated     ${getT("$t(cli.option_noDeprecated)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
@@ -192,7 +193,7 @@ ${getT("$t(cli.example)")}
 export const main = async (): Promise<DefaultConfigOptions> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version", "shared", "clean"],
+    boolean: ["help", "version", "shared", "clean", "noDeprecated"],
     string: [
       "url",
       "outDir",
@@ -212,6 +213,7 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       f: "filter",
       c: "conjunction",
       gh: "globalHeader",
+      nd: "noDeprecated",
     },
     collect: ["filter", "globalHeader"],
     default: {
@@ -274,5 +276,6 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     shared: args.shared,
     clean: args.clean,
     globalHeader: args.globalHeader,
+    noDeprecated: args.noDeprecated,
   };
 };

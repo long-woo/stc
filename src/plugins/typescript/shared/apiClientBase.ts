@@ -1,3 +1,8 @@
+import type {
+  InternalAxiosRequestConfig,
+  AxiosResponse
+} from "axios";
+
 export interface IDefaultObject<T = unknown> {
   [key: string]: T;
 };
@@ -36,8 +41,9 @@ export interface ApiClientConfig {
    */
   onError?: (message: string | Record<string, unknown>) => void
   onLogin?: () => void
+  onRequestInterceptor?: (config: InternalAxiosRequestConfig<any>) => void
+  onResponseInterceptor?: (response: AxiosResponse<any, any>) => void
 }
-
 /**
  * Generates a new URL by replacing placeholders in the input URL with values from the provided path object.
  *

@@ -1,4 +1,4 @@
-import oxc from "oxc-transform";
+import { isolatedDeclarationSync, transformSync } from "oxc-transform";
 
 import Logs from "../../console.ts";
 
@@ -9,7 +9,7 @@ import Logs from "../../console.ts";
  * @return {string} The generated declaration file content.
  */
 export const generateDeclarationFile = (sourceCode: string): string => {
-  const { errors, code } = oxc.isolatedDeclaration(
+  const { errors, code } = isolatedDeclarationSync(
     `temp_${+new Date()}.ts`,
     sourceCode,
     {
@@ -34,7 +34,7 @@ export const generateDeclarationFile = (sourceCode: string): string => {
 export const oxcTransform = (
   source: string,
 ): { code: string; declaration?: string } => {
-  const { code, declaration, errors } = oxc.transform(
+  const { code, declaration, errors } = transformSync(
     `temp_${+new Date()}.ts`,
     source,
     {
