@@ -245,9 +245,7 @@ export const createDiffFile = async (
     if (oldContent) {
       const diffResult = diff.diffLines(oldContent, newContent);
 
-      isChange = diffResult.some((item: Record<string, boolean>) =>
-        item.added || item.removed
-      );
+      isChange = diffResult.some((item) => item.added || item.removed);
 
       if (isChange) {
         newContent = "";
