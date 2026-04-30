@@ -66,6 +66,6 @@
     "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
     "micromatch": "npm:micromatch@4.0.8",
     "i18next":"npm:i18next@^26.0.6",
-    "oxc-transform": "npm:oxc-transform@^0.127.0"
+    "oxc-transform": "npm:oxc-transform@^0.128.0"
   }
 }
