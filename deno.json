@@ -60,12 +60,13 @@
     "@std/cli": "jsr:@std/cli@^1.0.29",
     "@std/datetime": "jsr:@std/datetime@^0.225.7",
     "@std/fmt": "jsr:@std/fmt@^1.0.10",
-    "@std/fs": "jsr:@std/fs@^1.0.23",
+    "@std/fmt/colors": "jsr:@std/fmt@^1.0.10/colors",
+    "@std/fs": "jsr:@std/fs@^1.0.24",
     "diff": "npm:diff@^9.0.0",
     "analytics": "npm:analytics@0.8.19",
     "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
     "micromatch": "npm:micromatch@4.0.8",
-    "i18next":"npm:i18next@^26.0.6",
+    "i18next": "npm:i18next@^26.0.6",
     "oxc-transform": "npm:oxc-transform@^0.133.0"
   }
 }
