@@ -1,12 +1,12 @@
 {
   "name": "@lonu/stc",
-  "version": "2.16.1",
+  "version": "2.16.2",
   "exports": "./mod.ts",
   "tasks": {
     "pack": "deno run -A src/pack.ts",
     "dev": "deno task pack && deno run -A --watch=src src/main.ts --url='https://petstore3.swagger.io/api/v3/openapi.json' --lang=js",
     "serve": "deno run -A --watch=src src/service.ts",
-    "version": "echo '2.16.1' > release/version",
+    "version": "echo '2.16.2' > release/version",
     "build:npm": "deno run -A src/npm/build.ts",
     "build:mac": "deno compile -A --target x86_64-apple-darwin --output release/stc src/main.ts",
     "build:mac-m": "deno compile -A --target aarch64-apple-darwin --output release/stc-m src/main.ts",
@@ -60,12 +60,13 @@
     "@std/cli": "jsr:@std/cli@^1.0.29",
     "@std/datetime": "jsr:@std/datetime@^0.225.7",
     "@std/fmt": "jsr:@std/fmt@^1.0.10",
-    "@std/fs": "jsr:@std/fs@^1.0.23",
+    "@std/fmt/colors": "jsr:@std/fmt@^1.0.10/colors",
+    "@std/fs": "jsr:@std/fs@^1.0.24",
     "diff": "npm:diff@^9.0.0",
     "analytics": "npm:analytics@0.8.19",
     "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
     "micromatch": "npm:micromatch@4.0.8",
-    "i18next":"npm:i18next@^26.0.6",
+    "i18next": "npm:i18next@^26.0.6",
     "oxc-transform": "npm:oxc-transform@^0.133.0"
   }
 }
