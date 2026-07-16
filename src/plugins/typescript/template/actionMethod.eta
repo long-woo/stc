@@ -35,7 +35,7 @@ export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
 <% it.params.forEach((param, index) => { %>
   <%= param.category %><% if (param.category === param.name) { %>
 <% } else { %>: <% if (param.category === 'body') { %><%= param.name %><% } else { %>{
-		<%= param.name %>
+		<%= param.originalName ? "'" + param.originalName + "': " + param.name : param.name %>
 
 	}<% } %>
 <% } %><% if (index < it.params.length - 1) { %>, <% } %>

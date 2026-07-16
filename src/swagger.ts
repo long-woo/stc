@@ -172,6 +172,7 @@ export interface IDefinitionVirtualProperty {
    * 属性名
    */
   name: string;
+  originalName?: string;
   /**
    * 属性类型。数组的情况，通常是 action 的返回值会多个
    */

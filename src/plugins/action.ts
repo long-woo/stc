@@ -216,6 +216,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (!_multiParam) {
         _formalParam = {
           name: item.name,
+          originalName: item.originalName,
           category: current,
           type: _type,
           description: (item.title || item.description) ?? "",
@@ -366,7 +367,7 @@ const getActionFiles = (data: Map<string, IPathVirtualProperty>) => {
 
   Logs.info(`${getT("$t(plugin.parserAction)")}...`);
   data.forEach((item, key) => {
-    const _tag = item.tag;
+    const _tag = item.tag?.replace(/\s+/g, "");
 
     if (!_tag) {
       Logs.error(getT("$t(plugin.no_tag)", { url: item.url }));

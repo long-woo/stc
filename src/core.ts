@@ -377,7 +377,8 @@ const getPathVirtualProperty = (
       ) {
         const _schema = current.schema;
         const item: IDefinitionVirtualProperty = {
-          name: current.name,
+          name: camelCase(current.name),
+          originalName: current.name,
           type: current.type ?? _schema?.type ?? "",
           required: current.required,
           description: current.description,
