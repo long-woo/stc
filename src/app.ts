@@ -100,7 +100,9 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   context.onLoad?.(data, context.options);
 
   // 处理类型定义。v2 版本中，通过 `definitions` 属性获取。而 v3 版本，则通过 `components.schemas` 属性获取。
-  const defData = getDefinition(data.definitions || data.components?.schemas);
+  const defData = getDefinition(
+    data.definitions || data.components?.schemas || {},
+  );
   // 触发插件 onDefinition 事件
   context.onDefinition?.(defData, context.options);
 

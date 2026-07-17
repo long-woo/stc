@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Tag Space Header Test",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "My Tag With Space",
+      "description": "A tag whose name contains spaces"
+    }
+  ],
+  "paths": {
+    "/pets": {
+      "get": {
+        "summary": "List pets",
+        "tags": ["My Tag With Space"],
+        "parameters": [
+          {
+            "name": "X-My-Custom-Header",
+            "in": "header",
+            "description": "A custom header containing a hyphen",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

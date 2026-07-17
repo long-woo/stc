@@ -34,7 +34,10 @@ export const <%= it.methodName %> = (<% it.params.forEach((param, index) => { %>
 <% }) %><% if (it.params.length) { %>, <% } %>config?: ApiClientConfig['config']): Promise<<%~ it.responseType %>> => fetchRuntime<<%~ it.responseType %>>('<%= it.url %>', '<%= it.method.toUpperCase() %>', <% if (it.params.length) { %>{
 <% it.params.forEach((param, index) => { %>
   <%= param.category %><% if (param.category === param.name) { %>
-<% } else { %>: <% if (param.category === 'body') { %><%= param.name %><% } else { %>{
+<% } else { %>: <% if (param.category === 'body') { %><%= param.name %><% } else if (param.category === 'header') { %>{
+		'<%= param.originalName || param.name %>': <%= param.name %>
+
+	}<% } else { %>{
 		<%= param.originalName ? "'" + param.originalName + "': " + param.name : param.name %>
 
 	}<% } %>
