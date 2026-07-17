@@ -8,7 +8,7 @@
   factory <%= it.defName %>.fromJson(Map<String, dynamic> json) {
     return <%= it.defName %>(
 <% it.props.forEach((prop, index) => { %>
-      <%= prop.name %>: json['<%= prop.name %>']<% if (index < it.props.length - 1) { %>,<% } %>
+      <%= prop.name %>: json['<%= prop.originalName || prop.name %>']<% if (index < it.props.length - 1) { %>,<% } %>
 
 <% }) %>
     );
@@ -18,7 +18,7 @@
     final Map<String, dynamic> data = <String, dynamic>{};
 
 <% it.props.forEach((prop) => { %>
-    data['<%= prop.name %>'] = <%= prop.name %>;
+    data['<%= prop.originalName || prop.name %>'] = <%= prop.name %>;
 <% }) %>
 
     return data;

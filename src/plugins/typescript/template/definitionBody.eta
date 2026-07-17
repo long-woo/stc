@@ -4,4 +4,4 @@
 
    */
 <% } %>
-  <%= it.prop.name %><% if (!it.prop.required) { %>?<% } %>: <%~ it.propType %><% if (it.nullable) { %> | <%~ it.nullable %><% } %>;
+  "<%= it.prop.originalName || it.prop.name %>"<% if (!it.prop.required) { %>?<% } %>: <%~ it.propType %><% if (it.nullable) { %> | <%~ it.nullable %><% } %>;

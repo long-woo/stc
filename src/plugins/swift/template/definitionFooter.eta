@@ -1,1 +1,8 @@
+<% if (it.props && it.props.some(prop => prop.originalName && prop.originalName !== prop.name)) { %>
+    private enum CodingKeys: String, CodingKey {
+<% it.props.forEach(prop => { %>
+        case <%= prop.name %> = "<%= prop.originalName || prop.name %>"
+<% }) %>
+    }
+<% } %>
 }

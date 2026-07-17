@@ -24,7 +24,7 @@ public func <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
     <% if (pathParams.length > 0) { %>
     let pathParams: [String: String] = [
         <% pathParams.forEach((param, index) => { %>
-        "<%= param.name %>": String(<%= param.name %>)<% if (index < pathParams.length - 1) { %>,<% } %>
+        "<%= param.originalName || param.name %>": String(<%= param.name %>)<% if (index < pathParams.length - 1) { %>,<% } %>
         <% }) %>
     ]
     let parsedUrl = "<%= it.url %>".parsePathParams(pathParams)
