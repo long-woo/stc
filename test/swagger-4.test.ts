@@ -7,7 +7,7 @@ Deno.test("解决动态路径生成方法被覆盖的问题", async () => {
       "run",
       "-A",
       "src/main.ts",
-      "--url=https://api.swaggerhub.com/apis/frezs/wp-json/1.0.0",
+      "--url=./test/wp-json.json",
       "--outDir=out",
     ],
   });
