@@ -6,10 +6,10 @@ import { getT } from "./i18n/index.ts";
  * 输出提示信息
  * @param str - 文本内容
  */
-const info = (str: string) => {
+const info = (str: unknown) => {
   console.info(
     Colors.bgBlue(getT(" $t(console.info) ")) +
-      ` ${Colors.blue(str)}`,
+      ` ${Colors.blue(formatLogMessage(str))}`,
   );
 };
 
@@ -17,9 +17,10 @@ const info = (str: string) => {
  * 输出成功信息
  * @param str - 文本内容
  */
-const success = (str: string) => {
+const success = (str: unknown) => {
   console.info(
-    Colors.bgGreen(getT(" $t(console.success) ")) + ` ${Colors.green(str)}`,
+    Colors.bgGreen(getT(" $t(console.success) ")) +
+      ` ${Colors.green(formatLogMessage(str))}`,
   );
 };
 
@@ -27,19 +28,32 @@ const success = (str: string) => {
  * 输出警告信息
  * @param str - 文本内容
  */
-const warn = (str: string) => {
+const warn = (str: unknown) => {
   console.log(
-    Colors.bgYellow(getT(" $t(console.warn) ")) + ` ${Colors.yellow(str)}`,
+    Colors.bgYellow(getT(" $t(console.warn) ")) +
+      ` ${Colors.yellow(formatLogMessage(str))}`,
   );
+};
+
+const formatLogMessage = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (value instanceof Error) return value.message;
+
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
 };
 
 /**
  * 输出错误信息
  * @param str - 文本内容
  */
-const error = (str: string) => {
+const error = (str: unknown) => {
   console.error(
-    Colors.bgRed(getT(" $t(console.error) ")) + ` ${Colors.red(str)}`,
+    Colors.bgRed(getT(" $t(console.error) ")) +
+      ` ${Colors.red(formatLogMessage(str))}`,
   );
 };
 

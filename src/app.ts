@@ -8,6 +8,17 @@ import { getT } from "./i18n/index.ts";
 
 const LOCK_FILE = ".stc.lock";
 
+const formatErrorMessage = (error: unknown) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+
+  try {
+    return JSON.stringify(error, null, 2);
+  } catch {
+    return String(error);
+  }
+};
+
 /**
  * 初始化插件管理器
  */
@@ -82,7 +93,9 @@ const getData = async (
 
     return data;
   } catch (error) {
-    throw new Error(getT("$t(app.apiJsonFileError)", { error }));
+    throw new Error(getT("$t(app.apiJsonFileError)", {
+      error: formatErrorMessage(error),
+    }));
   }
 };
 
@@ -100,7 +113,9 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   context.onLoad?.(data, context.options);
 
   // 处理类型定义。v2 版本中，通过 `definitions` 属性获取。而 v3 版本，则通过 `components.schemas` 属性获取。
-  const defData = getDefinition(data.definitions || data.components?.schemas);
+  const defData = getDefinition(
+    data.definitions || data.components?.schemas || {},
+  );
   // 触发插件 onDefinition 事件
   context.onDefinition?.(defData, context.options);
 

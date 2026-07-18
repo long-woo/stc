@@ -53,7 +53,7 @@ Deno.test("conjunction", async () => {
       "run",
       "-A",
       "src/main.ts",
-      "--url=https://api.swaggerhub.com/apis/frezs/wp-json/1.0.0",
+      "--url=./test/wp-json.json",
       "-c=with",
     ],
   });
@@ -122,5 +122,19 @@ Deno.test("globalHeader(gh)", async () => {
   });
   const { code } = await command.output();
 
+  assertEquals(0, code);
+});
+
+Deno.test("tagSpaceHeader", async () => {
+  const command = new Deno.Command("deno", {
+    args: [
+      "run",
+      "-A",
+      "src/main.ts",
+      "--url=./test/tag-space-header.json",
+    ],
+  });
+  const { code, stdout } = await command.output();
+  console.log(new TextDecoder().decode(stdout));
   assertEquals(0, code);
 });

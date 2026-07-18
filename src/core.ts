@@ -89,7 +89,7 @@ const getVirtualProperties = (
     IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
   >,
 ): IDefinitionVirtualProperty[] => {
-  if (!defItem.type.includes("object")) {
+  if (!defItem.type?.includes("object")) {
     Logs.warn(
       getT("$t(def.parserTypeError)", {
         name: defMapping.name,

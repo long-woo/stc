@@ -2,6 +2,31 @@ import { isolatedDeclarationSync, transformSync } from "oxc-transform";
 
 import Logs from "../../console.ts";
 
+const formatOxcError = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+
+  if (typeof error === "object" && error !== null) {
+    const obj = error as Record<string, unknown>;
+    const message = typeof obj.message === "string"
+      ? obj.message
+      : JSON.stringify(obj, null, 2);
+    const codeframe = typeof obj.codeframe === "string"
+      ? obj.codeframe
+      : undefined;
+    return [message, codeframe].filter(Boolean).join("\n\n");
+  }
+
+  try {
+    return JSON.stringify(error, null, 2);
+  } catch {
+    return String(error);
+  }
+};
+
+const formatOxcErrors = (errors: unknown[]): string =>
+  errors.map((error) => formatOxcError(error)).join("\n\n");
+
 /**
  * Generates a declaration file from the given source code.
  *
@@ -18,7 +43,7 @@ export const generateDeclarationFile = (sourceCode: string): string => {
   );
 
   if (errors.length > 0) {
-    Logs.error(errors.join("\n"));
+    Logs.error(formatOxcErrors(errors));
     return "";
   }
 
@@ -48,7 +73,7 @@ export const oxcTransform = (
   );
 
   if (errors.length > 0) {
-    Logs.error(errors.join("\n"));
+    Logs.error(formatOxcErrors(errors));
     return { code: "", declaration: "" };
   }
 
