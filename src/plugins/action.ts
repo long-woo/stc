@@ -142,6 +142,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     // 形参
     let _formalParam = {
       name: current,
+      originalName: "",
       category: current,
       type: _defName,
       description: "",
@@ -216,7 +217,9 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
       if (!_multiParam) {
         _formalParam = {
           name: item.name,
-          originalName: item.originalName,
+          originalName: item.originalName && item.originalName !== item.name
+            ? item.originalName
+            : "",
           category: current,
           type: _type,
           description: (item.title || item.description) ?? "",

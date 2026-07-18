@@ -8,6 +8,17 @@ import { getT } from "./i18n/index.ts";
 
 const LOCK_FILE = ".stc.lock";
 
+const formatErrorMessage = (error: unknown) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+
+  try {
+    return JSON.stringify(error, null, 2);
+  } catch {
+    return String(error);
+  }
+};
+
 /**
  * 初始化插件管理器
  */
@@ -82,7 +93,9 @@ const getData = async (
 
     return data;
   } catch (error) {
-    throw new Error(getT("$t(app.apiJsonFileError)", { error }));
+    throw new Error(getT("$t(app.apiJsonFileError)", {
+      error: formatErrorMessage(error),
+    }));
   }
 };
 
