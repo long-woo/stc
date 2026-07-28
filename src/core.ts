@@ -11,12 +11,12 @@ import type {
   ISwaggerContent,
   ISwaggerResultDefinition,
   ISwaggerResultPath,
+  ISwaggerSchema,
 } from "./swagger.ts";
 import {
   camelCase,
   getObjectKeyByValue,
   getRefType,
-  hasKey,
   lowerCase,
   upperCase,
 } from "./utils.ts";
@@ -80,51 +80,67 @@ const getDefinitionNameMapping = (
  * @param defMapping - 定义
  * @returns
  */
-const getVirtualProperties = (
-  defItem: ISwaggerResultDefinition,
-  defMapping: IDefinitionNameMapping,
+const getVirtualPropertiesFromSchema = (
+  schema: ISwaggerSchema | undefined,
   defs: IDefaultObject<ISwaggerResultDefinition>,
-  defData: Map<
+  defMapping: IDefinitionNameMapping,
+  defData?: Map<
     string,
     IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
   >,
+  requiredProps: string[] = [],
+  visitedRefs: Set<string> = new Set(),
 ): IDefinitionVirtualProperty[] => {
-  if (!defItem.type?.includes("object")) {
-    Logs.warn(
-      getT("$t(def.parserTypeError)", {
-        name: defMapping.name,
-        type: defItem.type,
-      }),
-    );
+  if (!schema) return [];
+
+  const hasObjectShape =
+    !!schema.properties && Object.keys(schema.properties).length > 0 ||
+    !!schema.allOf?.length || schema.type?.includes("object") ||
+    schema.type === "array";
+
+  if (!hasObjectShape && !schema.$ref) {
     return [];
   }
 
-  const props = defItem.properties ?? {};
   const mappings = defMapping.mappings ?? {};
+  const mergedProps = new Map<string, IDefinitionVirtualProperty>();
+  const required = new Set(requiredProps);
 
-  const vProps = Object.keys(props).reduce(
-    (prev: IDefinitionVirtualProperty[], current) => {
-      const prop = props[current];
+  const collectProps = (currentSchema: ISwaggerSchema | undefined) => {
+    if (!currentSchema) return;
 
-      // 必填属性
-      const required = defItem.required?.includes(current) ?? false;
-      // 属性枚举选项值
+    if (currentSchema.$ref) {
+      const refName = getRefType(currentSchema.$ref);
+      if (visitedRefs.has(refName)) return;
+
+      visitedRefs.add(refName);
+      const refSchema = defs[refName];
+      if (refSchema) {
+        collectProps(refSchema as unknown as ISwaggerSchema);
+      }
+      visitedRefs.delete(refName);
+      return;
+    }
+
+    (currentSchema.required ?? []).forEach((item) => required.add(item));
+
+    Object.keys(currentSchema.properties ?? {}).forEach((current) => {
+      const prop = currentSchema.properties
+        ?.[current] as unknown as ISwaggerSchema;
+      const propName = current;
+      const propRequired = required.has(propName);
+
       const enumOption = prop.enum || [];
-      // 属性 ref
-      let refName = getDefinitionNameMapping(prop.$ref ?? "")
-        .name;
+      let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
       if (prop.items) {
         refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
-          (prop.items.type ??
-            "");
+          (prop.items.type ?? "");
       }
 
-      // 属性类型。若存在枚举选项，则需要声明一个“定义名 + 属性名”的枚举类型
       let type = enumOption.length
-        ? camelCase(`${defMapping.name}_${current}`, true)
+        ? camelCase(`${defMapping.name}_${propName}`, true)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
 
-      // 如果 ref 的自定义类型为基础类型，且 type 为空
       if (
         !type && defs[refName] && !defs[refName].type.includes("object") &&
         !defs[refName].enum?.length
@@ -138,11 +154,23 @@ const getVirtualProperties = (
         ? getDefinitionNameMapping(prop.additionalProperties.$ref ?? "").name
         : undefined;
 
+      const childDef = getDefinitionNameMapping(propName, true);
+      const childSchema = prop as ISwaggerSchema;
+      const childProps = getVirtualPropertiesFromSchema(
+        childSchema,
+        defs,
+        childDef,
+        defData,
+        [],
+        visitedRefs,
+      );
+
       const _defItem: IDefinitionVirtualProperty = {
-        name: camelCase(current),
-        type,
+        name: camelCase(propName),
+        originalName: propName,
+        type: type || "",
         description: prop.description ?? "",
-        required,
+        required: propRequired,
         enumOption,
         ref: refName,
         format: prop.format ?? "",
@@ -150,39 +178,72 @@ const getVirtualProperties = (
         additionalRef,
       };
 
-      // 处理当前属性的子属性
-      if (hasKey(prop as unknown as Record<string, unknown>, "properties")) {
-        const _childDef = getDefinitionNameMapping(current, true);
-        const _childProps = getVirtualProperties(
-          prop as ISwaggerResultDefinition,
-          _childDef,
-          defs,
-          defData,
-        );
+      if (childProps.length) {
+        const _objTypeName = defMapping.name + childDef.name;
 
-        // 将 type 中存在 object，替换为新名字
-        if (_defItem.type.includes("object") && _childProps.length) {
-          const _objTypeName = defMapping.name + _childDef.name;
-
+        if (
+          childSchema.type?.includes("object") || childSchema.properties ||
+          childSchema.allOf?.length || childSchema.$ref
+        ) {
           if (Array.isArray(_defItem.type)) {
             const _objIndex = _defItem.type.indexOf("object");
-
             _defItem.type.splice(_objIndex, 1, _objTypeName);
           } else {
             _defItem.type = _objTypeName;
           }
 
-          defData.set(_objTypeName, _childProps);
+          _defItem.properties = childProps;
+          if (defData) {
+            defData.set(_objTypeName, childProps);
+          }
         }
       }
 
-      prev.push(_defItem);
-      return prev;
-    },
-    [],
-  );
+      mergedProps.set(propName, _defItem);
+    });
 
-  return vProps;
+    currentSchema.allOf?.forEach((item) => collectProps(item));
+  };
+
+  collectProps(schema);
+
+  return Array.from(mergedProps.values()).map((item) => ({
+    ...item,
+    required: required.has(item.originalName ?? item.name),
+  }));
+};
+
+const getVirtualProperties = (
+  defItem: ISwaggerResultDefinition,
+  defMapping: IDefinitionNameMapping,
+  defs: IDefaultObject<ISwaggerResultDefinition>,
+  defData: Map<
+    string,
+    IDefinitionVirtualProperty[] | IDefinitionVirtualProperty
+  >,
+): IDefinitionVirtualProperty[] => {
+  const hasObjectShape =
+    !!defItem.properties && Object.keys(defItem.properties).length > 0 ||
+    !!defItem.allOf?.length ||
+    defItem.type?.includes("object");
+
+  if (!hasObjectShape) {
+    Logs.warn(
+      getT("$t(def.parserTypeError)", {
+        name: defMapping.name,
+        type: defItem.type,
+      }),
+    );
+    return [];
+  }
+
+  return getVirtualPropertiesFromSchema(
+    defItem as unknown as ISwaggerSchema,
+    defs,
+    defMapping,
+    defData,
+    defItem.required ?? [],
+  );
 };
 
 /**
@@ -297,58 +358,19 @@ const getMethodName = (
  * @returns
  */
 const getProperties = (
-  properties: IDefaultObject<IDefinitionVirtualProperty>,
-  requiredProps: string[],
+  schema: ISwaggerSchema | undefined,
+  requiredProps: string[] = [],
+  definitions?: IDefaultObject<ISwaggerResultDefinition>,
 ) => {
-  const _properties = Object.keys(properties ?? {})
-    .reduce((prev: IDefinitionVirtualProperty[], current) => {
-      const _props = properties[current];
-      const _propItem: IDefinitionVirtualProperty = {
-        name: current,
-        type: _props?.type ?? "",
-        typeX: _props.items?.type.toString(),
-        required: requiredProps.includes(current) ??
-          false,
-        title: _props?.title,
-        description: _props?.description ?? "",
-        // ref: getRefType(
-        //   _props?.$ref ?? _props?.items?.$ref ?? "",
-        // ),
-      };
+  const defMapping = getDefinitionNameMapping("Body", true);
 
-      // 处理 properties
-      if (hasKey(_props as unknown as Record<string, unknown>, "properties")) {
-        _propItem.properties = getProperties(
-          (_props.properties) as unknown as IDefaultObject<
-            IDefinitionVirtualProperty
-          >,
-          (_props?.required ?? []) as unknown as string[],
-        );
-      }
-
-      // 处理 items
-      if (hasKey(_props as unknown as Record<string, unknown>, "items")) {
-        // 检查 items 是否为 object
-        if (
-          hasKey(
-            _props.items as unknown as Record<string, unknown>,
-            "properties",
-          )
-        ) {
-          _propItem.properties = getProperties(
-            (_props.items?.properties) as unknown as IDefaultObject<
-              IDefinitionVirtualProperty
-            >,
-            (_props.items?.required ?? []) as unknown as string[],
-          );
-        }
-      }
-
-      prev.push(_propItem);
-      return prev;
-    }, []);
-
-  return _properties;
+  return getVirtualPropertiesFromSchema(
+    schema,
+    definitions ?? {},
+    defMapping,
+    undefined,
+    requiredProps,
+  );
 };
 
 /**
@@ -364,6 +386,7 @@ const getPathVirtualProperty = (
   method: string,
   pathMethod: ISwaggerResultPath,
   options?: DefaultConfigOptions,
+  definitions?: IDefaultObject<ISwaggerResultDefinition>,
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
   const parameters =
@@ -390,6 +413,15 @@ const getPathVirtualProperty = (
           default: _schema?.default,
           enumOption: _schema?.enum,
         };
+
+        const _schemaProperties = getProperties(
+          _schema as ISwaggerSchema | undefined,
+          _schema?.required ?? [],
+          definitions,
+        );
+        if (_schemaProperties.length) {
+          item.properties = _schemaProperties;
+        }
 
         prev[current.in].push(item);
       }
@@ -423,8 +455,9 @@ const getPathVirtualProperty = (
         : _bodyContentSchema?.type ?? "";
 
       const _properties = getProperties(
-        _bodyContentSchema?.properties ?? {},
+        _bodyContentSchema as ISwaggerSchema | undefined,
         _bodyContentSchema?.required ?? [],
+        definitions,
       );
 
       const _body: IDefinitionVirtualProperty = {
@@ -451,8 +484,9 @@ const getPathVirtualProperty = (
     pathMethod.responses[200]?.content?.["text/plain"]?.schema;
 
   const _properties = getProperties(
-    _resSchema?.properties ?? _resSchema?.items?.properties ?? {},
+    _resSchema as ISwaggerSchema | undefined,
     _resSchema?.required ?? [],
+    definitions,
   );
 
   // 标签，用于文件名
@@ -490,6 +524,7 @@ const getPathVirtualProperty = (
 export const getApiPath = (
   paths: IDefaultObject<IDefaultObject<ISwaggerResultPath>>,
   options?: DefaultConfigOptions,
+  definitions?: IDefaultObject<ISwaggerResultDefinition>,
 ): Map<string, IPathVirtualProperty> => {
   const pathMap = new Map<string, IPathVirtualProperty>();
 
@@ -532,6 +567,7 @@ export const getApiPath = (
         method,
         currentAction,
         options,
+        definitions,
       );
 
       name = `${value.tag}@${name}`;
