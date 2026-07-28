@@ -174,7 +174,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
           { name: _type, data: item.enumOption, convertValue, isEnum: true },
         );
 
-        prev.definitions?.push(_enumData);
+        prev.definitions?.splice(0, 0, _enumData);
       }
 
       // properties 存在时直接定义
