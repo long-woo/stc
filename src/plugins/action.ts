@@ -41,6 +41,10 @@ interface IApiFile {
 interface IApiInternalDefinition {
   definitions: string[];
   childDefinitions: string[];
+  /**
+   * 内部定义所引用的外部类型
+   */
+  imports: string[];
 }
 
 let pluginOptions: IPluginOptions;
@@ -67,6 +71,9 @@ const getInternalDefinition = (
     });
   }
 
+  // `core.ts` 对数组属性会把 `items.type` 放进 `ref`，这类内置类型不需要导入
+  const _builtInTypes = pluginOptions.typeMap?.(convertType, undefined) ?? {};
+
   const _defs = properties.reduce((prev: IApiInternalDefinition, current) => {
     let _type = convertType(
       current.type,
@@ -75,10 +82,24 @@ const getInternalDefinition = (
       pluginOptions,
     );
 
+    // 枚举属性，`core.ts` 给出的是 `Body` 前缀的占位类型名，
+    // 这里按当前定义名重新命名，并补上枚举定义
+    if (current.enumOption?.length) {
+      _type = `${name}${upperCase(current.name)}`;
+
+      prev.definitions.unshift(
+        renderEtaString(
+          pluginOptions.template!.enum,
+          { name: _type, data: current.enumOption, convertValue, isEnum: true },
+        ),
+      );
+    }
+
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
+      // 同样是占位类型名，传 `object` 让 `convertType` 直接返回 `_defName`
       _type = convertType(
-        current.type,
+        "object",
         _defName,
         current.additionalRef,
         pluginOptions,
@@ -93,6 +114,10 @@ const getInternalDefinition = (
         ..._childDefinition.definitions,
         ..._childDefinition.childDefinitions,
       );
+      prev.imports.push(..._childDefinition.imports);
+    } else if (current.ref && !(current.ref in _builtInTypes)) {
+      // 未生成本地定义时，类型来自外部定义，需要导入
+      prev.imports.push(current.ref);
     }
 
     const _defBody = renderEtaString(pluginOptions.template!.definitionBody, {
@@ -106,6 +131,7 @@ const getInternalDefinition = (
   }, {
     definitions: properties.length ? [_defHeader, _defFooter] : [],
     childDefinitions: [],
+    imports: [],
   });
 
   return _defs;
@@ -124,7 +150,7 @@ const getDefinition = (
   const _def = getInternalDefinition(properties, name);
   const _defs = [..._def.definitions, ..._def.childDefinitions];
 
-  return _defs;
+  return { definitions: _defs, imports: _def.imports };
 };
 
 /**
@@ -159,8 +185,15 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
         )
       }`;
 
+      // 枚举与 properties 都会在本文件内生成定义，覆盖掉上面的 `_type`，
+      // 此时 `ref` 不会出现在产物里，导入进来就是多余的
+      const _hasInternalDefinition = !!(item.enumOption?.length ||
+        item.properties?.length);
+
       // 外部引用
-      if (item.ref && !prev.imports?.includes(item.ref)) {
+      if (
+        item.ref && !_hasInternalDefinition && !prev.imports?.includes(item.ref)
+      ) {
         prev.imports?.push(item.ref);
       }
 
@@ -174,7 +207,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
           { name: _type, data: item.enumOption, convertValue, isEnum: true },
         );
 
-        prev.definitions?.push(_enumData);
+        prev.definitions?.unshift(_enumData);
       }
 
       // properties 存在时直接定义
@@ -182,7 +215,12 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
         const _defs = getDefinition(item.properties, _defName);
 
         _type = _defName;
-        prev.definitions?.push(_defs.join("\n"));
+        prev.definitions?.push(_defs.definitions.join("\n"));
+        _defs.imports.forEach((_import) => {
+          if (!prev.imports?.includes(_import)) {
+            prev.imports?.push(_import);
+          }
+        });
       }
 
       // 同类型的参数进行合并成新对象
@@ -294,7 +332,8 @@ const parseResponse = (
     _response = {
       name: _defName,
       type: _defName,
-      definitions: _definitions,
+      definitions: _definitions.definitions,
+      imports: _definitions.imports,
     };
   } else {
     const _defName = parseResponseRef(response.ref ?? "");
@@ -349,7 +388,9 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
   });
 
   return {
-    imports: [..._params.imports ?? [], ..._response.imports ?? []],
+    imports: Array.from(
+      new Set([..._params.imports ?? [], ..._response.imports ?? []]),
+    ),
     definition: [
       ...(_params.definitions ?? []),
       ...(_response.definitions ?? []),

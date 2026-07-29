@@ -39,6 +39,9 @@ export interface ISwaggerSchema {
    * v3 枚举值
    */
   enum?: string[];
+  description?: string;
+  nullable?: boolean;
+  additionalProperties?: boolean | Pick<ISwaggerSchema, "$ref" | "type">;
   /**
    * Apifox - 属性
    */
@@ -47,6 +50,10 @@ export interface ISwaggerSchema {
    * Apifox - 必填属性
    */
   required?: Array<string>;
+  /**
+   * OpenAPI 组合扩展
+   */
+  allOf?: ISwaggerSchema[];
 }
 
 export interface ISwaggerContentSchema {
@@ -133,6 +140,7 @@ export interface ISwaggerResultDefinition {
   enum?: (number | string)[];
   required?: string[];
   properties: IDefaultObject<ISwaggerDefinitionProperties>;
+  allOf?: ISwaggerSchema[];
 }
 
 export interface ISwaggerResultSecurity {

@@ -23,5 +23,11 @@
   },
   "[jsonl]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "deno": true,
+    "printf": true,
+    "true": true,
+    "git checkout": true
   }
 }

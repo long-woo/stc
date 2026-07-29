@@ -119,7 +119,11 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   // 触发插件 onDefinition 事件
   context.onDefinition?.(defData, context.options);
 
-  const actionData = getApiPath(data.paths, options);
+  const actionData = getApiPath(
+    data.paths,
+    options,
+    data.definitions || data.components?.schemas || {},
+  );
   // 触发插件 onAction 事件
   context.onAction?.(actionData, context.options);
 

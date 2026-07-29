@@ -10,11 +10,11 @@ export interface IDefaultObject<T = unknown> {
 export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 export interface ApiClientParams {
-  path?: IDefaultObject;
-  query?: IDefaultObject;
+  path?: object;
+  query?: object;
   body?: any;
-  formData?: IDefaultObject;
-  header?: IDefaultObject;
+  formData?: object;
+  header?: object;
 }
 
 export interface ApiClientConfig {
