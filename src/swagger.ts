@@ -158,6 +158,10 @@ export interface ISwaggerResult {
   basePath: string;
   host: string;
   swagger: string;
+  /**
+   * v3 版本标识
+   */
+  openapi?: string;
   consumes: string[];
   info: ISwaggerResultInfo;
   tags: ISwaggerResultTag[];

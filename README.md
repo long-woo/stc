@@ -17,6 +17,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 > 🚧 Encapsulate the "shared" directory.
 
 - 🐹 Support for **Swagger 2/3(OpenApi)** and **Apifox**.
+- 📄 Support for **JSON** and **YAML** spec formats.
 - 💡 Support plug-in development.
 - 🐣 Built-in transformation languages:
   - **TypeScript**, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
@@ -126,7 +127,7 @@ App<IAppOption>({
 
 | Option      | Alias | Type     | Default   | Description                                                                                                  |
 | ----------- | ----- | -------- | --------- | ------------------------------------------------------------------------------------------------------------ |
-| url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path.                                                      |
+| url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path (JSON or YAML).                                                      |
 | outDir      | o     | string   | ./stc_out | Output Directory.                                                                                            |
 | client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
 | lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |

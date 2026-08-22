@@ -37,7 +37,7 @@ deno task build:linux  # Compile binary for Linux
 `src/main.ts` (CLI entry) → `src/cli.ts` (arg parsing) → `src/app.ts` (`start()`) → plugin lifecycle events
 
 The `start()` function in `app.ts`:
-1. Fetches the OpenAPI JSON (remote URL or local file)
+1. Fetches the OpenAPI spec (remote URL or local file, JSON or YAML — parsed via `parseSpec()` in `src/parser.ts`)
 2. Calls `getDefinition()` from `core.ts` to parse type schemas (`definitions` for v2, `components.schemas` for v3)
 3. Calls `getApiPath()` from `core.ts` to parse endpoint paths
 4. Fires plugin lifecycle: `onLoad` → `onDefinition` → `onAction` → `onTransform` → `onEnd`

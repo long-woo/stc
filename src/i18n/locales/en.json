@@ -18,7 +18,9 @@
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",
-    "generateFileDone": "API file is generated ({{total}} apis):"
+    "generateFileDone": "API file is generated ({{total}} apis):",
+    "specEmpty": "API spec content is empty.",
+    "specInvalid": "Invalid API spec content, expected a JSON or YAML object."
   },
   "cli": {
     "checkUpdate": "Check for updates",
@@ -33,7 +35,7 @@
     "option": "Options:",
     "example": "Example:",
     "option_help": "View help information.",
-    "option_url": "Remote address or local file path.",
+    "option_url": "Remote address or local file path (JSON or YAML).",
     "option_out": "The output directory, the default is {{out}} under the current execution directory of stc.",
     "option_client": "http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.",
     "option_lang": "Language, the suffix used for the output file, [default: \"ts\"].",

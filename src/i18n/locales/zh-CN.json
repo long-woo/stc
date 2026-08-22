@@ -18,7 +18,9 @@
   },
   "app": {
     "apiJsonFileError": "API 文件解析失败。原因：{{error}}",
-    "generateFileDone": "API 文件生成完成（共 {{total}} 个接口）："
+    "generateFileDone": "API 文件生成完成（共 {{total}} 个接口）：",
+    "specEmpty": "API 文件内容为空。",
+    "specInvalid": "API 文件内容无效，应为一个 JSON 或 YAML 对象。"
   },
   "cli": {
     "checkUpdate": "检查更新",
@@ -33,7 +35,7 @@
     "option": "选项：",
     "example": "示例：",
     "option_help": "查看帮助信息。",
-    "option_url": "远程地址或本地文件路径。",
+    "option_url": "远程地址或本地文件路径（支持 JSON、YAML 格式）。",
     "option_out": "输出目录，默认为 stc 当前执行的目录下 {{out}}。",
     "option_client": "http 请求客户端。 当 lang 为 ts/js 时，可选值：axios、wechat、fetch。",
     "option_lang": "语言，用于输出文件的后缀名， [默认: \"ts\"]。",

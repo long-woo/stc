@@ -238,8 +238,12 @@ export const main = async (): Promise<DefaultConfigOptions> => {
 
   // 解析命令行参数和选项
   const args: Args = parseArgs(Deno.args, argsConfig);
-  // 检查更新
-  await checkUpdate();
+  // 检查更新（检查失败不影响正常生成）
+  try {
+    await checkUpdate();
+  } catch {
+    // 忽略更新检查错误
+  }
 
   // 帮助
   if (args.help) {

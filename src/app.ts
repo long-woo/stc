@@ -3,6 +3,7 @@ import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
+import { parseSpec } from "./parser.ts";
 import { createDiffFile, createFile, readFile, removeFile } from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
@@ -59,12 +60,18 @@ const getData = async (
     if (!/^http(s?):\/\//.test(urlOrPath)) {
       const content = await readFile(urlOrPath);
 
-      data = JSON.parse(content) as unknown as ISwaggerResult;
+      data = parseSpec(content, urlOrPath);
     } else {
       // 从远程地址获取 Swagger 数据
       const res = await fetch(urlOrPath);
 
-      data = await res.json();
+      if (!res.ok) {
+        throw new Error(`${res.status} ${res.statusText}`);
+      }
+
+      const content = await res.text();
+
+      data = parseSpec(content, urlOrPath);
     }
 
     // 对比 path 和 definitions/schemas 数据是否有变化，有变化则使用新数据

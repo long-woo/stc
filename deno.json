@@ -52,6 +52,7 @@
   "imports": {
     "./": "./",
     "/": "./",
+    "@std/yaml": "jsr:@std/yaml@^1.2.0",
     "x/": "https://deno.land/x/",
     "@deno-library/progress": "jsr:@deno-library/progress@^1.5.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
