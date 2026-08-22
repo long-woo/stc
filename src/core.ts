@@ -437,6 +437,16 @@ const getPathVirtualProperty = (
   // v3 body 参数在 requestBody
   const _requestBody = pathMethod.requestBody;
   if (_requestBody) {
+    const _formContentTypes = [
+      "multipart/form-data",
+      "application/x-www-form-urlencoded",
+    ];
+    // requestBody 下各内容类型是同一请求体的备选序列化方式：
+    // 已存在 application/json 等 body 内容类型时，表单类型不再展开为 formData，
+    // 避免同一接口同时生成 body 与 formData 两个参数
+    const _hasBodyContent = Object.keys(_requestBody.content).some(
+      (_key) => !_formContentTypes.includes(_key),
+    );
     Object.keys(_requestBody.content).forEach((_key) => {
       const _bodyContent = _requestBody.content[_key as keyof ISwaggerContent];
       const _bodyContentSchema = _bodyContent?.schema;
@@ -445,11 +455,9 @@ const getPathVirtualProperty = (
       );
 
       // 表单内容类型：schema 属性展开为 formData 参数，与 v2 的 in: formData 一致
-      if (
-        ["multipart/form-data", "application/x-www-form-urlencoded"].includes(
-          _key,
-        )
-      ) {
+      if (_formContentTypes.includes(_key)) {
+        // 存在备选 body 内容类型时，不重复生成 formData 参数
+        if (_hasBodyContent) return;
         let _formDataProps = getProperties(
           _bodyContentSchema as ISwaggerSchema | undefined,
           _bodyContentSchema?.required ?? [],

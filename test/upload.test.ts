@@ -100,3 +100,75 @@ Deno.test("生成的 TS 代码：File 类型经 formData 发送，单参数不�
     await Deno.remove(outDir, { recursive: true });
   }
 });
+
+Deno.test("requestBody 同时声明 json 与表单内容类型时，仅生成 body 参数", () => {
+  const spec = {
+    paths: {
+      "/pet": {
+        put: {
+          operationId: "updatePet",
+          tags: ["pet"],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Pet" },
+              },
+              "application/x-www-form-urlencoded": {
+                schema: { $ref: "#/components/schemas/Pet" },
+              },
+            },
+          },
+          responses: { 200: { description: "ok" } },
+        },
+        post: {
+          operationId: "updatePetFormOnly",
+          tags: ["pet"],
+          requestBody: {
+            required: true,
+            content: {
+              "application/x-www-form-urlencoded": {
+                schema: { $ref: "#/components/schemas/Pet" },
+              },
+            },
+          },
+          responses: { 200: { description: "ok" } },
+        },
+      },
+    },
+    components: {
+      schemas: {
+        Pet: {
+          type: "object",
+          required: ["name"],
+          properties: {
+            id: { type: "integer", format: "int64" },
+            name: { type: "string" },
+          },
+        },
+      },
+    },
+  };
+
+  const actions = getApiPath(
+    spec.paths as never,
+    { conjunction: "_" } as never,
+    spec.components.schemas as never,
+  );
+
+  // json + 表单：表单只是备选的序列化方式，只保留 body 参数
+  const mixed = actions.get("pet@updatePet");
+  assertExists(mixed);
+  assertEquals(mixed.parameters.body.length, 1);
+  assertEquals(mixed.parameters.body[0].name, "pet");
+  assertEquals(mixed.parameters.formData, []);
+
+  // 仅表单：仍然展开为 formData 参数
+  const formOnly = actions.get("pet@updatePetFormOnly");
+  assertExists(formOnly);
+  assertEquals(formOnly.parameters.body, []);
+  assertEquals(
+    formOnly.parameters.formData.map((item) => item.name),
+    ["id", "name"],
+  );
+});
