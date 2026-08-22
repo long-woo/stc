@@ -123,6 +123,30 @@ App<IAppOption>({
 });
 ```
 
+### Authentication
+
+STC does not generate authentication code. For the `axios` client, inject a token into every request via `onRequestInterceptor`:
+
+```ts
+import { createApiClient } from './apis/shared/fetchRuntime';
+
+createApiClient({
+  baseURL: 'https://api.xxx.com',
+  onRequestInterceptor(config) {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  },
+  onLogin() {
+    // Triggered when the response status is 401, e.g. redirect to the login page
+  }
+})
+```
+
+> For the `fetch` or `wechat` client, pass headers through the `config` argument of each generated method instead, e.g. `getPetById(petId, { headers: { Authorization: 'Bearer xxx' } })`.
+
 ### Options
 
 | Option      | Alias | Type     | Default   | Description                                                                                                  |
@@ -155,8 +179,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.16.4/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.16.4'
+// import { start } from 'https://deno.land/x/stc@2.17.0/mod.ts'
+import { start } from 'jsr:@lonu/stc@^2.17.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {
