@@ -63,6 +63,8 @@ export interface ISwaggerContentSchema {
 export interface ISwaggerContent {
   "application/json"?: ISwaggerContentSchema;
   "application/octet-stream"?: ISwaggerContentSchema;
+  "multipart/form-data"?: ISwaggerContentSchema;
+  "application/x-www-form-urlencoded"?: ISwaggerContentSchema;
   "text/plain": ISwaggerContentSchema;
 }
 

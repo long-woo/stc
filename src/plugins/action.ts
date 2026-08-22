@@ -158,8 +158,11 @@ const getDefinition = (
  * @param parameters - 参数
  * @param action - 方法名称
  */
-const parseParams = (parameters: IPathVirtualParameter, action: string) =>
-  Object.keys(parameters).reduce((prev: IApiParams, current) => {
+const parseParams = (parameters: IPathVirtualParameter, action: string) => {
+  // `core.ts` 会把内置类型（如 file）写进 `ref`，这类类型无需从定义文件导入
+  const _builtInTypes = pluginOptions.typeMap?.(convertType, undefined) ?? {};
+
+  return Object.keys(parameters).reduce((prev: IApiParams, current) => {
     const _category = current as keyof IPathVirtualParameter;
     const _params = parameters[_category];
     const _multiParam = _params.length > 1;
@@ -192,7 +195,8 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 
       // 外部引用
       if (
-        item.ref && !_hasInternalDefinition && !prev.imports?.includes(item.ref)
+        item.ref && !_hasInternalDefinition && !(item.ref in _builtInTypes) &&
+        !prev.imports?.includes(item.ref)
       ) {
         prev.imports?.push(item.ref);
       }
@@ -212,10 +216,21 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
 
       // properties 存在时直接定义
       if (item.properties?.length) {
-        const _defs = getDefinition(item.properties, _defName);
+        // 多参数时，当前分类还会生成名为 `_defName` 的包装定义，
+        // 子定义需另行命名并置于顶层，避免重名、嵌入包装定义内部
+        const _childDefName = _multiParam
+          ? `${_defName}${upperCase(item.name)}`
+          : _defName;
+        const _defs = getDefinition(item.properties, _childDefName);
 
-        _type = _defName;
-        prev.definitions?.push(_defs.definitions.join("\n"));
+        _type = _childDefName;
+
+        if (_multiParam) {
+          prev.definitions?.unshift(_defs.definitions.join("\n"));
+        } else {
+          prev.definitions?.push(_defs.definitions.join("\n"));
+        }
+
         _defs.imports.forEach((_import) => {
           if (!prev.imports?.includes(_import)) {
             prev.imports?.push(_import);
@@ -285,6 +300,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) =>
     optionalParams: [],
     definitions: [],
   });
+};
 
 /**
  * 解析响应对象

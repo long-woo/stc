@@ -134,12 +134,17 @@ const getVirtualPropertiesFromSchema = (
       let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
       if (prop.items) {
         refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
-          (prop.items.type ?? "");
+          (prop.items.format === "binary" ? "file" : (prop.items.type ?? ""));
       }
 
       let type = enumOption.length
         ? camelCase(`${defMapping.name}_${propName}`, true)
         : (getObjectKeyByValue(mappings, refName) || prop.type);
+
+      // OpenAPI v3 文件上传：type: string + format: binary 归一为 file 类型
+      if (prop.format === "binary") {
+        type = "file";
+      }
 
       if (
         !type && defs[refName] && !defs[refName].type.includes("object") &&
@@ -439,20 +444,50 @@ const getPathVirtualProperty = (
         _bodyContentSchema?.$ref ?? _bodyContentSchema?.items?.$ref ?? "",
       );
 
+      // 表单内容类型：schema 属性展开为 formData 参数，与 v2 的 in: formData 一致
+      if (
+        ["multipart/form-data", "application/x-www-form-urlencoded"].includes(
+          _key,
+        )
+      ) {
+        let _formDataProps = getProperties(
+          _bodyContentSchema as ISwaggerSchema | undefined,
+          _bodyContentSchema?.required ?? [],
+          definitions,
+        );
+
+        // schema 无 properties 时（如直接声明 binary），退化为单个 file 参数
+        if (!_formDataProps.length) {
+          _formDataProps = [{
+            name: "file",
+            originalName: "file",
+            type: "file",
+            required: _requestBody.required ?? true,
+            description: _requestBody.description ?? "",
+          }];
+        }
+
+        _formDataProps.forEach((_prop) => {
+          // formData 存在相同 name 时，无需重复添加
+          if (!parameters.formData.some((item) => item.name === _prop.name)) {
+            parameters.formData.push(_prop);
+          }
+        });
+
+        return;
+      }
+
       // 处理 type 为 object 的情况，并且有 properties 属性
       if (
         _bodyContentSchema?.type === "object" &&
         !Object.keys(_bodyContentSchema?.properties ?? {}).length
       ) return;
 
-      const _name =
-        (["application/octet-stream", "multipart/form-data"].includes(_key)
-          ? "file"
-          : lowerCase(_bodyContentRef)) || "body";
+      const _name = (_key === "application/octet-stream"
+        ? "file"
+        : lowerCase(_bodyContentRef)) || "body";
 
-      const _type = _name === "file"
-        ? "FormData"
-        : _bodyContentSchema?.type ?? "";
+      const _type = _name === "file" ? "file" : _bodyContentSchema?.type ?? "";
 
       const _properties = getProperties(
         _bodyContentSchema as ISwaggerSchema | undefined,
@@ -471,7 +506,9 @@ const getPathVirtualProperty = (
 
       // body 存在相同 name 时，无需重复添加
       if (
-        !parameters.body.some((item) => item.name === _name)
+        !parameters.body.some((item) =>
+          item.name === _name
+        )
       ) {
         parameters.body.push(_body);
       }

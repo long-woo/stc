@@ -24,6 +24,7 @@ export const DartPlugin: IPlugin = {
           string: "String",
           integer: "int",
           boolean: "bool",
+          file: "MultipartFile",
           array: `List<${_newType}>`,
           object: `Map<String, ${_newType}>`,
           null: "null",
