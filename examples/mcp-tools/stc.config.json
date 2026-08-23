@@ -1,0 +1,7 @@
+{
+  "url": "./openapi.yaml",
+  "outDir": "./generated",
+  "mcp": true,
+  "clean": true,
+  "watch": false
+}

@@ -102,7 +102,15 @@ export const request = <T>(
     const formData = new FormData();
 
     Object.keys(_formData).forEach((key) => {
-      formData.append(key, _formData[key] as string | Blob);
+      const _value = _formData[key];
+
+      // 数组逐个追加，支持多文件同名字段（如 files: File[]）
+      if (Array.isArray(_value)) {
+        _value.forEach((item) => formData.append(key, item as string | Blob));
+        return;
+      }
+
+      formData.append(key, _value as string | Blob);
     });
 
     _data = formData;

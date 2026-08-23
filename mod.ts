@@ -35,3 +35,14 @@
  * @module
  */
 export { start } from "./src/app.ts";
+
+import type { IConfigFileOptions } from "./src/config.ts";
+
+/**
+ * Helper for defining a stc config file (stc.config.json / .stcrc.json / .stcrc).
+ * Only provides type hints, returns the config as-is.
+ *
+ * @param config - Config options, same names as the CLI options
+ */
+export const defineConfig = (config: IConfigFileOptions): IConfigFileOptions =>
+  config;

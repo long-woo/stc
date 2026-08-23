@@ -1,12 +1,14 @@
 import { type Args, parseArgs, type ParseOptions } from "@std/cli";
 import ProgressBar from "@deno-library/progress";
 
-import type { DefaultConfigOptions } from "./swagger.ts";
+import type { DefaultConfigOptions, IDefaultObject } from "./swagger.ts";
+import { loadConfigFile, normalizeConfig } from "./config.ts";
 import Logs from "./console.ts";
 import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 import { trackEvent } from "./ga.ts";
+import { dirname, resolve } from "@std/path";
 
 const drawLogo = () => {
   console.log(`
@@ -170,6 +172,7 @@ ${getT("$t(cli.option)")}
   -o, --outDir       ${getT("$t(cli.option_out)", { out: "./stc_out" })}
   --client           ${getT("$t(cli.option_client)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
+  --mcp              ${getT("$t(cli.option_mcp)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
@@ -178,22 +181,104 @@ ${getT("$t(cli.option)")}
   --clean            ${getT("$t(cli.option_clean)")}
   --globalHeader, --gh  ${getT("$t(cli.option_globalHeader)")}
   --noDeprecated     ${getT("$t(cli.option_noDeprecated)")}
+  --config           ${getT("$t(cli.option_config)")}
+  -w, --watch        ${getT("$t(cli.option_watch)")}
+  --interval         ${getT("$t(cli.option_interval)")}
   -v, --version      ${getT("$t(cli.option_version)")}
 
 ${getT("$t(cli.example)")}
   stc -o ./stc_out --url http://petstore.swagger.io/v2/swagger.json
   stc -o ./stc_out -p axios -l ts --url https://petstore3.swagger.io/api/v3/openapi.json
+  stc --config ./stc.config.json
+  stc -w --url https://petstore3.swagger.io/api/v3/openapi.json
+  stc --mcp --url ./openapi.yaml
 `);
   Deno.exit(0);
 };
 
 /**
- * 主入口
+ * 支持合并的选项名（配置文件与 CLI 通用）
  */
-export const main = async (): Promise<DefaultConfigOptions> => {
+const OPTION_KEYS = [
+  "url",
+  "outDir",
+  "client",
+  "lang",
+  "mcp",
+  "tag",
+  "filter",
+  "conjunction",
+  "actionIndex",
+  "shared",
+  "clean",
+  "globalHeader",
+  "noDeprecated",
+  "watch",
+  "interval",
+] as const;
+
+/**
+ * 选项默认值
+ */
+const OPTION_DEFAULTS: IDefaultObject = {
+  outDir: "./stc_out",
+  lang: "ts",
+  client: "axios",
+  conjunction: "By",
+  actionIndex: "-1",
+  shared: true,
+  clean: true,
+  watch: false,
+  mcp: false,
+  interval: 3000,
+};
+
+const OPTION_ALIASES: Record<string, string[]> = {
+  watch: ["w"],
+};
+
+/**
+ * 判断 CLI 是否显式传入了某个选项。`parseArgs` 会为未传入的布尔选项返回
+ * false，因此需要结合原始参数区分“未指定”和“明确指定 false”。
+ */
+const hasCliOption = (name: string): boolean => {
+  const names = [name, ...(OPTION_ALIASES[name] ?? [])];
+
+  return Deno.args.some((arg) =>
+    names.some((item) =>
+      arg === `--${item}` || arg.startsWith(`--${item}=`) ||
+      arg === `-${item}` || arg.startsWith(`-${item}=`)
+    )
+  );
+};
+
+/**
+ * main 方法的返回结果
+ */
+export interface IMainResult {
+  options: DefaultConfigOptions;
+  /**
+   * 实际加载的配置文件路径，未加载时为 undefined
+   */
+  configPath?: string;
+}
+
+/**
+ * 解析 CLI 参数并加载配置文件，合并得到最终选项。
+ * 优先级：CLI 参数 > 配置文件 > 默认值
+ */
+export const resolveOptions = async (): Promise<IMainResult> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version", "shared", "clean", "noDeprecated"],
+    boolean: [
+      "help",
+      "version",
+      "shared",
+      "clean",
+      "noDeprecated",
+      "watch",
+      "mcp",
+    ],
     string: [
       "url",
       "outDir",
@@ -204,6 +289,8 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       "conjunction",
       "actionIndex",
       "globalHeader",
+      "config",
+      "interval",
     ],
     alias: {
       h: "help",
@@ -214,17 +301,9 @@ export const main = async (): Promise<DefaultConfigOptions> => {
       c: "conjunction",
       gh: "globalHeader",
       nd: "noDeprecated",
+      w: "watch",
     },
     collect: ["filter", "globalHeader"],
-    default: {
-      outDir: "./stc_out",
-      lang: "ts",
-      client: "axios",
-      conjunction: "By",
-      actionIndex: "-1",
-      shared: true,
-      clean: true,
-    },
     unknown: (arg: string) => {
       Logs.error(getT("$t(cli.unknownOption)", { arg }));
       printHelp();
@@ -232,14 +311,8 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     },
   };
 
-  // 清空控制台信息
-  Logs.clear();
-  drawLogo();
-
-  // 解析命令行参数和选项
+  // 不带默认值解析，便于识别用户实际传入的选项
   const args: Args = parseArgs(Deno.args, argsConfig);
-  // 检查更新
-  await checkUpdate();
 
   // 帮助
   if (args.help) {
@@ -252,30 +325,128 @@ export const main = async (): Promise<DefaultConfigOptions> => {
     Deno.exit(0);
   }
 
+  // 加载配置文件
+  const explicitConfig = args.config as string | undefined;
+  let configPath: string | undefined;
+  let fileOptions: IDefaultObject = {};
+
+  try {
+    const loaded = await loadConfigFile(explicitConfig);
+
+    configPath = loaded.path;
+    fileOptions = normalizeConfig(loaded.options);
+  } catch (error) {
+    Logs.error(getT("$t(cli.configLoadError)", {
+      error: error instanceof Error ? error.message : String(error),
+    }));
+    Deno.exit(1);
+  }
+
+  // 显式指定了配置文件但不存在
+  if (explicitConfig && !configPath) {
+    Logs.error(getT("$t(cli.configNotFound)", { path: explicitConfig }));
+    Deno.exit(1);
+  }
+
+  // 忽略配置文件中不支持的选项
+  Object.keys(fileOptions).forEach((key) => {
+    if (!(OPTION_KEYS as readonly string[]).includes(key)) {
+      Logs.warn(getT("$t(cli.configUnknownKey)", { key }));
+      delete fileOptions[key];
+    }
+  });
+
+  // 合并：默认值 < 配置文件 < CLI 参数
+  const merged: IDefaultObject = { ...OPTION_DEFAULTS };
+
+  Object.entries(fileOptions).forEach(([key, value]) => {
+    if (value !== undefined) merged[key] = value;
+  });
+
+  OPTION_KEYS.forEach((key) => {
+    const value = args[key];
+
+    if (value === undefined) return;
+    if (typeof value === "boolean" && !hasCliOption(key)) return;
+    // collect 选项未传入时 parseArgs 会返回空数组，视为未指定
+    if (Array.isArray(value) && value.length === 0) return;
+
+    merged[key] = value;
+  });
+
+  if (merged.mcp) {
+    merged.lang = "mcp";
+  }
+
+  // 配置文件中的本地路径相对于配置文件所在目录解析；CLI 显式传入的路径仍相对于当前目录。
+  if (configPath) {
+    const configDirectory = dirname(resolve(Deno.cwd(), configPath));
+
+    if (
+      args.url === undefined && typeof merged.url === "string" &&
+      !/^https?:\/\//i.test(merged.url)
+    ) {
+      merged.url = resolve(configDirectory, merged.url);
+    }
+
+    if (args.outDir === undefined && typeof merged.outDir === "string") {
+      merged.outDir = resolve(configDirectory, merged.outDir);
+    }
+  }
+
+  // 轮询间隔最小 1 秒
+  merged.interval = Math.max(Number(merged.interval) || 3000, 1000);
+
   // 检查 url
-  if (!args.url) {
+  if (!merged.url) {
     Logs.error(getT("$t(cli.requiredUrl)"));
     printHelp();
   }
 
   trackEvent("cli_options", {
-    client: args.client,
-    lang: args.lang,
+    client: merged.client,
+    lang: merged.lang,
     version: denoJson.version,
+    config: Boolean(configPath),
+    watch: Boolean(merged.watch),
   });
 
   return {
-    url: args.url,
-    outDir: args.outDir,
-    client: args.client,
-    lang: args.lang,
-    tag: args.tag,
-    filter: args.filter,
-    conjunction: args.conjunction,
-    actionIndex: args.actionIndex,
-    shared: args.shared,
-    clean: args.clean,
-    globalHeader: args.globalHeader,
-    noDeprecated: args.noDeprecated,
+    options: {
+      url: merged.url as string,
+      outDir: merged.outDir as string,
+      client: merged.client as DefaultConfigOptions["client"],
+      lang: merged.lang as string,
+      mcp: merged.mcp as boolean,
+      tag: merged.tag as DefaultConfigOptions["tag"],
+      filter: merged.filter as string[] | undefined,
+      conjunction: merged.conjunction as string,
+      actionIndex: merged.actionIndex as DefaultConfigOptions["actionIndex"],
+      shared: merged.shared as boolean,
+      clean: merged.clean as boolean,
+      globalHeader: merged.globalHeader as string[] | undefined,
+      noDeprecated: merged.noDeprecated as boolean,
+      watch: merged.watch as boolean,
+      interval: merged.interval as number,
+    },
+    configPath,
   };
+};
+
+/**
+ * 主入口
+ */
+export const main = async (): Promise<IMainResult> => {
+  // 清空控制台信息
+  Logs.clear();
+  drawLogo();
+
+  // 检查更新（检查失败不影响正常生成）
+  try {
+    await checkUpdate();
+  } catch {
+    // 忽略更新检查错误
+  }
+
+  return resolveOptions();
 };

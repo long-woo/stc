@@ -7,7 +7,7 @@ export interface IDefaultObject<T = unknown> {
   [key: string]: T;
 };
 
-export type ApiClientMethod = "GET" | "POST" | "PUT" | "DELETE";
+export type ApiClientMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface ApiClientParams {
   path?: object;

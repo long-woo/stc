@@ -63,6 +63,8 @@ export interface ISwaggerContentSchema {
 export interface ISwaggerContent {
   "application/json"?: ISwaggerContentSchema;
   "application/octet-stream"?: ISwaggerContentSchema;
+  "multipart/form-data"?: ISwaggerContentSchema;
+  "application/x-www-form-urlencoded"?: ISwaggerContentSchema;
   "text/plain": ISwaggerContentSchema;
 }
 
@@ -156,6 +158,10 @@ export interface ISwaggerResult {
   basePath: string;
   host: string;
   swagger: string;
+  /**
+   * v3 版本标识
+   */
+  openapi?: string;
   consumes: string[];
   info: ISwaggerResultInfo;
   tags: ISwaggerResultTag[];
@@ -341,6 +347,10 @@ export interface DefaultConfigOptions {
    */
   readonly lang?: string;
   /**
+   * 是否生成 MCP 工具清单。CLI 对应 --mcp。
+   */
+  readonly mcp?: boolean;
+  /**
    * 插件
    */
   readonly plugins?: IPlugin[];
@@ -376,6 +386,14 @@ export interface DefaultConfigOptions {
    * 是否不生成废弃接口。默认：false
    */
   readonly noDeprecated?: boolean;
+  /**
+   * 监听 API 文档（本地文件或远程地址）变化，自动重新生成。默认：false
+   */
+  readonly watch?: boolean;
+  /**
+   * 监听远程地址时的轮询间隔，单位：毫秒。默认：3000
+   */
+  readonly interval?: number;
 }
 
 export interface IDefinitionNameMapping {

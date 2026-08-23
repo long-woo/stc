@@ -3,6 +3,7 @@ import type { IPluginContext } from "./plugins/typeDeclaration.ts";
 import Logs from "./console.ts";
 import { PluginManager } from "./plugins/index.ts";
 import { getApiPath, getDefinition } from "./core.ts";
+import { parseSpec } from "./parser.ts";
 import { createDiffFile, createFile, readFile, removeFile } from "./utils.ts";
 import { getT } from "./i18n/index.ts";
 
@@ -59,12 +60,18 @@ const getData = async (
     if (!/^http(s?):\/\//.test(urlOrPath)) {
       const content = await readFile(urlOrPath);
 
-      data = JSON.parse(content) as unknown as ISwaggerResult;
+      data = parseSpec(content, urlOrPath);
     } else {
       // 从远程地址获取 Swagger 数据
       const res = await fetch(urlOrPath);
 
-      data = await res.json();
+      if (!res.ok) {
+        throw new Error(`${res.status} ${res.statusText}`);
+      }
+
+      const content = await res.text();
+
+      data = parseSpec(content, urlOrPath);
     }
 
     // 对比 path 和 definitions/schemas 数据是否有变化，有变化则使用新数据
@@ -147,24 +154,34 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   );
 
   // 写入类型定义文件
-  if (transformData?.definition?.content) {
-    const name = `${options.outDir}/${transformData.definition.filename}`;
-    const content = transformData.definition.content;
+  const definition = transformData?.definition;
+  if (definition?.content) {
+    const name = `${options.outDir}/${definition.filename}`;
+    const content = definition.content;
 
-    createDiffFile(name, content, options.clean);
+    await createDiffFile(
+      name,
+      content,
+      options.clean,
+      definition.banner ?? true,
+    );
   }
 
   // 写入 API 文件
   if (transformData?.action) {
-    transformData.action.forEach((content, filename) => {
-      createDiffFile(`${options.outDir}/${filename}`, content, options.clean);
-    });
+    await Promise.all(
+      Array.from(transformData.action).map(([filename, content]) =>
+        createDiffFile(`${options.outDir}/${filename}`, content, options.clean)
+      ),
+    );
   }
 
   // 保存数据
-  createFile(`${options.outDir}/${LOCK_FILE}`, JSON.stringify(data, null, 2), {
-    banner: false,
-  });
+  await createFile(
+    `${options.outDir}/${LOCK_FILE}`,
+    JSON.stringify(data, null, 2),
+    { banner: false },
+  );
 
   console.log("\n");
   Logs.success(
@@ -173,5 +190,5 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
     }\n\t${options.outDir}\n`,
   );
   // 触发插件 onEnd 事件
-  context.onEnd?.(context.options);
+  await context.onEnd?.(context.options);
 };

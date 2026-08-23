@@ -24,6 +24,7 @@ export const SwiftPlugin: IPlugin = {
           string: "String",
           integer: "Int",
           boolean: "Bool",
+          file: "Data",
           array: `[${_newType}]`,
           object: `[String: ${_newType}]`,
           null: "nil",

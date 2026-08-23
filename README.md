@@ -17,6 +17,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 > 🚧 Encapsulate the "shared" directory.
 
 - 🐹 Support for **Swagger 2/3(OpenApi)** and **Apifox**.
+- 📄 Support for **JSON** and **YAML** spec formats.
 - 💡 Support plug-in development.
 - 🐣 Built-in transformation languages:
   - **TypeScript**, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
@@ -24,6 +25,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
   - **JavaScript**, from TypeScript to it.
   - **Dart**, dependency on **`dio`**.
   - 🚧 **Swift** ...
+  - **MCP Tools**, generate an MCP-compatible tool catalog from OpenAPI.
 
 ## Quick start
 
@@ -122,11 +124,35 @@ App<IAppOption>({
 });
 ```
 
+### Authentication
+
+STC does not generate authentication code. For the `axios` client, inject a token into every request via `onRequestInterceptor`:
+
+```ts
+import { createApiClient } from './apis/shared/fetchRuntime';
+
+createApiClient({
+  baseURL: 'https://api.xxx.com',
+  onRequestInterceptor(config) {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  },
+  onLogin() {
+    // Triggered when the response status is 401, e.g. redirect to the login page
+  }
+})
+```
+
+> For the `fetch` or `wechat` client, pass headers through the `config` argument of each generated method instead, e.g. `getPetById(petId, { headers: { Authorization: 'Bearer xxx' } })`.
+
 ### Options
 
 | Option      | Alias | Type     | Default   | Description                                                                                                  |
 | ----------- | ----- | -------- | --------- | ------------------------------------------------------------------------------------------------------------ |
-| url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path.                                                      |
+| url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path (JSON or YAML).                                                      |
 | outDir      | o     | string   | ./stc_out | Output Directory.                                                                                            |
 | client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
 | lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |
@@ -139,6 +165,16 @@ App<IAppOption>({
 | globalHeader | gh | string[] |  | Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter. |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
+
+### MCP Tools
+
+Use `--mcp` to generate `mcp-tools.json`. The file contains the standard MCP tool fields (`name`, `description`, `inputSchema`) and an `x-stc-http` extension with the original HTTP method and path, so an MCP server can expose the tools and connect them to a generic HTTP executor.
+
+```sh
+stc --url=./openapi.yaml --mcp --outDir=./generated
+```
+
+The generated JSON is intentionally limited to tool discovery. Authentication, base URL selection, and HTTP execution remain in the MCP server/runtime that consumes the catalog.
 
 ## Plug-in development
 
@@ -154,8 +190,8 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.16.4/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.16.4'
+// import { start } from 'https://deno.land/x/stc@2.17.0/mod.ts'
+import { start } from 'jsr:@lonu/stc@^2.17.0'
 
 // Defining plugins
 const myPlugin: IPlugin = {

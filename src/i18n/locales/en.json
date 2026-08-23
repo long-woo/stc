@@ -18,7 +18,9 @@
   },
   "app": {
     "apiJsonFileError": "API file parsing failed. Reason: {{error}}",
-    "generateFileDone": "API file is generated ({{total}} apis):"
+    "generateFileDone": "API file is generated ({{total}} apis):",
+    "specEmpty": "API spec content is empty.",
+    "specInvalid": "Invalid API spec content, expected a JSON or YAML object."
   },
   "cli": {
     "checkUpdate": "Check for updates",
@@ -33,10 +35,11 @@
     "option": "Options:",
     "example": "Example:",
     "option_help": "View help information.",
-    "option_url": "Remote address or local file path.",
+    "option_url": "Remote address or local file path (JSON or YAML).",
     "option_out": "The output directory, the default is {{out}} under the current execution directory of stc.",
     "option_client": "http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.",
     "option_lang": "Language, the suffix used for the output file, [default: \"ts\"].",
+    "option_mcp": "Generate an MCP tool catalog (mcp-tools.json).",
     "option_filter": "Filter interfaces, and the interfaces that meet the filter conditions will be generated.",
     "option_tag": "Specify tags from the interface url for filenames, the first one of tags is read by default.",
     "option_version": "View version information.",
@@ -45,7 +48,21 @@
     "option_shared": "Whether to generate the shared directory. [default: true].",
     "option_clean": "Whether to clean the output directory before generating. [default: true].",
     "option_globalHeader": "Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter.",
-    "option_noDeprecated": "Whether to ignore deprecated APIs. [default: false]."
+    "option_noDeprecated": "Whether to ignore deprecated APIs. [default: false].",
+    "option_config": "Config file path. By default, looks for stc.config.json, stc.config.ts, stc.config.js, .stcrc.json, .stcrc in the current directory.",
+    "option_watch": "Watch the API document (local file or remote url) and regenerate on change. [default: false].",
+    "option_interval": "Polling interval in milliseconds when watching a remote url. [default: 3000].",
+    "configNotFound": "Config file {{path}} does not exist.",
+    "configLoadError": "Failed to load the config file. Reason: {{error}}",
+    "configUnknownKey": "Unknown option {{key}} in the config file, ignored."
+  },
+  "watch": {
+    "start": "Watching for changes. Press Ctrl+C to exit.",
+    "changeDetected": "Change detected, regenerating.",
+    "configChanged": "Config file changed, reloading.",
+    "regenerateError": "Generation failed. Reason: {{error}}",
+    "pollRemote": "Polling the remote url every {{interval}}s.",
+    "stop": "Watch stopped."
   },
   "plugin": {
     "name": "Load plugin {{name}}",

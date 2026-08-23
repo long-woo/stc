@@ -30,6 +30,29 @@ Deno.test("help", async () => {
   assertEquals(0, code);
 });
 
+Deno.test("mcp shortcut", async () => {
+  const outDir = await Deno.makeTempDir({ prefix: "stc_mcp_" });
+  const command = new Deno.Command("deno", {
+    args: [
+      "run",
+      "-A",
+      "src/main.ts",
+      "--mcp",
+      "--url=./examples/mcp-tools/openapi.yaml",
+      `--outDir=${outDir}`,
+    ],
+  });
+  const { code } = await command.output();
+
+  assertEquals(code, 0);
+  const document = JSON.parse(
+    await Deno.readTextFile(`${outDir}/mcp-tools.json`),
+  );
+  assertEquals(document.tools.length, 4);
+
+  await Deno.remove(outDir, { recursive: true });
+});
+
 Deno.test("filter", async () => {
   const command = new Deno.Command("deno", {
     args: [

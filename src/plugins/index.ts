@@ -6,6 +6,7 @@ import { JavaScriptPlugin } from "./javascript/index.ts";
 import { DartPlugin } from "./dart/index.ts";
 import { setupTemplate, validTemplate } from "./common.ts";
 import { SwiftPlugin } from "./swift/index.ts";
+import { McpPlugin } from "./mcp/index.ts";
 
 export class PluginManager {
   private plugins: IPlugin[] = [
@@ -13,6 +14,7 @@ export class PluginManager {
     JavaScriptPlugin,
     DartPlugin,
     SwiftPlugin,
+    McpPlugin,
   ];
 
   register(plugins: IPlugin[]) {

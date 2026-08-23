@@ -62,6 +62,11 @@ export interface IPluginTransformDefinition {
    * 文件内容
    */
   content: string;
+  /**
+   * Whether the generated file should include STC's source banner.
+   * Structured files such as JSON must disable it.
+   */
+  banner?: boolean;
 }
 
 export interface IPluginTransform {
