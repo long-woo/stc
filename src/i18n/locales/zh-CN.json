@@ -47,7 +47,21 @@
     "option_shared": "是否生成 shared 目录。 [默认: true]。",
     "option_clean": "是否清空输出目录。 [默认: true]。",
     "option_globalHeader": "全局 header key 配置，可设置多个。当单个 API 存在相同的 key，将不会作为参数出现。",
-    "option_noDeprecated": "是否不生成废弃接口。默认：false。"
+    "option_noDeprecated": "是否不生成废弃接口。默认：false。",
+    "option_config": "配置文件路径。默认依次查找当前目录下的 stc.config.json、stc.config.ts、stc.config.js、.stcrc.json、.stcrc。",
+    "option_watch": "监听 API 文档（本地文件或远程地址）变化，自动重新生成。默认：false。",
+    "option_interval": "监听远程地址时的轮询间隔，单位：毫秒。默认：3000。",
+    "configNotFound": "配置文件 {{path}} 不存在。",
+    "configLoadError": "配置文件加载失败。原因：{{error}}",
+    "configUnknownKey": "配置文件中的未知配置项 {{key}} 已被忽略。"
+  },
+  "watch": {
+    "start": "已开启监听，内容变化将自动重新生成，按 Ctrl+C 退出。",
+    "changeDetected": "检测到变化，正在重新生成。",
+    "configChanged": "配置文件发生变化，正在重新加载配置。",
+    "regenerateError": "生成失败。原因：{{error}}",
+    "pollRemote": "每 {{interval}} 秒轮询一次远程地址。",
+    "stop": "已停止监听。"
   },
   "plugin": {
     "name": "加载插件 {{name}}",

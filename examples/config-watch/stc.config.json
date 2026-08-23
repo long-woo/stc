@@ -1,0 +1,9 @@
+{
+  "url": "./openapi.yaml",
+  "outDir": "./src/api/generated",
+  "lang": "ts",
+  "client": "fetch",
+  "shared": true,
+  "clean": true,
+  "watch": false
+}

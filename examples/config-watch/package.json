@@ -1,0 +1,18 @@
+{
+  "name": "stc-config-watch-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "api": "deno run -A --config ../../deno.json ../../src/main.ts --config ./stc.config.json --watch=false",
+    "api:watch": "deno run -A --config ../../deno.json ../../src/main.ts --config ./stc.config.json --watch",
+    "dev": "npm run api && vite",
+    "build": "npm run api && tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "axios": "^1.7.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0"
+  }
+}

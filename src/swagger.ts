@@ -382,6 +382,14 @@ export interface DefaultConfigOptions {
    * 是否不生成废弃接口。默认：false
    */
   readonly noDeprecated?: boolean;
+  /**
+   * 监听 API 文档（本地文件或远程地址）变化，自动重新生成。默认：false
+   */
+  readonly watch?: boolean;
+  /**
+   * 监听远程地址时的轮询间隔，单位：毫秒。默认：3000
+   */
+  readonly interval?: number;
 }
 
 export interface IDefinitionNameMapping {

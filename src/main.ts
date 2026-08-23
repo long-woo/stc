@@ -1,7 +1,14 @@
-import { main } from "./cli.ts";
+import { main, resolveOptions } from "./cli.ts";
 import { start } from "./app.ts";
+import { runOnce, startWatch } from "./watcher.ts";
 
-const options = await main();
+const result = await main();
 
-// 启动
-start(options);
+if (result.options.watch) {
+  // 监听模式：首次生成失败不中断，继续监听
+  await runOnce(result.options);
+  await startWatch(result, resolveOptions);
+} else {
+  // 启动
+  await start(result.options);
+}

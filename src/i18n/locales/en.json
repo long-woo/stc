@@ -47,7 +47,21 @@
     "option_shared": "Whether to generate the shared directory. [default: true].",
     "option_clean": "Whether to clean the output directory before generating. [default: true].",
     "option_globalHeader": "Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter.",
-    "option_noDeprecated": "Whether to ignore deprecated APIs. [default: false]."
+    "option_noDeprecated": "Whether to ignore deprecated APIs. [default: false].",
+    "option_config": "Config file path. By default, looks for stc.config.json, stc.config.ts, stc.config.js, .stcrc.json, .stcrc in the current directory.",
+    "option_watch": "Watch the API document (local file or remote url) and regenerate on change. [default: false].",
+    "option_interval": "Polling interval in milliseconds when watching a remote url. [default: 3000].",
+    "configNotFound": "Config file {{path}} does not exist.",
+    "configLoadError": "Failed to load the config file. Reason: {{error}}",
+    "configUnknownKey": "Unknown option {{key}} in the config file, ignored."
+  },
+  "watch": {
+    "start": "Watching for changes. Press Ctrl+C to exit.",
+    "changeDetected": "Change detected, regenerating.",
+    "configChanged": "Config file changed, reloading.",
+    "regenerateError": "Generation failed. Reason: {{error}}",
+    "pollRemote": "Polling the remote url every {{interval}}s.",
+    "stop": "Watch stopped."
   },
   "plugin": {
     "name": "Load plugin {{name}}",

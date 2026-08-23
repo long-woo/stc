@@ -51,7 +51,6 @@
   },
   "imports": {
     "./": "./",
-    "/": "./",
     "@std/yaml": "jsr:@std/yaml@^1.2.0",
     "x/": "https://deno.land/x/",
     "@deno-library/progress": "jsr:@deno-library/progress@^1.5.1",
@@ -63,6 +62,7 @@
     "@std/fmt": "jsr:@std/fmt@^1.0.10",
     "@std/fmt/colors": "jsr:@std/fmt@^1.0.10/colors",
     "@std/fs": "jsr:@std/fs@^1.0.24",
+    "@std/path": "jsr:@std/path@^1.0.9",
     "diff": "npm:diff@^9.0.0",
     "analytics": "npm:analytics@0.8.19",
     "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
