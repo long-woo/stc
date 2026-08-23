@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: Task Workspace API
+  version: 1.0.0
+paths:
+  /tasks:
+    get:
+      tags: [tasks]
+      operationId: listTasks
+      summary: List tasks
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Filter tasks by completion state
+          schema:
+            type: string
+            enum: [active, completed]
+      responses:
+        "200":
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+    post:
+      tags: [tasks]
+      operationId: createTask
+      summary: Create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskInput"
+      responses:
+        "200":
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+  /tasks/{taskId}:
+    patch:
+      tags: [tasks]
+      operationId: updateTask
+      summary: Update a task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskInput"
+      responses:
+        "200":
+          description: Updated task
+    delete:
+      tags: [tasks]
+      operationId: deleteTask
+      summary: Delete a task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task deleted
+components:
+  schemas:
+    Task:
+      type: object
+      required: [id, title, completed]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        completed: { type: boolean }
+    CreateTaskInput:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+    UpdateTaskInput:
+      type: object
+      properties:
+        title: { type: string }
+        completed: { type: boolean }

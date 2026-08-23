@@ -235,6 +235,7 @@ export const createDiffFile = async (
   source: string,
   content: string,
   clean: boolean = true,
+  banner = true,
 ) => {
   let isChange = true;
   let newContent = content;
@@ -259,5 +260,5 @@ export const createDiffFile = async (
     }
   }
 
-  if (isChange) createFile(source, newContent);
+  if (isChange) createFile(source, newContent, { banner });
 };

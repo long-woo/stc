@@ -39,6 +39,7 @@
     "option_out": "输出目录，默认为 stc 当前执行的目录下 {{out}}。",
     "option_client": "http 请求客户端。 当 lang 为 ts/js 时，可选值：axios、wechat、fetch。",
     "option_lang": "语言，用于输出文件的后缀名， [默认: \"ts\"]。",
+    "option_mcp": "生成 MCP 工具清单（mcp-tools.json）。",
     "option_filter": "过滤接口，符合过滤条件的接口会被生成，可设置多个。",
     "option_tag": "从接口 url 中指定标签，用于文件名，默认读取 tags 的第一个。",
     "option_version": "显示版本信息。",

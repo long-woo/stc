@@ -39,6 +39,7 @@
     "option_out": "The output directory, the default is {{out}} under the current execution directory of stc.",
     "option_client": "http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.",
     "option_lang": "Language, the suffix used for the output file, [default: \"ts\"].",
+    "option_mcp": "Generate an MCP tool catalog (mcp-tools.json).",
     "option_filter": "Filter interfaces, and the interfaces that meet the filter conditions will be generated.",
     "option_tag": "Specify tags from the interface url for filenames, the first one of tags is read by default.",
     "option_version": "View version information.",

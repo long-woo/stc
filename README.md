@@ -25,6 +25,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
   - **JavaScript**, from TypeScript to it.
   - **Dart**, dependency on **`dio`**.
   - 🚧 **Swift** ...
+  - **MCP Tools**, generate an MCP-compatible tool catalog from OpenAPI.
 
 ## Quick start
 
@@ -164,6 +165,16 @@ createApiClient({
 | globalHeader | gh | string[] |  | Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter. |
 | version     | v     | boolean  |           | Output version information.                                                                                  |
 | help        | h     | boolean  |           | Output help information.                                                                                     |
+
+### MCP Tools
+
+Use `--mcp` to generate `mcp-tools.json`. The file contains the standard MCP tool fields (`name`, `description`, `inputSchema`) and an `x-stc-http` extension with the original HTTP method and path, so an MCP server can expose the tools and connect them to a generic HTTP executor.
+
+```sh
+stc --url=./openapi.yaml --mcp --outDir=./generated
+```
+
+The generated JSON is intentionally limited to tool discovery. Authentication, base URL selection, and HTTP execution remain in the MCP server/runtime that consumes the catalog.
 
 ## Plug-in development
 

@@ -152,6 +152,29 @@ Deno.test("config: auto discovery and generation", async () => {
   await Deno.remove(dir, { recursive: true });
 });
 
+Deno.test("config: explicit config resolves local paths from its directory", async () => {
+  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+  const projectDir = `${dir}/project`;
+  await Deno.mkdir(projectDir);
+  await Deno.writeTextFile(`${projectDir}/openapi.json`, SPEC_V1);
+  await Deno.writeTextFile(
+    `${projectDir}/stc.config.json`,
+    JSON.stringify({
+      url: "./openapi.json",
+      outDir: "./generated",
+      shared: false,
+    }),
+  );
+
+  const child = runStc(["--config", "./project/stc.config.json"], dir);
+  const { code } = await child.status;
+
+  assertEquals(code, 0);
+  assertEquals(await exists(`${projectDir}/generated/ping.ts`), true);
+
+  await Deno.remove(dir, { recursive: true });
+});
+
 Deno.test("config: ts config file", async () => {
   const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
 

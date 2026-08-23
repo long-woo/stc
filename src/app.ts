@@ -154,24 +154,34 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   );
 
   // 写入类型定义文件
-  if (transformData?.definition?.content) {
-    const name = `${options.outDir}/${transformData.definition.filename}`;
-    const content = transformData.definition.content;
+  const definition = transformData?.definition;
+  if (definition?.content) {
+    const name = `${options.outDir}/${definition.filename}`;
+    const content = definition.content;
 
-    createDiffFile(name, content, options.clean);
+    await createDiffFile(
+      name,
+      content,
+      options.clean,
+      definition.banner ?? true,
+    );
   }
 
   // 写入 API 文件
   if (transformData?.action) {
-    transformData.action.forEach((content, filename) => {
-      createDiffFile(`${options.outDir}/${filename}`, content, options.clean);
-    });
+    await Promise.all(
+      Array.from(transformData.action).map(([filename, content]) =>
+        createDiffFile(`${options.outDir}/${filename}`, content, options.clean)
+      ),
+    );
   }
 
   // 保存数据
-  createFile(`${options.outDir}/${LOCK_FILE}`, JSON.stringify(data, null, 2), {
-    banner: false,
-  });
+  await createFile(
+    `${options.outDir}/${LOCK_FILE}`,
+    JSON.stringify(data, null, 2),
+    { banner: false },
+  );
 
   console.log("\n");
   Logs.success(
@@ -180,5 +190,5 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
     }\n\t${options.outDir}\n`,
   );
   // 触发插件 onEnd 事件
-  context.onEnd?.(context.options);
+  await context.onEnd?.(context.options);
 };

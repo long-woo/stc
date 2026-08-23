@@ -8,6 +8,7 @@ import { createAppFile } from "./utils.ts";
 import denoJson from "../deno.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 import { trackEvent } from "./ga.ts";
+import { dirname, resolve } from "@std/path";
 
 const drawLogo = () => {
   console.log(`
@@ -171,6 +172,7 @@ ${getT("$t(cli.option)")}
   -o, --outDir       ${getT("$t(cli.option_out)", { out: "./stc_out" })}
   --client           ${getT("$t(cli.option_client)")}
   -l, --lang         ${getT("$t(cli.option_lang)")}
+  --mcp              ${getT("$t(cli.option_mcp)")}
   -f, --filter       ${getT("$t(cli.option_filter)")}
   --tag              ${getT("$t(cli.option_tag)")}
   -c, --conjunction  ${getT("$t(cli.option_conjunction)")}
@@ -189,6 +191,7 @@ ${getT("$t(cli.example)")}
   stc -o ./stc_out -p axios -l ts --url https://petstore3.swagger.io/api/v3/openapi.json
   stc --config ./stc.config.json
   stc -w --url https://petstore3.swagger.io/api/v3/openapi.json
+  stc --mcp --url ./openapi.yaml
 `);
   Deno.exit(0);
 };
@@ -201,6 +204,7 @@ const OPTION_KEYS = [
   "outDir",
   "client",
   "lang",
+  "mcp",
   "tag",
   "filter",
   "conjunction",
@@ -225,6 +229,7 @@ const OPTION_DEFAULTS: IDefaultObject = {
   shared: true,
   clean: true,
   watch: false,
+  mcp: false,
   interval: 3000,
 };
 
@@ -265,7 +270,15 @@ export interface IMainResult {
 export const resolveOptions = async (): Promise<IMainResult> => {
   // 定义命令行参数和选项的配置
   const argsConfig: ParseOptions = {
-    boolean: ["help", "version", "shared", "clean", "noDeprecated", "watch"],
+    boolean: [
+      "help",
+      "version",
+      "shared",
+      "clean",
+      "noDeprecated",
+      "watch",
+      "mcp",
+    ],
     string: [
       "url",
       "outDir",
@@ -361,6 +374,26 @@ export const resolveOptions = async (): Promise<IMainResult> => {
     merged[key] = value;
   });
 
+  if (merged.mcp) {
+    merged.lang = "mcp";
+  }
+
+  // 配置文件中的本地路径相对于配置文件所在目录解析；CLI 显式传入的路径仍相对于当前目录。
+  if (configPath) {
+    const configDirectory = dirname(resolve(Deno.cwd(), configPath));
+
+    if (
+      args.url === undefined && typeof merged.url === "string" &&
+      !/^https?:\/\//i.test(merged.url)
+    ) {
+      merged.url = resolve(configDirectory, merged.url);
+    }
+
+    if (args.outDir === undefined && typeof merged.outDir === "string") {
+      merged.outDir = resolve(configDirectory, merged.outDir);
+    }
+  }
+
   // 轮询间隔最小 1 秒
   merged.interval = Math.max(Number(merged.interval) || 3000, 1000);
 
@@ -384,6 +417,7 @@ export const resolveOptions = async (): Promise<IMainResult> => {
       outDir: merged.outDir as string,
       client: merged.client as DefaultConfigOptions["client"],
       lang: merged.lang as string,
+      mcp: merged.mcp as boolean,
       tag: merged.tag as DefaultConfigOptions["tag"],
       filter: merged.filter as string[] | undefined,
       conjunction: merged.conjunction as string,

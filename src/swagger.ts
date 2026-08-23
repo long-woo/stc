@@ -347,6 +347,10 @@ export interface DefaultConfigOptions {
    */
   readonly lang?: string;
   /**
+   * 是否生成 MCP 工具清单。CLI 对应 --mcp。
+   */
+  readonly mcp?: boolean;
+  /**
    * 插件
    */
   readonly plugins?: IPlugin[];
