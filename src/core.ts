@@ -122,6 +122,14 @@ const getVirtualPropertiesFromSchema = (
       return;
     }
 
+    if (
+      currentSchema.type === "array" && currentSchema.items &&
+      !currentSchema.items.$ref
+    ) {
+      collectProps(currentSchema.items);
+      return;
+    }
+
     (currentSchema.required ?? []).forEach((item) => required.add(item));
 
     Object.keys(currentSchema.properties ?? {}).forEach((current) => {
@@ -186,7 +194,13 @@ const getVirtualPropertiesFromSchema = (
       if (childProps.length) {
         const _objTypeName = defMapping.name + childDef.name;
 
-        if (
+        if (prop.type === "array") {
+          _defItem.ref = _objTypeName;
+          _defItem.properties = childProps;
+          if (defData) {
+            defData.set(_objTypeName, childProps);
+          }
+        } else if (
           childSchema.type?.includes("object") || childSchema.properties ||
           childSchema.allOf?.length || childSchema.$ref
         ) {

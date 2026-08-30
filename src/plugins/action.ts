@@ -97,9 +97,9 @@ const getInternalDefinition = (
 
     if (current.properties?.length) {
       const _defName = `${name}${upperCase(current.name)}`;
-      // 同样是占位类型名，传 `object` 让 `convertType` 直接返回 `_defName`
+      // 内嵌对象使用当前定义名；数组对象同时保留数组容器。
       _type = convertType(
-        "object",
+        current.type === "array" ? "array" : "object",
         _defName,
         current.additionalRef,
         pluginOptions,
@@ -223,7 +223,12 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
           : _defName;
         const _defs = getDefinition(item.properties, _childDefName);
 
-        _type = _childDefName;
+        _type = convertType(
+          item.type === "array" ? "array" : "object",
+          _childDefName,
+          item.additionalRef,
+          pluginOptions,
+        );
 
         if (_multiParam) {
           prev.definitions?.unshift(_defs.definitions.join("\n"));
@@ -347,7 +352,12 @@ const parseResponse = (
 
     _response = {
       name: _defName,
-      type: _defName,
+      type: convertType(
+        response.type ?? "object",
+        _defName,
+        undefined,
+        pluginOptions,
+      ),
       definitions: _definitions.definitions,
       imports: _definitions.imports,
     };
