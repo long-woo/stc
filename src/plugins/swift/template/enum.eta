@@ -1,9 +1,57 @@
-<% if (it.isEnum) { %>
-public enum <%= it.name %>: String, Codable {
-    <% it.data.forEach(function(item) { %>
-    case <%= it.convertValue(item).replace(/[^a-zA-Z0-9_]/g, '_') %> = "<%= item %>"
-    <% }) %>
+<%
+const values = it.data || [];
+const converted = values.map((item) => it.convertValue(item));
+const enumType = String(it.enumType || "");
+const swiftKeywords = new Set([
+  "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+  "func", "import", "init", "inout", "internal", "let", "open", "operator",
+  "private", "precedencegroup", "protocol", "public", "rethrows", "static",
+  "struct", "subscript", "typealias", "var", "break", "case", "catch",
+  "continue", "default", "defer", "do", "else", "fallthrough", "for", "guard",
+  "if", "in", "repeat", "return", "throw", "switch", "where", "while", "as",
+  "Any", "false", "is", "nil", "self", "Self", "super", "throws", "true", "try"
+]);
+const lines = [];
+
+if (!it.isEnum) {
+  lines.push(`public typealias ${it.name} = ${it.data || "JSONValue"}`);
+} else if (enumType === "boolean") {
+  lines.push(`public typealias ${it.name} = Bool`);
+} else {
+  const inferredInteger = converted.length > 0 &&
+    converted.every((value) => Number.isInteger(value));
+  const inferredNumber = converted.length > 0 &&
+    converted.every((value) => typeof value === "number");
+  const rawType = enumType === "integer"
+    ? "Int"
+    : (enumType === "number"
+      ? "Double"
+      : (enumType === "string"
+        ? "String"
+        : (inferredInteger ? "Int" : (inferredNumber ? "Double" : "String"))));
+  const usedNames = new Set();
+  lines.push(`public enum ${it.name}: ${rawType}, Codable {`);
+
+  converted.forEach((value, index) => {
+    const rawValueSource = enumType === "string" ? String(values[index]) : value;
+    let caseName;
+    if (typeof rawValueSource === "number") {
+      caseName = rawValueSource < 0
+        ? `valueMinus${String(Math.abs(rawValueSource)).replace(/[^a-zA-Z0-9]/g, "_")}`
+        : `value${String(rawValueSource).replace(/[^a-zA-Z0-9]/g, "_")}`;
+    } else {
+      caseName = String(rawValueSource).replace(/[^a-zA-Z0-9_]/g, "_") || `value${index}`;
+      if (/^[0-9]/.test(caseName)) caseName = `_${caseName}`;
+    }
+    if (usedNames.has(caseName)) caseName = `${caseName}_${index}`;
+    usedNames.add(caseName);
+    if (swiftKeywords.has(caseName)) caseName = `\`${caseName}\``;
+
+    const rawValue = typeof rawValueSource === "number"
+      ? String(rawValueSource)
+      : JSON.stringify(String(rawValueSource));
+    lines.push(`    case ${caseName} = ${rawValue}`);
+  });
+  lines.push("}");
 }
-<% } else { %>
-public typealias <%= it.name %> = <%= it.data %>
-<% } %>
+%><%~ lines.join("\n") %>

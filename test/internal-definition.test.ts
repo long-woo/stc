@@ -35,6 +35,24 @@ const spec = {
                     type: "array",
                     items: { $ref: "#/components/schemas/Tag" },
                   },
+                  groups: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string" },
+                        members: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              id: { type: "integer" },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -42,6 +60,52 @@ const spec = {
         },
         responses: {
           "200": { description: "ok" },
+        },
+      },
+    },
+    "/store/orders/bulk": {
+      post: {
+        operationId: "bulkOrder",
+        tags: ["store"],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "integer" },
+                    metadata: {
+                      type: "object",
+                      properties: {
+                        source: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "ok",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "integer" },
+                      accepted: { type: "boolean" },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -101,6 +165,35 @@ Deno.test("内部定义引用的外部类型会被导入", () => {
 
   assertStringIncludes(content, "tags?: Tag[];");
   assertStringIncludes(content, "import type { Tag } from './_types'");
+});
+
+Deno.test("数组 items 中的深层 properties 会递归生成内部定义", () => {
+  const content = getStoreContent();
+
+  assertStringIncludes(content, "groups?: PlaceOrderBodyParamsGroups[];");
+  assertStringIncludes(
+    content,
+    "export interface PlaceOrderBodyParamsGroups {",
+  );
+  assertStringIncludes(
+    content,
+    "members?: PlaceOrderBodyParamsGroupsMembers[];",
+  );
+  assertStringIncludes(
+    content,
+    "export interface PlaceOrderBodyParamsGroupsMembers {",
+  );
+  assertStringIncludes(content, "id?: number;");
+});
+
+Deno.test("顶层数组请求与响应会保留数组类型并解析 items.properties", () => {
+  const content = getStoreContent();
+
+  assertStringIncludes(content, "body: BulkOrderBodyParams[]");
+  assertStringIncludes(content, "metadata?: BulkOrderBodyParamsMetadata;");
+  assertStringIncludes(content, "Promise<BulkOrderResponse[]>");
+  assertStringIncludes(content, "export interface BulkOrderResponse {");
+  assertStringIncludes(content, "accepted?: boolean;");
 });
 
 Deno.test("内部定义不会残留 core.ts 的 `Body` 占位类型名", () => {

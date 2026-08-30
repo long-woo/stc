@@ -19,13 +19,13 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 - 🐹 Support for **Swagger 2/3(OpenApi)** and **Apifox**.
 - 📄 Support for **JSON** and **YAML** spec formats.
 - 💡 Support plug-in development.
+- 🤖 Support **MCP Tools**, generate an MCP-compatible tool catalog from OpenAPI.
 - 🐣 Built-in transformation languages:
   - **TypeScript**, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
    > `xhr/ajax、ofetch` planned
   - **JavaScript**, from TypeScript to it.
   - **Dart**, dependency on **`dio`**.
-  - 🚧 **Swift** ...
-  - **MCP Tools**, generate an MCP-compatible tool catalog from OpenAPI.
+  - **Swift**, type-safe async APIs backed by **`Alamofire`**.
 
 ## Quick start
 
@@ -100,6 +100,75 @@ createApiClient({
 })
 ```
 
+#### Vue Query / React Query (TanStack Query)
+
+STC's generated methods return `Promise<T>`, so they can be used directly as a
+query function. Replace `getPetById` and its import path with a method from your
+own generated API.
+
+Install the adapter for your framework:
+
+```sh
+pnpm add @tanstack/vue-query    # Vue
+pnpm add @tanstack/react-query  # React
+```
+
+Initialize the generated API client once:
+
+```ts
+import { createApiClient } from './apis/shared/fetchRuntime';
+
+createApiClient({ baseURL: 'https://api.xxx.com' });
+```
+
+Vue uses `VueQueryPlugin` and a composable:
+
+```ts
+// main.ts
+import { createApp } from 'vue';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
+import App from './App.vue';
+
+const app = createApp(App);
+app.use(VueQueryPlugin, { queryClient: new QueryClient() });
+app.mount('#app');
+
+// usePet.ts
+import { useQuery } from '@tanstack/vue-query';
+import type { Ref } from 'vue';
+import { getPetById } from '../apis/pet';
+
+export const usePet = (petId: Ref<number>) => useQuery({
+  queryKey: ['pet', petId],
+  queryFn: () => getPetById(petId.value),
+});
+```
+
+React uses `QueryClientProvider` and a custom hook:
+
+```tsx
+// main.tsx
+import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import App from './App';
+
+const queryClient = new QueryClient();
+createRoot(document.getElementById('root')!).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>,
+);
+
+// usePet.ts
+import { useQuery } from '@tanstack/react-query';
+import { getPetById } from '../apis/pet';
+
+export const usePet = (petId: number) => useQuery({
+  queryKey: ['pet', petId],
+  queryFn: () => getPetById(petId),
+});
+```
+
 #### Wechat
 
 1. Find the directory of `outDir`, copy the entire directory of `shared` to the directory of the `wechat` module you encapsulated.
@@ -123,6 +192,32 @@ App<IAppOption>({
   }
 });
 ```
+
+#### Swift / Alamofire
+
+Add Alamofire to the app target, keep the generated `shared/APIClientBase.swift`
+and `shared/alamofire/APIClient.swift` files in the same target as the generated
+API files, then configure the client once during app startup:
+
+```swift
+import Alamofire
+
+APIClient.shared.configure(
+    APICreateConfig(
+        baseURL: "https://api.example.com",
+        defaultHeaders: ["Accept": "application/json"],
+        onError: { message in
+            print(message)
+        },
+        onLogin: {
+            // Handle an HTTP 401 response.
+        }
+    )
+)
+```
+
+Generated methods use `async throws`, preserve path/query/header/body parameters,
+and use `APIFile` for multipart uploads.
 
 ### Authentication
 
@@ -155,6 +250,7 @@ createApiClient({
 | url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path (JSON or YAML).                                                      |
 | outDir      | o     | string   | ./stc_out | Output Directory.                                                                                            |
 | client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
+| mcp         |       | boolean  | false     | Generate an MCP tool catalog (`mcp-tools.json`).                                                            |
 | lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |
 | tag         |       | number   |           | Specify the tag from the interface url. By default, the first tag is read for the file name.                 |
 | filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
@@ -190,8 +286,7 @@ Create a `myPlugin.ts` file:
 
 ```ts
 // 引用模块
-// import { start } from 'https://deno.land/x/stc@2.17.0/mod.ts'
-import { start } from 'jsr:@lonu/stc@^2.17.0'
+import { start } from 'jsr:@lonu/stc@^2.17.1'
 
 // Defining plugins
 const myPlugin: IPlugin = {

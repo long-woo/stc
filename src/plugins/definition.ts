@@ -18,7 +18,7 @@ const parserBaseAndEnum = (
 
   const res = renderEtaString(
     options.template!.enum,
-    { name, data, convertValue, isEnum },
+    { name, data, convertValue, isEnum, enumType: props.type },
   );
 
   return res;
@@ -37,6 +37,9 @@ export const parserDefinition = (
 
   data.forEach((props, key) => {
     const _definition: string[] = [];
+    const _renderedProps: Array<
+      IDefinitionVirtualProperty & { renderedType: string }
+    > = [];
 
     // 基础类型、枚举处理
     if (!Array.isArray(props)) {
@@ -84,13 +87,14 @@ export const parserDefinition = (
             : "",
         }),
       );
+      _renderedProps.push({ ...prop, renderedType: _type });
 
       // 定义尾
       if (index === props.length - 1) {
         _definition.push(
           renderEtaString(options.template!.definitionFooter, {
             defName: key,
-            props,
+            props: _renderedProps,
           }),
         );
       }

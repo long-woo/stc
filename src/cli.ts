@@ -138,7 +138,7 @@ const checkUpdate = async () => {
       //   args: [
       //     "compile",
       //     "-A",
-      //     `https://deno.land/x/stc@${latestVersion}/mod.ts`,
+      //     `jsr:@lonu/stc/mod.ts`,
       //     "--output",
       //     `${dir}/stc`,
       //   ],

@@ -1,8 +1,49 @@
-<% if (it.props && it.props.some(prop => prop.originalName && prop.originalName !== prop.name)) { %>
-    private enum CodingKeys: String, CodingKey {
-<% it.props.forEach(prop => { %>
-        case <%= prop.name %> = "<%= prop.originalName || prop.name %>"
-<% }) %>
-    }
-<% } %>
+<%
+const swiftKeywords = new Set([
+  "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+  "func", "import", "init", "inout", "internal", "let", "open", "operator",
+  "private", "protocol", "public", "static", "struct", "subscript", "typealias",
+  "var", "break", "case", "catch", "continue", "default", "defer", "do", "else",
+  "fallthrough", "for", "guard", "if", "in", "repeat", "return", "throw", "switch",
+  "where", "while", "as", "Any", "false", "is", "nil", "self", "Self", "super",
+  "throws", "true", "try"
+]);
+const swiftName = (value) => {
+  const name = String(value || "value").replace(/[^a-zA-Z0-9_]/g, "_");
+  const normalized = /^[0-9]/.test(name) ? `_${name}` : name;
+  return swiftKeywords.has(normalized) ? `\`${normalized}\`` : normalized;
+};
+const swiftType = (prop) => {
+  const rawType = String(prop.renderedType || "JSONValue");
+  return rawType.includes(" | ") ? "JSONValue" : rawType;
+};
+const props = it.props || [];
+const lines = [];
+
+if (props.length) {
+  lines.push("    public init(");
+  props.forEach((prop, index) => {
+    const optional = !prop.required || prop.nullable;
+    const suffix = optional ? "? = nil" : "";
+    lines.push(
+      `        ${swiftName(prop.name)}: ${swiftType(prop)}${suffix}${index < props.length - 1 ? "," : ""}`,
+    );
+  });
+  lines.push("    ) {");
+  props.forEach((prop) => {
+    const name = swiftName(prop.name);
+    lines.push(`        self.${name} = ${name}`);
+  });
+  lines.push("    }");
 }
+
+if (props.some((prop) => prop.originalName && prop.originalName !== prop.name)) {
+  lines.push("");
+  lines.push("    private enum CodingKeys: String, CodingKey {");
+  props.forEach((prop) => {
+    lines.push(`        case ${swiftName(prop.name)} = ${JSON.stringify(String(prop.originalName || prop.name))}`);
+  });
+  lines.push("    }");
+}
+lines.push("}");
+%><%~ lines.join("\n") %>
