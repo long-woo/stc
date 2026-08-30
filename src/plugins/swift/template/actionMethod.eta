@@ -1,65 +1,154 @@
-<% /* API 方法注释 */ %>
-/// <%~ it.url %>
-<% if (it.summary) { %>
-/// <%~ it.summary %>
-<% } %>
-<% if (it.summary !== it.description) { %>
-<% if (it.summary && it.description) { %>
-///
-<% } %>
-<% if (it.description) { %>
-/// <%~ it.description %>
-<% } %>
-<% } %>
+<%
+const swiftKeywords = new Set([
+  "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+  "func", "import", "init", "inout", "internal", "let", "open", "operator",
+  "private", "precedencegroup", "protocol", "public", "rethrows", "static",
+  "struct", "subscript", "typealias", "var", "break", "case", "catch",
+  "continue", "default", "defer", "do", "else", "fallthrough", "for", "guard",
+  "if", "in", "repeat", "return", "throw", "switch", "where", "while", "as",
+  "Any", "false", "is", "nil", "self", "Self", "super", "throws", "true", "try"
+]);
+const swiftName = (value) => {
+  const name = String(value || "value").replace(/[^a-zA-Z0-9_]/g, "_");
+  const normalized = /^[0-9]/.test(name) ? `_${name}` : name;
+  return swiftKeywords.has(normalized) ? `\`${normalized}\`` : normalized;
+};
+const swiftType = (value) => {
+  const type = String(value || "JSONValue");
+  return type.includes(" | ") ? "JSONValue" : type;
+};
+const stringLiteral = (value) => JSON.stringify(String(value));
+const commentLines = (value) => String(value || "")
+  .split(/\r?\n/)
+  .filter(Boolean)
+  .map((line) => `/// ${line}`);
+const expandFields = (param) => {
+  if (!param.fields?.length) {
+    return [{ ...param, access: swiftName(param.name) }];
+  }
 
-<% if (it.deprecated) { %>
-@available(*, deprecated, message: "This API is deprecated")
-<% } %>
-<% /* API 方法 */ %>
-public func <%= it.methodName %>(<% it.params.forEach((param, index) => { %>
-    <%= param.name %>: <%= param.type %><% if (!param.required) { %>?<% } %><% if (index < it.params.length - 1) { %>,<% } %>
-<% }) %>) async throws -> <%= it.responseType %> {
-    <% /* 处理路径参数 */ %>
-    <% const pathParams = it.params.filter(p => p.category === 'path'); %>
-    <% if (pathParams.length > 0) { %>
-    let pathParams: [String: String] = [
-        <% pathParams.forEach((param, index) => { %>
-        "<%= param.originalName || param.name %>": String(<%= param.name %>)<% if (index < pathParams.length - 1) { %>,<% } %>
-        <% }) %>
-    ]
-    let parsedUrl = "<%= it.url %>".parsePathParams(pathParams)
-    <% } %>
-    
-    <% /* 处理请求参数 */ %>
-    <% const bodyParams = it.params.filter(p => p.category === 'body' || p.category === 'formData'); %>
-    <% const queryParams = it.params.filter(p => p.category === 'query'); %>
-    <% if (bodyParams.length > 0 || queryParams.length > 0) { %>
-    var params: [String: Any] = [:]
-    <% bodyParams.forEach(param => { %>
-    <% if (param.required) { %>
-    params["<%= param.category %>"] = <%= param.name %>
-    <% } else { %>
-    if let <%= param.name %> = <%= param.name %> {
-        params["<%= param.category %>"] = <%= param.name %>
-    }
-    <% } %>
-    <% }) %>
-    <% queryParams.forEach(param => { %>
-    <% if (param.required) { %>
-    params["<%= param.category %>"] = <%= param.name %>
-    <% } else { %>
-    if let <%= param.name %> = <%= param.name %> {
-        params["<%= param.category %>"] = <%= param.name %>
-    }
-    <% } %>
-    <% }) %>
-    <% } %>
-    
-    let config = APIClientConfig(
-        url: <% if (pathParams.length > 0) { %>parsedUrl<% } else { %>"<%= it.url %>"<% } %>,
-        method: "<%= it.method %>"<% if (bodyParams.length > 0 || queryParams.length > 0) { %>,
-        params: params<% } %>
-    )
-    
-    return try await APIClient.shared.request(config, type: <%= it.responseType %>.self)
+  return param.fields.map((field) => ({
+    ...field,
+    access: `${swiftName(param.name)}.${swiftName(field.name)}`,
+  }));
+};
+const lines = [];
+const params = it.params || [];
+const rawResponseType = swiftType(it.responseType);
+const responseType = !it.responseName && rawResponseType === "JSONValue"
+  ? "EmptyResponse"
+  : rawResponseType;
+
+lines.push(`/// ${it.url}`);
+lines.push(...commentLines(it.summary));
+if (it.summary !== it.description) lines.push(...commentLines(it.description));
+if (it.deprecated) {
+  lines.push('@available(*, deprecated, message: "This API is deprecated")');
 }
+
+const signatureParams = params.map((param) => {
+  const optional = !param.required;
+  return `    ${swiftName(param.name)}: ${swiftType(param.type)}${optional ? "? = nil" : ""}`;
+});
+
+if (signatureParams.length) {
+  lines.push(`public func ${swiftName(it.methodName)}(`);
+  signatureParams.forEach((param, index) => {
+    lines.push(`${param}${index < signatureParams.length - 1 ? "," : ""}`);
+  });
+  lines.push(`) async throws -> ${responseType} {`);
+} else {
+  lines.push(`public func ${swiftName(it.methodName)}() async throws -> ${responseType} {`);
+}
+
+const pathFields = params
+  .filter((param) => param.category === "path")
+  .flatMap(expandFields);
+if (pathFields.length) {
+  lines.push("    let pathParameters: [String: String] = [");
+  pathFields.forEach((field, index) => {
+    const value = field.required
+      ? `APIParameterEncoder.string(from: ${field.access})`
+      : `${field.access}.map { APIParameterEncoder.string(from: $0) } ?? ""`;
+    lines.push(
+      `        ${stringLiteral(field.originalName || field.name)}: ${value}${index < pathFields.length - 1 ? "," : ""}`,
+    );
+  });
+  lines.push("    ]");
+  lines.push(`    let parsedURL = ${stringLiteral(it.url)}.parsePathParams(pathParameters)`);
+}
+
+const queryFields = params
+  .filter((param) => param.category === "query")
+  .flatMap(expandFields);
+if (queryFields.length) {
+  lines.push("    var queryParameters: [String: Any] = [:]");
+  queryFields.forEach((field) => {
+    const key = stringLiteral(field.originalName || field.name);
+    if (field.required) {
+      lines.push(`    queryParameters[${key}] = ${field.access}`);
+    } else {
+      lines.push(`    if let value = ${field.access} {`);
+      lines.push(`        queryParameters[${key}] = value`);
+      lines.push("    }");
+    }
+  });
+}
+
+const headerFields = params
+  .filter((param) => param.category === "header")
+  .flatMap(expandFields);
+if (headerFields.length) {
+  lines.push("    var headerParameters: [String: String] = [:]");
+  headerFields.forEach((field) => {
+    const key = stringLiteral(field.originalName || field.name);
+    if (field.required) {
+      lines.push(`    headerParameters[${key}] = APIParameterEncoder.string(from: ${field.access})`);
+    } else {
+      lines.push(`    if let value = ${field.access} {`);
+      lines.push(`        headerParameters[${key}] = APIParameterEncoder.string(from: value)`);
+      lines.push("    }");
+    }
+  });
+}
+
+const bodyParams = params.filter((param) => param.category === "body");
+if (bodyParams.length) {
+  lines.push(`    let requestBody: Any? = ${swiftName(bodyParams[0].name)}`);
+}
+
+const formFields = params
+  .filter((param) => param.category === "formData")
+  .flatMap(expandFields);
+if (formFields.length) {
+  lines.push("    var formParameters: [String: Any] = [:]");
+  formFields.forEach((field) => {
+    const key = stringLiteral(field.originalName || field.name);
+    if (field.required) {
+      lines.push(`    formParameters[${key}] = ${field.access}`);
+    } else {
+      lines.push(`    if let value = ${field.access} {`);
+      lines.push(`        formParameters[${key}] = value`);
+      lines.push("    }");
+    }
+  });
+}
+
+const configArgs = [
+  `        url: ${pathFields.length ? "parsedURL" : stringLiteral(it.url)}`,
+  `        method: ${stringLiteral(it.method)}`,
+];
+if (queryFields.length) configArgs.push("        query: queryParameters");
+if (headerFields.length) configArgs.push("        headers: headerParameters");
+if (bodyParams.length) configArgs.push("        body: requestBody");
+if (formFields.length) configArgs.push("        formData: formParameters");
+
+lines.push("    let config = APIClientConfig(");
+configArgs.forEach((arg, index) => {
+  lines.push(`${arg}${index < configArgs.length - 1 ? "," : ""}`);
+});
+lines.push("    )");
+lines.push("");
+lines.push(`    return try await APIClient.shared.request(config, type: ${responseType}.self)`);
+lines.push("}");
+%><%~ lines.join("\n") %>

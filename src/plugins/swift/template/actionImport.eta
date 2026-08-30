@@ -1,5 +1,1 @@
 import Foundation
-<% if (it.imports.length) { %>
-import <%= it.typeFileName %>
-<% } %>
-import APIClient

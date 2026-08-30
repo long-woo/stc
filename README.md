@@ -25,7 +25,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
    > `xhr/ajax、ofetch` planned
   - **JavaScript**, from TypeScript to it.
   - **Dart**, dependency on **`dio`**.
-  - 🚧 **Swift** ...
+  - **Swift**, type-safe async APIs backed by **`Alamofire`**.
 
 ## Quick start
 
@@ -192,6 +192,32 @@ App<IAppOption>({
   }
 });
 ```
+
+#### Swift / Alamofire
+
+Add Alamofire to the app target, keep the generated `shared/APIClientBase.swift`
+and `shared/alamofire/APIClient.swift` files in the same target as the generated
+API files, then configure the client once during app startup:
+
+```swift
+import Alamofire
+
+APIClient.shared.configure(
+    APICreateConfig(
+        baseURL: "https://api.example.com",
+        defaultHeaders: ["Accept": "application/json"],
+        onError: { message in
+            print(message)
+        },
+        onLogin: {
+            // Handle an HTTP 401 response.
+        }
+    )
+)
+```
+
+Generated methods use `async throws`, preserve path/query/header/body parameters,
+and use `APIFile` for multipart uploads.
 
 ### Authentication
 

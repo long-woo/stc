@@ -1,5 +1,24 @@
-<% if (it.propCommit) { %>
-    /// <%~ it.propCommit %>
-
-<% } %>
-    public let <%= it.prop.name %>: <%= it.propType %><% if (!it.prop.required) { %>?<% } %>
+<%
+const swiftKeywords = new Set([
+  "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+  "func", "import", "init", "inout", "internal", "let", "open", "operator",
+  "private", "protocol", "public", "static", "struct", "subscript", "typealias",
+  "var", "break", "case", "catch", "continue", "default", "defer", "do", "else",
+  "fallthrough", "for", "guard", "if", "in", "repeat", "return", "throw", "switch",
+  "where", "while", "as", "Any", "false", "is", "nil", "self", "Self", "super",
+  "throws", "true", "try"
+]);
+const swiftName = (value) => {
+  const name = String(value || "value").replace(/[^a-zA-Z0-9_]/g, "_");
+  const normalized = /^[0-9]/.test(name) ? `_${name}` : name;
+  return swiftKeywords.has(normalized) ? `\`${normalized}\`` : normalized;
+};
+const rawType = String(it.propType || "JSONValue");
+const propType = rawType.includes(" | ") ? "JSONValue" : rawType;
+const optional = !it.prop.required || it.prop.nullable;
+const lines = [];
+if (it.propCommit) {
+  String(it.propCommit).split(/\r?\n/).forEach((line) => lines.push(`    /// ${line}`));
+}
+lines.push(`    public let ${swiftName(it.prop.name)}: ${propType}${optional ? "?" : ""}`);
+%><%~ lines.join("\n") %>

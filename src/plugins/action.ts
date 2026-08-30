@@ -13,6 +13,19 @@ import Logs from "../console.ts";
 import { getT } from "../i18n/index.ts";
 import { convertValue } from "../utils.ts";
 
+interface IApiFormalParam {
+  name: string;
+  originalName: string;
+  category: string;
+  type: string;
+  description: string;
+  required: boolean;
+  /**
+   * 原始分类中包含多个参数时，记录包装类型的字段，供需要逐字段序列化的插件使用。
+   */
+  fields?: IApiFormalParam[];
+}
+
 interface IApiParams {
   /**
    * 外部导入
@@ -21,11 +34,11 @@ interface IApiParams {
   /**
    * 必填参数
    */
-  requiredParams?: IDefinitionVirtualProperty[];
+  requiredParams?: IApiFormalParam[];
   /**
    * 可选参数
    */
-  optionalParams?: IDefinitionVirtualProperty[];
+  optionalParams?: IApiFormalParam[];
   /**
    * 内部定义
    */
@@ -60,14 +73,13 @@ const getInternalDefinition = (
   name: string,
 ): IApiInternalDefinition => {
   let _defHeader = "", _defFooter = "";
+  const _renderedProps: Array<
+    IDefinitionVirtualProperty & { renderedType: string }
+  > = [];
 
   if (properties.length) {
     _defHeader = renderEtaString(pluginOptions.template!.definitionHeader, {
       defName: name,
-    });
-    _defFooter = renderEtaString(pluginOptions.template!.definitionFooter, {
-      defName: name,
-      props: properties,
     });
   }
 
@@ -90,7 +102,13 @@ const getInternalDefinition = (
       prev.definitions.unshift(
         renderEtaString(
           pluginOptions.template!.enum,
-          { name: _type, data: current.enumOption, convertValue, isEnum: true },
+          {
+            name: _type,
+            data: current.enumOption,
+            convertValue,
+            isEnum: true,
+            enumType: current.type,
+          },
         ),
       );
     }
@@ -126,6 +144,7 @@ const getInternalDefinition = (
       prop: current,
     });
 
+    _renderedProps.push({ ...current, renderedType: _type });
     prev.definitions.splice(prev.definitions.length - 1, 0, _defBody);
     return prev;
   }, {
@@ -133,6 +152,14 @@ const getInternalDefinition = (
     childDefinitions: [],
     imports: [],
   });
+
+  if (properties.length) {
+    _defFooter = renderEtaString(pluginOptions.template!.definitionFooter, {
+      defName: name,
+      props: _renderedProps,
+    });
+    _defs.definitions[_defs.definitions.length - 1] = _defFooter;
+  }
 
   return _defs;
 };
@@ -167,9 +194,12 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
     const _params = parameters[_category];
     const _multiParam = _params.length > 1;
     const _defName = camelCase(`${action}_${current}_params`, true);
+    const _multiRenderedProps: Array<
+      IDefinitionVirtualProperty & { renderedType: string }
+    > = [];
 
     // 形参
-    let _formalParam = {
+    let _formalParam: IApiFormalParam = {
       name: current,
       originalName: "",
       category: current,
@@ -208,7 +238,13 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
 
         const _enumData = renderEtaString(
           pluginOptions.template!.enum,
-          { name: _type, data: item.enumOption, convertValue, isEnum: true },
+          {
+            name: _type,
+            data: item.enumOption,
+            convertValue,
+            isEnum: true,
+            enumType: item.type,
+          },
         );
 
         prev.definitions?.unshift(_enumData);
@@ -245,6 +281,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
 
       // 同类型的参数进行合并成新对象
       if (_multiParam) {
+        _multiRenderedProps.push({ ...item, renderedType: _type });
         if (index === 0) {
           prev.definitions?.push(
             renderEtaString(pluginOptions.template!.definitionHeader, {
@@ -265,7 +302,7 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
           prev.definitions?.push(
             renderEtaString(pluginOptions.template!.definitionFooter, {
               defName: _defName,
-              props: _params,
+              props: _multiRenderedProps,
             }),
           );
         }
@@ -295,6 +332,21 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
     });
 
     if (_multiParam) {
+      _formalParam.fields = _params.map((item) => ({
+        name: item.name,
+        originalName: item.originalName && item.originalName !== item.name
+          ? item.originalName
+          : "",
+        category: current,
+        type: convertType(
+          item.type,
+          item.typeX ?? item.ref,
+          item.additionalRef,
+          pluginOptions,
+        ),
+        description: (item.title || item.description) ?? "",
+        required: item.required ?? false,
+      }));
       prev.requiredParams?.push(_formalParam);
     }
 
