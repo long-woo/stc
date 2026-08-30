@@ -57,17 +57,17 @@
     "@deno/dnt": "jsr:@deno/dnt@^0.43.2",
     "@eta-dev/eta": "jsr:@eta-dev/eta@^3.5.0",
     "@std/assert": "jsr:@std/assert@^1.0.19",
-    "@std/cli": "jsr:@std/cli@^1.0.29",
+    "@std/cli": "jsr:@std/cli@^1.0.32",
     "@std/datetime": "jsr:@std/datetime@^0.225.7",
     "@std/fmt": "jsr:@std/fmt@^1.0.10",
     "@std/fmt/colors": "jsr:@std/fmt@^1.0.10/colors",
     "@std/fs": "jsr:@std/fs@^1.0.24",
-    "@std/path": "jsr:@std/path@^1.0.9",
+    "@std/path": "jsr:@std/path@^1.1.6",
     "diff": "npm:diff@^9.0.0",
     "analytics": "npm:analytics@0.8.19",
     "@analytics/google-analytics": "npm:@analytics/google-analytics@1.1.0",
     "micromatch": "npm:micromatch@4.0.8",
-    "i18next": "npm:i18next@^26.0.6",
+    "i18next": "npm:i18next@^26.4.0",
     "oxc-transform": "npm:oxc-transform@^0.147.0"
   }
 }
