@@ -111,6 +111,10 @@ const compileGeneratedSwift = async (outDir: string) => {
     `
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 public struct HTTPMethod {
     public init(rawValue: String) {}
 }
@@ -258,6 +262,7 @@ Deno.test("Swift plugin generates type-safe Alamofire client code", async () => 
     assertStringIncludes(uploadApi, "async throws -> EmptyResponse");
     assertFalse(petApi.includes("import Models"));
     assertFalse(petApi.includes("import APIClient"));
+    assertStringIncludes(runtime, "#if canImport(FoundationNetworking)");
     assertStringIncludes(runtime, "import Alamofire");
     assertStringIncludes(runtime, "Session");
     assertStringIncludes(runtime, "multipartFormData:");

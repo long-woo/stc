@@ -1,4 +1,9 @@
 import Foundation
+
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 import Alamofire
 
 /// An Alamofire-backed HTTP client used by generated Swift APIs.
