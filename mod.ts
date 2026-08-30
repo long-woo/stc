@@ -1,7 +1,7 @@
 /**
  * @example
  * ```ts
- * import { start } from "https://deno.land/x/stc@$X_VERSION/mod.ts";
+ * import { start } from "jsr:@lonu/stc";
  * // 导入解析方法
  * import { parserDefinition } from "npm:@lonu/stc/plugin/definition";
  * import { parserActions } from 'npm:@lonu/stc/plugin/action'
