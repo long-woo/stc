@@ -23,22 +23,22 @@ const formatErrorMessage = (error: unknown) => {
 /**
  * 初始化插件管理器
  */
-const initPluginManager = (context: IPluginContext) => {
+const initPluginManager = async (context: IPluginContext) => {
   const pluginManager = new PluginManager();
 
   // 注册插件
   pluginManager.register(context.options.plugins ?? []);
   // 启动所有插件
-  pluginManager.setupAll(context);
+  await pluginManager.setupAll(context);
 };
 
 /**
  * 创建上下文
  * @param options
  */
-const createContext = (context: IPluginContext) => {
+const createContext = async (context: IPluginContext) => {
   // 初始化插件管理器
-  initPluginManager(context);
+  await initPluginManager(context);
 
   return context;
 };
@@ -100,9 +100,11 @@ const getData = async (
 
     return data;
   } catch (error) {
-    throw new Error(getT("$t(app.apiJsonFileError)", {
-      error: formatErrorMessage(error),
-    }));
+    throw new Error(
+      getT("$t(app.apiJsonFileError)", {
+        error: formatErrorMessage(error),
+      }),
+    );
   }
 };
 
@@ -112,7 +114,7 @@ const getData = async (
  */
 export const start = async (options: DefaultConfigOptions): Promise<void> => {
   // 创建上下文
-  const context = createContext({ options });
+  const context = await createContext({ options });
 
   const data = await getData(options.url, options.outDir);
 
@@ -171,7 +173,7 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
   if (transformData?.action) {
     await Promise.all(
       Array.from(transformData.action).map(([filename, content]) =>
-        createDiffFile(`${options.outDir}/${filename}`, content, options.clean)
+        createDiffFile(`${options.outDir}/${filename}`, content, options.clean),
       ),
     );
   }
@@ -185,9 +187,9 @@ export const start = async (options: DefaultConfigOptions): Promise<void> => {
 
   console.log("\n");
   Logs.success(
-    `${
-      getT("$t(app.generateFileDone)", { total: actionData.size })
-    }\n\t${options.outDir}\n`,
+    `${getT("$t(app.generateFileDone)", {
+      total: actionData.size,
+    })}\n\t${options.outDir}\n`,
   );
   // 触发插件 onEnd 事件
   await context.onEnd?.(context.options);

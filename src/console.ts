@@ -1,4 +1,4 @@
-import * as Colors from "@std/fmt/colors";
+import Colors from "picocolors";
 
 import { getT } from "./i18n/index.ts";
 

@@ -14,7 +14,7 @@ export const TypeScriptPlugin: IPlugin = {
       unknownType: "unknown",
       typeMap(func, type) {
         const _newType =
-          type && func(type, undefined, undefined, pluginSetup) ||
+          (type && func(type, undefined, undefined, pluginSetup)) ||
           pluginSetup.unknownType;
 
         return {
@@ -64,7 +64,7 @@ export const TypeScriptPlugin: IPlugin = {
     };
   },
 
-  onEnd(options) {
+  async onEnd(options) {
     if (!options.shared) return;
 
     // 创建运行时需要的文件
@@ -75,17 +75,17 @@ export const TypeScriptPlugin: IPlugin = {
 
     const _httpClientContent = shared[options.client!];
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/${options.client}/index.ts`,
       _httpClientContent,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/apiClientBase.ts`,
       shared.apiClientBase,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/fetchRuntime.ts`,
       _fetchRuntimeFileContent,
     );

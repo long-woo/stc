@@ -1,0 +1,11 @@
+dist
+node_modules
+release
+out
+stc_out
+npm_dist
+src/**/shared/**
+src/**/template/**
+examples
+package-lock.json
+deno.lock

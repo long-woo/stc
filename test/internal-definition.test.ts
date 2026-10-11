@@ -1,4 +1,5 @@
-import { assertEquals, assertStringIncludes } from "@std/assert";
+import { test } from "vitest";
+import { assertEquals, assertStringIncludes } from "./helpers.ts";
 
 import { getApiPath } from "../src/core.ts";
 import { parserActions } from "../src/plugins/action.ts";
@@ -140,7 +141,7 @@ const getStoreContent = () => {
   return parserActions(actions, "_types", options).get("store.ts") ?? "";
 };
 
-Deno.test("内部定义的枚举属性会生成对应的枚举定义", () => {
+test("内部定义的枚举属性会生成对应的枚举定义", () => {
   const content = getStoreContent();
 
   assertStringIncludes(content, "status?: PlaceOrderBodyParamsStatus;");
@@ -150,7 +151,7 @@ Deno.test("内部定义的枚举属性会生成对应的枚举定义", () => {
   );
 });
 
-Deno.test("内部定义的对象属性引用当前作用域下的定义名", () => {
+test("内部定义的对象属性引用当前作用域下的定义名", () => {
   const content = getStoreContent();
 
   assertStringIncludes(content, "category?: PlaceOrderBodyParamsCategory;");
@@ -160,14 +161,14 @@ Deno.test("内部定义的对象属性引用当前作用域下的定义名", () 
   );
 });
 
-Deno.test("内部定义引用的外部类型会被导入", () => {
+test("内部定义引用的外部类型会被导入", () => {
   const content = getStoreContent();
 
   assertStringIncludes(content, "tags?: Tag[];");
   assertStringIncludes(content, "import type { Tag } from './_types'");
 });
 
-Deno.test("数组 items 中的深层 properties 会递归生成内部定义", () => {
+test("数组 items 中的深层 properties 会递归生成内部定义", () => {
   const content = getStoreContent();
 
   assertStringIncludes(content, "groups?: PlaceOrderBodyParamsGroups[];");
@@ -186,7 +187,7 @@ Deno.test("数组 items 中的深层 properties 会递归生成内部定义", ()
   assertStringIncludes(content, "id?: number;");
 });
 
-Deno.test("顶层数组请求与响应会保留数组类型并解析 items.properties", () => {
+test("顶层数组请求与响应会保留数组类型并解析 items.properties", () => {
   const content = getStoreContent();
 
   assertStringIncludes(content, "body: BulkOrderBodyParams[]");
@@ -196,7 +197,7 @@ Deno.test("顶层数组请求与响应会保留数组类型并解析 items.prope
   assertStringIncludes(content, "accepted?: boolean;");
 });
 
-Deno.test("内部定义不会残留 core.ts 的 `Body` 占位类型名", () => {
+test("内部定义不会残留 core.ts 的 `Body` 占位类型名", () => {
   const content = getStoreContent();
 
   assertEquals(/\bBody[A-Z]\w*/.exec(content), null);

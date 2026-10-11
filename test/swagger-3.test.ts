@@ -1,13 +1,15 @@
+import { test } from "vitest";
+import { Command } from "./helpers.ts";
 // https://petstore3.swagger.io/api/v3/openapi.json
-import { assertEquals } from "@std/assert";
+import { assertEquals } from "./helpers.ts";
 
-Deno.test("v3", async () => {
-  const command = new Deno.Command("deno", {
+test("v3", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
-      "--url=https://petstore3.swagger.io/api/v3/openapi.json",
+      "--url=./test/openapi-v3.yaml",
       "--outDir=out",
     ],
   });

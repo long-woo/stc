@@ -1,9 +1,10 @@
-import { assertEquals } from "@std/assert";
+import { test } from "vitest";
+import { assertEquals } from "./helpers.ts";
 
 import { getApiPath, getDefinition } from "../src/core.ts";
 import type { IDefinitionVirtualProperty } from "../src/swagger.ts";
 
-Deno.test("支持 allOf 的定义与请求响应解析", () => {
+test("支持 allOf 的定义与请求响应解析", () => {
   const spec = {
     openapi: "3.0.0",
     info: {
@@ -85,10 +86,7 @@ Deno.test("支持 allOf 的定义与请求响应解析", () => {
 
   const definitions = getDefinition(spec.components.schemas as never);
   const petProperties = definitions.get("Pet") as IDefinitionVirtualProperty[];
-  assertEquals(
-    petProperties.map((item) => item.name).sort(),
-    ["id", "name"],
-  );
+  assertEquals(petProperties.map((item) => item.name).sort(), ["id", "name"]);
 
   const actions = getApiPath(
     spec.paths as never,

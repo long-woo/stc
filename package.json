@@ -1,0 +1,106 @@
+{
+  "name": "@lonu/stc",
+  "version": "3.0.0",
+  "description": "🔧 A tool for converting OpenApi/Swagger/Apifox into code.",
+  "type": "module",
+  "types": "./dist/mod.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/long-woo/stc.git"
+  },
+  "keywords": [
+    "swagger",
+    "openapi",
+    "apifox",
+    "api",
+    "doc",
+    "code-generation",
+    "stc",
+    "postman",
+    "apipost"
+  ],
+  "author": "lonu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/long-woo/stc/issues"
+  },
+  "homepage": "https://github.com/long-woo/stc#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/mod.d.ts",
+      "default": "./dist/mod.js"
+    },
+    "./plugin/definition": {
+      "types": "./dist/src/plugins/definition.d.ts",
+      "default": "./dist/src/plugins/definition.js"
+    },
+    "./plugin/action": {
+      "types": "./dist/src/plugins/action.d.ts",
+      "default": "./dist/src/plugins/action.js"
+    },
+    "./plugin/types": {
+      "types": "./dist/src/plugins/typeDeclaration.d.ts"
+    },
+    "./plugin/common": {
+      "types": "./dist/src/plugins/common.d.ts",
+      "default": "./dist/src/plugins/common.js"
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "stc": "./dist/src/main.js"
+  },
+  "main": "./dist/mod.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "pack:resources": "node --import tsx src/pack.ts",
+    "dev": "npm run pack:resources && tsx watch src/main.ts --url=https://petstore3.swagger.io/api/v3/openapi.json --lang=ts",
+    "build": "npm run pack:resources && node scripts/clean.mjs && tsc -p tsconfig.json && node scripts/postbuild.mjs",
+    "build:npm": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "fmt": "prettier --write .",
+    "fmt:check": "prettier --check .",
+    "check": "npm run typecheck && npm run lint && npm run fmt:check && npm test",
+    "prepack": "npm run build",
+    "test:package": "node scripts/test-package.mjs"
+  },
+  "dependencies": {
+    "@analytics/google-analytics": "1.1.0",
+    "analytics": "0.8.19",
+    "diff": "^9.0.0",
+    "micromatch": "4.0.8",
+    "i18next": "^26.4.0",
+    "oxc-transform": "^0.147.0",
+    "eta": "^3.5.0",
+    "yaml": "^2.8.0",
+    "fast-glob": "^3.3.3",
+    "picocolors": "^1.1.1",
+    "minimist": "^1.2.8",
+    "chokidar": "^4.0.3",
+    "jiti": "^2.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "tsx": "^4.20.6",
+    "vitest": "^3.2.4",
+    "eslint": "^9.39.0",
+    "typescript-eslint": "^8.46.0",
+    "prettier": "^3.6.2",
+    "@types/node": "^24.0.0",
+    "@types/minimist": "^1.2.5",
+    "@types/micromatch": "^4.0.9",
+    "axios": "1.7.9"
+  }
+}

@@ -16,21 +16,19 @@ export const getSecurityDefinition = (
 
   if (!securityDefinitions) return securityMap;
 
-  Object.keys(securityDefinitions).forEach(
-    (key) => {
-      const item = securityDefinitions[key];
+  Object.keys(securityDefinitions).forEach((key) => {
+    const item = securityDefinitions[key];
 
-      const name = item.name ?? key;
-      const value: ISecurityVirtualProperty = {
-        type: item.in ?? item.type,
-        name,
-        authorizationUrl: item.authorizationUrl ?? "",
-        scopes: item.scopes ?? {},
-      };
+    const name = item.name ?? key;
+    const value: ISecurityVirtualProperty = {
+      type: item.in ?? item.type,
+      name,
+      authorizationUrl: item.authorizationUrl ?? "",
+      scopes: item.scopes ?? {},
+    };
 
-      securityMap.set(name, value);
-    },
-  );
+    securityMap.set(name, value);
+  });
 
   return securityMap;
 };

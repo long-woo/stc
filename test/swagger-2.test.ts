@@ -1,13 +1,15 @@
+import { test } from "vitest";
+import { Command } from "./helpers.ts";
 // https://petstore.swagger.io/v2/swagger.json
-import { assertEquals } from "@std/assert";
+import { assertEquals } from "./helpers.ts";
 
-Deno.test("v2", async () => {
-  const command = new Deno.Command("deno", {
+test("v2", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
-      "--url=https://petstore.swagger.io/v2/swagger.json",
+      "--url=./test/swagger-v2.yml",
       "--outDir=out",
     ],
   });

@@ -4,9 +4,11 @@
 
 在仓库根目录执行：
 
+先在仓库根目录执行 `npm ci && npm run build`（Node.js 24+）。
+
 ```bash
 cd examples/mcp-tools
-deno run -A --config ../../deno.json ../../src/main.ts --config ./stc.config.json
+node ../../dist/src/main.js --config ./stc.config.json
 ```
 
 也可以不使用配置文件，直接执行：

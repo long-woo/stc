@@ -72,7 +72,8 @@ const getInternalDefinition = (
   properties: IDefinitionVirtualProperty[],
   name: string,
 ): IApiInternalDefinition => {
-  let _defHeader = "", _defFooter = "";
+  let _defHeader = "",
+    _defFooter = "";
   const _renderedProps: Array<
     IDefinitionVirtualProperty & { renderedType: string }
   > = [];
@@ -86,72 +87,72 @@ const getInternalDefinition = (
   // `core.ts` 对数组属性会把 `items.type` 放进 `ref`，这类内置类型不需要导入
   const _builtInTypes = pluginOptions.typeMap?.(convertType, undefined) ?? {};
 
-  const _defs = properties.reduce((prev: IApiInternalDefinition, current) => {
-    let _type = convertType(
-      current.type,
-      current.typeX ?? current.ref,
-      current.additionalRef,
-      pluginOptions,
-    );
+  const _defs = properties.reduce(
+    (prev: IApiInternalDefinition, current) => {
+      let _type = convertType(
+        current.type,
+        current.typeX ?? current.ref,
+        current.additionalRef,
+        pluginOptions,
+      );
 
-    // 枚举属性，`core.ts` 给出的是 `Body` 前缀的占位类型名，
-    // 这里按当前定义名重新命名，并补上枚举定义
-    if (current.enumOption?.length) {
-      _type = `${name}${upperCase(current.name)}`;
+      // 枚举属性，`core.ts` 给出的是 `Body` 前缀的占位类型名，
+      // 这里按当前定义名重新命名，并补上枚举定义
+      if (current.enumOption?.length) {
+        _type = `${name}${upperCase(current.name)}`;
 
-      prev.definitions.unshift(
-        renderEtaString(
-          pluginOptions.template!.enum,
-          {
+        prev.definitions.unshift(
+          renderEtaString(pluginOptions.template!.enum, {
             name: _type,
             data: current.enumOption,
             convertValue,
             isEnum: true,
             enumType: current.type,
-          },
-        ),
-      );
-    }
+          }),
+        );
+      }
 
-    if (current.properties?.length) {
-      const _defName = `${name}${upperCase(current.name)}`;
-      // 内嵌对象使用当前定义名；数组对象同时保留数组容器。
-      _type = convertType(
-        current.type === "array" ? "array" : "object",
-        _defName,
-        current.additionalRef,
-        pluginOptions,
-      );
+      if (current.properties?.length) {
+        const _defName = `${name}${upperCase(current.name)}`;
+        // 内嵌对象使用当前定义名；数组对象同时保留数组容器。
+        _type = convertType(
+          current.type === "array" ? "array" : "object",
+          _defName,
+          current.additionalRef,
+          pluginOptions,
+        );
 
-      const _childDefinition = getInternalDefinition(
-        current.properties,
-        _defName,
-      );
+        const _childDefinition = getInternalDefinition(
+          current.properties,
+          _defName,
+        );
 
-      prev.childDefinitions.push(
-        ..._childDefinition.definitions,
-        ..._childDefinition.childDefinitions,
-      );
-      prev.imports.push(..._childDefinition.imports);
-    } else if (current.ref && !(current.ref in _builtInTypes)) {
-      // 未生成本地定义时，类型来自外部定义，需要导入
-      prev.imports.push(current.ref);
-    }
+        prev.childDefinitions.push(
+          ..._childDefinition.definitions,
+          ..._childDefinition.childDefinitions,
+        );
+        prev.imports.push(..._childDefinition.imports);
+      } else if (current.ref && !(current.ref in _builtInTypes)) {
+        // 未生成本地定义时，类型来自外部定义，需要导入
+        prev.imports.push(current.ref);
+      }
 
-    const _defBody = renderEtaString(pluginOptions.template!.definitionBody, {
-      propCommit: current.title || current.description,
-      propType: _type,
-      prop: current,
-    });
+      const _defBody = renderEtaString(pluginOptions.template!.definitionBody, {
+        propCommit: current.title || current.description,
+        propType: _type,
+        prop: current,
+      });
 
-    _renderedProps.push({ ...current, renderedType: _type });
-    prev.definitions.splice(prev.definitions.length - 1, 0, _defBody);
-    return prev;
-  }, {
-    definitions: properties.length ? [_defHeader, _defFooter] : [],
-    childDefinitions: [],
-    imports: [],
-  });
+      _renderedProps.push({ ...current, renderedType: _type });
+      prev.definitions.splice(prev.definitions.length - 1, 0, _defBody);
+      return prev;
+    },
+    {
+      definitions: properties.length ? [_defHeader, _defFooter] : [],
+      childDefinitions: [],
+      imports: [],
+    },
+  );
 
   if (properties.length) {
     _defFooter = renderEtaString(pluginOptions.template!.definitionFooter, {
@@ -189,174 +190,177 @@ const parseParams = (parameters: IPathVirtualParameter, action: string) => {
   // `core.ts` 会把内置类型（如 file）写进 `ref`，这类类型无需从定义文件导入
   const _builtInTypes = pluginOptions.typeMap?.(convertType, undefined) ?? {};
 
-  return Object.keys(parameters).reduce((prev: IApiParams, current) => {
-    const _category = current as keyof IPathVirtualParameter;
-    const _params = parameters[_category];
-    const _multiParam = _params.length > 1;
-    const _defName = camelCase(`${action}_${current}_params`, true);
-    const _multiRenderedProps: Array<
-      IDefinitionVirtualProperty & { renderedType: string }
-    > = [];
+  return Object.keys(parameters).reduce(
+    (prev: IApiParams, current) => {
+      const _category = current as keyof IPathVirtualParameter;
+      const _params = parameters[_category];
+      const _multiParam = _params.length > 1;
+      const _defName = camelCase(`${action}_${current}_params`, true);
+      const _multiRenderedProps: Array<
+        IDefinitionVirtualProperty & { renderedType: string }
+      > = [];
 
-    // 形参
-    let _formalParam: IApiFormalParam = {
-      name: current,
-      originalName: "",
-      category: current,
-      type: _defName,
-      description: "",
-      required: true,
-    };
+      // 形参
+      let _formalParam: IApiFormalParam = {
+        name: current,
+        originalName: "",
+        category: current,
+        type: _defName,
+        description: "",
+        required: true,
+      };
 
-    _params.forEach((item, index) => {
-      let _type = `${
-        convertType(
+      _params.forEach((item, index) => {
+        let _type = `${convertType(
           item.type,
           item.typeX ?? item.ref,
           item.additionalRef,
           pluginOptions,
-        )
-      }`;
+        )}`;
 
-      // 枚举与 properties 都会在本文件内生成定义，覆盖掉上面的 `_type`，
-      // 此时 `ref` 不会出现在产物里，导入进来就是多余的
-      const _hasInternalDefinition = !!(item.enumOption?.length ||
-        item.properties?.length);
+        // 枚举与 properties 都会在本文件内生成定义，覆盖掉上面的 `_type`，
+        // 此时 `ref` 不会出现在产物里，导入进来就是多余的
+        const _hasInternalDefinition = !!(
+          item.enumOption?.length || item.properties?.length
+        );
 
-      // 外部引用
-      if (
-        item.ref && !_hasInternalDefinition && !(item.ref in _builtInTypes) &&
-        !prev.imports?.includes(item.ref)
-      ) {
-        prev.imports?.push(item.ref);
-      }
+        // 外部引用
+        if (
+          item.ref &&
+          !_hasInternalDefinition &&
+          !(item.ref in _builtInTypes) &&
+          !prev.imports?.includes(item.ref)
+        ) {
+          prev.imports?.push(item.ref);
+        }
 
-      /* #region 内部定义 */
-      // 定义参数枚举
-      if (item.enumOption?.length) {
-        _type = camelCase(`${_defName}_${item.name}`, true);
+        /* #region 内部定义 */
+        // 定义参数枚举
+        if (item.enumOption?.length) {
+          _type = camelCase(`${_defName}_${item.name}`, true);
 
-        const _enumData = renderEtaString(
-          pluginOptions.template!.enum,
-          {
+          const _enumData = renderEtaString(pluginOptions.template!.enum, {
             name: _type,
             data: item.enumOption,
             convertValue,
             isEnum: true,
             enumType: item.type,
-          },
-        );
+          });
 
-        prev.definitions?.unshift(_enumData);
-      }
-
-      // properties 存在时直接定义
-      if (item.properties?.length) {
-        // 多参数时，当前分类还会生成名为 `_defName` 的包装定义，
-        // 子定义需另行命名并置于顶层，避免重名、嵌入包装定义内部
-        const _childDefName = _multiParam
-          ? `${_defName}${upperCase(item.name)}`
-          : _defName;
-        const _defs = getDefinition(item.properties, _childDefName);
-
-        _type = convertType(
-          item.type === "array" ? "array" : "object",
-          _childDefName,
-          item.additionalRef,
-          pluginOptions,
-        );
-
-        if (_multiParam) {
-          prev.definitions?.unshift(_defs.definitions.join("\n"));
-        } else {
-          prev.definitions?.push(_defs.definitions.join("\n"));
+          prev.definitions?.unshift(_enumData);
         }
 
-        _defs.imports.forEach((_import) => {
-          if (!prev.imports?.includes(_import)) {
-            prev.imports?.push(_import);
+        // properties 存在时直接定义
+        if (item.properties?.length) {
+          // 多参数时，当前分类还会生成名为 `_defName` 的包装定义，
+          // 子定义需另行命名并置于顶层，避免重名、嵌入包装定义内部
+          const _childDefName = _multiParam
+            ? `${_defName}${upperCase(item.name)}`
+            : _defName;
+          const _defs = getDefinition(item.properties, _childDefName);
+
+          _type = convertType(
+            item.type === "array" ? "array" : "object",
+            _childDefName,
+            item.additionalRef,
+            pluginOptions,
+          );
+
+          if (_multiParam) {
+            prev.definitions?.unshift(_defs.definitions.join("\n"));
+          } else {
+            prev.definitions?.push(_defs.definitions.join("\n"));
           }
-        });
-      }
 
-      // 同类型的参数进行合并成新对象
+          _defs.imports.forEach((_import) => {
+            if (!prev.imports?.includes(_import)) {
+              prev.imports?.push(_import);
+            }
+          });
+        }
+
+        // 同类型的参数进行合并成新对象
+        if (_multiParam) {
+          _multiRenderedProps.push({ ...item, renderedType: _type });
+          if (index === 0) {
+            prev.definitions?.push(
+              renderEtaString(pluginOptions.template!.definitionHeader, {
+                defName: _defName,
+              }),
+            );
+          }
+
+          prev.definitions?.push(
+            renderEtaString(pluginOptions.template!.definitionBody, {
+              propCommit: item.title || item.description,
+              prop: item,
+              propType: _type,
+            }),
+          );
+
+          if (index === _params.length - 1) {
+            prev.definitions?.push(
+              renderEtaString(pluginOptions.template!.definitionFooter, {
+                defName: _defName,
+                props: _multiRenderedProps,
+              }),
+            );
+          }
+        }
+        /* #endregion */
+
+        if (!_multiParam) {
+          _formalParam = {
+            name: item.name,
+            originalName:
+              item.originalName && item.originalName !== item.name
+                ? item.originalName
+                : "",
+            category: current,
+            type: _type,
+            description: (item.title || item.description) ?? "",
+            required: item.required ?? false,
+          };
+
+          if (item.required) {
+            // 必填参数
+            prev.requiredParams?.push(_formalParam);
+          } else {
+            // 可选参数
+            prev.optionalParams?.push(_formalParam);
+          }
+        }
+      });
+
       if (_multiParam) {
-        _multiRenderedProps.push({ ...item, renderedType: _type });
-        if (index === 0) {
-          prev.definitions?.push(
-            renderEtaString(pluginOptions.template!.definitionHeader, {
-              defName: _defName,
-            }),
-          );
-        }
-
-        prev.definitions?.push(
-          renderEtaString(pluginOptions.template!.definitionBody, {
-            propCommit: item.title || item.description,
-            prop: item,
-            propType: _type,
-          }),
-        );
-
-        if (index === _params.length - 1) {
-          prev.definitions?.push(
-            renderEtaString(pluginOptions.template!.definitionFooter, {
-              defName: _defName,
-              props: _multiRenderedProps,
-            }),
-          );
-        }
-      }
-      /* #endregion */
-
-      if (!_multiParam) {
-        _formalParam = {
+        _formalParam.fields = _params.map((item) => ({
           name: item.name,
-          originalName: item.originalName && item.originalName !== item.name
-            ? item.originalName
-            : "",
+          originalName:
+            item.originalName && item.originalName !== item.name
+              ? item.originalName
+              : "",
           category: current,
-          type: _type,
+          type: convertType(
+            item.type,
+            item.typeX ?? item.ref,
+            item.additionalRef,
+            pluginOptions,
+          ),
           description: (item.title || item.description) ?? "",
           required: item.required ?? false,
-        };
-
-        if (item.required) {
-          // 必填参数
-          prev.requiredParams?.push(_formalParam);
-        } else {
-          // 可选参数
-          prev.optionalParams?.push(_formalParam);
-        }
+        }));
+        prev.requiredParams?.push(_formalParam);
       }
-    });
 
-    if (_multiParam) {
-      _formalParam.fields = _params.map((item) => ({
-        name: item.name,
-        originalName: item.originalName && item.originalName !== item.name
-          ? item.originalName
-          : "",
-        category: current,
-        type: convertType(
-          item.type,
-          item.typeX ?? item.ref,
-          item.additionalRef,
-          pluginOptions,
-        ),
-        description: (item.title || item.description) ?? "",
-        required: item.required ?? false,
-      }));
-      prev.requiredParams?.push(_formalParam);
-    }
-
-    return prev;
-  }, {
-    imports: [],
-    requiredParams: [],
-    optionalParams: [],
-    definitions: [],
-  });
+      return prev;
+    },
+    {
+      imports: [],
+      requiredParams: [],
+      optionalParams: [],
+      definitions: [],
+    },
+  );
 };
 
 /**
@@ -397,10 +401,7 @@ const parseResponse = (
 
   if (response.properties?.length) {
     const _defName = `${upperCase(action)}Response`;
-    const _definitions = getDefinition(
-      response.properties,
-      _defName,
-    );
+    const _definitions = getDefinition(response.properties, _defName);
 
     _response = {
       name: _defName,
@@ -454,8 +455,8 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
     description: data.description,
     methodName: action,
     params: [
-      ..._params.requiredParams ?? [],
-      ..._params.optionalParams ?? [],
+      ...(_params.requiredParams ?? []),
+      ...(_params.optionalParams ?? []),
     ],
     responseName: _response.name,
     responseType: _response.type,
@@ -467,13 +468,12 @@ const generateApi = (data: IPathVirtualProperty, action: string) => {
 
   return {
     imports: Array.from(
-      new Set([..._params.imports ?? [], ..._response.imports ?? []]),
+      new Set([...(_params.imports ?? []), ...(_response.imports ?? [])]),
     ),
     definition: [
       ...(_params.definitions ?? []),
       ...(_response.definitions ?? []),
-    ]
-      ?.join("\n"),
+    ]?.join("\n"),
     method: _apiMethod,
   };
 };

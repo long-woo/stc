@@ -51,15 +51,13 @@ export const JavaScriptPlugin: IPlugin = {
       action: _actionMapData,
     };
   },
-  onEnd(options) {
+  async onEnd(options) {
     // 创建接口声明文件
-    actionDeclareData.forEach((item, key) => {
-      createDiffFile(
-        `${options.outDir}/${key}.d.ts`,
-        item,
-        options.clean,
-      );
-    });
+    await Promise.all(
+      Array.from(actionDeclareData, ([key, item]) =>
+        createDiffFile(`${options.outDir}/${key}.d.ts`, item, options.clean),
+      ),
+    );
 
     if (!options.shared) return;
 
@@ -72,30 +70,30 @@ export const JavaScriptPlugin: IPlugin = {
     const _fetchRuntimeFile = oxcTransform(_parserFetchRuntime);
     const _httpClient = oxcTransform(shared[options.client!]);
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/${options.client}/index.${this.lang}`,
       _httpClient.code,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/apiClientBase.${this.lang}`,
       _baseFile.code,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/fetchRuntime.${this.lang}`,
       _fetchRuntimeFile.code,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/apiClientBase.d.ts`,
       _baseFile.declaration ?? "",
     );
-    createFile(
+    await createFile(
       `${options.outDir}/shared/fetchRuntime.d.ts`,
       _fetchRuntimeFile.declaration ?? "",
     );
-    createFile(
+    await createFile(
       `${options.outDir}/shared/${options.client}/index.d.ts`,
       _httpClient.declaration ?? "",
     );

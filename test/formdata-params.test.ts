@@ -1,6 +1,8 @@
+import { test } from "vitest";
+import { Command, makeTempDir, remove, writeTextFile } from "./helpers.ts";
 // 表单（multipart/form-data、x-www-form-urlencoded）多参数场景下，
 // 嵌套对象属性的内部定义命名与放置位置回归测试
-import { assertEquals, assertStringIncludes } from "@std/assert";
+import { assertEquals, assertStringIncludes } from "./helpers.ts";
 
 import { start } from "../src/app.ts";
 import { getApiPath } from "../src/core.ts";
@@ -14,23 +16,23 @@ const spec = {
   info: { title: "pet", version: "1.0.0" },
   paths: {
     "/pet": {
-      "put": {
-        "operationId": "updatePet",
-        "tags": ["pet"],
-        "requestBody": {
-          "required": true,
-          "content": {
+      put: {
+        operationId: "updatePet",
+        tags: ["pet"],
+        requestBody: {
+          required: true,
+          content: {
             "multipart/form-data": {
-              "schema": { $ref: "#/components/schemas/Pet" },
+              schema: { $ref: "#/components/schemas/Pet" },
             },
           },
         },
-        "responses": {
+        responses: {
           "200": {
-            "description": "ok",
-            "content": {
+            description: "ok",
+            content: {
               "application/json": {
-                "schema": { $ref: "#/components/schemas/Pet" },
+                schema: { $ref: "#/components/schemas/Pet" },
               },
             },
           },
@@ -69,7 +71,7 @@ const spec = {
           status: {
             type: "string",
             description: "pet status in the store",
-            "enum": ["available", "pending", "sold"],
+            enum: ["available", "pending", "sold"],
           },
         },
       },
@@ -94,7 +96,7 @@ const getPetContent = () => {
   return parserActions(actions, "_types", options).get("pet.ts") ?? "";
 };
 
-Deno.test("formData 包装定义只生成一次，子定义另行命名", () => {
+test("formData 包装定义只生成一次，子定义另行命名", () => {
   const content = getPetContent();
 
   // 包装 interface 仅一个，不能因嵌套对象属性而重名重复
@@ -104,10 +106,7 @@ Deno.test("formData 包装定义只生成一次，子定义另行命名", () => 
   );
 
   // 嵌套对象属性引用独立命名的子定义
-  assertStringIncludes(
-    content,
-    "category?: UpdatePetFormDataParamsCategory;",
-  );
+  assertStringIncludes(content, "category?: UpdatePetFormDataParamsCategory;");
   assertStringIncludes(
     content,
     "export interface UpdatePetFormDataParamsCategory {",
@@ -119,7 +118,7 @@ Deno.test("formData 包装定义只生成一次，子定义另行命名", () => 
   assertStringIncludes(content, "import type { Tag } from './_types'");
 });
 
-Deno.test("formData 子定义不嵌入包装定义内部", () => {
+test("formData 子定义不嵌入包装定义内部", () => {
   const content = getPetContent();
 
   // 子定义必须位于包装定义的 region 之外
@@ -137,12 +136,12 @@ Deno.test("formData 子定义不嵌入包装定义内部", () => {
   assertEquals(childStart < wrapperStart || childStart > wrapperEnd, true);
 });
 
-Deno.test("生成的 formData 代码可以通过类型检查", async () => {
-  const outDir = await Deno.makeTempDir();
+test("生成的 formData 代码可以通过类型检查", async () => {
+  const outDir = await makeTempDir();
   const specFile = `${outDir}/openapi.json`;
 
   try {
-    await Deno.writeTextFile(specFile, JSON.stringify(spec));
+    await writeTextFile(specFile, JSON.stringify(spec));
 
     // 直接调用 `start`，避免 CLI 检查更新依赖网络
     await start({
@@ -155,28 +154,30 @@ Deno.test("生成的 formData 代码可以通过类型检查", async () => {
       shared: true,
     } as never);
 
-    const check = new Deno.Command("deno", {
+    const check = new Command(process.execPath, {
       args: [
-        "check",
-        "--no-config",
-        "--no-lock",
-        "--unstable-sloppy-imports",
+        `${process.cwd()}/node_modules/typescript/bin/tsc`,
+        "--noEmit",
+        "--skipLibCheck",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "bundler",
+        "--baseUrl",
+        `${process.cwd()}/node_modules`,
         `${outDir}/out/pet.ts`,
       ],
       stderr: "piped",
       stdout: "piped",
     });
 
-    const { stderr } = await check.output();
+    const { stdout: stderr } = await check.output();
     const _output = new TextDecoder().decode(stderr);
 
-    // 截图中的问题均为语法类错误（TS1xxx）；
-    // axios 未安装等模块解析错误与本用例无关
-    assertEquals(
-      _output.split("\n").filter((line) => /TS1\d{3}/.test(line)),
-      [],
-    );
+    assertEquals(_output.trim(), "");
   } finally {
-    await Deno.remove(outDir, { recursive: true });
+    await remove(outDir, { recursive: true });
   }
 });

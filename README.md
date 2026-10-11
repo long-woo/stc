@@ -4,10 +4,9 @@
 
 STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox into code.
 
-![Publish to release](https://github.com/long-woo/stc/actions/workflows/deno-build.yml/badge.svg)
+![Publish to release](https://github.com/long-woo/stc/actions/workflows/release.yml/badge.svg)
 [![Publish Package to npmjs](https://github.com/long-woo/stc/actions/workflows/npm.yml/badge.svg)](https://github.com/long-woo/stc/actions/workflows/npm.yml)
 
-[![JSR](https://jsr.io/badges/@lonu/stc)](https://jsr.io/@lonu/stc)
 ![NPM Version](https://img.shields.io/npm/v/%40lonu%2Fstc)
 
 ![stc](resources/20240422-151653.gif)
@@ -22,7 +21,7 @@ STC (Swagger Transform Code) is a tool for converting OpenApi/Swagger/Apifox int
 - 🤖 Support **MCP Tools**, generate an MCP-compatible tool catalog from OpenAPI.
 - 🐣 Built-in transformation languages:
   - **TypeScript**, almost equivalent to handwriting. Depends on **`axios`, `wx.request`, `fetch`**.
-   > `xhr/ajax、ofetch` planned
+  > `xhr/ajax、ofetch` planned
   - **JavaScript**, from TypeScript to it.
   - **Dart**, dependency on **`dio`**.
   - **Swift**, type-safe async APIs backed by **`Alamofire`**.
@@ -58,7 +57,7 @@ pnpm add @lonu/stc -D
 
 ### Use
 
-⚠️ Note: deno will not parse the `~` character as the user's home directory.
+⚠️ Expand `~` in your shell or provide an absolute path when configuring local files.
 
 ```sh
 stc --url=https://petstore3.swagger.io/api/v3/openapi.json --outDir=out
@@ -90,14 +89,14 @@ Assume a project directory is:
 3. Taking `Vue` as an example, add the following code to the `main.ts` file:
 
 ```ts
-import { createApiClient } from './apis/shared/fetchRuntime';
+import { createApiClient } from "./apis/shared/fetchRuntime";
 
 createApiClient({
-  baseURL: 'https://api.xxx.com'
+  baseURL: "https://api.xxx.com",
   // onError(msg) {
   //   // 处理错误信息
   // }
-})
+});
 ```
 
 #### Vue Query / React Query (TanStack Query)
@@ -116,57 +115,59 @@ pnpm add @tanstack/react-query  # React
 Initialize the generated API client once:
 
 ```ts
-import { createApiClient } from './apis/shared/fetchRuntime';
+import { createApiClient } from "./apis/shared/fetchRuntime";
 
-createApiClient({ baseURL: 'https://api.xxx.com' });
+createApiClient({ baseURL: "https://api.xxx.com" });
 ```
 
 Vue uses `VueQueryPlugin` and a composable:
 
 ```ts
 // main.ts
-import { createApp } from 'vue';
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
-import App from './App.vue';
+import { createApp } from "vue";
+import { QueryClient, VueQueryPlugin } from "@tanstack/vue-query";
+import App from "./App.vue";
 
 const app = createApp(App);
 app.use(VueQueryPlugin, { queryClient: new QueryClient() });
-app.mount('#app');
+app.mount("#app");
 
 // usePet.ts
-import { useQuery } from '@tanstack/vue-query';
-import type { Ref } from 'vue';
-import { getPetById } from '../apis/pet';
+import { useQuery } from "@tanstack/vue-query";
+import type { Ref } from "vue";
+import { getPetById } from "../apis/pet";
 
-export const usePet = (petId: Ref<number>) => useQuery({
-  queryKey: ['pet', petId],
-  queryFn: () => getPetById(petId.value),
-});
+export const usePet = (petId: Ref<number>) =>
+  useQuery({
+    queryKey: ["pet", petId],
+    queryFn: () => getPetById(petId.value),
+  });
 ```
 
 React uses `QueryClientProvider` and a custom hook:
 
 ```tsx
 // main.tsx
-import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './App';
+import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from "./App";
 
 const queryClient = new QueryClient();
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <App />
   </QueryClientProvider>,
 );
 
 // usePet.ts
-import { useQuery } from '@tanstack/react-query';
-import { getPetById } from '../apis/pet';
+import { useQuery } from "@tanstack/react-query";
+import { getPetById } from "../apis/pet";
 
-export const usePet = (petId: number) => useQuery({
-  queryKey: ['pet', petId],
-  queryFn: () => getPetById(petId),
-});
+export const usePet = (petId: number) =>
+  useQuery({
+    queryKey: ["pet", petId],
+    queryFn: () => getPetById(petId),
+  });
 ```
 
 #### Wechat
@@ -224,12 +225,12 @@ and use `APIFile` for multipart uploads.
 STC does not generate authentication code. For the `axios` client, inject a token into every request via `onRequestInterceptor`:
 
 ```ts
-import { createApiClient } from './apis/shared/fetchRuntime';
+import { createApiClient } from "./apis/shared/fetchRuntime";
 
 createApiClient({
-  baseURL: 'https://api.xxx.com',
+  baseURL: "https://api.xxx.com",
   onRequestInterceptor(config) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -237,30 +238,30 @@ createApiClient({
   },
   onLogin() {
     // Triggered when the response status is 401, e.g. redirect to the login page
-  }
-})
+  },
+});
 ```
 
 > For the `fetch` or `wechat` client, pass headers through the `config` argument of each generated method instead, e.g. `getPetById(petId, { headers: { Authorization: 'Bearer xxx' } })`.
 
 ### Options
 
-| Option      | Alias | Type     | Default   | Description                                                                                                  |
-| ----------- | ----- | -------- | --------- | ------------------------------------------------------------------------------------------------------------ |
-| url         |       | string   |           | Swagger/OpenApi/Apifox document address, or local path (JSON or YAML).                                                      |
-| outDir      | o     | string   | ./stc_out | Output Directory.                                                                                            |
-| client      |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.            |
-| mcp         |       | boolean  | false     | Generate an MCP tool catalog (`mcp-tools.json`).                                                            |
-| lang        | l     | string   | ts        | Language, used for output file suffix.                                                                       |
-| tag         |       | number   |           | Specify the tag from the interface url. By default, the first tag is read for the file name.                 |
-| filter      | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
-| conjunction | c     | string   | By        | The method's connector, the default value is `By`.                                                           |
-| actionIndex |      | number   | -1        | The method name index, the default value is `-1`.                                                            |
-| shared      |      | boolean  | true      | Whether to generate the shared directory. [default: true].                                                   |
-| clean       |       | boolean  | true      | Whether to clean the output directory before generating. [default: true].                                   |
-| globalHeader | gh | string[] |  | Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter. |
-| version     | v     | boolean  |           | Output version information.                                                                                  |
-| help        | h     | boolean  |           | Output help information.                                                                                     |
+| Option       | Alias | Type     | Default   | Description                                                                                                                                                                                                                                                                         |
+| ------------ | ----- | -------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| url          |       | string   |           | Swagger/OpenApi/Apifox document address, or local path (JSON or YAML).                                                                                                                                                                                                              |
+| outDir       | o     | string   | ./stc_out | Output Directory.                                                                                                                                                                                                                                                                   |
+| client       |       | string   | axios     | http request client. When `lang` is `ts/js`, the possible values ​​are: `axios`, `wechat`, `fetch`.                                                                                                                                                                                 |
+| mcp          |       | boolean  | false     | Generate an MCP tool catalog (`mcp-tools.json`).                                                                                                                                                                                                                                    |
+| lang         | l     | string   | ts        | Language, used for output file suffix.                                                                                                                                                                                                                                              |
+| tag          |       | number   |           | Specify the tag from the interface url. By default, the first tag is read for the file name.                                                                                                                                                                                        |
+| filter       | f     | string[] |           | Filter interfaces. Interfaces that meet the filter conditions will be generated. Example: `--filter "/pet*"`, generate an interface for `/pet`, and support multiple `--filter`. For more usage information, please refer to [micromatch](https://github.com/micromatch/micromatch) |
+| conjunction  | c     | string   | By        | The method's connector, the default value is `By`.                                                                                                                                                                                                                                  |
+| actionIndex  |       | number   | -1        | The method name index, the default value is `-1`.                                                                                                                                                                                                                                   |
+| shared       |       | boolean  | true      | Whether to generate the shared directory. [default: true].                                                                                                                                                                                                                          |
+| clean        |       | boolean  | true      | Whether to clean the output directory before generating. [default: true].                                                                                                                                                                                                           |
+| globalHeader | gh    | string[] |           | Global header key configuration, multiple can be set. When a single API has the same key, it will not appear as a parameter.                                                                                                                                                        |
+| version      | v     | boolean  |           | Output version information.                                                                                                                                                                                                                                                         |
+| help         | h     | boolean  |           | Output help information.                                                                                                                                                                                                                                                            |
 
 ### MCP Tools
 
@@ -274,59 +275,9 @@ The generated JSON is intentionally limited to tool discovery. Authentication, b
 
 ## Plug-in development
 
-For convenience, STC can not only develop plugins in Deno, but also provides `@lonu/stc` npm library, which can develop plugins in Node environment.
+STC runs on Node.js 24 or newer and provides the `@lonu/stc` npm library for custom plugins.
 
 [examples](https://github.com/long-woo/stc/tree/master/examples)
-
-### Deno
-
-⚠️ Prepare the [Deno](https://github.com/denoland/deno#install) environment.
-
-Create a `myPlugin.ts` file:
-
-```ts
-// 引用模块
-import { start } from 'jsr:@lonu/stc@^2.17.1'
-
-// Defining plugins
-const myPlugin: IPlugin = {
-  name: 'stc:MyPlugin',
-  lang: 'ts',
-  setup(context: IPluginContext) {
-    // type map
-    return {
-
-    }
-  },
-  onTransform(def, action) {
-    // definition
-    const defContent: string = parserDefinition(
-      def
-    )
-    // action
-    const actionContent: Map<string, string> = parserAction(
-      action
-    )
-
-    return {
-      definition: {
-        filename: '_types.ts',
-        content: defContent,
-      },
-      action: actionContent // Here actionContent is of type Map<string, string>, key is the file name, value is the converted code.
-    }
-  },
-  onEnd() {
-    console.log('end')
-  }
-}
-
-// use plugin
-start({
-  // ...other options
-  plugins: [myPlugin]
-})
-```
 
 ### Node
 
@@ -335,40 +286,34 @@ start({
 2. Add the `@lonu/stc` reference and use the `start` method:
 
 ```ts
-import { start } from '@lonu/stc'
+import { start } from "@lonu/stc";
 ```
 
 3. Implement the code that converts `definition` and `action` into the target language in the plugin's `onTransform` hook function.
 
 ```ts
 export const myPlugin: IPlugin = {
-  name: 'stc:MyPlugin',
-  lang: 'ts',
+  name: "stc:MyPlugin",
+  lang: "ts",
   setup(context: IPluginContext) {
     // type map
-    return {
-
-    }
+    return {};
   },
   onTransform(def, action) {
     // definition
-    const defContent: string = parserDefinition(
-      def
-    )
+    const defContent: string = parserDefinition(def);
     // action
-    const actionContent: Map<string, string> = parserAction(
-      action
-    )
+    const actionContent: Map<string, string> = parserAction(action);
 
     return {
       definition: defContent,
-      action: actionContent
-    }
+      action: actionContent,
+    };
   },
   onEnd() {
-    console.log('end')
-  }
-}
+    console.log("end");
+  },
+};
 ```
 
 4.In the `start` method, add `plugins`:
@@ -376,8 +321,8 @@ export const myPlugin: IPlugin = {
 ```ts
 start({
   // ...other options
-  plugins: [myPlugin]
-})
+  plugins: [myPlugin],
+});
 ```
 
 ## Who's Using This?
@@ -387,3 +332,21 @@ start({
   <br/>
   <img src="./resources/company/gfk.png" style="height: 50px;" />
 </div>
+
+## Development (Node.js 24+)
+
+```bash
+npm ci
+npm run dev
+npm run check
+npm run build
+npm run test:package
+```
+
+`npm run build` embeds plugin templates/shared files and emits ESM JavaScript plus declarations in `dist/`. The npm package provides the `stc` CLI and supports ESM imports and Node 24 `require()` of ESM.
+
+Update with `npm install -g @lonu/stc@latest`. Set `STC_SKIP_UPDATE_CHECK=1` to disable the automatic release check.
+
+Version 3 requires Node.js 24+ and publishes through npm/GitHub Releases. Existing JSR 2.x releases remain the legacy distribution; new versions are not published to JSR. `package.json` is the single version source. Tag the matching version to build a draft GitHub Release; publishing that release triggers npm publication (`next` for prereleases). No release is published by a normal branch push.
+
+See [migration plan](docs/nodejs-migration.md) and [implementation validation](docs/nodejs-migration-validation.md) for compatibility boundaries and outstanding platform checks.

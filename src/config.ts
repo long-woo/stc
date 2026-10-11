@@ -1,5 +1,6 @@
-import { exists } from "@std/fs";
-import { pathToFileURL } from "node:url";
+import { exists } from "./fs.ts";
+import { realpath } from "node:fs/promises";
+import { createJiti } from "jiti";
 
 import { readFile } from "./utils.ts";
 import type { DefaultConfigOptions, IDefaultObject } from "./swagger.ts";
@@ -18,9 +19,10 @@ export const CONFIG_FILE_NAMES = [
 /**
  * 配置文件中支持的选项（与 CLI 选项同名，`plugins` 除外）
  */
-export type IConfigFileOptions =
-  & Partial<Omit<DefaultConfigOptions, "plugins">>
-  & IDefaultObject;
+export type IConfigFileOptions = Partial<
+  Omit<DefaultConfigOptions, "plugins">
+> &
+  IDefaultObject;
 
 /**
  * 查找配置文件
@@ -88,10 +90,14 @@ export const loadConfigFile = async (
   // ts/js 配置文件通过动态导入加载，支持 `export default`
   if (path.endsWith(".ts") || path.endsWith(".js")) {
     // 配置文件可能在 watch 模式下被重复加载，使用查询参数绕过模块缓存。
-    const modulePath = await Deno.realPath(path);
-    const module = await import(
-      `${pathToFileURL(modulePath).href}?stc_config_reload=${Date.now()}`
-    );
+    const modulePath = await realpath(path);
+    // A fresh loader with caches disabled also reloads imported config dependencies.
+    const loader = createJiti(modulePath, {
+      moduleCache: false,
+      fsCache: false,
+      tryNative: false,
+    });
+    const module = await loader.import<Record<string, unknown>>(modulePath);
     const config: unknown = module.default ?? module;
 
     if (typeof config !== "object" || config === null) {
@@ -111,9 +117,7 @@ export const loadConfigFile = async (
  *
  * @param options - 配置对象
  */
-export const normalizeConfig = (
-  options: IDefaultObject,
-): IDefaultObject => {
+export const normalizeConfig = (options: IDefaultObject): IDefaultObject => {
   const result: IDefaultObject = { ...options };
 
   (["filter", "globalHeader"] as const).forEach((key) => {

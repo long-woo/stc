@@ -9,25 +9,20 @@ STC (Swagger Transform Code) converts OpenAPI/Swagger/Apifox specs into type-saf
 ## Commands
 
 ```bash
-# Development
-deno task dev          # Watch mode with petstore demo (TS → JS)
-deno task pack         # Prepare package before dev
-
-# Testing
-deno test -A                                          # All tests
-deno test -A test/cli.test.ts                         # Single file
-deno test -A --filter "test name" test/cli.test.ts    # Single test by name
-
-# Code quality
-deno fmt               # Format (applies to src/ and test/, excludes shared/ and template/)
-deno lint              # Lint
-
-# Build
-deno task build:npm    # Build NPM package via dnt
-deno task build:mac    # Compile binary for Intel Mac
-deno task build:mac-m  # Compile binary for Apple Silicon Mac
-deno task build:win    # Compile binary for Windows
-deno task build:linux  # Compile binary for Linux
+# Requires Node.js 24+
+npm ci
+npm run dev                     # Watch source, generate from the local v3 fixture
+npm run pack:resources          # Embed plugin resources
+npm test                        # All tests
+npm test -- test/cli.test.ts     # Single file
+npm test -- -t "test name"       # Filter tests
+npm run typecheck
+npm run lint
+npm run fmt                     # Format, excludes plugin shared/template assets
+npm run fmt:check
+npm run check                   # Typecheck, lint, formatting and tests
+npm run build                   # ESM + declarations
+npm run test:package            # Install and verify npm tarball
 ```
 
 ## Architecture
@@ -37,6 +32,7 @@ deno task build:linux  # Compile binary for Linux
 `src/main.ts` (CLI entry) → `src/cli.ts` (arg parsing) → `src/app.ts` (`start()`) → plugin lifecycle events
 
 The `start()` function in `app.ts`:
+
 1. Fetches the OpenAPI spec (remote URL or local file, JSON or YAML — parsed via `parseSpec()` in `src/parser.ts`)
 2. Calls `getDefinition()` from `core.ts` to parse type schemas (`definitions` for v2, `components.schemas` for v3)
 3. Calls `getApiPath()` from `core.ts` to parse endpoint paths
@@ -72,7 +68,11 @@ Each language plugin has a `shared/` directory (also excluded from lint/fmt) tha
 
 ## Notes
 
-- The `shared/` and `template/` directories inside plugins are intentionally excluded from `deno fmt` and `deno lint`.
-- `src/service.ts` is an HTTP service wrapper (`deno task serve`) — separate from the CLI pipeline.
+- The `shared/` and `template/` directories inside plugins are intentionally excluded from Prettier and ESLint.
 - A `.stc.lock` file is written to `outDir` after each run to cache the last-seen spec.
 - The `noDeprecated` option (recently added) filters deprecated endpoints during `getApiPath()`.
+
+- `package.json` is the single version source; Node.js 24 is the CI/build baseline.
+- The npm package publishes ESM and declarations under `dist/`; Node 24 supports synchronous `require()` of this ESM library. Avoid top-level await in library exports.
+- `deno.json` is retained as a historical configuration during platform validation; new tooling must not depend on it. JSR 2.x is frozen.
+- Full migration validation is tracked in `docs/nodejs-migration-validation.md`. Do not claim unrun CI platforms or live publication are verified.

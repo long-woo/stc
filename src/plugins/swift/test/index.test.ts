@@ -1,5 +1,18 @@
-import { assertEquals, assertFalse, assertStringIncludes } from "@std/assert";
-import { expandGlob } from "@std/fs";
+import { test } from "vitest";
+import {
+  Command,
+  makeTempDir,
+  mkdir,
+  readTextFile,
+  remove,
+  writeTextFile,
+} from "../../../../test/helpers.ts";
+import {
+  assertEquals,
+  assertFalse,
+  assertStringIncludes,
+} from "../../../../test/helpers.ts";
+import { expandGlob } from "../../../fs.ts";
 import { start } from "../../../app.ts";
 
 const spec = {
@@ -106,7 +119,7 @@ const compileGeneratedSwift = async (outDir: string) => {
 
   const alamofireStubPath = `${outDir}/AlamofireStub.swift`;
   const alamofireModulePath = `${outDir}/Alamofire.swiftmodule`;
-  await Deno.writeTextFile(
+  await writeTextFile(
     alamofireStubPath,
     `
 import Foundation
@@ -175,10 +188,10 @@ public final class Session {
   );
 
   const moduleCache = `${outDir}/module-cache`;
-  await Deno.mkdir(moduleCache, { recursive: true });
+  await mkdir(moduleCache, { recursive: true });
 
   try {
-    const buildStub = new Deno.Command("swiftc", {
+    const buildStub = new Command("swiftc", {
       args: [
         "-emit-module",
         "-module-name",
@@ -199,7 +212,7 @@ public final class Session {
       new TextDecoder().decode(stubResult.stderr),
     );
 
-    const command = new Deno.Command("swiftc", {
+    const command = new Command("swiftc", {
       args: [
         "-typecheck",
         "-I",
@@ -215,7 +228,7 @@ public final class Session {
     const errorOutput = new TextDecoder().decode(result.stderr);
     assertEquals(result.code, 0, errorOutput);
   } catch (error) {
-    if (error instanceof Deno.errors.NotFound) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       console.warn("swiftc is unavailable; skipped Swift type checking");
       return;
     }
@@ -223,13 +236,13 @@ public final class Session {
   }
 };
 
-Deno.test("Swift plugin generates type-safe Alamofire client code", async () => {
-  const tempDir = await Deno.makeTempDir();
+test("Swift plugin generates type-safe Alamofire client code", async () => {
+  const tempDir = await makeTempDir();
   const specFile = `${tempDir}/openapi.json`;
   const outDir = `${tempDir}/out`;
 
   try {
-    await Deno.writeTextFile(specFile, JSON.stringify(spec));
+    await writeTextFile(specFile, JSON.stringify(spec));
     await start({
       url: specFile,
       outDir,
@@ -240,10 +253,10 @@ Deno.test("Swift plugin generates type-safe Alamofire client code", async () => 
       actionIndex: -1,
     });
 
-    const models = await Deno.readTextFile(`${outDir}/Models.swift`);
-    const petApi = await Deno.readTextFile(`${outDir}/pet.swift`);
-    const uploadApi = await Deno.readTextFile(`${outDir}/upload.swift`);
-    const runtime = await Deno.readTextFile(
+    const models = await readTextFile(`${outDir}/Models.swift`);
+    const petApi = await readTextFile(`${outDir}/pet.swift`);
+    const uploadApi = await readTextFile(`${outDir}/upload.swift`);
+    const runtime = await readTextFile(
       `${outDir}/shared/alamofire/APIClient.swift`,
     );
 
@@ -269,6 +282,6 @@ Deno.test("Swift plugin generates type-safe Alamofire client code", async () => 
 
     await compileGeneratedSwift(outDir);
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await remove(tempDir, { recursive: true });
   }
 });

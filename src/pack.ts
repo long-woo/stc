@@ -1,4 +1,4 @@
-import { expandGlob } from "@std/fs";
+import { expandGlob } from "./fs.ts";
 import { createFile, readFile } from "./utils.ts";
 
 /**
@@ -42,9 +42,9 @@ const readdDir = async (dirName: string) => {
       // 将文件内容写入对应插件目录
       await createFile(
         `src/plugins/${_pluginName}/${dirName}/index.ts`,
-        `// this file is auto generated. \nexport default ${
-          JSON.stringify(_fileMap)
-        }`,
+        `// this file is auto generated. \nexport default ${JSON.stringify(
+          _fileMap,
+        )}`,
         { banner: false },
       );
     }
@@ -52,8 +52,7 @@ const readdDir = async (dirName: string) => {
 };
 
 const packModule = () => {
-  readdDir("shared");
-  readdDir("template");
+  return Promise.all([readdDir("shared"), readdDir("template")]);
 };
 
-packModule();
+await packModule();

@@ -4,14 +4,11 @@
     "title": "Api",
     "version": "1.0"
   },
-  "paths": {
-  },
+  "paths": {},
   "components": {
     "schemas": {
       "ConnectionInfoModel": {
-        "required": [
-          "connectionType"
-        ],
+        "required": ["connectionType"],
         "type": "object",
         "properties": {
           "name": {
@@ -70,10 +67,7 @@
         "additionalProperties": false
       },
       "ConnectionStatus": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       }

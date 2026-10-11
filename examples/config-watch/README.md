@@ -20,7 +20,14 @@ config-watch/
 
 ## 启动前端
 
-需要 Node.js、npm 和 Deno：
+需要 Node.js 24+ 和 npm。先在仓库根目录构建 STC：
+
+```bash
+npm ci
+npm run build
+```
+
+然后启动示例：
 
 ```bash
 cd examples/config-watch

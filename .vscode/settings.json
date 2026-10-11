@@ -1,33 +1,26 @@
 {
-  "deno.enable": true,
-  "deno.unstable": true,
-  "deno.suggest.imports.hosts": {
-    "https://deno.land": true
-  },
-  "deno.codeLens.references": true,
-  "deno.codeLens.implementations": true,
-  "deno.codeLens.referencesAllFunctions": true,
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
-    "editor.defaultFormatter": "denoland.vscode-deno" 
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "denoland.vscode-deno" 
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonl]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "chat.tools.terminal.autoApprove": {
-    "deno": true,
     "printf": true,
     "true": true,
     "git checkout": true
-  }
+  },
+  "deno.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

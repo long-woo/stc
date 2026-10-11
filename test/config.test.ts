@@ -1,14 +1,27 @@
-import { assertEquals, assertMatch } from "@std/assert";
-import { exists } from "@std/fs";
+import { pathToFileURL } from "node:url";
+import type { RunningCommand } from "./helpers.ts";
+import { test } from "vitest";
+import {
+  Command,
+  makeTempDir,
+  mkdir,
+  remove,
+  serve,
+  writeTextFile,
+} from "./helpers.ts";
+import { assertEquals, assertMatch } from "./helpers.ts";
+import { exists } from "../src/fs.ts";
 import {
   loadConfigFile,
   normalizeConfig,
   parseConfigContent,
 } from "../src/config.ts";
 
-const REPO_ROOT = Deno.cwd();
+const REPO_ROOT = process.cwd().replaceAll("\\", "/");
+const TSX_LOADER = pathToFileURL(
+  `${REPO_ROOT}/node_modules/tsx/dist/loader.mjs`,
+).href;
 const MAIN_TS = `${REPO_ROOT}/src/main.ts`;
-const DENO_JSON = `${REPO_ROOT}/deno.json`;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -28,12 +41,9 @@ const waitFor = async (
   throw new Error(`Timed out: ${message}`);
 };
 
-const runStc = (
-  args: string[],
-  cwd: string,
-): Deno.ChildProcess => {
-  const command = new Deno.Command("deno", {
-    args: ["run", "-A", "--config", DENO_JSON, MAIN_TS, ...args],
+const runStc = (args: string[], cwd: string): RunningCommand => {
+  const command = new Command(process.execPath, {
+    args: ["--import", TSX_LOADER, MAIN_TS, ...args],
     cwd,
     stdout: "null",
     stderr: "null",
@@ -77,7 +87,7 @@ const SPEC_V2 = JSON.stringify({
   },
 });
 
-Deno.test("config: parseConfigContent", () => {
+test("config: parseConfigContent", () => {
   const options = parseConfigContent(
     JSON.stringify({ url: "./spec.json", outDir: "out" }),
     "stc.config.json",
@@ -98,7 +108,7 @@ Deno.test("config: parseConfigContent", () => {
   assertEquals(threw, true);
 });
 
-Deno.test("config: normalizeConfig", () => {
+test("config: normalizeConfig", () => {
   const options = normalizeConfig({
     filter: "/pet*",
     globalHeader: "Authorization",
@@ -110,11 +120,11 @@ Deno.test("config: normalizeConfig", () => {
   assertEquals(options.interval, 5000);
 });
 
-Deno.test("config: loadConfigFile with explicit path", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+test("config: loadConfigFile with explicit path", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
   const path = `${dir}/my.json`;
 
-  await Deno.writeTextFile(path, JSON.stringify({ lang: "js" }));
+  await writeTextFile(path, JSON.stringify({ lang: "js" }));
 
   const loaded = await loadConfigFile(path);
 
@@ -126,13 +136,13 @@ Deno.test("config: loadConfigFile with explicit path", async () => {
   assertEquals(missing.path, undefined);
   assertEquals(missing.options, {});
 
-  await Deno.remove(dir, { recursive: true });
+  await remove(dir, { recursive: true });
 });
 
-Deno.test("config: auto discovery and generation", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+test("config: auto discovery and generation", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
 
-  await Deno.writeTextFile(
+  await writeTextFile(
     `${dir}/stc.config.json`,
     JSON.stringify({
       url: `${REPO_ROOT}/test/wp-json.json`,
@@ -149,15 +159,15 @@ Deno.test("config: auto discovery and generation", async () => {
   assertEquals(await exists(`${dir}/out_auto/_types.ts`), true);
   assertEquals(await exists(`${dir}/out_auto/文章.ts`), true);
 
-  await Deno.remove(dir, { recursive: true });
+  await remove(dir, { recursive: true });
 });
 
-Deno.test("config: explicit config resolves local paths from its directory", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+test("config: explicit config resolves local paths from its directory", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
   const projectDir = `${dir}/project`;
-  await Deno.mkdir(projectDir);
-  await Deno.writeTextFile(`${projectDir}/openapi.json`, SPEC_V1);
-  await Deno.writeTextFile(
+  await mkdir(projectDir);
+  await writeTextFile(`${projectDir}/openapi.json`, SPEC_V1);
+  await writeTextFile(
     `${projectDir}/stc.config.json`,
     JSON.stringify({
       url: "./openapi.json",
@@ -172,13 +182,13 @@ Deno.test("config: explicit config resolves local paths from its directory", asy
   assertEquals(code, 0);
   assertEquals(await exists(`${projectDir}/generated/ping.ts`), true);
 
-  await Deno.remove(dir, { recursive: true });
+  await remove(dir, { recursive: true });
 });
 
-Deno.test("config: ts config file", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+test("config: ts config file", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
 
-  await Deno.writeTextFile(
+  await writeTextFile(
     `${dir}/stc.config.ts`,
     `export default {
   url: "${REPO_ROOT}/test/wp-json.json",
@@ -195,13 +205,13 @@ Deno.test("config: ts config file", async () => {
   assertEquals(code, 0);
   assertEquals(await exists(`${dir}/out_ts_config/_types.ts`), true);
 
-  await Deno.remove(dir, { recursive: true });
+  await remove(dir, { recursive: true });
 });
 
-Deno.test("config: cli args override config file", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
+test("config: cli args override config file", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
 
-  await Deno.writeTextFile(
+  await writeTextFile(
     `${dir}/stc.config.json`,
     JSON.stringify({
       url: `${REPO_ROOT}/test/wp-json.json`,
@@ -218,196 +228,108 @@ Deno.test("config: cli args override config file", async () => {
   assertEquals(await exists(`${dir}/out_cli/_types.ts`), true);
   assertEquals(await exists(`${dir}/out_config`), false);
 
-  await Deno.remove(dir, { recursive: true });
+  await remove(dir, { recursive: true });
 });
 
-Deno.test("config: missing explicit config file errors", async () => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_config_" });
-  const command = new Deno.Command("deno", {
-    args: [
-      "run",
-      "-A",
-      "--config",
-      DENO_JSON,
-      MAIN_TS,
-      "--config",
-      "./nope.json",
-    ],
+test("config: missing explicit config file errors", async () => {
+  const dir = await makeTempDir({ prefix: "stc_config_" });
+  const command = new Command(process.execPath, {
+    args: ["--import", TSX_LOADER, MAIN_TS, "--config", "./nope.json"],
     cwd: dir,
   });
   const { code, stderr } = await command.output();
 
   assertEquals(code, 1);
-  assertMatch(
-    new TextDecoder().decode(stderr),
-    /nope\.json/,
+  assertMatch(new TextDecoder().decode(stderr), /nope\.json/);
+
+  await remove(dir, { recursive: true });
+});
+
+test("watch: local file change triggers regeneration", async () => {
+  const dir = await makeTempDir({ prefix: "stc_watch_" });
+
+  await writeTextFile(`${dir}/spec.json`, SPEC_V1);
+
+  const child = runStc(
+    ["-w", "--url=./spec.json", "-o", "out", "--shared=false"],
+    dir,
   );
 
-  await Deno.remove(dir, { recursive: true });
+  try {
+    await waitFor(
+      () => exists(`${dir}/out/ping.ts`),
+      30_000,
+      "initial generation",
+    );
+    await sleep(1000);
+
+    await writeTextFile(`${dir}/spec.json`, SPEC_V2);
+
+    await waitFor(
+      () => exists(`${dir}/out/pong.ts`),
+      30_000,
+      "regeneration after change",
+    );
+  } finally {
+    try {
+      child.kill("SIGTERM");
+    } catch {
+      // 忽略
+    }
+    await child.status;
+    await remove(dir, { recursive: true });
+  }
 });
 
-/**
- * 探测当前环境是否支持 Deno.watchFs 事件
- */
-const watchFsWorks = async (): Promise<boolean> => {
-  const dir = await Deno.makeTempDir({ prefix: "stc_watchfs_" });
-  const file = `${dir}/probe.txt`;
+test("watch: remote url polling triggers regeneration", async () => {
+  let specContent = SPEC_V1;
 
-  await Deno.writeTextFile(file, "init");
+  const server = await serve(
+    { port: 0, hostname: "127.0.0.1" },
+    () =>
+      new Response(specContent, {
+        headers: { "content-type": "application/json" },
+      }),
+  );
+  const port = (server.addr as { port: number }).port;
+  const dir = await makeTempDir({ prefix: "stc_watch_" });
 
-  const watcher = Deno.watchFs(file);
-  let gotEvent = false;
-
-  const loop = (async () => {
-    for await (const _event of watcher) {
-      gotEvent = true;
-      break;
-    }
-  })();
-
-  const timer = setTimeout(() => {
-    Deno.writeTextFile(file, "changed").catch(() => {
-      // 文件可能已被清理
-    });
-  }, 200);
-  await Promise.race([loop, sleep(2500)]);
-  clearTimeout(timer);
+  const child = runStc(
+    [
+      "-w",
+      `--url=http://127.0.0.1:${port}/spec.json`,
+      "-o",
+      "out",
+      "--shared=false",
+      "--interval=1000",
+    ],
+    dir,
+  );
 
   try {
-    watcher.close();
-  } catch {
-    // 忽略
-  }
-  await Deno.remove(dir, { recursive: true });
-
-  return gotEvent;
-};
-
-/**
- * 探测当前环境是否允许监听本地端口
- */
-const canBindLocalhost = async (): Promise<boolean> => {
-  try {
-    const server = Deno.serve(
-      { port: 0, hostname: "127.0.0.1" },
-      () => new Response("ok"),
+    await waitFor(
+      () => exists(`${dir}/out/ping.ts`),
+      30_000,
+      "initial generation",
     );
+    // 等待 watcher 完成基准哈希请求
+    await sleep(1500);
 
+    specContent = SPEC_V2;
+
+    await waitFor(
+      () => exists(`${dir}/out/pong.ts`),
+      30_000,
+      "regeneration after remote change",
+    );
+  } finally {
+    try {
+      child.kill("SIGTERM");
+    } catch {
+      // 忽略
+    }
+    await child.status;
     await server.shutdown();
-
-    return true;
-  } catch {
-    return false;
+    await remove(dir, { recursive: true });
   }
-};
-
-Deno.test({
-  name: "watch: local file change triggers regeneration",
-  sanitizeOps: false,
-  sanitizeResources: false,
-  fn: async () => {
-    if (!await watchFsWorks()) {
-      console.log("skip: Deno.watchFs is not available in this environment");
-      return;
-    }
-
-    const dir = await Deno.makeTempDir({ prefix: "stc_watch_" });
-
-    await Deno.writeTextFile(`${dir}/spec.json`, SPEC_V1);
-
-    const child = runStc(
-      ["-w", "--url=./spec.json", "-o", "out", "--shared=false"],
-      dir,
-    );
-
-    try {
-      await waitFor(
-        () => exists(`${dir}/out/ping.ts`),
-        30_000,
-        "initial generation",
-      );
-      await sleep(1000);
-
-      await Deno.writeTextFile(`${dir}/spec.json`, SPEC_V2);
-
-      await waitFor(
-        () => exists(`${dir}/out/pong.ts`),
-        30_000,
-        "regeneration after change",
-      );
-    } finally {
-      try {
-        child.kill("SIGTERM");
-      } catch {
-        // 忽略
-      }
-      await child.status;
-      await Deno.remove(dir, { recursive: true });
-    }
-  },
-});
-
-Deno.test({
-  name: "watch: remote url polling triggers regeneration",
-  sanitizeOps: false,
-  sanitizeResources: false,
-  fn: async () => {
-    if (!await canBindLocalhost()) {
-      console.log(
-        "skip: binding localhost is not allowed in this environment",
-      );
-      return;
-    }
-
-    let specContent = SPEC_V1;
-
-    const server = Deno.serve(
-      { port: 0, hostname: "127.0.0.1" },
-      () =>
-        new Response(specContent, {
-          headers: { "content-type": "application/json" },
-        }),
-    );
-    const port = (server.addr as Deno.NetAddr).port;
-    const dir = await Deno.makeTempDir({ prefix: "stc_watch_" });
-
-    const child = runStc(
-      [
-        "-w",
-        `--url=http://127.0.0.1:${port}/spec.json`,
-        "-o",
-        "out",
-        "--shared=false",
-        "--interval=1000",
-      ],
-      dir,
-    );
-
-    try {
-      await waitFor(
-        () => exists(`${dir}/out/ping.ts`),
-        30_000,
-        "initial generation",
-      );
-      // 等待 watcher 完成基准哈希请求
-      await sleep(1500);
-
-      specContent = SPEC_V2;
-
-      await waitFor(
-        () => exists(`${dir}/out/pong.ts`),
-        30_000,
-        "regeneration after remote change",
-      );
-    } finally {
-      try {
-        child.kill("SIGTERM");
-      } catch {
-        // 忽略
-      }
-      await child.status;
-      await server.shutdown();
-      await Deno.remove(dir, { recursive: true });
-    }
-  },
 });

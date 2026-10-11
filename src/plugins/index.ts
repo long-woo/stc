@@ -21,9 +21,7 @@ export class PluginManager {
     const pluginNames = plugins.map((item) => item.name).join(", ");
     // 如果插件已经存在，则不重复注册
     if (this.plugins.every((item) => pluginNames.includes(item.name))) {
-      Logs.warn(
-        getT("$t(plugin.alreadyRegistered)", { names: pluginNames }),
-      );
+      Logs.warn(getT("$t(plugin.alreadyRegistered)", { names: pluginNames }));
       return;
     }
 

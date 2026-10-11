@@ -1,4 +1,4 @@
-import { parse as parseYaml } from "@std/yaml";
+import { parse as parseYaml } from "yaml";
 import type { ISwaggerResult } from "./swagger.ts";
 import { getT } from "./i18n/index.ts";
 
@@ -21,10 +21,7 @@ const isYamlSource = (source: string) => YAML_EXT_REG.test(source);
  * @param source - 来源文件路径或远程地址，用于格式检测
  * @returns 解析后的 Swagger 结果
  */
-export const parseSpec = (
-  content: string,
-  source = "",
-): ISwaggerResult => {
+export const parseSpec = (content: string, source = ""): ISwaggerResult => {
   const text = content.trim();
 
   if (!text) {

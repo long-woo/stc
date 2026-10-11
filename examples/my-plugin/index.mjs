@@ -1,51 +1,31 @@
 import { start } from "@lonu/stc";
-
-// 导入解析 eta 文件
 import { buildEta } from "@lonu/stc/plugin/common";
 
-// 导入解析方法
-// import { parserDefinition } from "@lonu/stc/plugin/definition";
-// import { parserActions } from '@lonu/stc/plugin/action'
-
+// The template files are illustrative pseudocode. This example writes a JSON
+// catalog to demonstrate asynchronous setup and the public plugin lifecycle.
 /** @type {import('@lonu/stc/plugin/types').IPlugin} */
 const myPlugin = {
   name: "stc:myPlugin",
-  lang: "cs",
-  async setup(context) {
-    // template 的文件是伪代码。
-    const template = await buildEta("./template");
-
-    console.log(context);
-
-    // 类型映射
+  lang: "catalog",
+  async setup() {
+    return { template: await buildEta("./template") };
+  },
+  onTransform(definitions, actions) {
     return {
-      unknownType: "",
-      typeMap(func, type) {
-        const _newType =
-          type && func(type, undefined, undefined, pluginSetup) ||
-          pluginSetup.unknownType;
-
-        return {
-          string: "string",
-          integer: "int",
-          boolean: "boolean",
-          array: `List<${_newType}>`,
-          object: "object",
-          file: "File",
-          null: "null",
-          bool: "boolean",
-        };
+      definition: {
+        filename: "catalog.json",
+        banner: false,
+        content: JSON.stringify({ definitions: [...definitions.keys()], actions: [...actions.keys()] }, null, 2),
       },
-      template,
+      action: new Map(),
     };
   },
 };
 
-start({
-  lang: "cs",
+await start({
+  lang: "catalog",
   outDir: "./dist",
-  url: "https://petstore3.swagger.io/api/v3/openapi.json",
-  plugins: [
-    myPlugin,
-  ],
+  url: "../../test/openapi-v3.yaml",
+  clean: true,
+  plugins: [myPlugin],
 });

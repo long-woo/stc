@@ -8,12 +8,12 @@ const formatOxcError = (error: unknown): string => {
 
   if (typeof error === "object" && error !== null) {
     const obj = error as Record<string, unknown>;
-    const message = typeof obj.message === "string"
-      ? obj.message
-      : JSON.stringify(obj, null, 2);
-    const codeframe = typeof obj.codeframe === "string"
-      ? obj.codeframe
-      : undefined;
+    const message =
+      typeof obj.message === "string"
+        ? obj.message
+        : JSON.stringify(obj, null, 2);
+    const codeframe =
+      typeof obj.codeframe === "string" ? obj.codeframe : undefined;
     return [message, codeframe].filter(Boolean).join("\n\n");
   }
 

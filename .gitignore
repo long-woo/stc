@@ -12,3 +12,6 @@ examples/**/package-lock.json
 
 .DS_Store
 deno.lock
+
+*.tgz
+examples/config-watch/src/api/generated

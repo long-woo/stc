@@ -1,37 +1,31 @@
 name: Publish Package to npmjs
-
 on:
-  push:
-    branches: ['master', 'main']
-    paths:
-      - src/npm/pkg.json
-
+  release:
+    types: [published]
+permissions:
+  contents: read
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2.0.5
         with:
-          deno-version: 2.x
-
-      # 使用 dnt(https://jsr.io/@deno/dnt) 打包
-      - name: 构建成 npm 包
-        run: deno task build:npm
-
-      # Setup .npmrc file to publish to npm
-      - name: 发布到 npmjs
-        uses: actions/setup-node@v7.0.0
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-node@v7.0.0
         with:
-          node-version: '24.x'
-          registry-url: 'https://registry.npmjs.org'
-
-      - run: |
-          cd npm_dist
-
-          npm ci
-          npm publish
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Verify release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: node -e 'if(require("./package.json").version !== process.env.RELEASE_TAG) throw Error("Release tag must match package.json version")'
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm run test:package
+      - name: Publish package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_DIST_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
+        run: npm publish --tag "$NPM_DIST_TAG"

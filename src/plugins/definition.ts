@@ -16,10 +16,13 @@ const parserBaseAndEnum = (
     ? _enumOption
     : convertType(props.type, props.ref, props.additionalRef, options);
 
-  const res = renderEtaString(
-    options.template!.enum,
-    { name, data, convertValue, isEnum, enumType: props.type },
-  );
+  const res = renderEtaString(options.template!.enum, {
+    name,
+    data,
+    convertValue,
+    isEnum,
+    enumType: props.type,
+  });
 
   return res;
 };

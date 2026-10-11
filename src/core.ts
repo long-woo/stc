@@ -94,8 +94,9 @@ const getVirtualPropertiesFromSchema = (
   if (!schema) return [];
 
   const hasObjectShape =
-    !!schema.properties && Object.keys(schema.properties).length > 0 ||
-    !!schema.allOf?.length || schema.type?.includes("object") ||
+    (!!schema.properties && Object.keys(schema.properties).length > 0) ||
+    !!schema.allOf?.length ||
+    schema.type?.includes("object") ||
     schema.type === "array";
 
   if (!hasObjectShape && !schema.$ref) {
@@ -123,7 +124,8 @@ const getVirtualPropertiesFromSchema = (
     }
 
     if (
-      currentSchema.type === "array" && currentSchema.items &&
+      currentSchema.type === "array" &&
+      currentSchema.items &&
       !currentSchema.items.$ref
     ) {
       collectProps(currentSchema.items);
@@ -133,21 +135,23 @@ const getVirtualPropertiesFromSchema = (
     (currentSchema.required ?? []).forEach((item) => required.add(item));
 
     Object.keys(currentSchema.properties ?? {}).forEach((current) => {
-      const prop = currentSchema.properties
-        ?.[current] as unknown as ISwaggerSchema;
+      const prop = currentSchema.properties?.[
+        current
+      ] as unknown as ISwaggerSchema;
       const propName = current;
       const propRequired = required.has(propName);
 
       const enumOption = prop.enum || [];
       let refName = getDefinitionNameMapping(prop.$ref ?? "").name;
       if (prop.items) {
-        refName = getDefinitionNameMapping(prop.items.$ref ?? "").name ||
+        refName =
+          getDefinitionNameMapping(prop.items.$ref ?? "").name ||
           (prop.items.format === "binary" ? "file" : (prop.items.type ?? ""));
       }
 
       let type = enumOption.length
         ? camelCase(`${defMapping.name}_${propName}`, true)
-        : (getObjectKeyByValue(mappings, refName) || prop.type);
+        : getObjectKeyByValue(mappings, refName) || prop.type;
 
       // OpenAPI v3 文件上传：type: string + format: binary 归一为 file 类型
       if (prop.format === "binary") {
@@ -155,17 +159,20 @@ const getVirtualPropertiesFromSchema = (
       }
 
       if (
-        !type && defs[refName] && !defs[refName].type.includes("object") &&
+        !type &&
+        defs[refName] &&
+        !defs[refName].type.includes("object") &&
         !defs[refName].enum?.length
       ) {
         type = defs[refName].type;
         refName = "";
       }
 
-      const additionalRef = typeof prop.additionalProperties === "object" &&
-          "$ref" in prop.additionalProperties
-        ? getDefinitionNameMapping(prop.additionalProperties.$ref ?? "").name
-        : undefined;
+      const additionalRef =
+        typeof prop.additionalProperties === "object" &&
+        "$ref" in prop.additionalProperties
+          ? getDefinitionNameMapping(prop.additionalProperties.$ref ?? "").name
+          : undefined;
 
       const childDef = getDefinitionNameMapping(propName, true);
       const childSchema = prop as ISwaggerSchema;
@@ -201,8 +208,10 @@ const getVirtualPropertiesFromSchema = (
             defData.set(_objTypeName, childProps);
           }
         } else if (
-          childSchema.type?.includes("object") || childSchema.properties ||
-          childSchema.allOf?.length || childSchema.$ref
+          childSchema.type?.includes("object") ||
+          childSchema.properties ||
+          childSchema.allOf?.length ||
+          childSchema.$ref
         ) {
           if (Array.isArray(_defItem.type)) {
             const _objIndex = _defItem.type.indexOf("object");
@@ -242,7 +251,7 @@ const getVirtualProperties = (
   >,
 ): IDefinitionVirtualProperty[] => {
   const hasObjectShape =
-    !!defItem.properties && Object.keys(defItem.properties).length > 0 ||
+    (!!defItem.properties && Object.keys(defItem.properties).length > 0) ||
     !!defItem.allOf?.length ||
     defItem.type?.includes("object");
 
@@ -344,15 +353,18 @@ const getMethodName = (
     // 若 _name 中存在动态路径，判断是否与 _lastName 重复
     if (regExp.test(_name)) {
       const _namePath =
-        _name.match(regExp)?.reduce<string[]>((prev, current) => {
-          const _n = current.replace(regReplace, "");
+        _name
+          .match(regExp)
+          ?.reduce<string[]>((prev, current) => {
+            const _n = current.replace(regReplace, "");
 
-          // 移除与 _lastName 重复的
-          if (_n !== _lastName) {
-            prev.push(_n);
-          }
-          return prev;
-        }, []).join("_") ?? "";
+            // 移除与 _lastName 重复的
+            if (_n !== _lastName) {
+              prev.push(_n);
+            }
+            return prev;
+          }, [])
+          .join("_") ?? "";
 
       if (_namePath) {
         _name = `${conjunction}_${_namePath}`;
@@ -408,10 +420,12 @@ const getPathVirtualProperty = (
   definitions?: IDefaultObject<ISwaggerResultDefinition>,
 ): IPathVirtualProperty => {
   // 请求参数 path、query、body、formData、header
-  const parameters =
-    (pathMethod.parameters?.sort((_a, _b) =>
-      Number(_b.required) - Number(_a.required)
-    ) ?? []).reduce((prev: IPathVirtualParameter, current) => {
+  const parameters = (
+    pathMethod.parameters?.sort(
+      (_a, _b) => Number(_b.required) - Number(_a.required),
+    ) ?? []
+  ).reduce(
+    (prev: IPathVirtualParameter, current) => {
       if (
         (current.in === "header" &&
           !options?.globalHeader?.includes(current.name.toLowerCase())) ||
@@ -425,9 +439,7 @@ const getPathVirtualProperty = (
           required: current.required,
           description: current.description,
           format: current.format ?? _schema?.format,
-          ref: getRefType(
-            _schema?.$ref ?? _schema?.items?.$ref ?? "",
-          ),
+          ref: getRefType(_schema?.$ref ?? _schema?.items?.$ref ?? ""),
           typeX: current?.items?.type ?? _schema?.items?.type,
           default: _schema?.default,
           enumOption: _schema?.enum,
@@ -446,7 +458,9 @@ const getPathVirtualProperty = (
       }
 
       return prev;
-    }, { path: [], query: [], body: [], formData: [], header: [] });
+    },
+    { path: [], query: [], body: [], formData: [], header: [] },
+  );
 
   // v3 body 参数在 requestBody
   const _requestBody = pathMethod.requestBody;
@@ -480,13 +494,15 @@ const getPathVirtualProperty = (
 
         // schema 无 properties 时（如直接声明 binary），退化为单个 file 参数
         if (!_formDataProps.length) {
-          _formDataProps = [{
-            name: "file",
-            originalName: "file",
-            type: "file",
-            required: _requestBody.required ?? true,
-            description: _requestBody.description ?? "",
-          }];
+          _formDataProps = [
+            {
+              name: "file",
+              originalName: "file",
+              type: "file",
+              required: _requestBody.required ?? true,
+              description: _requestBody.description ?? "",
+            },
+          ];
         }
 
         _formDataProps.forEach((_prop) => {
@@ -503,13 +519,16 @@ const getPathVirtualProperty = (
       if (
         _bodyContentSchema?.type === "object" &&
         !Object.keys(_bodyContentSchema?.properties ?? {}).length
-      ) return;
+      )
+        return;
 
-      const _name = (_key === "application/octet-stream"
-        ? "file"
-        : lowerCase(_bodyContentRef)) || "body";
+      const _name =
+        (_key === "application/octet-stream"
+          ? "file"
+          : lowerCase(_bodyContentRef)) || "body";
 
-      const _type = _name === "file" ? "file" : _bodyContentSchema?.type ?? "";
+      const _type =
+        _name === "file" ? "file" : (_bodyContentSchema?.type ?? "");
 
       const _properties = getProperties(
         _bodyContentSchema as ISwaggerSchema | undefined,
@@ -527,18 +546,15 @@ const getPathVirtualProperty = (
       };
 
       // body 存在相同 name 时，无需重复添加
-      if (
-        !parameters.body.some((item) =>
-          item.name === _name
-        )
-      ) {
+      if (!parameters.body.some((item) => item.name === _name)) {
         parameters.body.push(_body);
       }
     });
   }
 
   // 响应
-  const _resSchema = pathMethod.responses[200]?.schema ??
+  const _resSchema =
+    pathMethod.responses[200]?.schema ??
     pathMethod.responses[200]?.content?.["application/json"]?.schema ??
     pathMethod.responses[200]?.content?.["text/plain"]?.schema;
 
@@ -590,10 +606,12 @@ export const getApiPath = (
   Object.keys(paths).forEach((url) => {
     // 过滤接口，符合过滤条件的接口会被生成
     if (
-      options?.filter?.length && !micromatch.all(url, options.filter, {
+      options?.filter?.length &&
+      !micromatch.all(url, options.filter, {
         bash: true,
       })
-    ) return;
+    )
+      return;
 
     // 请求方式
     const methods = paths[url];
@@ -606,7 +624,8 @@ export const getApiPath = (
       const currentAction = methods[method];
 
       // 方法名
-      let name = currentAction.operationId ??
+      let name =
+        currentAction.operationId ??
         getMethodName(url, options!.conjunction!, options?.actionIndex);
 
       if (!name) {

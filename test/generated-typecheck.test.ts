@@ -1,4 +1,6 @@
-import { assertEquals } from "@std/assert";
+import { test } from "vitest";
+import { Command, makeTempDir, remove, writeTextFile } from "./helpers.ts";
+import { assertEquals } from "./helpers.ts";
 
 const spec = {
   openapi: "3.0.0",
@@ -28,17 +30,17 @@ const spec = {
  * 生成的多参数容器是 `interface`，TypeScript 不会给 `interface` 隐式索引签名，
  * 因此运行时的 `ApiClientParams` 不能声明成 `Record` 类型，否则调用处报 TS2322。
  */
-Deno.test("生成的代码可以通过类型检查", async () => {
-  const outDir = await Deno.makeTempDir();
+test("生成的代码可以通过类型检查", async () => {
+  const outDir = await makeTempDir();
   const specFile = `${outDir}/openapi.json`;
 
   try {
-    await Deno.writeTextFile(specFile, JSON.stringify(spec));
+    await writeTextFile(specFile, JSON.stringify(spec));
 
-    const generate = new Deno.Command("deno", {
+    const generate = new Command(process.execPath, {
       args: [
-        "run",
-        "-A",
+        "--import",
+        "tsx",
         "src/main.ts",
         `--url=${specFile}`,
         `--outDir=${outDir}/out`,
@@ -46,27 +48,30 @@ Deno.test("生成的代码可以通过类型检查", async () => {
     });
     assertEquals((await generate.output()).code, 0);
 
-    const check = new Deno.Command("deno", {
+    const check = new Command(process.execPath, {
       args: [
-        "check",
-        "--no-config",
-        "--no-lock",
-        "--unstable-sloppy-imports",
+        `${process.cwd()}/node_modules/typescript/bin/tsc`,
+        "--noEmit",
+        "--skipLibCheck",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "bundler",
+        "--baseUrl",
+        `${process.cwd()}/node_modules`,
         `${outDir}/out/pet.ts`,
       ],
       stderr: "piped",
       stdout: "piped",
     });
 
-    const { stderr } = await check.output();
+    const { stdout: stderr } = await check.output();
     const _output = new TextDecoder().decode(stderr);
 
-    // `axios` 未安装导致的模块解析错误与本用例无关，只断言类型本身的错误
-    assertEquals(
-      _output.split("\n").filter((line) => /TS2322|TS2304|TS2345/.test(line)),
-      [],
-    );
+    assertEquals(_output.trim(), "");
   } finally {
-    await Deno.remove(outDir, { recursive: true });
+    await remove(outDir, { recursive: true });
   }
 });

@@ -1,10 +1,12 @@
-import { assertEquals } from "@std/assert";
+import { test } from "vitest";
+import { Command } from "./helpers.ts";
+import { assertEquals } from "./helpers.ts";
 
-Deno.test("非 object 定义", async () => {
-  const command = new Deno.Command("deno", {
+test("非 object 定义", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=test/non-object-def.json",
       "--outDir=out",

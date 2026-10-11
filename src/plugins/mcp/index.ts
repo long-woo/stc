@@ -132,8 +132,8 @@ const toJsonSchema = (
       ref: property.ref,
     };
     schema.items = property.ref
-      ? definitionToSchema(property.ref, definitions, visitedRefs) ??
-        toJsonSchema(item, definitions, visitedRefs)
+      ? (definitionToSchema(property.ref, definitions, visitedRefs) ??
+        toJsonSchema(item, definitions, visitedRefs))
       : toJsonSchema(item, definitions, visitedRefs);
   }
 
@@ -254,8 +254,8 @@ export const McpPlugin: IPlugin = {
       const input = createInput(data, definitions);
       tools.push({
         name: getToolName(key, usedNames),
-        description: data.summary || data.description ||
-          `${data.method} ${data.url}`,
+        description:
+          data.summary || data.description || `${data.method} ${data.url}`,
         inputSchema: input.schema,
         "x-stc-http": {
           method: data.method.toUpperCase(),

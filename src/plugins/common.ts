@@ -1,5 +1,5 @@
-import { expandGlob } from "@std/fs";
-import { Eta } from "@eta-dev/eta";
+import { expandGlob } from "../fs.ts";
+import { Eta } from "eta";
 
 import type { IPluginOptions, IPluginSetup } from "./typeDeclaration.ts";
 import Logs from "../console.ts";
@@ -31,7 +31,8 @@ export const setupTemplate = (
   },
 ) => {
   etaInstance = new Eta({
-    views: template?.path ??
+    views:
+      template?.path ??
       `./src/plugins/${template?.langDirectoryName ?? options.lang}/template`,
   });
 

@@ -1,13 +1,9 @@
 {
-  "paths": {
-  },
+  "paths": {},
   "components": {
     "schemas": {
       "MetaVariableDataTypeInfo": {
-        "required": [
-          "displayName",
-          "name"
-        ],
+        "required": ["displayName", "name"],
         "type": "object",
         "properties": {
           "name": {

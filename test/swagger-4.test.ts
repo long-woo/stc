@@ -1,11 +1,13 @@
+import { test } from "vitest";
+import { Command } from "./helpers.ts";
 // https://petstore3.swagger.io/api/v3/openapi.json
-import { assertEquals } from "@std/assert";
+import { assertEquals } from "./helpers.ts";
 
-Deno.test("解决动态路径生成方法被覆盖的问题", async () => {
-  const command = new Deno.Command("deno", {
+test("解决动态路径生成方法被覆盖的问题", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/wp-json.json",
       "--outDir=out",
@@ -17,11 +19,11 @@ Deno.test("解决动态路径生成方法被覆盖的问题", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("支持URL路径Query参数解析", async () => {
-  const command = new Deno.Command("deno", {
+test("支持URL路径Query参数解析", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/blog-json.json",
       "--outDir=out",

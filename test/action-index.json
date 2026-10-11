@@ -7,9 +7,7 @@
   "paths": {
     "/api/das/job/create": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -55,9 +53,7 @@
     },
     "/api/das/job/update": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -103,9 +99,7 @@
     },
     "/api/das/job/enable": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -142,9 +136,7 @@
     },
     "/api/das/job/disable": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -181,9 +173,7 @@
     },
     "/api/das/job/detail": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -220,9 +210,7 @@
     },
     "/api/das/job/query": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -268,9 +256,7 @@
     },
     "/api/das/job/{id}/trigger/detail": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -308,9 +294,7 @@
     },
     "/api/das/job/{id}/trigger/update": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -367,9 +351,7 @@
     },
     "/api/das/job/{id}/trigger/disable": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -407,9 +389,7 @@
     },
     "/api/das/job/{id}/trigger/enable": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -447,9 +427,7 @@
     },
     "/api/das/job/{id}/tag/add": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -515,9 +493,7 @@
     },
     "/api/das/job/{id}/tag/remove": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -583,9 +559,7 @@
     },
     "/api/das/job/{id}/tag/overwrite": {
       "post": {
-        "tags": [
-          "Job"
-        ],
+        "tags": ["Job"],
         "parameters": [
           {
             "name": "id",
@@ -699,10 +673,7 @@
         "additionalProperties": false
       },
       "DASJobStatus": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       },
@@ -882,12 +853,7 @@
         "additionalProperties": false
       },
       "DASTaskStatus": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
@@ -991,9 +957,7 @@
         "additionalProperties": false
       },
       "JobCreateRequestModel": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
@@ -1211,10 +1175,7 @@
         "additionalProperties": false
       },
       "JobTriggerRequestModel": {
-        "required": [
-          "name",
-          "triggerType"
-        ],
+        "required": ["name", "triggerType"],
         "type": "object",
         "properties": {
           "triggerType": {
@@ -1241,17 +1202,12 @@
         "additionalProperties": false
       },
       "JobTriggerStatus": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       },
       "JobUpdateRequestModel": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
@@ -1474,10 +1430,7 @@
         "additionalProperties": false
       },
       "TriggerTemplateCreateRequestModel": {
-        "required": [
-          "name",
-          "triggerType"
-        ],
+        "required": ["name", "triggerType"],
         "type": "object",
         "properties": {
           "triggerType": {
@@ -1571,10 +1524,7 @@
         "additionalProperties": false
       },
       "TriggerTemplateUpdateRequestModel": {
-        "required": [
-          "name",
-          "triggerType"
-        ],
+        "required": ["name", "triggerType"],
         "type": "object",
         "properties": {
           "triggerType": {

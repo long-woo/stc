@@ -8,11 +8,7 @@ export type IDefaultObject<T = unknown> = {
  * 参数类别
  */
 export type parameterCategory =
-  | "path"
-  | "query"
-  | "body"
-  | "formData"
-  | "header";
+  "path" | "query" | "body" | "formData" | "header";
 
 interface ISwaggerResultInfo {
   title: string;
@@ -128,8 +124,7 @@ interface ISwaggerDefinitionProperties {
   items?: ISwaggerSchema;
   enum?: string[];
   additionalProperties?:
-    | boolean
-    | Pick<ISwaggerDefinitionProperties, "type" | "$ref">;
+    boolean | Pick<ISwaggerDefinitionProperties, "type" | "$ref">;
   nullable?: boolean;
 }
 

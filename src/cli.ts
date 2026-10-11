@@ -1,14 +1,13 @@
-import { type Args, parseArgs, type ParseOptions } from "@std/cli";
-import ProgressBar from "@deno-library/progress";
+import { parseArgs, type Args, type ParseOptions } from "./args.ts";
 
 import type { DefaultConfigOptions, IDefaultObject } from "./swagger.ts";
 import { loadConfigFile, normalizeConfig } from "./config.ts";
 import Logs from "./console.ts";
-import { createAppFile } from "./utils.ts";
-import denoJson from "../deno.json" with { type: "json" };
+import packageJson from "../package.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 import { trackEvent } from "./ga.ts";
-import { dirname, resolve } from "@std/path";
+import { isNewerVersion } from "./version.ts";
+import { dirname, resolve } from "node:path";
 
 const drawLogo = () => {
   console.log(`
@@ -28,140 +27,30 @@ const drawLogo = () => {
  */
 const checkUpdate = async () => {
   Logs.info(`${getT("$t(cli.checkUpdate)")}...`);
-  const version = Number(denoJson.version?.replace(/\./g, "") ?? 0);
-
   const res = await fetch(
     "https://api.github.com/repos/long-woo/stc/releases/latest",
-    // { timeout: 1000 * 60 * 10 },
+    { signal: AbortSignal.timeout(3000) },
   );
-
-  if (res.ok) {
-    const data = await res.json();
-    const latestVersion = data.tag_name;
-    const _lastVersion = Number(latestVersion.replace(/\./g, "") ?? 0);
-
-    if (version < _lastVersion) {
-      // 非 deno compile 的可执行文件，仅提示更新
-      if (typeof confirm === "undefined") {
-        // 提示有新版本
-        console.log("\n");
-        Logs.warn(getT("$t(cli.updatePrompt)", {
-          version: denoJson.version,
-          latestVersion,
-        }));
-        console.log("\n");
-        return;
-      }
-
-      // 询问是否更新
-      const _needUpdate = confirm(`${
-        getT("$t(cli.updatePrompt)", {
-          version: denoJson.version,
-          latestVersion,
-        })
-      }${getT("$t(cli.updateConfirm)")}`);
-
-      if (!_needUpdate) return;
-
-      Logs.info(
-        `${
-          getT("$t(cli.updating)", {
-            version: denoJson.version,
-            latestVersion,
-          })
-        }...`,
-      );
-
-      const dir = Deno.cwd();
-      const systemInfo = Deno.build;
-
-      const appNameMap: Record<string, string> = {
-        "x86_64-apple-darwin": "stc",
-        "aarch64-apple-darwin": "stc-m",
-        "x86_64-pc-windows-msvc": "stc-win",
-        "x86_64-unknown-linux-gnu": "stc-linux",
-      };
-      const downloadUrl =
-        `https://github.com/long-woo/stc/releases/download/${latestVersion}/${
-          appNameMap[systemInfo.target]
-        }`;
-      const downloadApp = await fetch(downloadUrl);
-
-      const reader = downloadApp.body?.getReader();
-      // 文件内容长度
-      const contentLength = Number(downloadApp.headers.get("content-length"));
-      const size = Number((contentLength / 1024 / 1024).toFixed(1));
-      // 接收的文件字节长度
-      let receivedLength = 0;
-      // 接收到的字节数据
-      const chunks: Uint8Array[] = [];
-
-      if (reader) {
-        const progressBar = new ProgressBar({
-          total: size,
-          display: ":completed/:total M :bar :percent",
-        });
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            break;
-          }
-
-          chunks.push(value);
-          receivedLength += value.length;
-
-          progressBar.render(Number((receivedLength / 1024 / 1024).toFixed(1)));
-        }
-
-        const chunkContent = new Uint8Array(receivedLength);
-        let offset = 0;
-
-        for (const chunk of chunks) {
-          chunkContent.set(chunk, offset);
-          offset += chunk.length;
-        }
-
-        await createAppFile(
-          `${dir}/stc`,
-          chunkContent.buffer,
-        );
-
-        Logs.success(getT("$t(cli.updateDone)", { version: latestVersion }));
-        Deno.exit(0);
-      }
-
-      Logs.error(downloadApp.statusText);
-
-      // const command = new Deno.Command("deno", {
-      //   args: [
-      //     "compile",
-      //     "-A",
-      //     `jsr:@lonu/stc/mod.ts`,
-      //     "--output",
-      //     `${dir}/stc`,
-      //   ],
-      // });
-
-      // const { code, stderr } = await command.output();
-
-      // if (code === 0) {
-      //   Logs.info("更新完成");
-      //   return;
-      // }
-
-      // Logs.error(new TextDecoder().decode(stderr));
-    }
-
-    Logs.info(getT("$t(cli.latestVersion)"));
-  }
+  if (!res.ok) return;
+  const data = (await res.json()) as { tag_name?: string };
+  const latestVersion = data.tag_name?.replace(/^v/, "");
+  if (!latestVersion) return;
+  if (isNewerVersion(latestVersion, packageJson.version)) {
+    Logs.warn(
+      getT("$t(cli.updatePrompt)", {
+        version: packageJson.version,
+        latestVersion,
+      }),
+    );
+    console.log("https://github.com/long-woo/stc/releases/latest");
+    console.log("npm install -g @lonu/stc@latest");
+  } else Logs.info(getT("$t(cli.latestVersion)"));
 };
 
 /**
  * 打印帮助信息
  */
-const printHelp = () => {
+const printHelp = (code = 0) => {
   console.log(`
 ${getT("$t(cli.usage)")}
   stc [options]
@@ -193,7 +82,7 @@ ${getT("$t(cli.example)")}
   stc -w --url https://petstore3.swagger.io/api/v3/openapi.json
   stc --mcp --url ./openapi.yaml
 `);
-  Deno.exit(0);
+  process.exit(code);
 };
 
 /**
@@ -235,6 +124,7 @@ const OPTION_DEFAULTS: IDefaultObject = {
 
 const OPTION_ALIASES: Record<string, string[]> = {
   watch: ["w"],
+  noDeprecated: ["nd"],
 };
 
 /**
@@ -244,12 +134,17 @@ const OPTION_ALIASES: Record<string, string[]> = {
 const hasCliOption = (name: string): boolean => {
   const names = [name, ...(OPTION_ALIASES[name] ?? [])];
 
-  return Deno.args.some((arg) =>
-    names.some((item) =>
-      arg === `--${item}` || arg.startsWith(`--${item}=`) ||
-      arg === `-${item}` || arg.startsWith(`-${item}=`)
-    )
-  );
+  return process.argv
+    .slice(2)
+    .some((arg) =>
+      names.some(
+        (item) =>
+          arg === `--${item}` ||
+          arg.startsWith(`--${item}=`) ||
+          arg === `-${item}` ||
+          arg.startsWith(`-${item}=`),
+      ),
+    );
 };
 
 /**
@@ -305,14 +200,12 @@ export const resolveOptions = async (): Promise<IMainResult> => {
     },
     collect: ["filter", "globalHeader"],
     unknown: (arg: string) => {
-      Logs.error(getT("$t(cli.unknownOption)", { arg }));
-      printHelp();
-      Deno.exit(1);
+      throw new Error(getT("$t(cli.unknownOption)", { arg }));
     },
   };
 
   // 不带默认值解析，便于识别用户实际传入的选项
-  const args: Args = parseArgs(Deno.args, argsConfig);
+  const args: Args = parseArgs(process.argv.slice(2), argsConfig);
 
   // 帮助
   if (args.help) {
@@ -321,8 +214,8 @@ export const resolveOptions = async (): Promise<IMainResult> => {
 
   // 版本
   if (args.version) {
-    console.log(`stc v${denoJson.version}`);
-    Deno.exit(0);
+    console.log(`stc v${packageJson.version}`);
+    process.exit(0);
   }
 
   // 加载配置文件
@@ -336,16 +229,14 @@ export const resolveOptions = async (): Promise<IMainResult> => {
     configPath = loaded.path;
     fileOptions = normalizeConfig(loaded.options);
   } catch (error) {
-    Logs.error(getT("$t(cli.configLoadError)", {
-      error: error instanceof Error ? error.message : String(error),
-    }));
-    Deno.exit(1);
+    throw new Error(
+      getT("$t(cli.configLoadError)", {
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
   }
-
-  // 显式指定了配置文件但不存在
   if (explicitConfig && !configPath) {
-    Logs.error(getT("$t(cli.configNotFound)", { path: explicitConfig }));
-    Deno.exit(1);
+    throw new Error(getT("$t(cli.configNotFound)", { path: explicitConfig }));
   }
 
   // 忽略配置文件中不支持的选项
@@ -380,10 +271,11 @@ export const resolveOptions = async (): Promise<IMainResult> => {
 
   // 配置文件中的本地路径相对于配置文件所在目录解析；CLI 显式传入的路径仍相对于当前目录。
   if (configPath) {
-    const configDirectory = dirname(resolve(Deno.cwd(), configPath));
+    const configDirectory = dirname(resolve(process.cwd(), configPath));
 
     if (
-      args.url === undefined && typeof merged.url === "string" &&
+      args.url === undefined &&
+      typeof merged.url === "string" &&
       !/^https?:\/\//i.test(merged.url)
     ) {
       merged.url = resolve(configDirectory, merged.url);
@@ -399,14 +291,13 @@ export const resolveOptions = async (): Promise<IMainResult> => {
 
   // 检查 url
   if (!merged.url) {
-    Logs.error(getT("$t(cli.requiredUrl)"));
-    printHelp();
+    throw new Error(getT("$t(cli.requiredUrl)"));
   }
 
   trackEvent("cli_options", {
     client: merged.client,
     lang: merged.lang,
-    version: denoJson.version,
+    version: packageJson.version,
     config: Boolean(configPath),
     watch: Boolean(merged.watch),
   });
@@ -443,7 +334,13 @@ export const main = async (): Promise<IMainResult> => {
 
   // 检查更新（检查失败不影响正常生成）
   try {
-    await checkUpdate();
+    if (
+      !process.env.STC_SKIP_UPDATE_CHECK &&
+      !process.argv
+        .slice(2)
+        .some((arg) => ["--help", "-h", "--version", "-v"].includes(arg))
+    )
+      await checkUpdate();
   } catch {
     // 忽略更新检查错误
   }

@@ -1,12 +1,13 @@
+import { test } from "vitest";
+import { Command, makeTempDir, readTextFile, remove } from "./helpers.ts";
 // OpenAPI v3 文件上传规范解析（multipart/form-data、application/octet-stream）
-import { assertEquals, assertExists, assertStringIncludes } from "@std/assert";
+import { assertEquals, assertExists, assertStringIncludes } from "./helpers.ts";
 
 import { getApiPath } from "../src/core.ts";
 
-const loadSpec = async () =>
-  JSON.parse(await Deno.readTextFile("test/upload.json"));
+const loadSpec = async () => JSON.parse(await readTextFile("test/upload.json"));
 
-Deno.test("multipart/form-data 解析为 formData 参数，binary 归一为 file", async () => {
+test("multipart/form-data 解析为 formData 参数，binary 归一为 file", async () => {
   const spec = await loadSpec();
 
   const actions = getApiPath(
@@ -46,9 +47,7 @@ Deno.test("multipart/form-data 解析为 formData 参数，binary 归一为 file
   // 多文件上传：array 的 items.format: binary，元素类型归一为 file
   const batch = actions.get("upload@uploadBatch");
   assertExists(batch);
-  const files = batch.parameters.formData.find(
-    (item) => item.name === "files",
-  );
+  const files = batch.parameters.formData.find((item) => item.name === "files");
   assertEquals(files?.type, "array");
   assertEquals(files?.ref, "file");
   assertEquals(files?.required, true);
@@ -64,14 +63,14 @@ Deno.test("multipart/form-data 解析为 formData 参数，binary 归一为 file
   assertEquals(rawBody.properties, []);
 });
 
-Deno.test("生成的 TS 代码：File 类型经 formData 发送，单参数不生成包装对象", async () => {
-  const outDir = await Deno.makeTempDir();
+test("生成的 TS 代码：File 类型经 formData 发送，单参数不生成包装对象", async () => {
+  const outDir = await makeTempDir();
 
   try {
-    const command = new Deno.Command("deno", {
+    const command = new Command(process.execPath, {
       args: [
-        "run",
-        "-A",
+        "--import",
+        "tsx",
         "src/main.ts",
         "--url=test/upload.json",
         `--outDir=${outDir}`,
@@ -81,7 +80,7 @@ Deno.test("生成的 TS 代码：File 类型经 formData 发送，单参数不�
     const { code } = await command.output();
     assertEquals(0, code);
 
-    const content = await Deno.readTextFile(`${outDir}/upload.ts`);
+    const content = await readTextFile(`${outDir}/upload.ts`);
 
     // 单文件：形参直接是 File，不定义 XxxBodyParams 包装对象
     assertStringIncludes(content, "uploadSingle = (file: File,");
@@ -97,11 +96,11 @@ Deno.test("生成的 TS 代码：File 类型经 formData 发送，单参数不�
     // file 是内置类型，不应从类型文件导入
     assertEquals(content.includes("import type { file }"), false);
   } finally {
-    await Deno.remove(outDir, { recursive: true });
+    await remove(outDir, { recursive: true });
   }
 });
 
-Deno.test("requestBody 同时声明 json 与表单内容类型时，仅生成 body 参数", () => {
+test("requestBody 同时声明 json 与表单内容类型时，仅生成 body 参数", () => {
   const spec = {
     paths: {
       "/pet": {

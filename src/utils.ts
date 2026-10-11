@@ -1,9 +1,18 @@
 import * as diff from "diff";
-import type { ExpandGlobOptions } from "@std/fs";
-import { copy, emptyDir, ensureFile, exists, expandGlob } from "@std/fs";
-import { format as dateFormat } from "@std/datetime";
+import type { ExpandGlobOptions } from "./fs.ts";
+import { copy, emptyDir, ensureFile, exists, expandGlob } from "./fs.ts";
+import {
+  readFile as readText,
+  writeFile,
+  appendFile,
+  rm,
+} from "node:fs/promises";
+const dateFormat = (date: Date, _format: string) => {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
 
-import denoJson from "../deno.json" with { type: "json" };
+import packageJson from "../package.json" with { type: "json" };
 import { getT } from "./i18n/index.ts";
 
 interface ICopyFileOptions {
@@ -48,7 +57,7 @@ export const upperCase = (str: string) =>
 export const readFile = async (filePath: string) => {
   // 检查路径是否存在
   if (!(await exists(filePath))) return "";
-  return Deno.readTextFile(filePath);
+  return readText(filePath, "utf8");
 };
 
 /**
@@ -63,16 +72,14 @@ export const createFile = async (
   { append, banner = true }: { append?: boolean; banner?: boolean } = {},
 ) => {
   await ensureFile(filePath);
-  await Deno.writeFile(
+  await (append ? appendFile : writeFile)(
     filePath,
     new TextEncoder().encode(
       `${
         banner
-          ? `/** ${
-            getT("$t(util.createFileDescription)", {
-              version: denoJson.version,
-            })
-          }
+          ? `/** ${getT("$t(util.createFileDescription)", {
+              version: packageJson.version,
+            })}
  *
  * https://github.com/long-woo/stc
  * ${dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss")}
@@ -80,7 +87,6 @@ export const createFile = async (
           : ""
       }${content}`,
     ),
-    { append },
   );
 };
 
@@ -91,10 +97,8 @@ export const createFile = async (
  * @param {ArrayBuffer} content - 要写入文件的内容
  * @return {Promise<void>} - 在文件成功写入时解析，或在出现错误时拒绝
  */
-export const createAppFile = (
-  filePath: string,
-  content: ArrayBuffer,
-) => Deno.writeFile(filePath, new Uint8Array(content));
+export const createAppFile = (filePath: string, content: ArrayBuffer) =>
+  writeFile(filePath, new Uint8Array(content));
 
 /**
  * 覆盖复制文件
@@ -106,7 +110,7 @@ export const copyFile = (
   to: string,
   options: ICopyFileOptions = { overwrite: true },
 ) => {
-  copy(from, to, { overwrite: options.overwrite });
+  return copy(from, to, { overwrite: options.overwrite });
 };
 
 /**
@@ -173,24 +177,21 @@ export const fetchClient = async (
   url: string,
   options: RequestInit & { timeout?: number } = { timeout: 5000 },
 ) => {
-  const responsePromise = fetch(url, options);
-
-  // 创建一个超时 Promise
-  const timeoutPromise = new Promise((_resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error(getT("$t(util.timeout)")));
-    }, options?.timeout);
-  });
-
-  // 等待任意一个 Promise 完成
-  const res = await Promise.race([responsePromise, timeoutPromise]);
-
-  if (res instanceof Response) {
-    // 请求成功，返回响应
-    return res;
+  const controller = new AbortController();
+  const timer = setTimeout(
+    () => controller.abort(new Error(getT("$t(util.timeout)"))),
+    options.timeout ?? 5000,
+  );
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: options.signal
+        ? AbortSignal.any([options.signal, controller.signal])
+        : controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
   }
-
-  throw res;
 };
 
 /**
@@ -202,12 +203,10 @@ export const removeFile = async (
   glob: string | URL,
   options?: ExpandGlobOptions,
 ) => {
-  const _files = await Array.fromAsync(
-    expandGlob(glob, options),
-  );
+  const _files = await Array.fromAsync(expandGlob(glob, options));
 
   for await (const _file of _files) {
-    await Deno.remove(_file.path);
+    await rm(_file.path);
   }
 };
 
@@ -260,5 +259,5 @@ export const createDiffFile = async (
     }
   }
 
-  if (isChange) createFile(source, newContent, { banner });
+  if (isChange) await createFile(source, newContent, { banner });
 };

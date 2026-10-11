@@ -1,4 +1,5 @@
-import { assertStringIncludes } from "@std/assert";
+import { test } from "vitest";
+import { assertStringIncludes } from "./helpers.ts";
 
 import { getApiPath } from "../src/core.ts";
 import { parserActions } from "../src/plugins/action.ts";
@@ -74,24 +75,27 @@ const getPetContent = () => {
 /** 导入语句中的类型名 */
 const getImports = (content: string) =>
   (content.match(/import type \{([^}]*)\} from '\.\/_types'/s)?.[1] ?? "")
-    .split(",").map((item) => item.trim()).filter(Boolean);
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 
-Deno.test("展开成本地定义的 body 引用不会被导入", () => {
+test("展开成本地定义的 body 引用不会被导入", () => {
   const content = getPetContent();
 
   // `AddPetRequest` 已展开成 `AddPetBodyParams`，产物里不再出现该类型
   assertStringIncludes(content, "export interface AddPetBodyParams {");
 
-  const _unused = getImports(content).filter((name) =>
-    !new RegExp(`\\b${name}\\b`).test(
-      content.replace(/import type \{[^}]*\} from '\.\/_types'/s, ""),
-    )
+  const _unused = getImports(content).filter(
+    (name) =>
+      !new RegExp(`\\b${name}\\b`).test(
+        content.replace(/import type \{[^}]*\} from '\.\/_types'/s, ""),
+      ),
   );
 
   assertStringIncludes(`[${_unused.join(", ")}]`, "[]");
 });
 
-Deno.test("仍在产物中使用的引用会被导入", () => {
+test("仍在产物中使用的引用会被导入", () => {
   const content = getPetContent();
 
   assertStringIncludes(content, "Pet[]");

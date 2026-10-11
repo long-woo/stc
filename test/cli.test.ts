@@ -1,13 +1,10 @@
-import { assertEquals } from "@std/assert";
+import { test } from "vitest";
+import { Command, makeTempDir, readTextFile, remove } from "./helpers.ts";
+import { assertEquals } from "./helpers.ts";
 
-Deno.test("version", async () => {
-  const command = new Deno.Command("deno", {
-    args: [
-      "run",
-      "-A",
-      "src/main.ts",
-      "--version",
-    ],
+test("version", async () => {
+  const command = new Command(process.execPath, {
+    args: ["--import", "tsx", "src/main.ts", "--version"],
   });
   const { code } = await command.output();
 
@@ -15,14 +12,9 @@ Deno.test("version", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("help", async () => {
-  const command = new Deno.Command("deno", {
-    args: [
-      "run",
-      "-A",
-      "src/main.ts",
-      "--help",
-    ],
+test("help", async () => {
+  const command = new Command(process.execPath, {
+    args: ["--import", "tsx", "src/main.ts", "--help"],
   });
   const { code } = await command.output();
 
@@ -30,12 +22,12 @@ Deno.test("help", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("mcp shortcut", async () => {
-  const outDir = await Deno.makeTempDir({ prefix: "stc_mcp_" });
-  const command = new Deno.Command("deno", {
+test("mcp shortcut", async () => {
+  const outDir = await makeTempDir({ prefix: "stc_mcp_" });
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--mcp",
       "--url=./examples/mcp-tools/openapi.yaml",
@@ -45,21 +37,19 @@ Deno.test("mcp shortcut", async () => {
   const { code } = await command.output();
 
   assertEquals(code, 0);
-  const document = JSON.parse(
-    await Deno.readTextFile(`${outDir}/mcp-tools.json`),
-  );
+  const document = JSON.parse(await readTextFile(`${outDir}/mcp-tools.json`));
   assertEquals(document.tools.length, 4);
 
-  await Deno.remove(outDir, { recursive: true });
+  await remove(outDir, { recursive: true });
 });
 
-Deno.test("filter", async () => {
-  const command = new Deno.Command("deno", {
+test("filter", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
-      "--url=https://petstore3.swagger.io/api/v3/openapi.json",
+      "--url=./test/openapi-v3.yaml",
       "--filter=/user*",
       "-f=!/user/createWithList",
     ],
@@ -70,11 +60,11 @@ Deno.test("filter", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("conjunction", async () => {
-  const command = new Deno.Command("deno", {
+test("conjunction", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/wp-json.json",
       "-c=with",
@@ -85,11 +75,11 @@ Deno.test("conjunction", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("actionIndex", async () => {
-  const command = new Deno.Command("deno", {
+test("actionIndex", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/action-index.json",
       "--actionIndex=-2",
@@ -101,11 +91,11 @@ Deno.test("actionIndex", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("shared", async () => {
-  const command = new Deno.Command("deno", {
+test("shared", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/demo1.json",
       "--shared=false",
@@ -117,11 +107,11 @@ Deno.test("shared", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("additionalProperties", async () => {
-  const command = new Deno.Command("deno", {
+test("additionalProperties", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/additional-properties.json",
     ],
@@ -132,13 +122,13 @@ Deno.test("additionalProperties", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("globalHeader(gh)", async () => {
-  const command = new Deno.Command("deno", {
+test("globalHeader(gh)", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
-      "--url=https://petstore3.swagger.io/api/v3/openapi.json",
+      "--url=./test/openapi-v3.yaml",
       "--globalHeader=authorization",
       "--gh=custom-header",
     ],
@@ -148,11 +138,11 @@ Deno.test("globalHeader(gh)", async () => {
   assertEquals(0, code);
 });
 
-Deno.test("tagSpaceHeader", async () => {
-  const command = new Deno.Command("deno", {
+test("tagSpaceHeader", async () => {
+  const command = new Command(process.execPath, {
     args: [
-      "run",
-      "-A",
+      "--import",
+      "tsx",
       "src/main.ts",
       "--url=./test/tag-space-header.json",
     ],

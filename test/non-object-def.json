@@ -3,16 +3,11 @@
   "components": {
     "schemas": {
       "DataType": {
-        "enum": [
-          "String"
-        ],
+        "enum": ["String"],
         "type": "string"
       },
       "FactField": {
-        "required": [
-          "dataType",
-          "name"
-        ],
+        "required": ["dataType", "name"],
         "type": "object",
         "properties": {
           "name": {
@@ -26,15 +21,11 @@
         "additionalProperties": false
       },
       "LanguageType": {
-        "enum": [
-          "Java"
-        ],
+        "enum": ["Java"],
         "type": "string"
       },
       "MetaAction": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "createBy": {

@@ -17,7 +17,7 @@ export const DartPlugin: IPlugin = {
       unknownType: "dynamic",
       typeMap(func, type) {
         const _newType =
-          type && func(type, undefined, undefined, pluginSetup) ||
+          (type && func(type, undefined, undefined, pluginSetup)) ||
           pluginSetup.unknownType;
 
         return {
@@ -55,15 +55,15 @@ export const DartPlugin: IPlugin = {
       action: actionData,
     };
   },
-  onEnd(options) {
+  async onEnd(options) {
     if (!options.shared) return;
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/api_client_base.${this.lang}`,
       shared.api_client_base,
     );
 
-    createFile(
+    await createFile(
       `${options.outDir}/shared/dio/index.${this.lang}`,
       shared.dio,
     );

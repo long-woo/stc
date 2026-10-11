@@ -1,11 +1,11 @@
 /**
  * @example
  * ```ts
- * import { start } from "jsr:@lonu/stc";
+ * import { start } from "@lonu/stc";
  * // 导入解析方法
- * import { parserDefinition } from "npm:@lonu/stc/plugin/definition";
- * import { parserActions } from 'npm:@lonu/stc/plugin/action'
- * 
+ * import { parserDefinition } from "@lonu/stc/plugin/definition";
+ * import { parserActions } from '@lonu/stc/plugin/action'
+ *
  * const myPlugin: IPlugin = {
  *  name: "stc:MyPlugin",
  *  setup(context) {

@@ -17,7 +17,7 @@ export const SwiftPlugin: IPlugin = {
       unknownType: "JSONValue",
       typeMap(func, type) {
         const _newType =
-          type && func(type, undefined, undefined, pluginSetup) ||
+          (type && func(type, undefined, undefined, pluginSetup)) ||
           pluginSetup.unknownType;
 
         return {
@@ -61,11 +61,11 @@ export const SwiftPlugin: IPlugin = {
 
     // Copy template files to output directory
     await Promise.all([
-      createFile(
+      await createFile(
         `${options.outDir}/shared/APIClientBase.${this.lang}`,
         shared.APIClientBase,
       ),
-      createFile(
+      await createFile(
         `${options.outDir}/shared/alamofire/APIClient.${this.lang}`,
         shared.APIClient,
       ),
